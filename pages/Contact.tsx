@@ -12,9 +12,17 @@ const Contact: React.FC = () => {
   });
 
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateEmail = (email: string) => {
+    // Standard email regex pattern
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(''); // Reset previous errors
     
     // SPAM PREVENTION: Honeypot check
     // If the hidden 'honey' field is filled, it's a bot.
@@ -25,12 +33,19 @@ const Contact: React.FC = () => {
       return;
     }
 
+    // EMAIL VALIDATION
+    if (!validateEmail(formData.email)) {
+      setStatus('error');
+      setErrorMessage('Please enter a valid email address (e.g. name@example.com)');
+      return;
+    }
+
     setStatus('sending');
 
     try {
-      // Using FormSubmit.co AJAX API
+      // Using FormSubmit.co API
       // Note: The first time this is used, an activation email will be sent to ryzeeducationhq@gmail.com
-      const response = await fetch("https://formsubmit.co/ajax/ryzeeducationhq@gmail.com", {
+      const response = await fetch("https://formsubmit.co/ryzeeducationhq@gmail.com", {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json',
@@ -53,15 +68,19 @@ const Contact: React.FC = () => {
         setFormData({ name: '', email: '', phone: '', message: '', honey: '' }); // Clear form
       } else {
         setStatus('error');
+        setErrorMessage(''); // Use default generic error
       }
     } catch (error) {
       console.error("Submission error:", error);
       setStatus('error');
+      setErrorMessage(''); // Use default generic error
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error state when user starts typing again
+    if (status === 'error') setStatus('idle');
   };
 
   return (
@@ -136,6 +155,8 @@ const Contact: React.FC = () => {
                  <h4 className="text-2xl font-bold text-slate-900 mb-4">Message Sent!</h4>
                  <p className="text-slate-600 mb-8 max-w-md mx-auto">
                     Thanks for reaching out to Ryze. We've received your enquiry and will be in touch with you shortly.
+                    <br/><br/>
+                    <span className="text-xs text-slate-400 italic">(Dev Note: If testing for the first time, check the target email inbox for an activation link from FormSubmit)</span>
                  </p>
                  <button 
                     onClick={() => setStatus('idle')}
@@ -147,9 +168,11 @@ const Contact: React.FC = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 relative">
                   {status === 'error' && (
-                    <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 border border-red-100 mb-6">
-                       <AlertCircle size={20} />
-                       <span className="font-medium">Something went wrong. Please try again or call us directly.</span>
+                    <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 border border-red-100 mb-6 animate-in fade-in slide-in-from-top-2">
+                       <AlertCircle size={20} className="shrink-0" />
+                       <span className="font-medium">
+                         {errorMessage || "Something went wrong. Please try again or call us directly."}
+                       </span>
                     </div>
                   )}
 

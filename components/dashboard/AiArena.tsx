@@ -114,7 +114,7 @@ export const AiArena: React.FC = () => {
             <div>
                <h2 className="font-bold text-white text-base md:text-lg">Ryze AI Engine</h2>
                <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></span> Gemini 2.5 Flash
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#3b82f6]"></span> DeepSeek V3
                </div>
             </div>
          </div>
