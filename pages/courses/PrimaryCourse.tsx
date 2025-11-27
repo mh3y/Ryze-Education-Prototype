@@ -1,14 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 // @ts-ignore
 import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../../data/courses';
 import { BookOpen, ArrowRight, Award, Target, Check, Layers, Users, Star, BarChart3, GraduationCap, Calculator, PenTool, MessageCircle, RefreshCw } from 'lucide-react';
 import { motion as motionOriginal } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 const motion = motionOriginal as any;
 
 const PrimaryCourse: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const course = courses[courseId || ''];
   const [activeTermIndex, setActiveTermIndex] = useState(0);
 
@@ -17,22 +20,20 @@ const PrimaryCourse: React.FC = () => {
   }, [courseId]);
 
   if (!course) {
-    return <div className="pt-32 text-center font-sans">Course not found.</div>;
+    return <div className="pt-32 text-center font-sans">{t("Course not found.")}</div>;
   }
 
   // Flatten topics from all subjects for the timeline
   const allTopics = course.subjects.flatMap(s => s.topics);
   const topicsPerTerm = Math.ceil(allTopics.length / 4);
   const terms = [
-    { name: "Term 1", topics: allTopics.slice(0, topicsPerTerm) },
-    { name: "Term 2", topics: allTopics.slice(topicsPerTerm, topicsPerTerm * 2) },
-    { name: "Term 3", topics: allTopics.slice(topicsPerTerm * 2, topicsPerTerm * 3) },
-    { name: "Term 4", topics: allTopics.slice(topicsPerTerm * 3) }
+    { name: t("Term 1"), topics: allTopics.slice(0, topicsPerTerm) },
+    { name: t("Term 2"), topics: allTopics.slice(topicsPerTerm, topicsPerTerm * 2) },
+    { name: t("Term 3"), topics: allTopics.slice(topicsPerTerm * 2, topicsPerTerm * 3) },
+    { name: t("Term 4"), topics: allTopics.slice(topicsPerTerm * 3) }
   ];
 
   // Logic for Learning Targets based on Term
-  const allOutcomes = course.subjects[0].keyOutcomes;
-  // Use representative topics as Goals
   const termGoals = terms[activeTermIndex].topics.slice(0, 5);
 
   return (
@@ -55,7 +56,7 @@ const PrimaryCourse: React.FC = () => {
                  transition={{ delay: 0.1 }}
                  className="text-5xl md:text-7xl font-sans font-bold mb-6 tracking-tight leading-tight text-white drop-shadow-sm"
                >
-                 {course.title}
+                 {t(course.title)}
                </motion.h1>
                <motion.p 
                  initial={{ opacity: 0, y: 20 }}
@@ -63,7 +64,7 @@ const PrimaryCourse: React.FC = () => {
                  transition={{ delay: 0.2 }}
                  className="text-xl text-white/90 font-medium leading-relaxed mb-10 max-w-lg"
                >
-                 {course.description}
+                 {t(course.description)}
                </motion.p>
                
                <motion.div 
@@ -73,10 +74,10 @@ const PrimaryCourse: React.FC = () => {
                  className="flex flex-wrap gap-4"
                >
                   <button onClick={() => navigate('/contact')} className="px-8 py-4 bg-white text-[#FFB000] font-bold rounded-full hover:bg-slate-50 transition-all shadow-lg flex items-center gap-2">
-                    Book Trial Class <ArrowRight size={18} />
+                    {t("Book Trial Class")} <ArrowRight size={18} />
                   </button>
                   <button onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})} className="px-8 py-4 border border-white/40 text-white font-bold rounded-full hover:bg-white/10 transition-all">
-                    Course Details
+                    {t("Course Details")}
                   </button>
                </motion.div>
             </div>
@@ -99,7 +100,7 @@ const PrimaryCourse: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              Why Choose Ryze {course.gradeLevel}?
+              {t(`Why Choose Ryze ${course.gradeLevel}?`)}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {course.whyChoose.map((item, idx) => (
@@ -110,8 +111,8 @@ const PrimaryCourse: React.FC = () => {
                       </div>
                    </div>
                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                      <p className="text-slate-600 leading-relaxed">{item.description}</p>
+                      <h3 className="text-xl font-bold text-slate-900 mb-3">{t(item.title)}</h3>
+                      <p className="text-slate-600 leading-relaxed">{t(item.description)}</p>
                    </div>
                 </div>
               ))}
@@ -124,9 +125,9 @@ const PrimaryCourse: React.FC = () => {
       <section id="details" className="py-24 bg-slate-50">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-4 text-center">
-               {course.gradeLevel} Course Details
+               {course.gradeLevel} {t("Course Details")}
             </h2>
-            <p className="text-center text-slate-500 mb-16 max-w-2xl mx-auto">Explore the detailed curriculum and capabilities built each term.</p>
+            <p className="text-center text-slate-500 mb-16 max-w-2xl mx-auto">{t("Explore the detailed curriculum and capabilities built each term.")}</p>
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                
@@ -171,7 +172,7 @@ const PrimaryCourse: React.FC = () => {
                         <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-[#FFB000]">
                            <Target size={24} />
                         </div>
-                        <h3 className="text-2xl font-bold">Term Goals</h3>
+                        <h3 className="text-2xl font-bold">{t("Term Goals")}</h3>
                      </div>
 
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
@@ -179,8 +180,8 @@ const PrimaryCourse: React.FC = () => {
                            <div key={i} className="flex gap-4">
                               <div className="w-6 h-6 rounded-full bg-[#FFB000] text-[#0f172a] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">{i+1}</div>
                               <div>
-                                 <h4 className="font-bold text-lg mb-1">{topic.title}</h4>
-                                 <p className="text-slate-400 text-sm leading-relaxed">{topic.description}</p>
+                                 <h4 className="font-bold text-lg mb-1">{t(topic.title)}</h4>
+                                 <p className="text-slate-400 text-sm leading-relaxed">{t(topic.description)}</p>
                               </div>
                            </div>
                         ))}
@@ -197,15 +198,15 @@ const PrimaryCourse: React.FC = () => {
                   >
                      <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center gap-3">
                         <BookOpen size={20} className="text-[#FFB000]" />
-                        Complete Syllabus
+                        {t("Complete Syllabus")}
                      </h3>
                      <div className="space-y-4">
                         {terms[activeTermIndex].topics.map((topic, i) => (
                            <div key={i} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                               <div className="font-mono text-slate-400 text-sm mt-1 w-8">{(i + 1).toString().padStart(2, '0')}</div>
                               <div>
-                                 <div className="font-bold text-slate-800">{topic.title}</div>
-                                 <div className="text-slate-500 text-sm">{topic.description}</div>
+                                 <div className="font-bold text-slate-800">{t(topic.title)}</div>
+                                 <div className="text-slate-500 text-sm">{t(topic.description)}</div>
                               </div>
                            </div>
                         ))}

@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { ArrowLeft, Lock, Mail, ArrowRight, Users } from 'lucide-react';
 // @ts-ignore
 import { Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ParentPortal: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +32,7 @@ const ParentPortal: React.FC = () => {
          to="/login" 
          className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white transition-colors font-bold text-sm z-20"
       >
-         <ArrowLeft size={16} /> Back to Portal Selection
+         <ArrowLeft size={16} /> {t("Back to Portal Selection")}
       </Link>
 
       <div className="relative z-20 w-full max-w-md px-6">
@@ -39,13 +41,13 @@ const ParentPortal: React.FC = () => {
                <div className="w-16 h-16 bg-[#a855f7]/10 rounded-2xl flex items-center justify-center text-[#a855f7] mx-auto mb-6 border border-[#a855f7]/20">
                   <Users size={32} />
                </div>
-               <h1 className="text-2xl font-bold text-white mb-2">Parent Portal</h1>
-               <p className="text-sm text-slate-500">Manage billing, reports, and communication.</p>
+               <h1 className="text-2xl font-bold text-white mb-2">{t("Parent Portal")}</h1>
+               <p className="text-sm text-slate-500">{t("Manage billing, reports, and communication.")}</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Email Address")}</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -60,7 +62,7 @@ const ParentPortal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Password")}</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -77,9 +79,9 @@ const ParentPortal: React.FC = () => {
               <div className="flex items-center justify-between text-xs">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" className="w-3 h-3 rounded border-slate-700 bg-[#050510] text-[#a855f7] focus:ring-[#a855f7]" />
-                  <span className="text-slate-500 font-medium">Remember me</span>
+                  <span className="text-slate-500 font-medium">{t("Remember me")}</span>
                 </label>
-                <a href="#" className="text-[#a855f7] hover:text-white transition-colors">Forgot Password?</a>
+                <a href="#" className="text-[#a855f7] hover:text-white transition-colors">{t("Forgot Password?")}</a>
               </div>
 
               <button 
@@ -90,14 +92,14 @@ const ParentPortal: React.FC = () => {
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 ) : (
-                  <>Sign In <ArrowRight size={18} /></>
+                  <>{t("Sign In")} <ArrowRight size={18} /></>
                 )}
               </button>
             </form>
             
             <div className="mt-8 pt-6 border-t border-white/5 text-center">
                <p className="text-xs text-slate-600">
-                  New to Ryze? <Link to="/contact" className="text-[#a855f7] hover:underline">Contact Support</Link>
+                  {t("New to Ryze?")} <Link to="/contact" className="text-[#a855f7] hover:underline">{t("Contact Support")}</Link>
                </p>
             </div>
         </div>

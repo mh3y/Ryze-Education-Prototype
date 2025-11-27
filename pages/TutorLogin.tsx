@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Lock, Mail, ArrowRight, BookOpen } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const TutorLogin: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ const TutorLogin: React.FC = () => {
          to="/login" 
          className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white transition-colors font-bold text-sm z-20"
       >
-         <ArrowLeft size={16} /> Back to Portal Selection
+         <ArrowLeft size={16} /> {t("Back to Portal Selection")}
       </Link>
 
       <div className="relative z-20 w-full max-w-md px-6">
@@ -38,13 +40,13 @@ const TutorLogin: React.FC = () => {
                <div className="w-16 h-16 bg-[#3b82f6]/10 rounded-2xl flex items-center justify-center text-[#3b82f6] mx-auto mb-6 border border-[#3b82f6]/20">
                   <BookOpen size={32} />
                </div>
-               <h1 className="text-2xl font-bold text-white mb-2">Tutor Workspace</h1>
-               <p className="text-sm text-slate-500">Access class management and marking tools.</p>
+               <h1 className="text-2xl font-bold text-white mb-2">{t("Tutor Workspace")}</h1>
+               <p className="text-sm text-slate-500">{t("Access class management and marking tools.")}</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Staff ID</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Staff ID")}</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -59,7 +61,7 @@ const TutorLogin: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Password")}</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -81,14 +83,14 @@ const TutorLogin: React.FC = () => {
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 ) : (
-                  <>Secure Login <ArrowRight size={18} /></>
+                  <>{t("Secure Login")} <ArrowRight size={18} /></>
                 )}
               </button>
             </form>
             
             <div className="mt-8 pt-6 border-t border-white/5 text-center">
                <p className="text-xs text-slate-600">
-                  System access is restricted to authorised staff.
+                  {t("System access is restricted to authorised staff.")}
                </p>
             </div>
         </div>

@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Lock, Mail, ArrowRight, ShieldCheck, Terminal } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ const AdminLogin: React.FC = () => {
          to="/" 
          className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white transition-colors font-bold text-sm z-20"
       >
-         <ArrowLeft size={16} /> Exit System
+         <ArrowLeft size={16} /> {t("Exit System")}
       </Link>
 
       <div className="relative z-20 w-full max-w-md px-6">
@@ -38,16 +40,16 @@ const AdminLogin: React.FC = () => {
                <div className="w-16 h-16 bg-[#FFB000]/10 rounded-2xl flex items-center justify-center text-[#FFB000] mx-auto mb-6 border border-[#FFB000]/20">
                   <ShieldCheck size={32} />
                </div>
-               <h1 className="text-2xl font-bold text-white mb-2">Admin Console</h1>
+               <h1 className="text-2xl font-bold text-white mb-2">{t("Admin Console")}</h1>
                <div className="flex items-center justify-center gap-2 text-xs font-mono text-slate-500">
                   <Terminal size={12} />
-                  <span>SECURE ACCESS REQUIRED</span>
+                  <span>{t("SECURE ACCESS REQUIRED")}</span>
                </div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">System ID</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("System ID")}</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -62,7 +64,7 @@ const AdminLogin: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Access Key</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Access Key")}</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <input 
@@ -84,14 +86,14 @@ const AdminLogin: React.FC = () => {
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-[#050510]/30 border-t-[#050510] rounded-full animate-spin"></div>
                 ) : (
-                  <>Authenticate <ArrowRight size={18} /></>
+                  <>{t("Authenticate")} <ArrowRight size={18} /></>
                 )}
               </button>
             </form>
             
             <div className="mt-8 pt-6 border-t border-white/5 text-center">
                <p className="text-[10px] text-slate-600">
-                  Unauthorised access is prohibited and monitored.
+                  {t("Unauthorised access is prohibited and monitored.")}
                </p>
             </div>
         </div>

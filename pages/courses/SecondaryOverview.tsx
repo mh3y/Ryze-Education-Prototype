@@ -3,9 +3,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Target, ArrowRight, Brain, Calculator, GitBranch, Zap, Layers, BarChart3, GraduationCap, RefreshCw, BookOpen, PenTool, MessageCircle, Sigma, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const SecondaryOverview: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const secondaryCourses = [
     { name: 'Year 7 Maths', path: '/secondary/year-7-maths', desc: 'Transition' },
@@ -29,7 +31,7 @@ const SecondaryOverview: React.FC = () => {
                  animate={{ opacity: 1, y: 0 }}
                  className="inline-block px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-ryze text-xs font-bold uppercase tracking-widest mb-6"
                >
-                 Secondary Education (Years 7-12)
+                 {t("Secondary Education (Years 7-12)")}
                </motion.div>
                <motion.h1 
                  initial={{ opacity: 0, y: 20 }}
@@ -37,7 +39,7 @@ const SecondaryOverview: React.FC = () => {
                  transition={{ delay: 0.1 }}
                  className="text-5xl md:text-7xl font-sans font-bold mb-6 tracking-tight leading-tight"
                >
-                 Mastering Mathematics
+                 {t("Mastering Mathematics")}
                </motion.h1>
                <motion.p 
                  initial={{ opacity: 0, y: 20 }}
@@ -45,7 +47,7 @@ const SecondaryOverview: React.FC = () => {
                  transition={{ delay: 0.2 }}
                  className="text-xl text-slate-300 font-light leading-relaxed mb-10 max-w-lg"
                >
-                 From algebraic fluency to complex calculus. A rigorous, evidence-based approach to the HSC.
+                 {t("From algebraic fluency to complex calculus. A rigorous, evidence-based approach to the HSC.")}
                </motion.p>
                
                <motion.div 
@@ -55,7 +57,7 @@ const SecondaryOverview: React.FC = () => {
                  className="flex flex-wrap gap-4"
                >
                   <button onClick={() => navigate('/contact')} className="px-8 py-4 bg-white text-slate-900 font-bold rounded-full hover:bg-ryze hover:text-white transition-all shadow-lg flex items-center gap-2">
-                    Book Assessment <ArrowRight size={18} />
+                    {t("Book Assessment")} <ArrowRight size={18} />
                   </button>
                </motion.div>
             </div>
@@ -75,7 +77,7 @@ const SecondaryOverview: React.FC = () => {
                         className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md cursor-pointer transition-transform hover:-translate-y-1 hover:bg-white/10 hover:border-ryze/50"
                      >
                         <div className="text-sm text-ryze opacity-80 uppercase tracking-widest mb-1">{course.desc}</div>
-                        <div className="text-xl font-bold">{course.name}</div>
+                        <div className="text-xl font-bold">{t(course.name)}</div>
                         <div className="mt-4 flex justify-end"><ArrowRight size={20} className="text-slate-400" /></div>
                      </div>
                   ))}
@@ -88,7 +90,7 @@ const SecondaryOverview: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-6 text-center">
-               The Secondary Roadmap
+               {t("The Secondary Roadmap")}
             </h2>
             <p className="text-center text-slate-500 max-w-2xl mx-auto mb-16 text-lg">
                High school mathematics is cumulative. A gap in Year 8 Algebra becomes a failure in Year 11 Calculus. We build rigour at every step.
@@ -151,7 +153,7 @@ const SecondaryOverview: React.FC = () => {
       <section className="py-24 bg-slate-50">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              The Weekly Ryze Cycle
+              {t("The Weekly Ryze Cycle")}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
@@ -167,7 +169,7 @@ const SecondaryOverview: React.FC = () => {
                      <div className="w-12 h-12 bg-blue-900 text-white rounded-full flex items-center justify-center mb-4 font-bold text-lg shadow-lg shadow-blue-200 relative z-10">
                         <step.icon size={20} />
                      </div>
-                     <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
+                     <h3 className="text-lg font-bold text-slate-900 mb-2">{t(step.title)}</h3>
                      <p className="text-sm text-slate-500">{step.desc}</p>
                   </div>
                ))}
@@ -179,7 +181,7 @@ const SecondaryOverview: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              The Ryze Methodology
+              {t("The Ryze Methodology")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
@@ -207,7 +209,7 @@ const SecondaryOverview: React.FC = () => {
       {/* 5. Course Links */}
       <section className="py-24 bg-slate-900 text-white">
           <div className="max-w-7xl mx-auto px-4">
-             <h2 className="text-3xl font-bold mb-12 text-center">Select Your Year Level</h2>
+             <h2 className="text-3xl font-bold mb-12 text-center">{t("Select Your Year Level")}</h2>
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {secondaryCourses.map((course, idx) => (
                    <div 
@@ -221,7 +223,7 @@ const SecondaryOverview: React.FC = () => {
                          </div>
                          <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400" />
                       </div>
-                      <h3 className="text-2xl font-bold mb-2">{course.name}</h3>
+                      <h3 className="text-2xl font-bold mb-2">{t(course.name)}</h3>
                       <p className="text-slate-400">{course.desc}</p>
                    </div>
                 ))}

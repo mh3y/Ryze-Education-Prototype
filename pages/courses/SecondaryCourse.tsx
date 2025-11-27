@@ -4,10 +4,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../../data/courses';
 import { ArrowRight, Award, Target, Brain, GraduationCap, CheckCircle2, Users, BarChart3, Lightbulb, Zap, Compass, Sigma, GitBranch, RefreshCw, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const SecondaryCourse: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const course = courses[courseId || ''];
   const [activeStreamIndex, setActiveStreamIndex] = useState(0);
   const [activeTermIndex, setActiveTermIndex] = useState(0);
@@ -18,7 +20,7 @@ const SecondaryCourse: React.FC = () => {
   }, [courseId]);
 
   if (!course) {
-    return <div className="pt-32 text-center font-sans">Course not found.</div>;
+    return <div className="pt-32 text-center font-sans">{t("Course not found.")}</div>;
   }
 
   const hasStreams = course.streams && course.streams.length > 0;
@@ -32,19 +34,14 @@ const SecondaryCourse: React.FC = () => {
   // Group topics into "Terms" for display purposes
   const topicsPerTerm = Math.ceil(allTopics.length / 4);
   const terms = [
-    { name: "Term 1", topics: allTopics.slice(0, topicsPerTerm) },
-    { name: "Term 2", topics: allTopics.slice(topicsPerTerm, topicsPerTerm * 2) },
-    { name: "Term 3", topics: allTopics.slice(topicsPerTerm * 2, topicsPerTerm * 3) },
-    { name: "Term 4", topics: allTopics.slice(topicsPerTerm * 3) }
+    { name: t("Term 1"), topics: allTopics.slice(0, topicsPerTerm) },
+    { name: t("Term 2"), topics: allTopics.slice(topicsPerTerm, topicsPerTerm * 2) },
+    { name: t("Term 3"), topics: allTopics.slice(topicsPerTerm * 2, topicsPerTerm * 3) },
+    { name: t("Term 4"), topics: allTopics.slice(topicsPerTerm * 3) }
   ];
 
   // Pricing Logic Helper
   const getPricingInfo = (gradeLevel: string) => {
-    // Base Rates (Private) from Pricing.tsx logic
-    // Yr 7-8: $80
-    // Yr 9-10: $90
-    // Yr 11: $100
-    // Yr 12: $120
     let baseRate = 80;
     let duration = 2;
 
@@ -69,7 +66,7 @@ const SecondaryCourse: React.FC = () => {
   const { groupRate, duration } = getPricingInfo(course.gradeLevel);
 
   if (!activeModules) {
-    return <div className="pt-32 text-center font-sans">Loading course data...</div>;
+    return <div className="pt-32 text-center font-sans">{t("Loading course data...")}</div>;
   }
 
   return (
@@ -93,7 +90,7 @@ const SecondaryCourse: React.FC = () => {
                  transition={{ delay: 0.1 }}
                  className="text-5xl md:text-7xl font-sans font-bold mb-6 tracking-tight leading-tight"
                >
-                 {course.title}
+                 {t(course.title)}
                </motion.h1>
                <motion.p 
                  initial={{ opacity: 0, y: 20 }}
@@ -101,7 +98,7 @@ const SecondaryCourse: React.FC = () => {
                  transition={{ delay: 0.2 }}
                  className="text-xl text-slate-300 font-light leading-relaxed mb-10 max-w-lg"
                >
-                 {activeDescription}
+                 {t(activeDescription || course.description)}
                </motion.p>
                
                {hasStreams && (
@@ -129,10 +126,10 @@ const SecondaryCourse: React.FC = () => {
                  className="flex flex-wrap gap-4"
                >
                   <button onClick={() => navigate('/contact')} className="px-8 py-4 bg-white text-slate-900 font-bold rounded-full hover:bg-ryze hover:text-white transition-all shadow-lg flex items-center gap-2">
-                    Book Trial Class <ArrowRight size={18} />
+                    {t("Book Trial Class")} <ArrowRight size={18} />
                   </button>
                   <button onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})} className="px-8 py-4 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all">
-                    Course Details
+                    {t("Course Details")}
                   </button>
                </motion.div>
             </div>
@@ -150,11 +147,11 @@ const SecondaryCourse: React.FC = () => {
                      <div className="flex gap-4 mb-4">
                         <div className="bg-white/20 backdrop-blur-md p-4 rounded-2xl flex-1 border border-white/10">
                            <div className="text-2xl font-bold text-white mb-1">36+</div>
-                           <div className="text-xs text-slate-300 uppercase tracking-widest">Weeks</div>
+                           <div className="text-xs text-slate-300 uppercase tracking-widest">{t("lessons / year")}</div>
                         </div>
                         <div className="bg-white/20 backdrop-blur-md p-4 rounded-2xl flex-1 border border-white/10">
                            <div className="text-2xl font-bold text-white mb-1">Max 6</div>
-                           <div className="text-xs text-slate-300 uppercase tracking-widest">Students</div>
+                           <div className="text-xs text-slate-300 uppercase tracking-widest">{t("Small Group Focus")}</div>
                         </div>
                      </div>
                   </div>
@@ -170,7 +167,7 @@ const SecondaryCourse: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              Why Choose Ryze {course.gradeLevel}?
+              {t(`Why Choose Ryze ${course.gradeLevel}?`)}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {course.whyChoose.map((item, idx) => (
@@ -181,8 +178,8 @@ const SecondaryCourse: React.FC = () => {
                       </div>
                    </div>
                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                      <p className="text-slate-600 leading-relaxed">{item.description}</p>
+                      <h3 className="text-xl font-bold text-slate-900 mb-3">{t(item.title)}</h3>
+                      <p className="text-slate-600 leading-relaxed">{t(item.description)}</p>
                    </div>
                 </div>
               ))}
@@ -195,7 +192,7 @@ const SecondaryCourse: React.FC = () => {
       <section className="py-24 bg-slate-50">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              Learning Targets
+              {t("Learning Targets")}
             </h2>
             
             <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-xl border border-slate-100">
@@ -205,12 +202,12 @@ const SecondaryCourse: React.FC = () => {
                      <div className="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-lg shadow-blue-900/30">
                         <Target size={40} />
                      </div>
-                     <h4 className="text-xl font-bold text-slate-900 mb-8">Goals to be Achieved</h4>
+                     <h4 className="text-xl font-bold text-slate-900 mb-8">{t("Goals to be Achieved")}</h4>
                      <ul className="text-left space-y-6">
                         {activeModules.slice(0, 4).map((mod, i) => (
                            <li key={i} className="flex gap-4">
                               <div className="w-8 h-8 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-sm shrink-0">{i+1}</div>
-                              <p className="text-slate-600 text-sm leading-relaxed">{mod.description}</p>
+                              <p className="text-slate-600 text-sm leading-relaxed">{t(mod.description)}</p>
                            </li>
                         ))}
                      </ul>
@@ -221,12 +218,12 @@ const SecondaryCourse: React.FC = () => {
                      <div className="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-lg shadow-blue-900/30">
                         <Award size={40} />
                      </div>
-                     <h4 className="text-xl font-bold text-slate-900 mb-8">Competencies to be Reached</h4>
+                     <h4 className="text-xl font-bold text-slate-900 mb-8">{t("Competencies to be Reached")}</h4>
                      <ul className="text-left space-y-6">
                         {activeModules[0]?.keyOutcomes.slice(0, 5).map((outcome, i) => (
                            <li key={i} className="flex gap-4">
                               <div className="w-8 h-8 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-sm shrink-0">{i+1}</div>
-                              <p className="text-slate-600 text-sm leading-relaxed">Students can proficiently demonstrate {outcome} in complex problem-solving scenarios.</p>
+                              <p className="text-slate-600 text-sm leading-relaxed">{t(`Students can proficiently demonstrate ${outcome} in complex problem-solving scenarios.`)}</p>
                            </li>
                         ))}
                      </ul>
@@ -239,7 +236,7 @@ const SecondaryCourse: React.FC = () => {
       {/* 4. Course Structure (Timeline) */}
       <section id="details" className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-slate-900 mb-16">Course Structure</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-16">{t("Course Structure")}</h2>
             
             {/* Timeline Selector */}
             <div className="relative mb-16">
@@ -266,15 +263,15 @@ const SecondaryCourse: React.FC = () => {
                transition={{ duration: 0.4 }}
                className="bg-slate-50 rounded-[2.5rem] p-12 md:p-16 border border-slate-100"
             >
-               <h3 className="text-2xl font-bold text-slate-900 mb-10 text-center">{terms[activeTermIndex].name} Curriculum</h3>
+               <h3 className="text-2xl font-bold text-slate-900 mb-10 text-center">{terms[activeTermIndex].name} {t("Curriculum")}</h3>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 max-w-4xl mx-auto">
                   {terms[activeTermIndex].topics.length > 0 ? terms[activeTermIndex].topics.map((topic, i) => (
                      <div key={i} className="flex items-start gap-3">
-                        <div className="text-slate-400 font-mono text-sm mt-1">Lesson {i + 1}:</div>
-                        <div className="font-bold text-slate-700">{topic.title}</div>
+                        <div className="text-slate-400 font-mono text-sm mt-1">{t("Lesson")} {i + 1}:</div>
+                        <div className="font-bold text-slate-700">{t(topic.title)}</div>
                      </div>
                   )) : (
-                     <div className="col-span-2 text-center text-slate-400">Content for this term is being finalised.</div>
+                     <div className="col-span-2 text-center text-slate-400">{t("Content for this term is being finalised.")}</div>
                   )}
                </div>
             </motion.div>
@@ -287,9 +284,9 @@ const SecondaryCourse: React.FC = () => {
             <div className="bg-[#1e3a8a] rounded-[3rem] overflow-hidden shadow-2xl relative text-white">
                {/* Header */}
                <div className="bg-[#1e3a8a] pt-16 pb-12 text-center relative z-10">
-                   <h2 className="text-4xl font-bold mb-4">{course.title} Pricing</h2>
-                   <p className="text-blue-200 text-lg">Offline Courses / Live Streaming Courses</p>
-                   <div className="mt-8 text-blue-200 font-bold">{duration} hours per lesson &bull; 36 lessons / year</div>
+                   <h2 className="text-4xl font-bold mb-4">{t(course.title)} {t("Pricing")}</h2>
+                   <p className="text-blue-200 text-lg">{t("Offline Courses / Live Streaming Courses")}</p>
+                   <div className="mt-8 text-blue-200 font-bold">{duration} {t("hours per lesson")} &bull; 36 {t("lessons / year")}</div>
                </div>
                
                {/* Wave Divider */}
@@ -320,16 +317,16 @@ const SecondaryCourse: React.FC = () => {
                         ].map((item, i) => (
                            <div key={i} className="flex items-center gap-3 text-slate-700 font-medium">
                               <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-                              {item}
+                              {t(item)}
                            </div>
                         ))}
                      </div>
                   </div>
                   
                   <button onClick={() => navigate('/contact')} className="w-full md:w-auto px-16 py-4 bg-[#3b82f6] text-white font-bold rounded-xl shadow-lg hover:bg-blue-600 transition-colors">
-                     Free Trial
+                     {t("Free Trial")}
                   </button>
-                  <p className="mt-4 text-xs text-slate-400">*Click to inquire for the latest details and discounts</p>
+                  <p className="mt-4 text-xs text-slate-400">*{t("Click to inquire for the latest details and discounts")}</p>
                </div>
             </div>
          </div>

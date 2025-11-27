@@ -1,12 +1,13 @@
 
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Users, Brain, Target, ArrowRight, Layers, Check, Calculator, PenTool, MessageCircle, RefreshCw, Zap, Compass, Puzzle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const PrimaryOverview: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const primaryCourses = [
     { 
@@ -58,7 +59,7 @@ const PrimaryOverview: React.FC = () => {
                  animate={{ opacity: 1, y: 0 }}
                  className="inline-block px-4 py-1.5 rounded-full bg-white/20 border border-white/40 text-white text-xs font-bold uppercase tracking-widest mb-6"
                >
-                 Primary Education (Years 3-6)
+                 {t("Primary Education (Years 3-6)")}
                </motion.div>
                <motion.h1 
                  initial={{ opacity: 0, y: 20 }}
@@ -66,7 +67,7 @@ const PrimaryOverview: React.FC = () => {
                  transition={{ delay: 0.1 }}
                  className="text-5xl md:text-7xl font-sans font-bold mb-6 tracking-tight leading-tight text-white drop-shadow-sm"
                >
-                 Building the Foundation
+                 {t("Building the Foundation")}
                </motion.h1>
                <motion.p 
                  initial={{ opacity: 0, y: 20 }}
@@ -74,7 +75,7 @@ const PrimaryOverview: React.FC = () => {
                  transition={{ delay: 0.2 }}
                  className="text-xl text-white/90 font-medium leading-relaxed mb-10 max-w-lg"
                >
-                 A structured journey from fundamental literacy and numeracy to advanced critical thinking and exam readiness.
+                 {t("A structured journey from fundamental literacy and numeracy to advanced critical thinking and exam readiness.")}
                </motion.p>
                
                <motion.div 
@@ -84,7 +85,7 @@ const PrimaryOverview: React.FC = () => {
                  className="flex flex-wrap gap-4"
                >
                   <button onClick={() => navigate('/contact')} className="px-8 py-4 bg-white text-[#FFB000] font-bold rounded-full hover:bg-slate-50 transition-all shadow-lg flex items-center gap-2">
-                    Book Assessment <ArrowRight size={18} />
+                    {t("Book Assessment")} <ArrowRight size={18} />
                   </button>
                </motion.div>
             </div>
@@ -103,7 +104,7 @@ const PrimaryOverview: React.FC = () => {
                         className="p-6 rounded-3xl backdrop-blur-md border border-white/20 text-white bg-white/10"
                      >
                         <div className="text-sm opacity-80 uppercase tracking-widest mb-1">{course.desc}</div>
-                        <div className="text-xl font-bold mb-4">{course.name}</div>
+                        <div className="text-xl font-bold mb-4">{t(course.name)}</div>
                         
                         {/* Sub-buttons for Maths/English */}
                         <div className="flex gap-2">
@@ -128,7 +129,7 @@ const PrimaryOverview: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-6 text-center">
-               The Ryze Primary Ecosystem
+               {t("The Ryze Primary Ecosystem")}
             </h2>
             <p className="text-center text-slate-500 max-w-2xl mx-auto mb-16 text-lg">
                We don't just teach subjects; we build intelligent learners. Our K-6 roadmap is designed to transition students from concrete operational thinking to abstract reasoning.
@@ -191,7 +192,7 @@ const PrimaryOverview: React.FC = () => {
       <section className="py-24 bg-slate-50">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              The Weekly Ryze Cycle
+              {t("The Weekly Ryze Cycle")}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
@@ -207,7 +208,7 @@ const PrimaryOverview: React.FC = () => {
                      <div className="w-12 h-12 bg-[#FFB000] text-white rounded-full flex items-center justify-center mb-4 font-bold text-lg shadow-lg shadow-orange-200 relative z-10">
                         <step.icon size={20} />
                      </div>
-                     <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
+                     <h3 className="text-lg font-bold text-slate-900 mb-2">{t(step.title)}</h3>
                      <p className="text-sm text-slate-500">{step.desc}</p>
                   </div>
                ))}
@@ -219,7 +220,7 @@ const PrimaryOverview: React.FC = () => {
       <section className="py-24 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-5xl font-sans font-bold text-slate-900 mb-16 text-center">
-              Core Competencies
+              {t("Core Competencies")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
@@ -235,7 +236,7 @@ const PrimaryOverview: React.FC = () => {
                       </div>
                    </div>
                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                      <h3 className="text-xl font-bold text-slate-900 mb-3">{t(item.title)}</h3>
                       <p className="text-slate-600 leading-relaxed">{item.desc}</p>
                    </div>
                 </div>
@@ -247,7 +248,7 @@ const PrimaryOverview: React.FC = () => {
       {/* 5. Course Links */}
       <section className="py-24 bg-slate-900 text-white">
           <div className="max-w-7xl mx-auto px-4">
-             <h2 className="text-3xl font-bold mb-12 text-center">Select Your Year Level</h2>
+             <h2 className="text-3xl font-bold mb-12 text-center">{t("Select Your Year Level")}</h2>
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {primaryCourses.map((course, idx) => (
                    <div 
@@ -259,7 +260,7 @@ const PrimaryOverview: React.FC = () => {
                             {idx + 3 > 6 ? <Target size={20}/> : idx + 3}
                          </div>
                       </div>
-                      <h3 className="text-2xl font-bold mb-2">{course.name}</h3>
+                      <h3 className="text-2xl font-bold mb-2">{t(course.name)}</h3>
                       <p className="text-slate-400 mb-6">{course.desc}</p>
 
                       {/* Subject Selection Buttons */}
@@ -280,7 +281,7 @@ const PrimaryOverview: React.FC = () => {
                            onClick={() => navigate(course.path || '#')}
                            className="w-full flex items-center justify-between px-4 py-3 bg-white/10 hover:bg-[#FFB000] rounded-xl text-sm font-bold transition-all text-white hover:text-slate-900"
                         >
-                           View Course <ArrowRight size={16} />
+                           {t("View Course")} <ArrowRight size={16} />
                         </button>
                       )}
                    </div>

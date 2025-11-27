@@ -1,13 +1,11 @@
 
-
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { Brain, GitBranch, Lightbulb, BarChart3, ArrowRight, GraduationCap, ChevronDown, Terminal, Cpu, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+import { useLanguage } from '../contexts/LanguageContext';
 
 // --- Components ---
-
 
 // 1. Holographic/Spotlight Card Component
 const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -146,6 +144,7 @@ const CodeTerminal = () => {
 
 const RyzeAI: React.FC = () => {
  const navigate = useNavigate();
+ const { t } = useLanguage();
  const canvasRef = useRef<HTMLCanvasElement>(null);
  const { scrollY } = useScroll();
  const headerY = useTransform(scrollY, [0, 500], [0, 200]);
@@ -153,24 +152,9 @@ const RyzeAI: React.FC = () => {
 
 
  useEffect(() => {
-   // Only run the star canvas logic if not disabled by App.tsx shared logic
-   // However, to be safe, we add a check for the canvas element.
    const canvas = canvasRef.current;
-   if (!canvas) return; // If canvas is not rendered (e.g. strict mode or App-level override), exit
+   if (!canvas) return;
    
-   // Check if we should render local stars (if App.tsx handles it, we might want to skip)
-   // But per previous instructions, RyzeAI page might use App-level starfield.
-   // To avoid duplication, we add pointer-events-none to existing logic.
-   
-   // NOTE: The previous instruction "Remove local canvas... use shared" was implemented.
-   // If this file still has local canvas logic, it might be redundant.
-   // Assuming from the prompt we need to keep aesthetics but fix performance.
-   
-   // If the shared Starfield component in App.tsx is active for /ryze-ai, 
-   // this local canvas might be doubling up. 
-   // However, per the provided file content, the local logic is here.
-   // We will keep it but optimize it.
-
    const ctx = canvas.getContext('2d');
    if (!ctx) return;
 
@@ -178,9 +162,8 @@ const RyzeAI: React.FC = () => {
    let width = window.innerWidth;
    let height = window.innerHeight;
   
-   // Optimize star count based on device width
    const getStarCount = (w: number) => {
-     if (w < 768) return 50; // Mobile optimization - drastically reduce
+     if (w < 768) return 50;
      if (w < 1024) return 150;
      return 300;
    };
@@ -225,8 +208,8 @@ const RyzeAI: React.FC = () => {
          size: Math.random() * 1.5 + 0.5,
          baseOpacity,
          opacity: 0,
-         speed: Math.random() * 0.05, // Slower speed for less jitter
-         twinkleSpeed: 0.01 + Math.random() * 0.03, // Slower twinkle
+         speed: Math.random() * 0.05,
+         twinkleSpeed: 0.01 + Math.random() * 0.03,
          twinklePhase: Math.random() * Math.PI * 2,
          color: isGold ? `255, 176, 0` : `200, 220, 255`
        });
@@ -312,7 +295,7 @@ const RyzeAI: React.FC = () => {
          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FFB000] to-orange-600 rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
          <div className="relative px-5 py-2 bg-[#0a0f1e] rounded-full border border-[#FFB000]/30 flex items-center gap-2">
            <span className="w-2 h-2 rounded-full bg-[#FFB000] animate-pulse"></span>
-           <span className="text-[#FFB000] font-semibold text-xs tracking-wide uppercase">Beta Access</span>
+           <span className="text-[#FFB000] font-semibold text-xs tracking-wide uppercase">{t("Beta Access")}</span>
          </div>
        </div>
      </motion.div>
@@ -346,7 +329,7 @@ const RyzeAI: React.FC = () => {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="text-xl md:text-3xl text-slate-300 font-light tracking-wide mb-8"
               >
-                Learning That <span className="text-white font-semibold">Adapts</span> to You
+                {t("Learning That")} <span className="text-white font-semibold">{t("Adapts")}</span> {t("to You")}
               </motion.p>
              
               <motion.div
@@ -357,7 +340,7 @@ const RyzeAI: React.FC = () => {
               >
                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-[#FFB000] to-transparent"></div>
                  <p className="text-[#FFB000] text-xs md:text-sm font-mono tracking-[0.2em] uppercase text-center">
-                   Personalised understanding, not memorisation
+                   {t("Personalised understanding, not memorisation")}
                  </p>
               </motion.div>
 
@@ -393,14 +376,14 @@ const RyzeAI: React.FC = () => {
              <div className="relative bg-[#0a0f1e]/80 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/5">
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                   <div className="lg:col-span-4">
-                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">The Real <br/><span className="text-[#FFB000]">Problem</span></h2>
+                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t("The Real Problem")}</h2>
                      <div className="w-20 h-1.5 bg-[#FFB000] rounded-full mb-6"></div>
                   </div>
                   <div className="lg:col-span-8 space-y-8 text-lg text-slate-300 font-light leading-relaxed">
-                     <p className="text-xl"><strong className="text-white font-semibold">Most students don't fail because they're not smart enough.</strong> They fail because they don't know what they don't know.</p>
-                     <p>Students spend hours reviewing material they've already mastered while their actual weak spots go unaddressed. They cram facts without understanding concepts. They walk into exams anxious and underprepared—not because they didn't study, but because they studied the wrong things in the wrong ways.</p>
+                     <p className="text-xl" dangerouslySetInnerHTML={{ __html: t("Most students don't fail because they're not smart enough.</strong> They fail because they don't know what they don't know.") }}></p>
+                     <p>{t("Students spend hours reviewing material they've already mastered while their actual weak spots go unaddressed. They cram facts without understanding concepts. They walk into exams anxious and underprepared—not because they didn't study, but because they studied the wrong things in the wrong ways.")}</p>
                      <div className="pl-6 border-l-2 border-[#FFB000]/30">
-                       <p className="text-slate-400 italic">Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.</p>
+                       <p className="text-slate-400 italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
                      </div>
                   </div>
                </div>
@@ -416,9 +399,9 @@ const RyzeAI: React.FC = () => {
                  viewport={{ once: true }}
                  className="text-3xl md:text-6xl font-bold text-white mb-6"
                >
-                 How <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB000] to-yellow-200">Ryze AI</span> Works
+                 {t("How")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB000] to-yellow-200">Ryze AI</span> {t("Works")}
                </motion.h2>
-               <p className="text-slate-400 text-lg max-w-2xl mx-auto">A neural network for your education. It learns how you learn.</p>
+               <p className="text-slate-400 text-lg max-w-2xl mx-auto">{t("A neural network for your education. It learns how you learn.")}</p>
              </div>
 
 
@@ -463,8 +446,8 @@ const RyzeAI: React.FC = () => {
                           <item.icon size={28} />
                         </div>
                        
-                        <h3 className="text-2xl font-bold text-white mb-4">{item.title}</h3>
-                        <p className="text-slate-400 leading-relaxed flex-grow">{item.desc}</p>
+                        <h3 className="text-2xl font-bold text-white mb-4">{t(item.title)}</h3>
+                        <p className="text-slate-400 leading-relaxed flex-grow">{t(item.desc)}</p>
                        
                         <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent mt-8"></div>
                      </div>
@@ -486,10 +469,10 @@ const RyzeAI: React.FC = () => {
                       <span>LIVE_ANALYSIS_ENGINE</span>
                    </div>
                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                      Thinking in <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Real-Time</span>
+                      {t("Thinking in")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{t("Real-Time")}</span>
                    </h2>
                    <p className="text-slate-300 text-lg leading-relaxed mb-8">
-                      Unlike standard quiz apps that just mark "Correct" or "Incorrect", Ryze AI deconstructs your answer. It identifies the specific cognitive step where you failed—was it a calculation error, a conceptual gap, or a misinterpretation?
+                      {t("Unlike standard quiz apps that just mark \"Correct\" or \"Incorrect\", Ryze AI deconstructs your answer. It identifies the specific cognitive step where you failed—was it a calculation error, a conceptual gap, or a misinterpretation?")}
                    </p>
                   
                    <ul className="space-y-4">
@@ -500,7 +483,7 @@ const RyzeAI: React.FC = () => {
                       ].map((item, i) => (
                         <li key={i} className="flex items-center gap-3 text-slate-400">
                            <Activity size={18} className="text-[#FFB000]" />
-                           {item}
+                           {t(item)}
                         </li>
                       ))}
                    </ul>
@@ -525,7 +508,7 @@ const RyzeAI: React.FC = () => {
                viewport={{ once: true }}
                className="mb-16 text-center md:text-left"
              >
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">The Impact</h2>
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">{t("The Impact")}</h2>
              </motion.div>
 
 
@@ -546,7 +529,7 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-400 mb-8 border border-blue-500/20">
                              <GraduationCap size={32} />
                           </div>
-                          <h3 className="text-3xl font-bold text-white mb-6">For Students</h3>
+                          <h3 className="text-3xl font-bold text-white mb-6">{t("For Students")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Less time wasted on what you already know.",
@@ -555,7 +538,7 @@ const RyzeAI: React.FC = () => {
                              ].map((text, i) => (
                                <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0 shadow-[0_0_10px_#60a5fa]"></div>
-                                  <span>{text}</span>
+                                  <span>{t(text)}</span>
                                </li>
                              ))}
                           </ul>
@@ -580,7 +563,7 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-400 mb-8 border border-purple-500/20">
                              <Brain size={32} />
                           </div>
-                          <h3 className="text-3xl font-bold text-white mb-6">For Teachers</h3>
+                          <h3 className="text-3xl font-bold text-white mb-6">{t("For Teachers")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Insights into where your class struggles to inform planning.",
@@ -589,7 +572,7 @@ const RyzeAI: React.FC = () => {
                              ].map((text, i) => (
                                <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0 shadow-[0_0_10px_#c084fc]"></div>
-                                  <span>{text}</span>
+                                  <span>{t(text)}</span>
                                </li>
                              ))}
                           </ul>
@@ -604,17 +587,17 @@ const RyzeAI: React.FC = () => {
              <div className="absolute inset-0 bg-gradient-to-b from-[#FFB000]/5 to-transparent rounded-[3rem] blur-2xl"></div>
              <div className="bg-[#0a0e1f]/80 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
                 <div className="relative z-10">
-                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Development Roadmap</h2>
+                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t("Development Roadmap")}</h2>
                    <p className="text-slate-400 mb-16 max-w-2xl mx-auto text-lg">
-                      Ryze AI is currently in active beta testing with selected users. We're refining our algorithms based on real student interactions.
+                      {t("Ryze AI is currently in active beta testing with selected users. We're refining our algorithms based on real student interactions.")}
                    </p>
                    <div className="flex flex-col md:flex-row justify-center items-center gap-0 md:gap-0">
                        <div className="relative z-10 flex flex-col items-center w-64 group mb-12 md:mb-0">
                            <div className="w-4 h-4 bg-[#FFB000] rounded-full shadow-[0_0_20px_#FFB000] mb-6 relative">
                                <div className="absolute inset-0 bg-[#FFB000] rounded-full animate-ping opacity-50"></div>
                            </div>
-                           <div className="text-[#FFB000] font-bold text-2xl mb-2 tracking-wider">NOW</div>
-                           <div className="text-slate-200 font-medium bg-[#FFB000]/10 px-4 py-1 rounded-full border border-[#FFB000]/20">Beta Testing</div>
+                           <div className="text-[#FFB000] font-bold text-2xl mb-2 tracking-wider">{t("NOW")}</div>
+                           <div className="text-slate-200 font-medium bg-[#FFB000]/10 px-4 py-1 rounded-full border border-[#FFB000]/20">{t("Beta Testing")}</div>
                        </div>
                        <div className="h-24 w-0.5 md:h-0.5 md:w-48 bg-gradient-to-b md:bg-gradient-to-r from-[#FFB000] to-slate-800 relative mb-12 md:mb-0">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent w-1/2 h-full md:w-full md:h-1/2 opacity-20 animate-pulse"></div>
@@ -622,7 +605,7 @@ const RyzeAI: React.FC = () => {
                        <div className="relative z-10 flex flex-col items-center w-64 opacity-50">
                            <div className="w-3 h-3 bg-slate-700 rounded-full mb-6 border border-slate-500"></div>
                            <div className="text-white font-bold text-2xl mb-2 tracking-wider">2026</div>
-                           <div className="text-slate-400 font-medium">Public Launch</div>
+                           <div className="text-slate-400 font-medium">{t("Public Launch")}</div>
                        </div>
                    </div>
                 </div>
@@ -639,16 +622,16 @@ const RyzeAI: React.FC = () => {
                 <div className="relative bg-[#050510] border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden">
                    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)] pointer-events-none"></div>
                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 relative z-10">
-                      Join the <span className="text-[#FFB000]">Future</span>
+                      {t("Join the")} <span className="text-[#FFB000]">{t("Future")}</span>
                    </h2>
                    <p className="text-slate-300 text-xl mb-12 relative z-10 max-w-2xl mx-auto font-light">
-                      If you'd like to discuss Ryze AI, explore partnership opportunities, or express interest in beta access, we'd love to hear from you.
+                      {t("If you'd like to discuss Ryze AI, explore partnership opportunities, or express interest in beta access, we'd love to hear from you.")}
                    </p>
                    <a
                       href="mailto:ryzeeducation@outlook.com"
                       className="relative z-10 inline-flex items-center gap-4 px-12 py-6 bg-[#FFB000] text-[#050510] font-bold text-xl rounded-full hover:bg-[#ffc133] transition-all duration-300 transform hover:-translate-y-1 shadow-[0_10px_40px_-10px_rgba(255,176,0,0.5)]"
                    >
-                      Request Access <ArrowRight className="w-6 h-6" />
+                      {t("Request Access")} <ArrowRight className="w-6 h-6" />
                    </a>
                 </div>
              </motion.div>

@@ -3,9 +3,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { GraduationCap, Users, BookOpen, ArrowRight, ArrowLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PortalHome: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const roles = [
     {
@@ -51,8 +53,8 @@ const PortalHome: React.FC = () => {
         className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium group text-sm md:text-base"
       >
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-        <span className="hidden md:inline">Back to Home</span>
-        <span className="md:hidden">Home</span>
+        <span className="hidden md:inline">{t("Back to Home")}</span>
+        <span className="md:hidden">{t("Home")}</span>
       </motion.button>
 
       <div className="relative z-10 w-full max-w-6xl px-4 md:px-6">
@@ -69,9 +71,9 @@ const PortalHome: React.FC = () => {
              alt="Ryze" 
              className="h-12 md:h-16 w-auto mx-auto mb-6 md:mb-8"
           />
-          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tight">Select Your Portal</h1>
+          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tight">{t("Select Your Portal")}</h1>
           <p className="text-slate-400 text-base md:text-xl max-w-2xl mx-auto font-light px-4">
-            Welcome back. Please select your account type to continue.
+            {t("Welcome back. Please select your account type to continue.")}
           </p>
         </motion.div>
 
@@ -98,9 +100,9 @@ const PortalHome: React.FC = () => {
                  </div>
 
                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-4">{role.title}</h3>
+                    <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-4">{t(role.title)}</h3>
                     <p className="text-slate-400 text-sm md:text-base md:mb-10 leading-relaxed md:block truncate md:whitespace-normal">
-                      {role.description}
+                      {t(role.description)}
                     </p>
                  </div>
 
@@ -111,7 +113,7 @@ const PortalHome: React.FC = () => {
 
                  {/* Desktop Enter Link */}
                  <div className="hidden md:flex items-center gap-2 text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 mx-auto" style={{ color: role.color }}>
-                    Enter Portal <ArrowRight size={16} />
+                    {t("Enter Portal")} <ArrowRight size={16} />
                  </div>
 
                  {/* Decor */}
@@ -128,7 +130,7 @@ const PortalHome: React.FC = () => {
           className="mt-12 md:mt-16 text-center"
         >
            <p className="text-slate-500 text-xs md:text-sm">
-             Having trouble signing in? <button onClick={() => navigate('/contact')} className="text-[#FFB000] hover:underline">Contact Support</button>
+             {t("Having trouble signing in?")} <button onClick={() => navigate('/contact')} className="text-[#FFB000] hover:underline">{t("Contact Support")}</button>
            </p>
         </motion.div>
 

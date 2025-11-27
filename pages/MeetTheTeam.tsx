@@ -1,19 +1,21 @@
 
 import React from 'react';
 import { motion as motionOriginal } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 const motion = motionOriginal as any;
 
 const MeetTheTeam: React.FC = () => {
+  const { t } = useLanguage();
+  
   const team = [
     {
       id: "mike-nojiri",
-      name: "Mr Mike Nojiri",
-      role: "Co-Founder & Head of Education",
+      name: "Mr Mike Nojiri", // Kept English
+      role: "Co-Founder & Head of Education", // Translated below
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallbackImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
-        "Master of Teaching | UNSW",
-        "BSc(Maths)/BCompSc",
+        "Master's in Teaching, BSc(Math)/BCompSc", // Mapped in dictionary
         "NSW Certified Teacher",
         "Maths Teacher | Stella Maris College",
         "The King's School Alumni"
@@ -26,7 +28,7 @@ const MeetTheTeam: React.FC = () => {
     },
     {
       id: "william-gong",
-      name: "Mr William Gong",
+      name: "Mr William Gong", // Kept English
       role: "Co-Founder & Head of Technology",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallbackImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
@@ -42,13 +44,12 @@ const MeetTheTeam: React.FC = () => {
     },
     {
       id: "michael-yang",
-      name: "Mr Michael Yang",
+      name: "Mr Michael Yang", // Kept English
       role: "Founder & CEO",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
-        "BCom/BCompSc UNSW",
-        "DevOps Engineer",
+        "BCom/BCompSc | DevOps Engineer",
         "The King's School Alumni"
       ],
       bio: [
@@ -64,9 +65,9 @@ const MeetTheTeam: React.FC = () => {
       <div className="bg-white pt-24 pb-24 px-4 border-b border-slate-100 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-slate-50 to-transparent opacity-50 rounded-full blur-3xl -z-10"></div>
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-slate-900 tracking-tight">Meet Our Team</h1>
+          <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-slate-900 tracking-tight">{t("Meet Our Team")}</h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
-              Meet the tutors who make learning click. Our experienced educators are committed to helping every student thrive.
+              {t("Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.")}
           </p>
         </div>
       </div>
@@ -99,18 +100,19 @@ const MeetTheTeam: React.FC = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                       <div className="absolute bottom-0 left-0 p-8 text-white w-full">
-                         <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{member.name}</h3>
-                         <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{member.role}</p>
+                         <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{t(member.name)}</h3>
+                         <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="w-full lg:w-7/12 space-y-10">
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                       <h4 className="text-slate-400 font-bold mb-6 uppercase tracking-widest text-xs">Credentials</h4>
+                       <h4 className="text-slate-400 font-bold mb-6 uppercase tracking-widest text-xs">{t("Credentials")}</h4>
                        <ul className="flex flex-wrap gap-3">
                          {member.creds.map((cred, i) => (
                            <li key={i} className="inline-flex items-center px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-medium">
+                             {/* Creds contain HTML, so we use dangerouslySetInnerHTML but wrap t() around content if simple string, here it's complex HTML string so we leave as is or map specific strings in dictionary */}
                              <span dangerouslySetInnerHTML={{ __html: cred }}></span>
                            </li>
                          ))}

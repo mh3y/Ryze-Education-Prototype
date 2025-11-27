@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, HelpCircle, BookOpen, CreditCard, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FaqItem {
   question: string;
@@ -17,6 +18,7 @@ interface FaqCategory {
 
 const FAQ: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<string | null>(null);
 
   const toggleAccordion = (index: string) => {
@@ -89,9 +91,9 @@ const FAQ: React.FC = () => {
       {/* Header - Standardized */}
       <div className="bg-white pt-32 md:pt-40 pb-20 px-4 border-b border-slate-100">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-slate-900 tracking-tight">Frequently Asked Questions</h1>
+          <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-slate-900 tracking-tight">{t("Frequently Asked Questions")}</h1>
           <p className="text-xl text-slate-500 font-light max-w-2xl mx-auto">
-            Everything you need to know about our classes, methodology, and enrolment process.
+            {t("Everything you need to know about our classes, methodology, and enrolment process.")}
           </p>
         </div>
       </div>
@@ -105,7 +107,7 @@ const FAQ: React.FC = () => {
               <div className="w-12 h-12 rounded-2xl bg-[#FFB000]/10 flex items-center justify-center text-[#FFB000]">
                 <category.icon size={24} />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900">{category.title}</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t(category.title)}</h2>
             </div>
 
             <div className="space-y-4">
@@ -164,7 +166,7 @@ const FAQ: React.FC = () => {
                 onClick={() => navigate('/contact')}
                 className="px-8 py-4 bg-[#FFB000] text-[#0f172a] font-bold rounded-full hover:bg-[#ffc133] transition-all shadow-lg transform hover:-translate-y-1"
               >
-                Contact Us
+                {t("Contact Us")}
               </button>
            </div>
         </div>

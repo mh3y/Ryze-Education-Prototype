@@ -4,6 +4,7 @@ import { Check, Star, MapPin, Laptop, HelpCircle, Layers, GraduationCap, Zap } f
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { motion as motionOriginal, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 const motion = motionOriginal as any;
 
 // --- Pricing Logic Configuration ---
@@ -73,16 +74,9 @@ const CATEGORY_MAP: Record<Category, YearLevel[]> = {
   'Secondary': ['Year 7', 'Year 8', 'Year 9', 'Year 10', 'Year 11', 'Year 12']
 };
 
-// FAQ Data
-const FAQS = [
-  { q: "What is the difference between Campus and Online?", a: "On-campus classes are held at our Sydney centre with a tutor physically present. Online classes are live-streamed with the same tutor, materials, and interactivity, but at a reduced rate." },
-  { q: "Do you offer trial lessons?", a: "Yes. We offer a First Lesson Money-Back Guarantee for on-campus courses. If you are a new student or enrolling in a new subject, you can try the first lesson risk-free. If you feel Ryze isn't the right fit, simply notify us within 4 days and return your resources within 6 days for a full refund. This applies to on-campus term courses only." },
-  { q: "Are materials included?", a: "Yes. All term fees include our printed theory books (for campus students) or digital/shipped books (for online students) and access to our LMS." },
-  { q: "What happens if I miss a lesson?", a: "We provide recording access for all lessons via the student portal, so you never fall behind." },
-];
-
 const Pricing: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // State
   const [category, setCategory] = useState<Category>('Secondary');
@@ -90,6 +84,14 @@ const Pricing: React.FC = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>('Mathematics');
   const [learningMode, setLearningMode] = useState<'campus' | 'online'>('campus');
   const [billingPeriod, setBillingPeriod] = useState<'quarterly' | 'monthly'>('quarterly');
+
+  // FAQ Data inside component to use translation hook
+  const FAQS = [
+    { q: t("What is the difference between Campus and Online?"), a: t("On-campus classes are held at our Sydney centre with a tutor physically present. Online classes are live-streamed with the same tutor, materials, and interactivity, but at a reduced rate.") },
+    { q: t("Do you offer trial lessons?"), a: t("Yes! We believe you should experience the difference before committing. We offer a paid trial lesson which is fully refundable if you decide not to continue. This allows your child to meet the tutor and see if our small-group dynamic is the right fit.") },
+    { q: t("Are materials included in the fee?"), a: t("Yes. All course fees cover the cost of our proprietary theory books, workbooks, and access to the Ryze AI online platform. There are no hidden resource fees.") },
+    { q: t("What happens if my child misses a lesson?"), a: t("We understand that life happens. If a student misses a class, they can access a recording of the lesson via the Student Portal. All materials, homework, and notes are also available digitally so they can catch up before the next session.") },
+  ];
 
   // Logic to handle Category switch
   const handleCategoryChange = (cat: Category) => {
@@ -130,10 +132,10 @@ const Pricing: React.FC = () => {
       <div className="bg-white pt-32 md:pt-40 pb-48 px-4 border-b border-slate-100 relative">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-sans font-bold text-slate-900 mb-6 tracking-tight">
-            Transparent Pricing
+            {t("Transparent Pricing")}
           </h1>
           <p className="text-xl md:text-2xl text-slate-500 font-light max-w-2xl mx-auto leading-relaxed">
-            Invest in results, not promises. <span className="font-medium text-slate-900">Simple, term-based pricing</span> with no hidden fees.
+            {t("Invest in results, not promises.")} <span className="font-medium text-slate-900">{t("Simple, term-based pricing")}</span> {t("with no hidden fees.")}
           </p>
         </div>
       </div>
@@ -157,7 +159,7 @@ const Pricing: React.FC = () => {
                           onClick={() => handleCategoryChange(cat)}
                           className={`relative px-8 py-3 rounded-xl text-sm font-bold transition-all z-10 ${category === cat ? 'text-white' : 'text-slate-500 hover:text-slate-700'}`}
                        >
-                          {cat}
+                          {t(cat)}
                           {category === cat && (
                              <motion.div 
                                 layoutId="category-pill"
@@ -175,7 +177,7 @@ const Pricing: React.FC = () => {
                        onClick={() => setBillingPeriod('quarterly')}
                        className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'quarterly' ? 'text-[#0f172a]' : 'text-slate-400 hover:text-slate-600'}`}
                     >
-                       Quarterly
+                       {t("Quarterly")}
                        {billingPeriod === 'quarterly' && (
                           <motion.div 
                              layoutId="billing-pill"
@@ -188,7 +190,7 @@ const Pricing: React.FC = () => {
                        onClick={() => setBillingPeriod('monthly')}
                        className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'monthly' ? 'text-[#0f172a]' : 'text-slate-400 hover:text-slate-600'}`}
                     >
-                       Monthly
+                       {t("Monthly")}
                        {billingPeriod === 'monthly' && (
                           <motion.div 
                              layoutId="billing-pill"
@@ -202,7 +204,7 @@ const Pricing: React.FC = () => {
 
               {/* 2. Year Selection */}
               <div className="space-y-3">
-                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Select Year Group</div>
+                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">{t("Select Year Group")}</div>
                  <div className="flex flex-wrap gap-3">
                     {CATEGORY_MAP[category].map((year) => (
                        <button
@@ -214,7 +216,7 @@ const Pricing: React.FC = () => {
                              : 'text-slate-500 border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                           }`}
                        >
-                          {year}
+                          {t(year) || year}
                           {selectedYear === year && (
                              <motion.div 
                                 layoutId="year-outline"
@@ -229,7 +231,7 @@ const Pricing: React.FC = () => {
 
               {/* 3. Subject Selection */}
               <div className="space-y-3">
-                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Select Subject</div>
+                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">{t("Select Subject")}</div>
                  <div className="flex flex-wrap gap-3">
                     {availableSubjects.map((sub) => (
                        <button
@@ -241,7 +243,7 @@ const Pricing: React.FC = () => {
                              : 'text-slate-600 bg-slate-100 hover:bg-slate-200'
                           }`}
                        >
-                          {sub}
+                          {t(sub) || sub}
                           {selectedSubject === sub && (
                              <motion.div 
                                 layoutId="subject-pill"
@@ -268,10 +270,10 @@ const Pricing: React.FC = () => {
                <div className="flex justify-between items-start mb-8 relative z-10">
                   <div>
                      <div className="text-xs font-bold text-[#FFB000] uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <Layers size={14} /> During the Term
+                        <Layers size={14} /> {t("During the Term")}
                      </div>
-                     <h3 className="text-3xl font-bold text-slate-900">Term course</h3>
-                     <p className="text-slate-500 mt-2 text-sm font-medium">{WEEKS_PER_TERM} lessons over 9 weeks <br/> ({config.lessonDuration} hours per lesson)</p>
+                     <h3 className="text-3xl font-bold text-slate-900">{t("Term course")}</h3>
+                     <p className="text-slate-500 mt-2 text-sm font-medium">{WEEKS_PER_TERM} {t("lessons over 9 weeks")} <br/> ({config.lessonDuration} {t("hours per lesson")})</p>
                   </div>
                   <div className="w-12 h-12 bg-[#FFB000]/10 rounded-2xl flex items-center justify-center text-[#FFB000]">
                      <MapPin size={24} />
@@ -284,14 +286,14 @@ const Pricing: React.FC = () => {
                     onClick={() => setLearningMode('campus')}
                     className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'campus' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
                   >
-                     <MapPin size={16} /> on-campus
+                     <MapPin size={16} /> {t("on-campus")}
                      {learningMode === 'campus' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
                   </button>
                   <button 
                     onClick={() => setLearningMode('online')}
                     className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'online' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
                   >
-                     <Laptop size={16} /> online
+                     <Laptop size={16} /> {t("online")}
                      {learningMode === 'online' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
                   </button>
                </div>
@@ -303,7 +305,7 @@ const Pricing: React.FC = () => {
                      <span className="text-6xl font-bold text-slate-900 tracking-tight">{displayPrice}</span>
                   </div>
                   <span className="text-slate-500 font-medium bg-[#FFB000]/5 px-3 py-1 rounded-lg text-xs">
-                     per {billingPeriod === 'quarterly' ? 'term' : 'month'} &bull; Inc GST
+                     {billingPeriod === 'quarterly' ? t("per term") : t("per month")} &bull; {t("Inc GST")}
                   </span>
                </div>
 
@@ -311,7 +313,7 @@ const Pricing: React.FC = () => {
                <ul className="space-y-4 mb-10 flex-grow relative z-10">
                   <li className="flex gap-3 items-start text-sm text-slate-700 font-bold bg-[#FFB000]/5 p-2 rounded-lg -mx-2">
                       <div className="p-0.5 bg-[#FFB000] rounded text-white mt-0.5"><Zap size={12} fill="currentColor"/></div>
-                      <span className="text-[#FFB000]">Includes Beta Access to Ryze AI</span>
+                      <span className="text-[#FFB000]">{t("Includes Beta Access to Ryze AI")}</span>
                   </li>
                   {[
                     "Taught by experienced Ryze teachers",
@@ -323,7 +325,7 @@ const Pricing: React.FC = () => {
                   ].map((feat, i) => (
                     <li key={i} className="flex gap-3 items-start text-sm text-slate-700">
                         <Check size={16} className="text-[#FFB000] shrink-0 mt-0.5" />
-                        <span>{feat}</span>
+                        <span>{t(feat)}</span>
                     </li>
                   ))}
                </ul>
@@ -332,7 +334,7 @@ const Pricing: React.FC = () => {
                  onClick={() => navigate('/contact')}
                  className="w-full bg-[#FFB000] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:bg-[#e6a000] hover:-translate-y-1 transition-all relative z-10"
                >
-                 Enrol now
+                 {t("Enrol now")}
                </button>
             </div>
 
@@ -344,10 +346,10 @@ const Pricing: React.FC = () => {
                <div className="flex justify-between items-start mb-8 relative z-10">
                   <div>
                      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <Star size={14} className="text-[#FFB000]" /> Private Tuition
+                        <Star size={14} className="text-[#FFB000]" /> {t("Private Tuition")}
                      </div>
-                     <h3 className="text-3xl font-bold text-white">1-on-1 Mentorship</h3>
-                     <p className="text-slate-400 mt-2 text-sm font-medium">Completely personalised attention</p>
+                     <h3 className="text-3xl font-bold text-white">{t("1-on-1 Mentorship")}</h3>
+                     <p className="text-slate-400 mt-2 text-sm font-medium">{t("Completely personalised attention")}</p>
                   </div>
                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white border border-white/10">
                      <GraduationCap size={24} />
@@ -356,17 +358,17 @@ const Pricing: React.FC = () => {
 
                <div className="mb-8 relative z-10">
                   <div className="inline-block px-4 py-2 border border-[#FFB000] text-[#FFB000] text-xs font-bold rounded-lg uppercase tracking-wider mb-6 bg-[#FFB000]/10">
-                     Premium
+                     {t("Premium")}
                   </div>
                   <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-white/20 pl-4">
-                     We deliberately limit our private intake to ensure the highest quality of service and mentor availability.
+                     {t("We deliberately limit our private intake to ensure the highest quality of service and mentor availability.")}
                   </p>
                </div>
 
                <ul className="space-y-4 mb-10 flex-grow relative z-10">
                   <li className="flex gap-3 items-start text-sm font-bold bg-white/5 p-2 rounded-lg -mx-2">
                       <div className="p-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded text-white mt-0.5"><Zap size={12} fill="currentColor"/></div>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Includes Beta Access to Ryze AI</span>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">{t("Includes Beta Access to Ryze AI")}</span>
                   </li>
                   {[
                     "Direct access to senior mentors",
@@ -380,7 +382,7 @@ const Pricing: React.FC = () => {
                         <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/10">
                            <Check size={10} className="text-white" />
                         </div>
-                        <span>{feat}</span>
+                        <span>{t(feat)}</span>
                     </li>
                   ))}
                </ul>
@@ -389,9 +391,9 @@ const Pricing: React.FC = () => {
                  onClick={() => navigate('/contact')}
                  className="w-full bg-white text-[#0f172a] font-bold py-4 rounded-2xl shadow-lg hover:bg-slate-100 hover:-translate-y-1 transition-all relative z-10"
                >
-                 Enquire for Private
+                 {t("Enquire for Private")}
                </button>
-               <p className="text-center text-xs text-slate-500 mt-4 relative z-10">*Private pricing available upon application</p>
+               <p className="text-center text-xs text-slate-500 mt-4 relative z-10">*{t("Private pricing available upon application")}</p>
             </div>
 
         </div>
@@ -400,7 +402,7 @@ const Pricing: React.FC = () => {
 
       {/* FAQ Section */}
       <section className="max-w-4xl mx-auto px-4 pt-24 pb-12">
-         <h2 className="text-3xl font-bold text-slate-900 text-center mb-16 font-sans">Frequently Asked Questions</h2>
+         <h2 className="text-3xl font-bold text-slate-900 text-center mb-16 font-sans">{t("Frequently Asked Questions")}</h2>
          <div className="grid gap-6">
             {FAQS.map((faq, idx) => (
                <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
