@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { Starfield } from './components/Starfield';
 import { LanguageProvider } from './contexts/LanguageContext';
+import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 
@@ -83,7 +84,7 @@ const PageLoader = () => (
 );
 
 // Performance-optimized Page Wrapper for smooth transitions
-const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 15 }}
     animate={{ opacity: 1, y: 0 }}
@@ -148,7 +149,16 @@ const AppContent: React.FC = () => {
             <Route path="/parent-portal" element={<PageWrapper><ParentPortal /></PageWrapper>} />
             <Route path="/tutor-portal" element={<PageWrapper><TutorLogin /></PageWrapper>} />
             
-            <Route path="/dashboard" element={<PageWrapper><Dashboard /></PageWrapper>} />
+            {/* Protected Dashboard Route */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <PageWrapper><Dashboard /></PageWrapper>
+                </ProtectedRoute>
+              } 
+            />
+            
             <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
             <Route path="/privacy" element={<PageWrapper><Privacy /></PageWrapper>} />
             <Route path="/sitemap" element={<PageWrapper><Sitemap /></PageWrapper>} />

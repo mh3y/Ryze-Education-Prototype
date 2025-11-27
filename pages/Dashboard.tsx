@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Layers, Search, Bell, Settings } from 'lucide-react';
+import { Layers, Search, Bell, Settings, User } from 'lucide-react';
 
 // Subsystems
-import { BackendService, UserRole, Course, Assignment } from '../services/backend';
+import { BackendService, UserRole as BackendRole, Course, Assignment } from '../services/backend';
+import { AuthService } from '../services/auth';
 import { Sidebar, ModuleType } from '../components/dashboard/Sidebar';
 import { AiArena } from '../components/dashboard/AiArena';
 import { IngestionStudio } from '../components/dashboard/IngestionStudio';
@@ -14,18 +15,36 @@ import { CoursesList, AssignmentsList } from '../components/dashboard/LmsViews';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ModuleType>('overview');
-  const [userRole, setUserRole] = useState<UserRole>('student'); 
+  const [userRole, setUserRole] = useState<BackendRole>('student'); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [userName, setUserName] = useState('Student');
   
   // Data State
   const [courses, setCourses] = useState<Course[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  // Initialize from Auth
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
+    if (user) {
+      setUserRole(user.role as BackendRole);
+      setUserName(user.name);
+    } else {
+      // Fallback or redirect if protected route failed somehow
+      navigate('/login');
+    }
+  }, [navigate]);
 
   // Fetch Mock Data on load
   useEffect(() => {
     BackendService.getCourses().then(setCourses);
     BackendService.getAssignments().then(setAssignments);
   }, [userRole]);
+
+  const handleLogout = () => {
+    AuthService.logout();
+    navigate('/login');
+  };
 
   return (
     <div 
@@ -39,8 +58,8 @@ const Dashboard: React.FC = () => {
           activeTab={activeTab}
           userRole={userRole}
           onTabChange={setActiveTab}
-          onRoleChange={setUserRole}
-          onLogout={() => navigate('/')}
+          onRoleChange={(role) => setUserRole(role)} // For debug/demo purposes allow switching in UI
+          onLogout={handleLogout}
           onCloseMobile={() => setIsSidebarOpen(false)}
         />
 
@@ -67,10 +86,15 @@ const Dashboard: React.FC = () => {
                    />
                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
-                <button className="relative text-slate-400 hover:text-white transition-colors">
-                   <Bell size={20} />
-                   <span className="absolute top-0 right-0 w-2 h-2 bg-[#FFB000] rounded-full border-2 border-[#050510]"></span>
-                </button>
+                <div className="flex items-center gap-4">
+                   <div className="text-right hidden md:block">
+                      <div className="text-sm font-bold text-white">{userName}</div>
+                      <div className="text-xs text-slate-400 capitalize">{userRole}</div>
+                   </div>
+                   <div className="w-8 h-8 rounded-full bg-[#FFB000] flex items-center justify-center text-[#0a0f1e] font-bold">
+                      <User size={16} />
+                   </div>
+                </div>
              </div>
           </header>
 
@@ -90,7 +114,7 @@ const Dashboard: React.FC = () => {
                       >
                         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-700"></div>
                         <div className="relative z-10">
-                            <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, Alex.</h2>
+                            <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, {userName.split(' ')[0]}.</h2>
                             <p className="text-slate-400 mb-8 max-w-xl text-base md:text-lg leading-relaxed">
                               {userRole === 'student' ? "Ryze AI has analysed your last assignment. Focus on Quadratic Equations this week." : "You have 4 assignments pending review."}
                             </p>

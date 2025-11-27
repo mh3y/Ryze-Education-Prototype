@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Lock, Mail, ArrowRight, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Lock, Mail, ArrowRight, GraduationCap, AlertCircle } from 'lucide-react';
 // @ts-ignore
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { AuthService } from '../services/auth';
 
 const StudentPortal: React.FC = () => {
   const navigate = useNavigate();
@@ -11,15 +12,22 @@ const StudentPortal: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate network request and redirect
-    setTimeout(() => {
-      setIsLoading(false);
+    setError('');
+    
+    try {
+      await AuthService.login(email, password);
+      // Success - Redirect
       navigate('/dashboard'); 
-    }, 1000);
+    } catch (err) {
+      setError('Invalid email or password. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,6 +52,13 @@ const StudentPortal: React.FC = () => {
                <h1 className="text-2xl font-bold text-white mb-2">{t("Student Access")}</h1>
                <p className="text-sm text-slate-500">{t("Sign in to view your tasks and progress.")}</p>
             </div>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-3">
+                <AlertCircle size={18} className="shrink-0" />
+                {t(error)}
+              </div>
+            )}
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div>

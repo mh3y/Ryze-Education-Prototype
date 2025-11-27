@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Lock, Mail, ArrowRight, ShieldCheck, Terminal } from 'lucide-react';
+import { ArrowLeft, Lock, Mail, ArrowRight, ShieldCheck, Terminal, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { AuthService } from '../services/auth';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -10,15 +11,21 @@ const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate auth check
-    setTimeout(() => {
+    setError('');
+    
+    try {
+      await AuthService.login(email, password);
+      navigate('/dashboard'); 
+    } catch (err) {
+      setError('Access Denied. Please verify your credentials.');
+    } finally {
       setIsLoading(false);
-      navigate('/dashboard'); // Redirect to dashboard
-    }, 1500);
+    }
   };
 
   return (
@@ -47,6 +54,13 @@ const AdminLogin: React.FC = () => {
                </div>
             </div>
 
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-3">
+                <AlertCircle size={18} className="shrink-0" />
+                {t(error)}
+              </div>
+            )}
+
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("System ID")}</label>
@@ -73,7 +87,7 @@ const AdminLogin: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 transition-all font-medium text-white placeholder-slate-600"
-                    placeholder="••••••••••••"
+                    placeholder="••••••••"
                   />
                 </div>
               </div>

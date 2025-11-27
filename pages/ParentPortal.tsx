@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Lock, Mail, ArrowRight, Users } from 'lucide-react';
+import { ArrowLeft, Lock, Mail, ArrowRight, Users, AlertCircle } from 'lucide-react';
 // @ts-ignore
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { AuthService } from '../services/auth';
 
 const ParentPortal: React.FC = () => {
   const navigate = useNavigate();
@@ -11,15 +12,21 @@ const ParentPortal: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate network request and redirect
-    setTimeout(() => {
-      setIsLoading(false);
+    setError('');
+    
+    try {
+      await AuthService.login(email, password);
       navigate('/dashboard'); 
-    }, 1000);
+    } catch (err) {
+      setError('Invalid email or password. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +52,13 @@ const ParentPortal: React.FC = () => {
                <p className="text-sm text-slate-500">{t("Manage billing, reports, and communication.")}</p>
             </div>
 
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-3">
+                <AlertCircle size={18} className="shrink-0" />
+                {t(error)}
+              </div>
+            )}
+
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Email Address")}</label>
@@ -56,7 +70,7 @@ const ParentPortal: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#a855f7]/50 focus:ring-1 focus:ring-[#a855f7]/50 transition-all font-medium text-white placeholder-slate-600"
-                    placeholder="parent@email.com"
+                    placeholder="parent@ryze.edu.au"
                   />
                 </div>
               </div>

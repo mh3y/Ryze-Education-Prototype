@@ -27,6 +27,28 @@ export const translations: Record<string, string> = {
   "Back to Home": "返回首页",
   "Home": "首页",
 
+  // --- Footer Specific ---
+  "Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.": "因材施教。精准诊断漏洞，构建深度理解，重塑每位学生的自信。",
+
+  // --- Generic Subjects (Pricing/Selectors) ---
+  "Mathematics": "数学",
+  "English": "英语",
+  "Thinking Skills": "思维训练 (Thinking Skills)",
+  "Full Course (Bundle)": "全科套餐 (Bundle)",
+  "Mathematics Advanced": "高级数学 (Advanced)",
+  "Maths Ext 1": "拓展数学 1 (Ext 1)",
+  "Maths Ext 2": "拓展数学 2 (Ext 2)",
+  "Year 3": "三年级",
+  "Year 4": "四年级",
+  "Year 5": "五年级",
+  "Year 6": "六年级",
+  "Year 7": "七年级",
+  "Year 8": "八年级",
+  "Year 9": "九年级",
+  "Year 10": "十年级",
+  "Year 11": "十一年级",
+  "Year 12": "十二年级",
+
   // --- Home / Hero ---
   "SYDNEY'S MOST EFFECTIVE TUTORING": "悉尼最高效的补习教育",
   "Teaching with": "目标明确的",
@@ -44,6 +66,16 @@ export const translations: Record<string, string> = {
   "Proven Results": "卓越的过往战绩",
   "What makes Ryze different?": "Ryze 有何不同？",
   "We've stripped away the inefficiencies of traditional tuition to focus on what actually drives learning outcomes.": "我们摒弃了传统补习机构的低效模式，只专注于真正能提升学习成果的核心要素。",
+
+  // --- Meet the Mentors & CTA ---
+  "Meet the Mentors": "结识精英导师",
+  "Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.": "我们的资深教育者致力于帮助每位学生茁壮成长。他们不仅是辅导员，更是具备资质的教师和各领域的佼佼者。",
+  "View All Team": "查看全部团队",
+  "Read Bio": "阅读个人简介",
+  "Ready to realise": "准备好释放",
+  "your potential?": "您的潜能了吗？",
+  "Join the students achieving their best with Ryze. Expert tutors, personalised attention, and proven results.": "加入 Ryze，与优秀者同行。专家导师、个性化关注，以及经得起考验的成绩。",
+  "Give us a call now!": "立即致电！",
 
   // --- Features ---
   "Small Classes": "精品小班授课",
@@ -261,6 +293,18 @@ export const translations: Record<string, string> = {
   "Usually replies in 10 mins": "通常10分钟内回复",
   "We'll reply during business hours": "我们将在工作时间回复",
   "Send Message →": "发送消息 →",
+  
+  // --- Ryze AI Terminal ---
+  "> Pinging Student_Knowledge_Graph...": "> 连接学生知识图谱...",
+  "> Status: Connected [Latency: 12ms]": "> 状态：已连接 [延迟：12ms]",
+  "> Analyzing input: '2x + 5 = 15' ...": "> 正在分析输入：'2x + 5 = 15' ...",
+  "> Error Detected: Inverse Operation Misapplication": "> 检测到错误：逆运算应用不当",
+  "> Root Cause Identification: Pre-Algebra_Foundations": "> 根源识别：代数基础",
+  "> Confidence Score: 98.4%": "> 置信度评分：98.4%",
+  "> Generating Micro-Lesson...": "> 正在生成微课程...",
+  "> Adjusting Curriculum Path: +Quadratic_Intro delayed": "> 调整课程路径：+二次方程入门 已推迟",
+  "> Deploying Visual_Model_Module_4...": "> 部署视觉模型模块_4...",
+  "> Ready for interaction.": "> 准备交互。",
 
   // --- Pricing ---
   "Transparent Pricing": "透明定价",
@@ -334,6 +378,8 @@ export const translations: Record<string, string> = {
   "How can we help you?": "我们能为您做什么？",
   "Location": "地址",
   "Something went wrong. Please try again or call us directly.": "出错了。请重试或直接致电我们。",
+  "Please enter a valid email address (e.g. name@example.com)": "请输入有效的电子邮箱地址 (例如 name@example.com)",
+  "Please enter a valid phone number (e.g. 0412 345 678)": "请输入有效的手机号码 (例如 0412 345 678)",
 
   // --- Portal ---
   "Select Your Portal": "选择您的门户",
