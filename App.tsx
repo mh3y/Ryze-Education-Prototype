@@ -1,9 +1,11 @@
+
 import React, { useEffect, Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { Starfield } from './components/Starfield';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 
@@ -169,10 +171,12 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
-      <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <AppContent />
-      </Suspense>
+      <LanguageProvider>
+        <ScrollToTop />
+        <Suspense fallback={<PageLoader />}>
+          <AppContent />
+        </Suspense>
+      </LanguageProvider>
     </Router>
   );
 };

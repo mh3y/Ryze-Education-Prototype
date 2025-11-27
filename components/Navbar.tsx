@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
-import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight, LogIn, ChevronUp } from 'lucide-react';
+import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight, LogIn, ChevronUp, Globe } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +22,7 @@ const Navbar: React.FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { language, toggleLanguage, t } = useLanguage();
 
   const isAiPage = location.pathname === '/ryze-ai';
   const isLoginPage = location.pathname === '/login';
@@ -134,7 +137,7 @@ const Navbar: React.FC = () => {
   }`;
 
   const linkClasses = (isActive: boolean) => `
-    relative text-sm font-semibold tracking-wide transition-colors duration-300
+    relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap
     ${isActive 
       ? 'text-ryze' 
       : isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
@@ -152,6 +155,15 @@ const Navbar: React.FC = () => {
     open: { x: 0, opacity: 1, transition: { type: "tween", duration: 0.3 } }
   };
 
+  // Helper for dynamic language colors
+  const getLangColorClass = () => {
+    if (language === 'en') {
+      return isAiPage || isLoginPage ? 'text-blue-400' : 'text-[#002B7F]';
+    } else {
+      return isAiPage || isLoginPage ? 'text-red-400' : 'text-[#DE2910]';
+    }
+  };
+
   return (
     <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,7 +179,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-4 lg:gap-8">
             
             {/* About Dropdown */}
             <div 
@@ -176,11 +188,11 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => setAboutDropdownOpen(false)}
             >
               <button 
-                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 ${
+                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${
                   isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 } ${['/the-ryze-truth', '/meet-the-team', '/faq'].includes(location.pathname) ? 'text-ryze' : ''}`}
               >
-                About <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
+                {t('About')} <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
               <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 pt-4 transition-all duration-300 origin-top ${aboutDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
@@ -196,22 +208,24 @@ const Navbar: React.FC = () => {
                       }
                     >
                       <span className={`block text-sm font-bold ${['/the-ryze-truth', '/meet-the-team', '/faq'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
-                        {link.name}
+                        {t(link.name)}
                       </span>
-                      <span className="block text-xs text-slate-500 font-normal mt-0.5">
-                        {link.desc}
-                      </span>
+                      {language === 'en' && (
+                        <span className="block text-xs text-slate-500 font-normal mt-0.5">
+                          {link.desc}
+                        </span>
+                      )}
                     </NavLink>
                   ))}
                 </div>
               </div>
             </div>
 
-            <NavLink to="/how-it-works" className={({ isActive }: any) => linkClasses(isActive)}>How It Works</NavLink>
+            <NavLink to="/how-it-works" className={({ isActive }: any) => linkClasses(isActive)}>{t('How It Works')}</NavLink>
             
             <NavLink to="/ryze-ai" className={({ isActive }: any) => linkClasses(isActive)}>
-               <span className="flex items-center gap-1.5">
-                 Ryze AI 
+               <span className="flex items-center gap-1.5 whitespace-nowrap">
+                 {t('Ryze AI')}
                  <span className={`flex items-center justify-center w-5 h-5 rounded-full ${isAiPage || isLoginPage ? 'bg-white/10 text-ryze' : 'bg-ryze/10 text-ryze'}`}>
                     <Zap size={10} fill="currentColor" />
                  </span>
@@ -225,11 +239,11 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => setCoursesDropdownOpen(false)}
             >
               <button 
-                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 ${
+                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${
                   isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 } ${location.pathname.includes('/primary') || location.pathname.includes('/secondary') ? 'text-ryze' : ''}`}
               >
-                Courses <ChevronDown size={14} className={`transition-transform duration-300 ${coursesDropdownOpen ? 'rotate-180' : ''}`} />
+                {t('Courses')} <ChevronDown size={14} className={`transition-transform duration-300 ${coursesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
               <div className={`absolute top-full left-1/2 -translate-x-1/2 w-[600px] pt-4 transition-all duration-300 origin-top z-50 ${coursesDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
@@ -238,7 +252,7 @@ const Navbar: React.FC = () => {
                   {/* Primary Column */}
                   <div className="col-span-6 border-r border-slate-100 pr-4">
                      <Link to="/primary" className="flex items-center justify-between group/head mb-3 px-3">
-                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">Primary</h4>
+                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">{t('Primary')}</h4>
                         <ArrowRight size={12} className="text-slate-300 opacity-0 group-hover/head:opacity-100 group-hover/head:text-ryze transition-all -translate-x-2 group-hover/head:translate-x-0"/>
                      </Link>
                      
@@ -247,7 +261,7 @@ const Navbar: React.FC = () => {
                            <div key={link.name}>
                              {link.subLinks ? (
                                <div className="group/item relative flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                                  <span>{link.name}</span>
+                                  <span>{t(link.name) || link.name}</span>
                                   <ChevronRight size={14} className="text-slate-400" />
                                   <div className="absolute left-[95%] top-[-10px] w-48 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-[60]">
                                      <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2 overflow-hidden">
@@ -276,7 +290,7 @@ const Navbar: React.FC = () => {
                                     } ${link.highlight ? 'text-ryze font-bold' : ''}`
                                   }
                                 >
-                                  {link.name}
+                                  {t(link.name) || link.name}
                                 </NavLink>
                              )}
                            </div>
@@ -287,7 +301,7 @@ const Navbar: React.FC = () => {
                   {/* Secondary Column */}
                   <div className="col-span-6 pl-2 relative">
                      <Link to="/secondary" className="flex items-center justify-between group/head mb-3 px-3">
-                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">Secondary</h4>
+                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">{t('Secondary')}</h4>
                         <ArrowRight size={12} className="text-slate-300 opacity-0 group-hover/head:opacity-100 group-hover/head:text-ryze transition-all -translate-x-2 group-hover/head:translate-x-0"/>
                      </Link>
 
@@ -296,7 +310,7 @@ const Navbar: React.FC = () => {
                            <div key={link.name}>
                              {link.subLinks ? (
                                <div className="group/item relative flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                                  <span>{link.name}</span>
+                                  <span>{t(link.name) || link.name}</span>
                                   <ChevronRight size={14} className="text-slate-400" />
                                   <div className="absolute left-[95%] top-[-10px] w-48 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-[60]">
                                      <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2 overflow-hidden">
@@ -325,7 +339,7 @@ const Navbar: React.FC = () => {
                                     }`
                                   }
                                 >
-                                  {link.name}
+                                  {t(link.name) || link.name}
                                 </NavLink>
                              )}
                            </div>
@@ -336,35 +350,72 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <NavLink to="/pricing" className={({ isActive }: any) => linkClasses(isActive)}>Pricing</NavLink>
+            <NavLink to="/pricing" className={({ isActive }: any) => linkClasses(isActive)}>{t('Pricing')}</NavLink>
+
+            {/* Language Toggle - Desktop */}
+            <button 
+              onClick={toggleLanguage}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 border ${
+                isAiPage || isLoginPage 
+                  ? 'bg-white/10 border-white/20 hover:bg-white/20' 
+                  : 'bg-slate-100 border-slate-200 hover:bg-slate-200'
+              }`}
+              title={language === 'en' ? "Switch to Chinese" : "Switch to English"}
+            >
+              <Globe 
+                size={18} 
+                className={`transition-colors duration-300 ${getLangColorClass()}`}
+              />
+              <span className={`text-xs font-bold w-4 transition-colors duration-300 ${getLangColorClass()}`}>
+                {language === 'en' ? 'EN' : 'CN'}
+              </span>
+            </button>
 
             <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage ? 'bg-white/20' : 'bg-slate-200'}`}></div>
 
             <button
               onClick={() => navigate('/login')}
-              className={`text-sm font-bold transition-all duration-300 px-5 py-2.5 rounded-full border flex items-center gap-2 ${
+              className={`h-11 w-[130px] rounded-full border text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${
                 isAiPage || isLoginPage
                 ? 'text-white border-white/30 hover:bg-white hover:text-[#050510]'
                 : 'text-slate-700 border-slate-200 hover:border-slate-900 hover:text-slate-900'
               }`}
             >
-              <LogIn size={16} /> Login
+              <LogIn size={16} /> {t('Login')}
             </button>
 
             <button
               onClick={() => navigate('/contact')}
-              className={`ml-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 ${
+              className={`h-11 w-[130px] ml-2 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 flex items-center justify-center whitespace-nowrap ${
                 isAiPage || isLoginPage
                 ? 'bg-[#FFB000] text-[#050510] hover:bg-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]' 
                 : 'bg-slate-900 text-white hover:bg-ryze hover:text-white shadow-lg hover:shadow-ryze/40'
               }`}
             >
-              Book a Trial
+              {t('Book a Trial')}
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center z-50">
+          <div className="md:hidden flex items-center gap-4 z-50">
+            {/* Mobile Language Toggle */}
+            <button 
+              onClick={toggleLanguage}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-full border transition-all ${
+                 isAiPage || isLoginPage 
+                  ? 'bg-white/10 border-white/20' 
+                  : 'bg-slate-100 border-slate-200'
+              }`}
+            >
+              <Globe 
+                size={20} 
+                className={`transition-colors duration-300 ${getLangColorClass()}`}
+              />
+              <span className={`text-xs font-bold transition-colors duration-300 ${getLangColorClass()}`}>
+                {language === 'en' ? 'EN' : 'CN'}
+              </span>
+            </button>
+
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`p-2 rounded-full transition-colors ${isOpen || isAiPage || isLoginPage ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'} ${isOpen ? '!text-slate-900 hover:!bg-slate-100' : ''}`}
@@ -395,7 +446,7 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
                     className="w-full flex items-center justify-between text-xl font-bold text-slate-900 py-2"
                   >
-                    About
+                    {t('About')}
                     <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-ryze' : 'text-slate-400'}`} />
                   </button>
                   <AnimatePresence>
@@ -412,7 +463,7 @@ const Navbar: React.FC = () => {
                               onClick={() => setIsOpen(false)}
                               className={({isActive}: any) => `block text-base font-medium transition-colors ${isActive ? 'text-ryze' : 'text-slate-500'}`}
                             >
-                              {link.name}
+                              {t(link.name)}
                             </NavLink>
                           ))}
                         </div>
@@ -427,7 +478,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="block text-xl font-bold text-slate-900 border-b border-slate-100 pb-4"
                 >
-                  How It Works
+                  {t('How It Works')}
                 </NavLink>
 
                 <NavLink 
@@ -435,7 +486,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between text-xl font-bold text-slate-900 border-b border-slate-100 pb-4 group"
                 >
-                  <span className="flex items-center gap-2">Ryze AI <Zap size={18} className="text-ryze" fill="currentColor" /></span>
+                  <span className="flex items-center gap-2">{t('Ryze AI')} <Zap size={18} className="text-ryze" fill="currentColor" /></span>
                   <ChevronRight size={20} className="text-slate-300 group-hover:text-ryze" />
                 </NavLink>
 
@@ -445,7 +496,7 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileCoursesOpen(!mobileCoursesOpen)}
                     className="w-full flex items-center justify-between text-xl font-bold text-slate-900 py-2"
                   >
-                    Courses
+                    {t('Courses')}
                     <ChevronDown size={20} className={`transition-transform duration-300 ${mobileCoursesOpen ? 'rotate-180 text-ryze' : 'text-slate-400'}`} />
                   </button>
                   <AnimatePresence>
@@ -459,7 +510,7 @@ const Navbar: React.FC = () => {
                               onClick={() => setMobilePrimaryOpen(!mobilePrimaryOpen)}
                               className="w-full flex items-center justify-between text-lg font-bold text-slate-700 py-2"
                             >
-                              Primary
+                              {t('Primary')}
                               <div className={`transition-transform duration-300 ${mobilePrimaryOpen ? 'rotate-180' : ''}`}>
                                  {mobilePrimaryOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                               </div>
@@ -469,7 +520,7 @@ const Navbar: React.FC = () => {
                                 <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
                                   <div className="pl-4 pt-1 space-y-3 border-l-2 border-slate-100 ml-1">
                                     <div className="mb-2">
-                                       <NavLink to="/primary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">View Overview <ArrowRight size={12}/></NavLink>
+                                       <NavLink to="/primary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">{t('View Overview')} <ArrowRight size={12}/></NavLink>
                                     </div>
                                     {primaryCourses.map((course) => (
                                        <div key={course.name}>
@@ -479,7 +530,7 @@ const Navbar: React.FC = () => {
                                                    onClick={() => toggleYearLevel(course.name)}
                                                    className="w-full flex items-center justify-between text-base font-medium text-slate-600 py-1"
                                                 >
-                                                   {course.name}
+                                                   {t(course.name) || course.name}
                                                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${openYearLevels[course.name] ? 'rotate-180' : ''}`} />
                                                 </button>
                                                 <AnimatePresence>
@@ -495,7 +546,7 @@ const Navbar: React.FC = () => {
                                                 </AnimatePresence>
                                              </div>
                                           ) : (
-                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{course.name}</NavLink>
+                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{t(course.name) || course.name}</NavLink>
                                           )}
                                        </div>
                                     ))}
@@ -511,7 +562,7 @@ const Navbar: React.FC = () => {
                               onClick={() => setMobileSecondaryOpen(!mobileSecondaryOpen)}
                               className="w-full flex items-center justify-between text-lg font-bold text-slate-700 py-2"
                             >
-                              Secondary
+                              {t('Secondary')}
                               <div className={`transition-transform duration-300 ${mobileSecondaryOpen ? 'rotate-180' : ''}`}>
                                  {mobileSecondaryOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                               </div>
@@ -521,7 +572,7 @@ const Navbar: React.FC = () => {
                                 <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
                                   <div className="pl-4 pt-1 space-y-3 border-l-2 border-slate-100 ml-1">
                                     <div className="mb-2">
-                                       <NavLink to="/secondary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">View Overview <ArrowRight size={12}/></NavLink>
+                                       <NavLink to="/secondary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">{t('View Overview')} <ArrowRight size={12}/></NavLink>
                                     </div>
                                     {secondaryCourses.map((course) => (
                                        <div key={course.name}>
@@ -531,7 +582,7 @@ const Navbar: React.FC = () => {
                                                    onClick={() => toggleYearLevel(course.name)}
                                                    className="w-full flex items-center justify-between text-base font-medium text-slate-600 py-1"
                                                 >
-                                                   {course.name}
+                                                   {t(course.name) || course.name}
                                                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${openYearLevels[course.name] ? 'rotate-180' : ''}`} />
                                                 </button>
                                                 <AnimatePresence>
@@ -547,7 +598,7 @@ const Navbar: React.FC = () => {
                                                 </AnimatePresence>
                                              </div>
                                           ) : (
-                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{course.name}</NavLink>
+                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{t(course.name) || course.name}</NavLink>
                                           )}
                                        </div>
                                     ))}
@@ -568,7 +619,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="block text-xl font-bold text-slate-900 border-b border-slate-100 pb-4"
                 >
-                  Pricing
+                  {t('Pricing')}
                 </NavLink>
 
               </div>
@@ -579,13 +630,13 @@ const Navbar: React.FC = () => {
                     onClick={() => { navigate('/login'); setIsOpen(false); }}
                     className="w-full py-3.5 border-2 border-slate-200 rounded-2xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
                  >
-                    <LogIn size={20} /> Dashboard Login
+                    <LogIn size={20} /> {t('Dashboard Login')}
                  </button>
                  <button 
                     onClick={() => { navigate('/contact'); setIsOpen(false); }}
                     className="w-full py-4 bg-ryze text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-ryze-600 active:scale-95 transition-all flex items-center justify-center gap-2"
                  >
-                    Book a Trial Lesson <ArrowRight size={20} />
+                    {t('Book a Trial Lesson')} <ArrowRight size={20} />
                  </button>
               </div>
 

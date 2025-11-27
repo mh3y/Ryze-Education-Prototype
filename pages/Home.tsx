@@ -5,6 +5,7 @@ const motion = motionOriginal as any;
 import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Optimized Scrolling Column
 const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.PropsWithChildren<{ direction?: "up" | "down", speed?: number }>) => {
@@ -61,6 +62,7 @@ const Card = ({ image, title, tag, priority = false }: { image: string, title: s
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { scrollY } = useScroll();
   
   // Parallax transforms - optimized with transform-gpu
@@ -199,21 +201,21 @@ const Home: React.FC = () => {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-100 shadow-sm text-slate-600 text-sm font-semibold tracking-wide mb-2 mx-auto lg:mx-0"
                   >
                     <Sparkles size={14} className="text-ryze" />
-                    <span>SYDNEY'S MOST EFFECTIVE TUTORING</span>
+                    <span>{t("SYDNEY'S MOST EFFECTIVE TUTORING")}</span>
                   </motion.div>
                   
                   <h1 className="text-5xl lg:text-8xl font-sans font-extrabold text-slate-900 leading-[1.05] tracking-tight">
-                    Teaching with <span className="text-transparent bg-clip-text bg-gradient-to-r from-ryze to-orange-500">purpose.</span> <br/>
-                    Learning with <span className="text-slate-900">clarity.</span>
+                    {t("Teaching with")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-ryze to-orange-500">{t("purpose.")}</span> <br/>
+                    {t("Learning with")} <span className="text-slate-900">{t("clarity.")}</span>
                   </h1>
                   
                   <p className="text-xl lg:text-2xl font-sans font-medium text-slate-400 leading-tight tracking-wide">
-                    Think Sharper. Perform Better.
+                    {t("Think Sharper. Perform Better.")}
                   </p>
               </div>
 
               <p className="text-lg text-slate-600 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
-                Get the individual attention you deserve in our focused small group classes. Experienced tutors, personalised programs, and real results.
+                {t("Get the individual attention you deserve in our focused small group classes. Experienced tutors, personalised programs, and real results.")}
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
@@ -223,7 +225,7 @@ const Home: React.FC = () => {
                   onClick={() => navigate('/contact')}
                   className="group px-8 py-4 bg-ryze text-white rounded-full font-bold text-lg shadow-xl shadow-ryze/30 hover:shadow-2xl hover:bg-ryze-600 transition-all flex items-center gap-3 w-full sm:w-auto justify-center"
                 >
-                  Book a Trial Lesson <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  {t('Book a Trial Lesson')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
@@ -243,7 +245,7 @@ const Home: React.FC = () => {
                          ))}
                     </div>
                     <div className="text-sm font-bold text-slate-700">
-                        <span className="text-ryze">100%</span> Client Satisfaction
+                        <span className="text-ryze">100%</span> {t("Client Satisfaction")}
                     </div>
                 </div>
               </div>
@@ -255,31 +257,31 @@ const Home: React.FC = () => {
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
                     image="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80" 
-                    title="OC & Selective Exam Preparation" 
+                    title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
                     priority={true} 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" title="Small Group Focus" tag="Method" />
+                  <Card image="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80" title="Personalised Support" tag="Care" />
+                  <Card image="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80" title={t("Personalised Support")} tag="Care" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
                     image="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80" 
-                    title="HSC Excellence" 
+                    title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80" title="Hybrid Learning" tag="Flexibility" />
+                  <Card image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80" title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Proven Results */}
-                  <Card image="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80" title="Proven Results" tag="Success" />
+                  <Card image="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80" title={t("Proven Results")} tag="Success" />
                </ScrollingColumn>
             </div>
           </div>
@@ -299,10 +301,10 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-20 max-w-3xl mx-auto">
             <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-6 tracking-tight">
-              What makes Ryze different?
+              {t("What makes Ryze different?")}
             </h2>
             <p className="text-lg text-slate-500 font-normal">
-                We've stripped away the inefficiencies of traditional tuition to focus on what actually drives learning outcomes.
+                {t("We've stripped away the inefficiencies of traditional tuition to focus on what actually drives learning outcomes.")}
             </p>
           </div>
 
@@ -319,9 +321,9 @@ const Home: React.FC = () => {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-inner ${feature.colorClass}`}>
                   <feature.icon size={28} strokeWidth={2} />
                 </div>
-                <h3 className="text-xl font-bold font-sans text-slate-900 mb-3 leading-tight">{feature.title}</h3>
+                <h3 className="text-xl font-bold font-sans text-slate-900 mb-3 leading-tight">{t(feature.title)}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans flex-grow">
-                  {feature.desc}
+                  {t(feature.desc)}
                 </p>
               </motion.div>
             ))}
@@ -337,14 +339,14 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             
             <div>
-               <div className="inline-block px-3 py-1 rounded-full bg-ryze/10 text-ryze text-xs font-bold uppercase tracking-widest mb-6 border border-ryze/20">Our Philosophy</div>
+               <div className="inline-block px-3 py-1 rounded-full bg-ryze/10 text-ryze text-xs font-bold uppercase tracking-widest mb-6 border border-ryze/20">{t("Our Philosophy")}</div>
                <h2 className="text-4xl lg:text-6xl font-sans font-bold text-slate-900 mb-8 leading-[1.1]">
-                 Education that <br/> <span className="relative inline-block text-ryze">sees you.
+                 {t("Education that")} <br/> <span className="relative inline-block text-ryze">{t("sees you.")}
                    <svg className="absolute w-full h-3 -bottom-1 left-0 text-ryze/30" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none"/></svg>
                  </span>
                </h2>
                <p className="text-lg text-slate-600 mb-8 leading-relaxed font-normal">
-                 At Ryze, we believe learning happens in relationship, not in crowds. We have built everything around small classes and genuine mentorships because we know it works.
+                 {t("At Ryze, we believe learning happens in relationship, not in crowds. We have built everything around small classes and genuine mentorships because we know it works.")}
                </p>
                <motion.button 
                   whileHover={{ scale: 1.05 }}
@@ -352,7 +354,7 @@ const Home: React.FC = () => {
                   onClick={() => navigate('/contact')}
                   className="group px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-lg shadow-lg hover:bg-ryze hover:text-slate-900 transition-all inline-flex items-center gap-3"
                 >
-                  Start your journey <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  {t("Start your journey")} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
             </div>
 
@@ -370,7 +372,7 @@ const Home: React.FC = () => {
                   <div className="shrink-0 w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-green-600 border border-green-100">
                     <CheckCircle2 size={20} strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-800 font-sans">{benefit}</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-sans">{t(benefit)}</h3>
                 </motion.div>
               ))}
             </div>
@@ -386,9 +388,9 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
              <div className="max-w-2xl">
-                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">Meet the Mentors</h2>
+                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Meet the Mentors")}</h2>
                 <p className="text-lg text-slate-500">
-                  Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.
+                  {t("Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.")}
                 </p>
              </div>
              <motion.button 
@@ -396,7 +398,7 @@ const Home: React.FC = () => {
                 onClick={() => navigate('/meet-the-team')} 
                 className="text-ryze font-bold flex items-center gap-2 hover:gap-4 transition-all bg-white px-6 py-3 rounded-full shadow-sm hover:shadow-md"
              >
-                View All Team <ArrowRight size={20} />
+                {t("View All Team")} <ArrowRight size={20} />
              </motion.button>
           </div>
 
@@ -422,12 +424,12 @@ const Home: React.FC = () => {
                       />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                      <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
-                        <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">Read Bio</span>
+                        <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">{t("Read Bio")}</span>
                      </div>
                   </div>
                   <div className="pl-2">
                      <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                     <p className="text-slate-500 text-sm font-medium">{member.role}</p>
+                     <p className="text-slate-500 text-sm font-medium">{t(member.role)}</p>
                   </div>
                </motion.div>
              ))}
@@ -448,10 +450,10 @@ const Home: React.FC = () => {
                     {/* Left: Content */}
                     <div className="text-center lg:text-left space-y-8">
                         <h2 className="text-4xl md:text-6xl font-sans font-bold text-white leading-[1.1] tracking-tight">
-                            Ready to realise <br/> your potential?
+                            {t("Ready to realise")} <br/> {t("your potential?")}
                         </h2>
                         <p className="text-lg md:text-xl text-white/90 font-medium max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                            Join the students achieving their best with Ryze. Expert tutors, personalised attention, and proven results.
+                            {t("Join the students achieving their best with Ryze. Expert tutors, personalised attention, and proven results.")}
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -461,14 +463,14 @@ const Home: React.FC = () => {
                                 onClick={() => navigate('/contact')}
                                 className="px-8 py-4 bg-white text-orange-600 font-bold rounded-full text-lg shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                             >
-                                Book a Trial Lesson <ArrowRight size={20} />
+                                {t("Book a Trial Lesson")} <ArrowRight size={20} />
                             </motion.button>
                             <a 
                                 href="tel:+61413885839"
                                 className="px-8 py-4 bg-orange-600/20 text-white border border-white/30 font-bold rounded-full text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
                             >
                                 <Phone size={20} />
-                                <span>Give us a call now!</span>
+                                <span>{t("Give us a call now!")}</span>
                             </a>
                         </div>
                     </div>
@@ -487,16 +489,16 @@ const Home: React.FC = () => {
                                     <MessageCircle size={20} />
                                 </div>
                                 <div>
-                                    <div className="font-bold text-slate-800">Quick Question?</div>
+                                    <div className="font-bold text-slate-800">{t("Quick Question?")}</div>
                                     <div className="text-xs text-slate-500">
-                                      {isAvailable ? "Usually replies in 10 mins" : "We'll reply during business hours"}
+                                      {isAvailable ? t("Usually replies in 10 mins") : t("We'll reply during business hours")}
                                     </div>
                                 </div>
                             </div>
                             <div className="bg-slate-50 p-3 rounded-lg text-sm text-slate-600 mb-3">
                                 "Hi, I'm interested in Year 10 Maths for my son. Do you have spots?"
                             </div>
-                            <div className="text-right text-xs font-bold text-orange-600 cursor-pointer hover:underline" onClick={() => navigate('/contact')}>Send Message →</div>
+                            <div className="text-right text-xs font-bold text-orange-600 cursor-pointer hover:underline" onClick={() => navigate('/contact')}>{t("Send Message →")}</div>
                         </motion.div>
 
                         <motion.div 
@@ -514,18 +516,18 @@ const Home: React.FC = () => {
                                 />
                                 <div>
                                     <div className="font-bold text-slate-900 text-lg">Michael Yang</div>
-                                    <div className="text-sm text-slate-500">Founder & CEO</div>
+                                    <div className="text-sm text-slate-500">{t("Founder & CEO")}</div>
                                     
                                     {isAvailable ? (
                                       <div className="flex items-center gap-1 mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full w-fit">
-                                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></div> Available for call (9am-11pm)
+                                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></div> {t("Available for call (9am-11pm)")}
                                       </div>
                                     ) : (
                                       <div className="flex flex-col mt-2">
                                          <div className="flex items-center gap-1 text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full w-fit mb-1">
-                                            <Clock size={10} /> Back at 9am SYD
+                                            <Clock size={10} /> {t("Back at 9am SYD")}
                                          </div>
-                                         <span className="text-[10px] text-slate-400 leading-tight">Please drop a message, we'll reply during business hours.</span>
+                                         <span className="text-[10px] text-slate-400 leading-tight">{t("Please drop a message, we'll reply during business hours.")}</span>
                                       </div>
                                     )}
                                 </div>

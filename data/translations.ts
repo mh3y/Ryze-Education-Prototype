@@ -1,0 +1,102 @@
+
+export const translations: Record<string, string> = {
+  // Navbar
+  "About": "关于",
+  "The Ryze Truth": "Ryze 真相",
+  "Meet the Team": "认识团队",
+  "FAQ": "常见问题",
+  "How It Works": "教学方法",
+  "Ryze AI": "Ryze AI", // Brand name kept in English
+  "Courses": "课程",
+  "Primary": "小学 (Primary)",
+  "Secondary": "中学 (Secondary)",
+  "Pricing": "价格",
+  "Login": "登录",
+  "Book a Trial": "预约试听",
+  "Book a Trial Lesson": "预约试听课",
+  "Dashboard Login": "仪表盘登录",
+  "View Overview": "查看概览",
+
+  // Home Hero
+  "SYDNEY'S MOST EFFECTIVE TUTORING": "悉尼最高效的补习",
+  "Teaching with": "教学带有",
+  "purpose.": "目标。",
+  "Learning with": "学习带有",
+  "clarity.": "清晰度。",
+  "Think Sharper. Perform Better.": "思维更敏捷。表现更出色。",
+  "Get the individual attention you deserve in our focused small group classes. Experienced tutors, personalised programs, and real results.": "在我们专注的小组课程中获得您应得的个人关注。经验丰富的导师，个性化的课程，以及真实的结果。",
+  "Client Satisfaction": "客户满意度",
+  
+  // Home Cards & Features
+  "OC & Selective Exam Preparation": "OC班 & 精英中学备考",
+  "Small Group Focus": "专注小组教学",
+  "Personalised Support": "个性化支持",
+  "HSC Excellence": "HSC 卓越课程",
+  "Hybrid Learning": "混合学习模式",
+  "Proven Results": "从实战中验证的成果",
+  "What makes Ryze different?": "Ryze 有何不同？",
+  "We've stripped away the inefficiencies of traditional tuition to focus on what actually drives learning outcomes.": "我们剔除了传统补习的低效环节，专注于真正推动学习成果的因素。",
+  
+  // Features
+  "Small Classes": "小班授课",
+  "Max 6 students. You won't get lost in the crowd.": "最多6名学生。你不会在人群中迷失。",
+  "Signature Curriculum": "独家课程体系",
+  "Syllabus-aligned resources developed by NSW teachers.": "由 NSW 教师开发的符合教学大纲的资源。",
+  "Complete Support": "全面支持",
+  "Help between sessions, subject selection, and uni pathways.": "课间帮助、选课指导和大学升学规划。",
+  "Progress Tracking": "进度追踪",
+  "Regular sessions to monitor, analyse, and optimise performance.": "定期监测、分析和优化表现。",
+  "Expert Tutors": "专家导师",
+  "Genuine care and expertise to build student confidence.": "真诚的关怀和专业知识，建立学生的自信。",
+  "Personalised Plans": "个性化计划",
+  "Tailored to your unique strengths and learning style.": "根据你独特的优势和学习风格量身定制。",
+  "Risk-Free Trial": "无风险试听",
+  "First lesson free. You only pay if you decide to continue.": "首课免费。只有决定继续上课才需付费。",
+  "Flexible Options": "灵活选择",
+  "Private, group, online, or in-person learning.": "一对一、小组、在线或面授学习。",
+
+  // Philosophy
+  "Our Philosophy": "我们的理念",
+  "Education that": "教育",
+  "sees you.": "看见你。",
+  "At Ryze, we believe learning happens in relationship, not in crowds. We have built everything around small classes and genuine mentorships because we know it works.": "在 Ryze，我们相信学习发生于关系之中，而非人群之中。我们将一切建立在小班授课和真诚的师徒关系之上，因为我们知道这行之有效。",
+  "Start your journey": "开启你的旅程",
+  "Personal attention that matters": "至关重要的个人关注",
+  "Genuine mentorship": "真诚的指导关系",
+  "Engagement, not lectures": "互动参与，而非单向讲座",
+  "Real understanding": "真正的理解",
+  "You are not a number": "你不是一个数字",
+
+  // Team
+  "Meet the Mentors": "认识导师",
+  "Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.": "我们经验丰富的教育工作者致力于帮助每一位学生茁壮成长。不仅仅是补习老师，更是合格的教师和高成就者。",
+  "View All Team": "查看所有团队",
+  "Read Bio": "阅读简介",
+  "Master's in Teaching, BSc(Math)/BCompSc": "教育硕士, 理学士(数学)/计算机科学学士",
+  "PhD - AI & Machine Learning candidate": "博士候选人 - AI 与机器学习",
+  "BCom/BCompSc | DevOps Engineer": "商学士/计算机科学学士 | DevOps 工程师",
+  "Founder & CEO": "创始人 & CEO",
+
+  // CTA Section
+  "Ready to realise": "准备好实现",
+  "your potential?": "你的潜力了吗？",
+  "Join the students achieving their best with Ryze. Expert tutors, personalised attention, and proven results.": "加入 Ryze，与那些正在实现最佳表现的学生一起。专家导师，个性化关注，以及经证实的成果。",
+  "Give us a call now!": "现在给我们打电话！",
+  "Quick Question?": "有问题吗？",
+  "Usually replies in 10 mins": "通常在10分钟内回复",
+  "We'll reply during business hours": "我们将在工作时间回复",
+  "Available for call (9am-11pm)": "可通话 (早9点-晚11点)",
+  "Back at 9am SYD": "悉尼时间早9点回来",
+  "Please drop a message, we'll reply during business hours.": "请留言，我们将在工作时间回复。",
+  "Send Message →": "发送消息 →",
+
+  // Footer
+  "Company": "公司",
+  "Resources": "资源",
+  "Contact": "联系我们",
+  "Contact Support": "联系支持",
+  "Privacy Policy": "隐私政策",
+  "Terms and Conditions": "条款与条件",
+  "Sitemap": "网站地图",
+  "Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.": "看见你的教育。诊断差距，建立理解，并为每位学生建立自信。",
+};
