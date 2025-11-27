@@ -22,6 +22,13 @@ const Contact: React.FC = () => {
     return re.test(String(email).toLowerCase());
   };
 
+  const validatePhone = (phone: string) => {
+    // Remove spaces and dashes for check
+    const stripped = phone.replace(/[\s\-]/g, '');
+    // Check for digits, optional +, length 8-15
+    return /^\+?[\d]{8,15}$/.test(stripped);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(''); // Reset previous errors
@@ -40,6 +47,13 @@ const Contact: React.FC = () => {
       setStatus('error');
       setErrorMessage(t('Please enter a valid email address (e.g. name@example.com)'));
       return;
+    }
+
+    // PHONE VALIDATION
+    if (!validatePhone(formData.phone)) {
+        setStatus('error');
+        setErrorMessage(t('Please enter a valid phone number (e.g. 0412 345 678)'));
+        return;
     }
 
     setStatus('sending');
@@ -194,6 +208,7 @@ const Contact: React.FC = () => {
                         id="name"
                         name="name"
                         required
+                        maxLength={100}
                         value={formData.name}
                         onChange={handleChange}
                         disabled={status === 'sending'}
@@ -223,6 +238,7 @@ const Contact: React.FC = () => {
                       type="tel"
                       id="phone"
                       name="phone"
+                      maxLength={20}
                       value={formData.phone}
                       onChange={handleChange}
                       disabled={status === 'sending'}
@@ -232,12 +248,18 @@ const Contact: React.FC = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <label htmlFor="message" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">{t("Message")}</label>
+                    <div className="flex justify-between items-center">
+                        <label htmlFor="message" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">{t("Message")}</label>
+                        <span className={`text-xs font-medium ${formData.message.length >= 2000 ? 'text-red-500' : 'text-slate-400'}`}>
+                            {formData.message.length}/2000
+                        </span>
+                    </div>
                     <textarea
                       id="message"
                       name="message"
                       rows={6}
                       required
+                      maxLength={2000}
                       value={formData.message}
                       onChange={handleChange}
                       disabled={status === 'sending'}
@@ -249,7 +271,7 @@ const Contact: React.FC = () => {
                   <button
                     type="submit"
                     disabled={status === 'sending'}
-                    className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 hover:-translate-y-1 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 hover:-translate-y-1 active:scale-95 active:bg-ryze-700 focus:outline-none focus:ring-4 focus:ring-ryze/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
                   >
                     {status === 'sending' ? (
                       <>
@@ -267,21 +289,21 @@ const Contact: React.FC = () => {
       {/* Footer Info Strips */}
       <div className="bg-[#0f172a] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
               <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><MapPin size={20} /></div>
               <div>
                  <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Location")}</div>
                  <div className="font-bold text-lg">Sydney, NSW Australia</div>
               </div>
            </div>
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
               <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><Phone size={20} /></div>
               <div>
                  <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Phone")}</div>
                  <div className="font-bold text-lg">+61 413 885 839</div>
               </div>
            </div>
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
               <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><Mail size={20} /></div>
               <div>
                  <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Email")}</div>
