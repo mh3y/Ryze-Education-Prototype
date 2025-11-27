@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
+// @ts-ignore
 import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../../data/courses';
 import { BookOpen, ArrowRight, Award, Target, Check, Layers, Users, Star, BarChart3, GraduationCap, Calculator, PenTool, MessageCircle, RefreshCw } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion as motionOriginal } from 'framer-motion';
+const motion = motionOriginal as any;
 
 const PrimaryCourse: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -31,9 +32,6 @@ const PrimaryCourse: React.FC = () => {
 
   // Logic for Learning Targets based on Term
   const allOutcomes = course.subjects[0].keyOutcomes;
-  const outcomesPerTerm = Math.ceil(allOutcomes.length / 4);
-  const termOutcomes = allOutcomes.slice(activeTermIndex * outcomesPerTerm, (activeTermIndex + 1) * outcomesPerTerm);
-  
   // Use representative topics as Goals
   const termGoals = terms[activeTermIndex].topics.slice(0, 5);
 
@@ -168,131 +166,57 @@ const PrimaryCourse: React.FC = () => {
                   >
                      {/* Decor */}
                      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#FFB000] rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
-                     
+
                      <div className="flex items-center gap-4 mb-8">
-                        <div className="px-4 py-1.5 rounded-full bg-[#FFB000] text-[#0f172a] text-xs font-bold uppercase tracking-widest">
-                           {terms[activeTermIndex].name}
+                        <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-[#FFB000]">
+                           <Target size={24} />
                         </div>
-                        <h3 className="text-2xl font-bold">Focus & Outcomes</h3>
+                        <h3 className="text-2xl font-bold">Term Goals</h3>
                      </div>
 
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div>
-                           <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-[#FFB000] mb-6">
-                              <Target size={32} />
-                           </div>
-                           <h4 className="text-xl font-bold mb-6">Goals to be Achieved</h4>
-                           <ul className="space-y-4">
-                              {termGoals.map((topic, i) => (
-                                 <li key={i} className="flex gap-4 items-start">
-                                    <div className="w-6 h-6 rounded-full bg-[#FFB000] text-[#0f172a] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">{i+1}</div>
-                                    <p className="text-slate-300 text-sm leading-relaxed">{topic.description}</p>
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
-
-                        <div>
-                           <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-[#FFB000] mb-6">
-                              <Award size={32} />
-                           </div>
-                           <h4 className="text-xl font-bold mb-6">Competencies to be Reached</h4>
-                           <ul className="space-y-4">
-                              {termOutcomes.map((outcome, i) => (
-                                 <li key={i} className="flex gap-4 items-start">
-                                    <div className="w-6 h-6 rounded-full bg-[#FFB000] text-[#0f172a] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">{i+1}</div>
-                                    <p className="text-slate-300 text-sm leading-relaxed">{outcome}.</p>
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
-                     </div>
-                  </motion.div>
-
-                  {/* Course Structure Timeline */}
-                  <motion.div 
-                     key={`timeline-${activeTermIndex}`}
-                     initial={{ opacity: 0, y: 10 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     transition={{ duration: 0.3, delay: 0.1 }}
-                     className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-slate-100"
-                  >
-                     <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">{terms[activeTermIndex].name} Lesson Plan</h3>
-                     
-                     <div className="relative pl-8 border-l-2 border-slate-100 space-y-8">
-                        {terms[activeTermIndex].topics.length > 0 ? terms[activeTermIndex].topics.map((topic, i) => (
-                           <div key={i} className="relative group">
-                              <div className="absolute -left-[41px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-slate-200 group-hover:border-[#FFB000] transition-colors"></div>
-                              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest min-w-[80px]">Lesson {i + 1}</span>
-                                 <h4 className="text-lg font-bold text-slate-800">{topic.title}</h4>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                        {termGoals.map((topic, i) => (
+                           <div key={i} className="flex gap-4">
+                              <div className="w-6 h-6 rounded-full bg-[#FFB000] text-[#0f172a] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">{i+1}</div>
+                              <div>
+                                 <h4 className="font-bold text-lg mb-1">{topic.title}</h4>
+                                 <p className="text-slate-400 text-sm leading-relaxed">{topic.description}</p>
                               </div>
-                              <p className="text-sm text-slate-500 mt-1 md:ml-[96px] max-w-2xl">{topic.description}</p>
-                           </div>
-                        )) : (
-                           <div className="text-center text-slate-400 italic">Curriculum detailed upon assessment.</div>
-                        )}
-                     </div>
-                  </motion.div>
-
-               </div>
-            </div>
-
-         </div>
-      </section>
-
-      {/* 5. Pricing Section */}
-      <section className="py-24 bg-white border-t border-slate-100">
-         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-[#FFB000] rounded-[3rem] overflow-hidden shadow-2xl relative text-white">
-               {/* Header */}
-               <div className="bg-[#FFB000] pt-16 pb-12 text-center relative z-10">
-                   <h2 className="text-4xl font-bold mb-4">{course.title} Pricing</h2>
-                   <p className="text-white/80 text-lg">Small Group / Personalised</p>
-                   <div className="mt-8 text-white/90 font-bold">1.5 hours per lesson &bull; 36 lessons / year</div>
-               </div>
-               
-               {/* Wave Divider */}
-               <div className="relative">
-                  <svg className="fill-white w-full h-12" viewBox="0 0 1440 120" preserveAspectRatio="none">
-                     <path d="M0,0 C240,120 480,120 720,60 C960,0 1200,0 1440,60 L1440,120 L0,120 Z"></path>
-                  </svg>
-               </div>
-
-               {/* Content */}
-               <div className="bg-white px-8 pb-16 pt-8 text-center">
-                  <div className="mb-12">
-                     <span className="text-7xl font-bold text-slate-800">$49</span>
-                     <span className="text-2xl font-bold text-slate-400">/hour</span>
-                  </div>
-                  
-                  <div className="bg-orange-50 rounded-3xl p-10 max-w-3xl mx-auto mb-12">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                        {[
-                           "Expert primary teachers",
-                           "Engaging learning materials",
-                           "Homework marking included",
-                           "Term assessments",
-                           "Access to Online Student Portal",
-                           "Feedback reports",
-                           "Small class size (Max 6)",
-                           "Comfortable learning environment"
-                        ].map((item, i) => (
-                           <div key={i} className="flex items-center gap-3 text-slate-700 font-medium">
-                              <div className="w-2 h-2 rounded-full bg-[#FFB000]"></div>
-                              {item}
                            </div>
                         ))}
                      </div>
-                  </div>
-                  
-                  <button onClick={() => navigate('/contact')} className="w-full md:w-auto px-16 py-4 bg-[#FFB000] text-white font-bold rounded-xl shadow-lg hover:bg-orange-400 transition-colors">
-                     Free Trial
-                  </button>
+                  </motion.div>
+
+                  {/* Syllabus / Topics List */}
+                  <motion.div
+                     key={`topics-${activeTermIndex}`}
+                     initial={{ opacity: 0, y: 10 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.3, delay: 0.1 }}
+                     className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-100 shadow-sm"
+                  >
+                     <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+                        <BookOpen size={20} className="text-[#FFB000]" />
+                        Complete Syllabus
+                     </h3>
+                     <div className="space-y-4">
+                        {terms[activeTermIndex].topics.map((topic, i) => (
+                           <div key={i} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                              <div className="font-mono text-slate-400 text-sm mt-1 w-8">{(i + 1).toString().padStart(2, '0')}</div>
+                              <div>
+                                 <div className="font-bold text-slate-800">{topic.title}</div>
+                                 <div className="text-slate-500 text-sm">{topic.description}</div>
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+                  </motion.div>
+
                </div>
             </div>
          </div>
       </section>
+
     </div>
   );
 };

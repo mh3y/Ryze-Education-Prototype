@@ -1,5 +1,6 @@
 
 import React from 'react';
+// @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, XCircle, MessageSquareOff, ZapOff, ArrowRight, Brain, Microscope, BedDouble, BellOff, Zap } from 'lucide-react';
 

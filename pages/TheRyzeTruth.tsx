@@ -1,5 +1,6 @@
 
 import React from 'react';
+// @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { Microscope, BedDouble, BellOff, Zap, ArrowRight, XCircle, CheckCircle2, Quote } from 'lucide-react';
 

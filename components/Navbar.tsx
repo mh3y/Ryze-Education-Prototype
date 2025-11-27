@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
-import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight, LogIn } from 'lucide-react';
+import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight, LogIn, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,19 +9,48 @@ const Navbar: React.FC = () => {
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   
-  // Mobile state
-  const [mobileYear3Open, setMobileYear3Open] = useState(false);
-  const [mobileYear4Open, setMobileYear4Open] = useState(false);
-  const [mobileYear5Open, setMobileYear5Open] = useState(false);
-  const [mobileYear6Open, setMobileYear6Open] = useState(false);
-  const [mobileYear11Open, setMobileYear11Open] = useState(false);
-  const [mobileYear12Open, setMobileYear12Open] = useState(false);
+  // Mobile state management
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false);
+  const [mobilePrimaryOpen, setMobilePrimaryOpen] = useState(false);
+  const [mobileSecondaryOpen, setMobileSecondaryOpen] = useState(false);
+  
+  // Generic state for expanding year levels in mobile
+  const [openYearLevels, setOpenYearLevels] = useState<Record<string, boolean>>({});
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAiPage = location.pathname === '/ryze-ai';
   const isLoginPage = location.pathname === '/login';
+
+  // Toggle helper for year levels
+  const toggleYearLevel = (yearName: string) => {
+    setOpenYearLevels(prev => ({ ...prev, [yearName]: !prev[yearName] }));
+  };
+
+  // Scroll locking for mobile menu
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,10 +59,7 @@ const Navbar: React.FC = () => {
         setScrolled(isScrolled);
       }
     };
-    
-    // Initial check
     handleScroll();
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [scrolled]);
@@ -41,6 +67,7 @@ const Navbar: React.FC = () => {
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: "Our philosophy and story." },
     { name: 'Meet the Team', path: '/meet-the-team', desc: "Expert educators." },
+    { name: 'FAQ', path: '/faq', desc: "Common questions." },
   ];
 
   const primaryCourses = [
@@ -72,8 +99,8 @@ const Navbar: React.FC = () => {
         { name: 'English', path: '/primary/year-6-english' },
       ]
     },
-    { name: 'OC Preparation', path: '/primary/oc-preparation', highlight: true },
-    { name: 'Selective Prep', path: '/primary/selective-preparation', highlight: true },
+    { name: 'OC Exam Preparation', path: '/primary/oc-preparation', highlight: true },
+    { name: 'Selective Exam Preparation', path: '/primary/selective-preparation', highlight: true },
   ];
 
   const secondaryCourses = [
@@ -98,7 +125,7 @@ const Navbar: React.FC = () => {
     },
   ];
 
-  const navClasses = `fixed w-full z-50 transition-all duration-500 border-b ${
+  const navClasses = `fixed w-full z-50 transition-all duration-300 border-b ${
     scrolled || isLoginPage
       ? isAiPage || isLoginPage
         ? 'bg-[#050510]/80 backdrop-blur-xl border-white/10 py-2' 
@@ -114,17 +141,28 @@ const Navbar: React.FC = () => {
     }
   `;
 
+  // Animation variants for accordion
+  const accordionVariants: Variants = {
+    open: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] } },
+    collapsed: { opacity: 0, height: 0, transition: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] } }
+  };
+
+  const menuVariants: Variants = {
+    closed: { x: "100%", opacity: 0, transition: { type: "tween", duration: 0.3 } },
+    open: { x: 0, opacity: 1, transition: { type: "tween", duration: 0.3 } }
+  };
+
   return (
     <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           
           {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer group" onClick={() => navigate('/')}>
+          <div className="flex-shrink-0 cursor-pointer group z-50" onClick={() => { setIsOpen(false); navigate('/'); }}>
             <img 
               src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
               alt="Ryze Education" 
-              className={`h-14 md:h-16 w-auto transition-all duration-500 ${isAiPage || isLoginPage ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
+              className={`h-10 md:h-16 w-auto transition-all duration-500 ${isAiPage || isLoginPage ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
             />
           </div>
 
@@ -140,25 +178,24 @@ const Navbar: React.FC = () => {
               <button 
                 className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 ${
                   isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                } ${['/the-ryze-truth', '/meet-the-team'].includes(location.pathname) ? 'text-ryze' : ''}`}
+                } ${['/the-ryze-truth', '/meet-the-team', '/faq'].includes(location.pathname) ? 'text-ryze' : ''}`}
               >
                 About <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
-              {/* Dropdown Menu */}
               <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 pt-4 transition-all duration-300 origin-top ${aboutDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                 <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-2 overflow-hidden">
                   {aboutSubLinks.map((link) => (
                     <NavLink
                       key={link.name}
                       to={link.path}
-                      className={({ isActive }) =>
+                      className={({ isActive }: any) =>
                         `block px-4 py-3 rounded-xl transition-all duration-200 group/item ${
                           isActive ? 'bg-ryze-50' : 'hover:bg-slate-50'
                         }`
                       }
                     >
-                      <span className={`block text-sm font-bold ${['/the-ryze-truth', '/meet-the-team'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
+                      <span className={`block text-sm font-bold ${['/the-ryze-truth', '/meet-the-team', '/faq'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
                         {link.name}
                       </span>
                       <span className="block text-xs text-slate-500 font-normal mt-0.5">
@@ -170,9 +207,9 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <NavLink to="/how-it-works" className={({ isActive }) => linkClasses(isActive)}>How It Works</NavLink>
+            <NavLink to="/how-it-works" className={({ isActive }: any) => linkClasses(isActive)}>How It Works</NavLink>
             
-            <NavLink to="/ryze-ai" className={({ isActive }) => linkClasses(isActive)}>
+            <NavLink to="/ryze-ai" className={({ isActive }: any) => linkClasses(isActive)}>
                <span className="flex items-center gap-1.5">
                  Ryze AI 
                  <span className={`flex items-center justify-center w-5 h-5 rounded-full ${isAiPage || isLoginPage ? 'bg-white/10 text-ryze' : 'bg-ryze/10 text-ryze'}`}>
@@ -195,13 +232,11 @@ const Navbar: React.FC = () => {
                 Courses <ChevronDown size={14} className={`transition-transform duration-300 ${coursesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
-              {/* Mega Menu */}
               <div className={`absolute top-full left-1/2 -translate-x-1/2 w-[600px] pt-4 transition-all duration-300 origin-top z-50 ${coursesDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                 <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 p-6 grid grid-cols-12 gap-4 relative">
                   
                   {/* Primary Column */}
                   <div className="col-span-6 border-r border-slate-100 pr-4">
-                     {/* Clickable Heading */}
                      <Link to="/primary" className="flex items-center justify-between group/head mb-3 px-3">
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">Primary</h4>
                         <ArrowRight size={12} className="text-slate-300 opacity-0 group-hover/head:opacity-100 group-hover/head:text-ryze transition-all -translate-x-2 group-hover/head:translate-x-0"/>
@@ -214,15 +249,13 @@ const Navbar: React.FC = () => {
                                <div className="group/item relative flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
                                   <span>{link.name}</span>
                                   <ChevronRight size={14} className="text-slate-400" />
-                                  
-                                  {/* Submenu Flyout */}
                                   <div className="absolute left-[95%] top-[-10px] w-48 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-[60]">
                                      <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2 overflow-hidden">
                                        {link.subLinks.map((sub) => (
                                           <NavLink
                                              key={sub.name}
                                              to={sub.path}
-                                             className={({ isActive }) =>
+                                             className={({ isActive }: any) =>
                                                `block px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                                                  isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                                                }`
@@ -237,7 +270,7 @@ const Navbar: React.FC = () => {
                              ) : (
                                <NavLink
                                   to={link.path!}
-                                  className={({ isActive }) =>
+                                  className={({ isActive }: any) =>
                                     `block px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                                       isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                                     } ${link.highlight ? 'text-ryze font-bold' : ''}`
@@ -253,7 +286,6 @@ const Navbar: React.FC = () => {
 
                   {/* Secondary Column */}
                   <div className="col-span-6 pl-2 relative">
-                     {/* Clickable Heading */}
                      <Link to="/secondary" className="flex items-center justify-between group/head mb-3 px-3">
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover/head:text-ryze transition-colors">Secondary</h4>
                         <ArrowRight size={12} className="text-slate-300 opacity-0 group-hover/head:opacity-100 group-hover/head:text-ryze transition-all -translate-x-2 group-hover/head:translate-x-0"/>
@@ -266,15 +298,13 @@ const Navbar: React.FC = () => {
                                <div className="group/item relative flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
                                   <span>{link.name}</span>
                                   <ChevronRight size={14} className="text-slate-400" />
-                                  
-                                  {/* Submenu Flyout */}
                                   <div className="absolute left-[95%] top-[-10px] w-48 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-[60]">
                                      <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2 overflow-hidden">
                                        {link.subLinks.map((sub) => (
                                           <NavLink
                                              key={sub.name}
                                              to={sub.path}
-                                             className={({ isActive }) =>
+                                             className={({ isActive }: any) =>
                                                `block px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                                                  isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                                                }`
@@ -289,7 +319,7 @@ const Navbar: React.FC = () => {
                              ) : (
                                <NavLink
                                   to={link.path!}
-                                  className={({ isActive }) =>
+                                  className={({ isActive }: any) =>
                                     `block px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                                       isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                                     }`
@@ -306,12 +336,10 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <NavLink to="/pricing" className={({ isActive }) => linkClasses(isActive)}>Pricing</NavLink>
+            <NavLink to="/pricing" className={({ isActive }: any) => linkClasses(isActive)}>Pricing</NavLink>
 
-            {/* Separator */}
             <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage ? 'bg-white/20' : 'bg-slate-200'}`}></div>
 
-            {/* Login Button */}
             <button
               onClick={() => navigate('/login')}
               className={`text-sm font-bold transition-all duration-300 px-5 py-2.5 rounded-full border flex items-center gap-2 ${
@@ -323,7 +351,6 @@ const Navbar: React.FC = () => {
               <LogIn size={16} /> Login
             </button>
 
-            {/* CTA Button */}
             <button
               onClick={() => navigate('/contact')}
               className={`ml-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 ${
@@ -337,175 +364,235 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-full transition-colors ${isAiPage || isLoginPage ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'}`}
+              className={`p-2 rounded-full transition-colors ${isOpen || isAiPage || isLoginPage ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'} ${isOpen ? '!text-slate-900 hover:!bg-slate-100' : ''}`}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      <div className={`md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-2xl transition-all duration-300 origin-top ${isOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-90'}`}>
-        <div className="px-6 py-8 space-y-6 h-[calc(100vh-80px)] overflow-y-auto">
-          
-          <div className="space-y-1">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Company</div>
-            {aboutSubLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={({ isActive }) =>
-                  `block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                    isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50'
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
-             <NavLink to="/how-it-works" onClick={() => setIsOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base font-medium transition-colors ${isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50'}`}>How It Works</NavLink>
-             
-             {/* Mobile Primary Section */}
-             <div className="flex items-center justify-between mt-4 mb-2 px-2" onClick={() => { navigate('/primary'); setIsOpen(false); }}>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Primary Courses</div>
-                <ArrowRight size={14} className="text-ryze"/>
-             </div>
-             {primaryCourses.map((link) => (
-                <div key={link.name}>
-                  {link.subLinks ? (
-                    <div>
-                       <button 
-                          onClick={() => {
-                             if(link.name === "Year 3") setMobileYear3Open(!mobileYear3Open);
-                             if(link.name === "Year 4") setMobileYear4Open(!mobileYear4Open);
-                             if(link.name === "Year 5") setMobileYear5Open(!mobileYear5Open);
-                             if(link.name === "Year 6") setMobileYear6Open(!mobileYear6Open);
-                          }}
-                          className="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50"
-                       >
-                          {link.name}
-                          <ChevronDown size={14} className={`transition-transform ${
-                              (link.name === "Year 3" && mobileYear3Open) || 
-                              (link.name === "Year 4" && mobileYear4Open) ||
-                              (link.name === "Year 5" && mobileYear5Open) ||
-                              (link.name === "Year 6" && mobileYear6Open)
-                              ? 'rotate-180' : ''}`} 
-                          />
-                       </button>
-                       <div className={`pl-4 space-y-1 overflow-hidden transition-all duration-300 ${
-                          (link.name === "Year 3" && mobileYear3Open) || 
-                          (link.name === "Year 4" && mobileYear4Open) ||
-                          (link.name === "Year 5" && mobileYear5Open) ||
-                          (link.name === "Year 6" && mobileYear6Open)
-                          ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                          {link.subLinks.map(sub => (
-                             <NavLink
-                                key={sub.name}
-                                to={sub.path}
-                                onClick={() => setIsOpen(false)}
-                                className={({ isActive }) => `block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'text-ryze' : 'text-slate-500'}`}
-                             >
-                                {sub.name}
-                             </NavLink>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={menuVariants}
+            className="fixed inset-0 top-0 z-40 bg-white h-screen overflow-y-auto"
+          >
+            <div className="pt-24 pb-12 px-6 flex flex-col min-h-screen">
+              
+              <div className="flex-grow space-y-6">
+                
+                {/* 1. About Accordion */}
+                <div className="border-b border-slate-100 pb-4">
+                  <button 
+                    onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
+                    className="w-full flex items-center justify-between text-xl font-bold text-slate-900 py-2"
+                  >
+                    About
+                    <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-ryze' : 'text-slate-400'}`} />
+                  </button>
+                  <AnimatePresence>
+                    {mobileAboutOpen && (
+                      <motion.div 
+                        initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 pt-2 space-y-3">
+                          {aboutSubLinks.map(link => (
+                            <NavLink 
+                              key={link.name} 
+                              to={link.path} 
+                              onClick={() => setIsOpen(false)}
+                              className={({isActive}: any) => `block text-base font-medium transition-colors ${isActive ? 'text-ryze' : 'text-slate-500'}`}
+                            >
+                              {link.name}
+                            </NavLink>
                           ))}
-                       </div>
-                    </div>
-                  ) : (
-                    <NavLink
-                      to={link.path!}
-                      onClick={() => setIsOpen(false)}
-                      className={({ isActive }) => `block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50'}`}
-                    >
-                      {link.name}
-                    </NavLink>
-                  )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-             ))}
 
-             {/* Mobile Secondary Section */}
-             <div className="flex items-center justify-between mt-4 mb-2 px-2" onClick={() => { navigate('/secondary'); setIsOpen(false); }}>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Secondary Courses</div>
-                <ArrowRight size={14} className="text-ryze"/>
-             </div>
-             {secondaryCourses.map((link) => (
-                <div key={link.name}>
-                  {link.subLinks ? (
-                    <div>
-                       <button 
-                          onClick={() => {
-                             if(link.name.includes("11")) setMobileYear11Open(!mobileYear11Open);
-                             if(link.name.includes("12")) setMobileYear12Open(!mobileYear12Open);
-                          }}
-                          className="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50"
-                       >
-                          {link.name}
-                          <ChevronDown size={14} className={`transition-transform ${(link.name.includes("11") ? mobileYear11Open : mobileYear12Open) ? 'rotate-180' : ''}`} />
-                       </button>
-                       <div className={`pl-4 space-y-1 overflow-hidden transition-all duration-300 ${(link.name.includes("11") ? mobileYear11Open : mobileYear12Open) ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                          {link.subLinks.map(sub => (
-                             <NavLink
-                                key={sub.name}
-                                to={sub.path}
-                                onClick={() => setIsOpen(false)}
-                                className={({ isActive }) => `block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'text-ryze' : 'text-slate-500'}`}
-                             >
-                                {sub.name}
-                             </NavLink>
-                          ))}
-                       </div>
-                    </div>
-                  ) : (
-                    <NavLink
-                      to={link.path!}
-                      onClick={() => setIsOpen(false)}
-                      className={({ isActive }) => `block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50'}`}
-                    >
-                      {link.name}
-                    </NavLink>
-                  )}
+                {/* 2. Direct Links */}
+                <NavLink 
+                  to="/how-it-works" 
+                  onClick={() => setIsOpen(false)}
+                  className="block text-xl font-bold text-slate-900 border-b border-slate-100 pb-4"
+                >
+                  How It Works
+                </NavLink>
+
+                <NavLink 
+                  to="/ryze-ai" 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between text-xl font-bold text-slate-900 border-b border-slate-100 pb-4 group"
+                >
+                  <span className="flex items-center gap-2">Ryze AI <Zap size={18} className="text-ryze" fill="currentColor" /></span>
+                  <ChevronRight size={20} className="text-slate-300 group-hover:text-ryze" />
+                </NavLink>
+
+                {/* 3. Courses Accordion (Deep Nesting) */}
+                <div className="border-b border-slate-100 pb-4">
+                  <button 
+                    onClick={() => setMobileCoursesOpen(!mobileCoursesOpen)}
+                    className="w-full flex items-center justify-between text-xl font-bold text-slate-900 py-2"
+                  >
+                    Courses
+                    <ChevronDown size={20} className={`transition-transform duration-300 ${mobileCoursesOpen ? 'rotate-180 text-ryze' : 'text-slate-400'}`} />
+                  </button>
+                  <AnimatePresence>
+                    {mobileCoursesOpen && (
+                      <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
+                        <div className="pl-4 pt-2 space-y-4">
+                          
+                          {/* Primary Sub-Accordion */}
+                          <div>
+                            <button 
+                              onClick={() => setMobilePrimaryOpen(!mobilePrimaryOpen)}
+                              className="w-full flex items-center justify-between text-lg font-bold text-slate-700 py-2"
+                            >
+                              Primary
+                              <div className={`transition-transform duration-300 ${mobilePrimaryOpen ? 'rotate-180' : ''}`}>
+                                 {mobilePrimaryOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              </div>
+                            </button>
+                            <AnimatePresence>
+                              {mobilePrimaryOpen && (
+                                <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
+                                  <div className="pl-4 pt-1 space-y-3 border-l-2 border-slate-100 ml-1">
+                                    <div className="mb-2">
+                                       <NavLink to="/primary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">View Overview <ArrowRight size={12}/></NavLink>
+                                    </div>
+                                    {primaryCourses.map((course) => (
+                                       <div key={course.name}>
+                                          {course.subLinks ? (
+                                             <div>
+                                                <button 
+                                                   onClick={() => toggleYearLevel(course.name)}
+                                                   className="w-full flex items-center justify-between text-base font-medium text-slate-600 py-1"
+                                                >
+                                                   {course.name}
+                                                   <ChevronDown size={14} className={`text-slate-400 transition-transform ${openYearLevels[course.name] ? 'rotate-180' : ''}`} />
+                                                </button>
+                                                <AnimatePresence>
+                                                   {openYearLevels[course.name] && (
+                                                      <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
+                                                         <div className="pl-4 space-y-2 py-2">
+                                                            {course.subLinks.map(sub => (
+                                                               <NavLink key={sub.name} to={sub.path} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-sm font-medium ${isActive ? 'text-ryze' : 'text-slate-500'}`}>{sub.name}</NavLink>
+                                                            ))}
+                                                         </div>
+                                                      </motion.div>
+                                                   )}
+                                                </AnimatePresence>
+                                             </div>
+                                          ) : (
+                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{course.name}</NavLink>
+                                          )}
+                                       </div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+
+                          {/* Secondary Sub-Accordion */}
+                          <div>
+                            <button 
+                              onClick={() => setMobileSecondaryOpen(!mobileSecondaryOpen)}
+                              className="w-full flex items-center justify-between text-lg font-bold text-slate-700 py-2"
+                            >
+                              Secondary
+                              <div className={`transition-transform duration-300 ${mobileSecondaryOpen ? 'rotate-180' : ''}`}>
+                                 {mobileSecondaryOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              </div>
+                            </button>
+                            <AnimatePresence>
+                              {mobileSecondaryOpen && (
+                                <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
+                                  <div className="pl-4 pt-1 space-y-3 border-l-2 border-slate-100 ml-1">
+                                    <div className="mb-2">
+                                       <NavLink to="/secondary" onClick={() => setIsOpen(false)} className="text-sm font-bold text-ryze uppercase tracking-wide flex items-center gap-1">View Overview <ArrowRight size={12}/></NavLink>
+                                    </div>
+                                    {secondaryCourses.map((course) => (
+                                       <div key={course.name}>
+                                          {course.subLinks ? (
+                                             <div>
+                                                <button 
+                                                   onClick={() => toggleYearLevel(course.name)}
+                                                   className="w-full flex items-center justify-between text-base font-medium text-slate-600 py-1"
+                                                >
+                                                   {course.name}
+                                                   <ChevronDown size={14} className={`text-slate-400 transition-transform ${openYearLevels[course.name] ? 'rotate-180' : ''}`} />
+                                                </button>
+                                                <AnimatePresence>
+                                                   {openYearLevels[course.name] && (
+                                                      <motion.div initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants} className="overflow-hidden">
+                                                         <div className="pl-4 space-y-2 py-2">
+                                                            {course.subLinks.map(sub => (
+                                                               <NavLink key={sub.name} to={sub.path} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-sm font-medium ${isActive ? 'text-ryze' : 'text-slate-500'}`}>{sub.name}</NavLink>
+                                                            ))}
+                                                         </div>
+                                                      </motion.div>
+                                                   )}
+                                                </AnimatePresence>
+                                             </div>
+                                          ) : (
+                                             <NavLink to={course.path!} onClick={() => setIsOpen(false)} className={({isActive}: any) => `block text-base font-medium py-1 ${isActive ? 'text-ryze' : 'text-slate-600'}`}>{course.name}</NavLink>
+                                          )}
+                                       </div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-             ))}
 
-             <NavLink to="/pricing" onClick={() => setIsOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base font-medium transition-colors mt-4 ${isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-600 hover:bg-slate-50'}`}>Pricing</NavLink>
-          </div>
+                <NavLink 
+                  to="/pricing" 
+                  onClick={() => setIsOpen(false)}
+                  className="block text-xl font-bold text-slate-900 border-b border-slate-100 pb-4"
+                >
+                  Pricing
+                </NavLink>
 
-          <div className="pt-6 border-t border-slate-100">
-             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Portals</div>
-             <NavLink to="/login" onClick={() => setIsOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base font-bold transition-colors ${isActive ? 'bg-ryze-50 text-ryze' : 'text-slate-900 hover:bg-slate-50'}`}>
-               Login to Portal
-             </NavLink>
-          </div>
+              </div>
 
-          <div className="pt-6 border-t border-slate-100">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Technology</div>
-            <NavLink 
-              to="/ryze-ai" 
-              onClick={() => setIsOpen(false)}
-              className={({ isActive }) => `flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-colors ${isActive ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'}`}
-            >
-               <span className="flex items-center gap-2">Ryze AI <Zap size={16} className="text-ryze" fill="currentColor"/></span>
-               <ChevronRight size={16} />
-            </NavLink>
-          </div>
+              {/* Bottom Actions */}
+              <div className="mt-8 space-y-4">
+                 <button 
+                    onClick={() => { navigate('/login'); setIsOpen(false); }}
+                    className="w-full py-3.5 border-2 border-slate-200 rounded-2xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
+                 >
+                    <LogIn size={20} /> Dashboard Login
+                 </button>
+                 <button 
+                    onClick={() => { navigate('/contact'); setIsOpen(false); }}
+                    className="w-full py-4 bg-ryze text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-ryze-600 active:scale-95 transition-all flex items-center justify-center gap-2"
+                 >
+                    Book a Trial Lesson <ArrowRight size={20} />
+                 </button>
+              </div>
 
-          <div className="pt-4">
-            <button
-              onClick={() => {
-                navigate('/contact');
-                setIsOpen(false);
-              }}
-              className="w-full bg-ryze text-white font-bold text-lg py-4 rounded-2xl shadow-lg hover:bg-ryze-600 active:scale-95 transition-all"
-            >
-              Book a Trial Lesson
-            </button>
-          </div>
-        </div>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

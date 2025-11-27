@@ -90,17 +90,17 @@ export const IngestionStudio: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8 h-full flex flex-col">
        <div>
-          <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
             <Database className="text-[#FFB000]" />
             Ingestion Pipeline
           </h2>
-          <p className="text-slate-400 mt-2 text-lg">Upload learning materials to the Ryze Knowledge Base. The AI Engine performs advanced layout analysis, OCR, chunking, and vectorisation.</p>
+          <p className="text-slate-400 mt-2 text-sm md:text-lg">Upload learning materials to the Ryze Knowledge Base. The AI Engine performs advanced layout analysis, OCR, chunking, and vectorisation.</p>
        </div>
 
-       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
+       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 overflow-visible">
           
           {/* Left Column: Upload & Status */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="col-span-12 lg:col-span-4 space-y-6">
              
              {/* Upload Card */}
              <div 
@@ -174,15 +174,15 @@ export const IngestionStudio: React.FC = () => {
           </div>
 
           {/* Right Column: Results Preview */}
-          <div className="lg:col-span-8">
+          <div className="col-span-12 lg:col-span-8">
              {result ? (
                <div className="bg-[#0a0f1e] rounded-[2rem] border border-white/5 shadow-2xl h-full flex flex-col overflow-hidden">
-                  <div className="p-8 border-b border-white/5 bg-[#0a0f1e] flex justify-between items-center">
+                  <div className="p-6 md:p-8 border-b border-white/5 bg-[#0a0f1e] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                      <h3 className="font-bold text-white text-xl flex items-center gap-3">
                         <FileJson size={24} className="text-[#FFB000]" />
                         Digital Twin
                      </h3>
-                     <div className="flex gap-2">
+                     <div className="flex flex-wrap gap-2">
                         {result.topics.map(t => (
                            <span key={t} className="px-4 py-1.5 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20">
                               {t}
@@ -194,12 +194,12 @@ export const IngestionStudio: React.FC = () => {
                      </div>
                   </div>
                   
-                  <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-[#050510]/50 scroll-smooth">
+                  <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 bg-[#050510]/50 scroll-smooth">
                      
                      {/* Summary Section */}
                      <div className="p-6 bg-[#0a0f1e] rounded-2xl border border-white/5">
                         <h4 className="text-xs font-bold text-slate-500 uppercase mb-3 tracking-widest">Summary</h4>
-                        <p className="text-slate-300 leading-relaxed text-lg">{result.summary}</p>
+                        <p className="text-slate-300 leading-relaxed text-base md:text-lg">{result.summary}</p>
                      </div>
 
                      {/* Semantic Chunks */}
@@ -291,7 +291,7 @@ export const IngestionStudio: React.FC = () => {
                                             <tbody>
                                                 {table.rows.map((row, ri) => (
                                                     <tr key={ri} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                                                        {row.cells.map((cell, ci) => <td key={ci} className="px-6 py-3 text-slate-300">{cell}</td>)}
+                                                        {row.cells.map((cell, ci) => <td key={ci} className="px-6 py-3 text-slate-300 min-w-[100px]">{cell}</td>)}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -314,7 +314,7 @@ export const IngestionStudio: React.FC = () => {
                   </div>
                </div>
              ) : (
-               <div className="h-full rounded-[2rem] border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 bg-[#0a0f1e]/50">
+               <div className="h-full rounded-[2rem] border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 bg-[#0a0f1e]/50 min-h-[300px]">
                   <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5">
                      <Database size={48} className="opacity-30" />
                   </div>

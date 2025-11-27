@@ -10,7 +10,6 @@ import { Sidebar, ModuleType } from '../components/dashboard/Sidebar';
 import { AiArena } from '../components/dashboard/AiArena';
 import { IngestionStudio } from '../components/dashboard/IngestionStudio';
 import { CoursesList, AssignmentsList } from '../components/dashboard/LmsViews';
-import { Starfield } from '../components/Starfield';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -30,14 +29,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <div 
-      className="flex h-screen bg-[#050510] font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:text-black"
+      className="flex h-screen bg-transparent font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:text-black"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      
-      {/* 1. Background Stack (Strict Ryze AI Match) */}
-      <Starfield />
-
-      {/* 2. Application UI Layer */}
+      {/* Application UI Layer */}
       <div className="relative z-10 flex h-full w-full">
         <Sidebar 
           isOpen={isSidebarOpen}
@@ -46,23 +41,24 @@ const Dashboard: React.FC = () => {
           onTabChange={setActiveTab}
           onRoleChange={setUserRole}
           onLogout={() => navigate('/')}
+          onCloseMobile={() => setIsSidebarOpen(false)}
         />
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col overflow-hidden relative">
+        <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">
           
           {/* Header */}
-          <header className="h-20 bg-[#050510]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 flex-shrink-0 z-10">
+          <header className="h-16 md:h-20 bg-[#050510]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-10">
              <div className="flex items-center gap-4">
                 <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-400 hover:text-white transition-colors">
                   <Layers size={20} />
                 </button>
-                <h1 className="text-xl font-bold text-white capitalize tracking-wide">
+                <h1 className="text-lg md:text-xl font-bold text-white capitalize tracking-wide truncate">
                   {activeTab.replace('-', ' ')}
                 </h1>
              </div>
              
-             <div className="flex items-center gap-6">
+             <div className="flex items-center gap-4 md:gap-6">
                 <div className="relative hidden md:block group">
                    <input 
                      type="text" 
@@ -79,23 +75,23 @@ const Dashboard: React.FC = () => {
           </header>
 
           {/* 3. Subsystem Views */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-8 relative bg-transparent scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent scroll-smooth">
+          <div className="flex-1 overflow-y-auto p-4 md:p-8 relative bg-transparent scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent scroll-smooth">
              {/* Subtle Grid Effect */}
              <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03] pointer-events-none"></div>
 
-             <div className="relative z-10 h-full max-w-[1600px] mx-auto">
+             <div className="relative z-10 h-full max-w-[1600px] mx-auto pb-20 md:pb-0">
                 {/* LMS OVERVIEW */}
                 {activeTab === 'overview' && (
                   <div className="space-y-10">
                       <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-10 text-white relative overflow-hidden border border-white/5 shadow-2xl group"
+                        className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-6 md:p-10 text-white relative overflow-hidden border border-white/5 shadow-2xl group"
                       >
                         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-700"></div>
                         <div className="relative z-10">
-                            <h2 className="text-4xl font-bold mb-4">Welcome Back, Alex.</h2>
-                            <p className="text-slate-400 mb-8 max-w-xl text-lg leading-relaxed">
+                            <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, Alex.</h2>
+                            <p className="text-slate-400 mb-8 max-w-xl text-base md:text-lg leading-relaxed">
                               {userRole === 'student' ? "Ryze AI has analysed your last assignment. Focus on Quadratic Equations this week." : "You have 4 assignments pending review."}
                             </p>
                             <button onClick={() => setActiveTab('ryze-ai')} className="px-8 py-3.5 bg-[#FFB000] text-[#050510] font-bold rounded-xl hover:bg-[#ffc133] transition-all shadow-[0_0_20px_rgba(255,176,0,0.2)] hover:shadow-[0_0_30px_rgba(255,176,0,0.4)]">

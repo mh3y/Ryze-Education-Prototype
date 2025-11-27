@@ -153,28 +153,6 @@ export const Starfield: React.FC = memo(() => {
       
       {/* 2. Canvas Stars & Shooting Stars */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-20" />
-
-      {/* 3. Atmospheric Color Blobs */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1], 
-            opacity: [0.1, 0.2, 0.1],
-            x: [0, 50, 0] 
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 will-change-transform"
-        />
-        <motion.div 
-           animate={{ 
-            scale: [1, 1.3, 1], 
-            opacity: [0.05, 0.15, 0.05],
-            x: [0, -30, 0] 
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[900px] h-[900px] bg-indigo-900 rounded-full blur-[150px] will-change-transform"
-        />
-      </div>
     </div>
   );
 });

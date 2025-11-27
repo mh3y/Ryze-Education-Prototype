@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+// @ts-ignore
 import { Link } from 'react-router-dom';
 
 const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: string }) => (
@@ -90,8 +91,8 @@ const Footer: React.FC = () => {
             <ul className="space-y-4 text-sm text-slate-500 font-medium">
               <li><Link to="/pricing" className="hover:text-ryze transition-colors">Pricing</Link></li>
               <li><Link to="/contact" className="hover:text-ryze transition-colors">Contact Support</Link></li>
-              <li><Link to="/portal" className="hover:text-ryze transition-colors">Student Portal</Link></li>
-              <li><Link to="/parent-portal" className="hover:text-ryze transition-colors">Parent Portal</Link></li>
+              <li><Link to="/faq" className="hover:text-ryze transition-colors">FAQ</Link></li>
+              <li><Link to="/login" className="hover:text-ryze transition-colors">Dashboard Login</Link></li>
             </ul>
           </div>
 

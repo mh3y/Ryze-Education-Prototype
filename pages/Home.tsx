@@ -1,7 +1,9 @@
 
-import React, { useEffect } from 'react';
-import { motion, useAnimationControls, useScroll, useTransform } from 'framer-motion';
-import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { motion as motionOriginal, useAnimationControls, useScroll, useTransform } from 'framer-motion';
+const motion = motionOriginal as any;
+import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
+// @ts-ignore
 import { useNavigate } from 'react-router-dom';
 
 // Optimized Scrolling Column
@@ -62,9 +64,27 @@ const Home: React.FC = () => {
   const { scrollY } = useScroll();
   
   // Parallax transforms - optimized with transform-gpu
-  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
-  const y2 = useTransform(scrollY, [0, 1000], [0, -150]);
-  const opacity = useTransform(scrollY, [0, 600], [0.6, 0]);
+  const headerY = useTransform(scrollY, [0, 500], [0, 200]);
+  const headerOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+
+  // Business Logic for Availability
+  const [isAvailable, setIsAvailable] = useState(false);
+
+  useEffect(() => {
+    const checkAvailability = () => {
+      // Create a date object for the current time in Sydney
+      const now = new Date();
+      const sydneyTime = new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"}));
+      const hour = sydneyTime.getHours();
+      
+      // Available between 9 AM (09:00) and 11 PM (23:00)
+      setIsAvailable(hour >= 9 && hour < 23);
+    };
+
+    checkAvailability();
+    const interval = setInterval(checkAvailability, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const features = [
     { 
@@ -137,21 +157,21 @@ const Home: React.FC = () => {
     {
       id: "mike-nojiri",
       name: "Mike Nojiri",
-      role: "Master in Teaching, BSc(Math)/BCompSc | UNSW",
+      role: "Master's in Teaching, BSc(Math)/BCompSc",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: "william-gong",
       name: "William Gong",
-      role: "PhD AI & Machine Learning candidate | UNSW",
+      role: "PhD - AI & Machine Learning candidate",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: "michael-yang",
       name: "Michael Yang",
-      role: "BCom/BCompSc | UNSW",
+      role: "BCom/BCompSc | DevOps Engineer",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallback: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
@@ -162,16 +182,6 @@ const Home: React.FC = () => {
       
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white rounded-b-[3rem] lg:rounded-b-[5rem] shadow-sm border-b border-slate-100">
-        {/* Parallax Background Accents */}
-        <motion.div 
-          style={{ y: y1, opacity, willChange: 'transform' }} 
-          className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-[#FFF8E5] rounded-full blur-[120px] z-0 pointer-events-none"
-        ></motion.div>
-        <motion.div 
-          style={{ y: y2, opacity, willChange: 'transform' }} 
-          className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-[120px] z-0 pointer-events-none"
-        ></motion.div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
@@ -189,7 +199,7 @@ const Home: React.FC = () => {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-100 shadow-sm text-slate-600 text-sm font-semibold tracking-wide mb-2 mx-auto lg:mx-0"
                   >
                     <Sparkles size={14} className="text-ryze" />
-                    <span>Premium Education in Sydney</span>
+                    <span>SYDNEY'S MOST EFFECTIVE TUTORING</span>
                   </motion.div>
                   
                   <h1 className="text-5xl lg:text-8xl font-sans font-extrabold text-slate-900 leading-[1.05] tracking-tight">
@@ -242,10 +252,10 @@ const Home: React.FC = () => {
             {/* Right Scrolling Content - Optimized with will-change */}
             <div className="grid grid-cols-2 gap-5 h-[650px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                <ScrollingColumn direction="up" speed={50}>
-                  {/* OC & Selective Prep - Prioritize loading first image */}
+                  {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
                     image="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80" 
-                    title="OC & Selective Prep" 
+                    title="OC & Selective Exam Preparation" 
                     tag="Primary" 
                     priority={true} 
                   />
@@ -478,7 +488,9 @@ const Home: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="font-bold text-slate-800">Quick Question?</div>
-                                    <div className="text-xs text-slate-500">Usually replies in 1 hour</div>
+                                    <div className="text-xs text-slate-500">
+                                      {isAvailable ? "Usually replies in 10 mins" : "We'll reply during business hours"}
+                                    </div>
                                 </div>
                             </div>
                             <div className="bg-slate-50 p-3 rounded-lg text-sm text-slate-600 mb-3">
@@ -496,16 +508,26 @@ const Home: React.FC = () => {
                         >
                             <div className="flex items-center gap-4">
                                 <img 
-                                    src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png" 
-                                    alt="Mike"
+                                    src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg" 
+                                    alt="Michael Yang"
                                     className="w-14 h-14 rounded-full object-cover border-2 border-orange-100"
                                 />
                                 <div>
-                                    <div className="font-bold text-slate-900 text-lg">Mike Nojiri</div>
-                                    <div className="text-sm text-slate-500">Head of Education</div>
-                                    <div className="flex items-center gap-1 mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full w-fit">
-                                        <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></div> Available for call
-                                    </div>
+                                    <div className="font-bold text-slate-900 text-lg">Michael Yang</div>
+                                    <div className="text-sm text-slate-500">Founder & CEO</div>
+                                    
+                                    {isAvailable ? (
+                                      <div className="flex items-center gap-1 mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full w-fit">
+                                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></div> Available for call (9am-11pm)
+                                      </div>
+                                    ) : (
+                                      <div className="flex flex-col mt-2">
+                                         <div className="flex items-center gap-1 text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full w-fit mb-1">
+                                            <Clock size={10} /> Back at 9am SYD
+                                         </div>
+                                         <span className="text-[10px] text-slate-400 leading-tight">Please drop a message, we'll reply during business hours.</span>
+                                      </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

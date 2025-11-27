@@ -1,4 +1,3 @@
-
 import React, { useEffect, Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -29,22 +28,46 @@ const Dashboard = lazy(() => import('./pages/Dashboard')); // New SaaS Dashboard
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
+const FAQ = lazy(() => import('./pages/FAQ'));
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    if (hash) {
-      setTimeout(() => {
-        const id = hash.replace('#', '');
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    } else {
+    if (!hash) {
       window.scrollTo(0, 0);
+      return;
     }
+
+    const id = hash.replace('#', '');
+    let attempts = 0;
+    const maxAttempts = 50; // Try for ~5 seconds to allow lazy chunks to load
+
+    const attemptScroll = () => {
+      attempts++;
+      const element = document.getElementById(id);
+      
+      if (element) {
+        // Found the element, scroll to it
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return true; 
+      }
+      
+      if (attempts >= maxAttempts) return true; // Stop trying
+      return false; // Keep trying
+    };
+
+    // Attempt immediately
+    if (attemptScroll()) return;
+
+    // Poll for existence
+    const interval = setInterval(() => {
+      if (attemptScroll()) {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
   }, [pathname, hash]);
 
   return null;
@@ -58,14 +81,14 @@ const PageLoader = () => (
 );
 
 // Performance-optimized Page Wrapper for smooth transitions
-// Removed 'y' translation to prevent layout/scrollbar jitter
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.2, ease: "easeInOut" }} 
-    className="flex-grow flex flex-col w-full will-change-auto relative z-10"
+    initial={{ opacity: 0, y: 15 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -15 }}
+    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    style={{ willChange: "opacity, transform" }}
+    className="flex-grow flex flex-col w-full relative z-10"
   >
     {children}
   </motion.div>
@@ -76,30 +99,32 @@ const AppContent: React.FC = () => {
   const isDashboard = location.pathname.startsWith('/dashboard');
   
   // Routes that share the "Portal" aesthetic (Starfield background)
-  const isPortalGateway = location.pathname === '/login' || 
-                          location.pathname === '/admin' || 
-                          location.pathname === '/portal' || 
-                          location.pathname === '/parent-portal' || 
-                          location.pathname === '/tutor-portal';
+  // We include Dashboard here to keep the background persistent when logging in
+  const shouldShowStarfield = location.pathname === '/login' || 
+                              location.pathname === '/admin' || 
+                              location.pathname === '/portal' || 
+                              location.pathname === '/parent-portal' || 
+                              location.pathname === '/tutor-portal' ||
+                              isDashboard;
 
   // Determine background class based on route type
   // Marketing pages get slate-50, App/Portal pages get dark background
-  const bgClass = (isDashboard || isPortalGateway || location.pathname === '/ryze-ai') 
+  const bgClass = (shouldShowStarfield || location.pathname === '/ryze-ai') 
     ? 'bg-[#050510]' 
     : 'bg-slate-50';
 
   return (
     <div className={`flex flex-col min-h-screen font-sans relative transition-colors duration-300 overflow-x-hidden ${bgClass}`}>
       
-      {/* Persistent Background for Portal Pages to prevent 'Star Reset' */}
-      {isPortalGateway && (
+      {/* Persistent Background for Portal & Dashboard Pages to prevent 'Star Reset' */}
+      {shouldShowStarfield && (
         <div className="fixed inset-0 z-0 pointer-events-none">
            <div className="absolute inset-0 bg-[#050510]"></div>
            <Starfield />
         </div>
       )}
 
-      {(!isDashboard && !isPortalGateway) && <Navbar />}
+      {(!isDashboard && !shouldShowStarfield) && <Navbar />}
       
       <main className="flex-grow flex flex-col relative z-10 w-full">
         <AnimatePresence mode="wait">
@@ -112,6 +137,7 @@ const AppContent: React.FC = () => {
             <Route path="/ryze-ai" element={<PageWrapper><RyzeAI /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
             <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
+            <Route path="/faq" element={<PageWrapper><FAQ /></PageWrapper>} />
             
             {/* Portal Routes - Now Eager Loaded for Performance */}
             <Route path="/login" element={<PageWrapper><PortalHome /></PageWrapper>} />
@@ -135,7 +161,7 @@ const AppContent: React.FC = () => {
           </Routes>
         </AnimatePresence>
       </main>
-      {(!isDashboard && !isPortalGateway) && <Footer />}
+      {(!isDashboard && !shouldShowStarfield) && <Footer />}
     </div>
   );
 };

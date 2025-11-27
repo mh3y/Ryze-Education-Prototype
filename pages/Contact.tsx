@@ -1,18 +1,63 @@
 
 import React, { useState } from 'react';
-import { Phone, ArrowRight, Send, MapPin, Mail } from 'lucide-react';
+import { Phone, ArrowRight, Send, MapPin, Mail, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
+    honey: '' // Honeypot field
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thanks for contacting Ryze! We'll be in touch shortly.");
+    
+    // SPAM PREVENTION: Honeypot check
+    // If the hidden 'honey' field is filled, it's a bot.
+    // We return 'success' to trick the bot into thinking it worked (shadow ban).
+    if (formData.honey) {
+      setStatus('success');
+      setFormData({ name: '', email: '', phone: '', message: '', honey: '' });
+      return;
+    }
+
+    setStatus('sending');
+
+    try {
+      // Using FormSubmit.co AJAX API
+      // Note: The first time this is used, an activation email will be sent to ryzeeducationhq@gmail.com
+      const response = await fetch("https://formsubmit.co/ajax/ryzeeducationhq@gmail.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          _subject: `New Enquiry from ${formData.name}`, // Custom subject line
+          _template: 'table', // Formats the email nicely
+          _captcha: 'false', // Disable redirect captcha (we use honeypot)
+          _honey: '' // Explicitly sending empty honey to server just in case
+        })
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', phone: '', message: '', honey: '' }); // Clear form
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      setStatus('error');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -83,70 +128,117 @@ const Contact: React.FC = () => {
                 <p className="text-slate-500">We typically respond within 24 hours.</p>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium"
-                      placeholder="Your Full Name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium"
-                      placeholder="email@address.com"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Phone</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium"
-                    placeholder="Mobile Number"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="message" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    required
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium resize-none"
-                    placeholder="How can we help you?"
-                  ></textarea>
-                </div>
+            {status === 'success' ? (
+              <div className="bg-green-50 border border-green-200 rounded-[2rem] p-10 text-center animate-in fade-in zoom-in duration-300">
+                 <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 size={40} />
+                 </div>
+                 <h4 className="text-2xl font-bold text-slate-900 mb-4">Message Sent!</h4>
+                 <p className="text-slate-600 mb-8 max-w-md mx-auto">
+                    Thanks for reaching out to Ryze. We've received your enquiry and will be in touch with you shortly.
+                 </p>
+                 <button 
+                    onClick={() => setStatus('idle')}
+                    className="px-8 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+                 >
+                    Send Another Message
+                 </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6 relative">
+                  {status === 'error' && (
+                    <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 border border-red-100 mb-6">
+                       <AlertCircle size={20} />
+                       <span className="font-medium">Something went wrong. Please try again or call us directly.</span>
+                    </div>
+                  )}
 
-                <button
-                  type="submit"
-                  className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 hover:-translate-y-1 transition-all text-lg"
-                >
-                  Submit Enquiry
-                </button>
-            </form>
+                  {/* Honeypot Field - Hidden from humans */}
+                  <input 
+                    type="text" 
+                    name="honey" 
+                    value={formData.honey}
+                    onChange={handleChange}
+                    style={{ display: 'none' }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Name</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        value={formData.name}
+                        onChange={handleChange}
+                        disabled={status === 'sending'}
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                        placeholder="Your Full Name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={status === 'sending'}
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                        placeholder="email@address.com"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Phone</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      disabled={status === 'sending'}
+                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                      placeholder="Mobile Number"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="message" className="block text-sm font-bold text-slate-700 uppercase tracking-wider">Message</label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={6}
+                      required
+                      value={formData.message}
+                      onChange={handleChange}
+                      disabled={status === 'sending'}
+                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-ryze focus:bg-white outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
+                      placeholder="How can we help you?"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 hover:-translate-y-1 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    {status === 'sending' ? (
+                      <>
+                        <Loader2 size={24} className="animate-spin" /> Sending...
+                      </>
+                    ) : (
+                      <>Submit Enquiry</>
+                    )}
+                  </button>
+              </form>
+            )}
          </div>
       </section>
 
@@ -171,7 +263,7 @@ const Contact: React.FC = () => {
               <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><Mail size={20} /></div>
               <div>
                  <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Email</div>
-                 <div className="font-bold text-lg">ryzeeducation@outlook.com</div>
+                 <div className="font-bold text-lg">ryzeeducationhq@gmail.com</div>
               </div>
            </div>
         </div>

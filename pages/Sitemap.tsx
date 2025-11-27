@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+// @ts-ignore
 import { Link } from 'react-router-dom';
 import { ChevronRight, Home, BookOpen, Shield, LayoutDashboard } from 'lucide-react';
 
@@ -20,6 +21,7 @@ const Sitemap: React.FC = () => {
                 { name: "Ryze AI", path: "/ryze-ai" },
                 { name: "Pricing", path: "/pricing" },
                 { name: "Contact", path: "/contact" },
+                { name: "FAQ", path: "/faq" },
             ]
         },
         {
@@ -35,8 +37,8 @@ const Sitemap: React.FC = () => {
                 { name: "Year 5 English", path: "/primary/year-5-english" },
                 { name: "Year 6 Mathematics", path: "/primary/year-6-maths" },
                 { name: "Year 6 English", path: "/primary/year-6-english" },
-                { name: "OC Preparation", path: "/primary/oc-preparation" },
-                { name: "Selective Prep", path: "/primary/selective-preparation" },
+                { name: "OC Exam Preparation", path: "/primary/oc-preparation" },
+                { name: "Selective Exam Preparation", path: "/primary/selective-preparation" },
             ]
         },
         {
@@ -59,6 +61,7 @@ const Sitemap: React.FC = () => {
             title: "Portals",
             icon: LayoutDashboard,
             links: [
+                { name: "Dashboard Login", path: "/login" },
                 { name: "Student Portal", path: "/portal" },
                 { name: "Parent Portal", path: "/parent-portal" },
             ]

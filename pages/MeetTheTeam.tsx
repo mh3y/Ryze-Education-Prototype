@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as motionOriginal } from 'framer-motion';
+const motion = motionOriginal as any;
 
 const MeetTheTeam: React.FC = () => {
   const team = [

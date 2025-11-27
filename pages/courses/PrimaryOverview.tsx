@@ -19,7 +19,7 @@ const PrimaryOverview: React.FC = () => {
     },
     { 
       name: 'Year 4', 
-      desc: 'OC Prep', 
+      desc: 'OC Exam Preparation', 
       subLinks: [
         { name: 'Mathematics', path: '/primary/year-4-maths' },
         { name: 'English', path: '/primary/year-4-english' }
@@ -27,7 +27,7 @@ const PrimaryOverview: React.FC = () => {
     },
     { 
       name: 'Year 5', 
-      desc: 'Selective Prep', 
+      desc: 'Selective Exam Preparation', 
       subLinks: [
         { name: 'Mathematics', path: '/primary/year-5-maths' },
         { name: 'English', path: '/primary/year-5-english' }
@@ -41,8 +41,8 @@ const PrimaryOverview: React.FC = () => {
         { name: 'English', path: '/primary/year-6-english' }
       ]
     },
-    { name: 'OC Preparation', path: '/primary/oc-preparation', desc: 'Specialised', highlight: true },
-    { name: 'Selective Prep', path: '/primary/selective-preparation', desc: 'Intensive', highlight: true },
+    { name: 'OC Exam Preparation', path: '/primary/oc-preparation', desc: 'Specialised', highlight: true },
+    { name: 'Selective Exam Preparation', path: '/primary/selective-preparation', desc: 'Intensive', highlight: true },
   ];
 
   return (
@@ -153,7 +153,7 @@ const PrimaryOverview: React.FC = () => {
                         align: "right"
                      },
                      { 
-                        title: "OC Prep: Critical Thinking", 
+                        title: "OC Exam Preparation: Critical Thinking", 
                         desc: "Introduction to non-verbal reasoning and complex problem solving. We teach students *how* to think, not just what to think.", 
                         icon: Brain,
                         align: "left"

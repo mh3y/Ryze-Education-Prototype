@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Lock, Mail, ArrowRight, GraduationCap } from 'lucide-react';
+// @ts-ignore
 import { Link, useNavigate } from 'react-router-dom';
 
 const StudentPortal: React.FC = () => {

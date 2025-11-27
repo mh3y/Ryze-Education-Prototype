@@ -1,3 +1,4 @@
+
 import { CourseData } from '../types';
 import { Target, Users, TrendingUp, Brain, Award, BarChart3, GraduationCap, Layers, Check, PenTool, Timer, Lightbulb, MessageSquare, Calculator, Smile, FileText, Zap, Compass, GitBranch, Puzzle, Sparkles, BookOpen } from 'lucide-react';
 
@@ -232,7 +233,7 @@ export const courses: Record<string, CourseData> = {
           { title: 'Transformations', description: 'Translation, reflection, and rotation (flip, slide, turn).' },
           { title: 'Mixed Operations', description: 'Order of operations introduction.' },
           { title: 'Mathematical Reasoning', description: 'Logic puzzles and spatial reasoning tasks.' },
-          { title: 'OC Prep Intro', description: 'Introduction to multiple-choice reasoning questions.' },
+          { title: 'OC Exam Preparation Intro', description: 'Introduction to multiple-choice reasoning questions.' },
           { title: 'Revision: Number', description: 'Consolidating all number concepts.' },
           { title: 'Final Exam', description: 'Year 4 comprehensive assessment.' }
         ]
@@ -684,7 +685,7 @@ export const courses: Record<string, CourseData> = {
   },
   'selective-preparation': {
     id: 'selective-preparation',
-    title: 'Selective Exam Prep',
+    title: 'Selective Exam Preparation',
     gradeLevel: 'Year 5-6',
     category: 'Primary',
     heroImage: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
