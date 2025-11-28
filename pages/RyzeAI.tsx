@@ -239,7 +239,7 @@ const RyzeAI: React.FC = () => {
          size: Math.random() * 1.2 + 0.3, 
          baseOpacity,
          opacity: 0,
-         speed: Math.random() * 0.05, // Slower, more majestic drift
+         speed: Math.random() * 0.02, // Slower, more majestic drift
          twinkleSpeed: 0.01 + Math.random() * 0.03, // Slower twinkle
          twinklePhase: Math.random() * Math.PI * 2,
          color: isGold ? `255, 200, 50` : `220, 230, 255`
@@ -288,7 +288,7 @@ const RyzeAI: React.FC = () => {
            x: Math.random() * width,
            y: Math.random() * (height * 0.5), // Start in top 50%
            len: Math.random() * 120 + 80, // Longer tails
-           speed: Math.random() * 10 + 5, // Slower speed
+           speed: Math.random() * 5 + 2, // Slower speed
            opacity: 1
         });
      }
@@ -358,14 +358,6 @@ const RyzeAI: React.FC = () => {
         {/* The Milky Way Band - Boosted opacity and blending */}
         <div 
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[70%] bg-gradient-to-r from-transparent via-indigo-600/30 to-transparent blur-[120px] rotate-[-45deg] transform-gpu mix-blend-screen"
-          style={{ willChange: 'transform' }}
-        ></div>
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[50%] bg-gradient-to-r from-transparent via-purple-500/20 to-transparent blur-[90px] rotate-[-45deg] transform-gpu mix-blend-screen"
-          style={{ willChange: 'transform' }}
-        ></div>
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[30%] bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent blur-[60px] rotate-[-45deg] transform-gpu mix-blend-screen"
           style={{ willChange: 'transform' }}
         ></div>
      </div>

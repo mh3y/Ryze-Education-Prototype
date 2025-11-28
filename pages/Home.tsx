@@ -198,7 +198,7 @@ const Home: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-100 shadow-sm text-slate-600 text-sm font-semibold tracking-wide mb-2 mx-auto lg:mx-0"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-ryze/10 border border-ryze/20 shadow-sm text-ryze-600 text-sm font-bold tracking-wide mb-2 mx-auto lg:mx-0"
                   >
                     <Sparkles size={14} className="text-ryze" />
                     <span>{t("SYDNEY'S MOST EFFECTIVE TUTORING")}</span>
