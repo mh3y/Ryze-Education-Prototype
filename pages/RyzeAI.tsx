@@ -170,9 +170,9 @@ const RyzeAI: React.FC = () => {
    let height = window.innerHeight;
   
    const getStarCount = (w: number) => {
-     if (w < 768) return 50;  // Reduced for cleaner look
-     if (w < 1024) return 100;
-     return 200; // significantly reduced from 600 for a less cluttered, higher quality feel
+     if (w < 768) return 150;  
+     if (w < 1024) return 300;
+     return 600; // Increased count slightly, but logic will ensure they are small and sharp
    };
 
 
@@ -217,32 +217,32 @@ const RyzeAI: React.FC = () => {
    const stars: Star[] = [];
    const shootingStars: ShootingStar[] = [];
    let shootingStarTimer = 0;
-   const SHOOTING_STAR_PROBABILITY = 0.03; 
+   const SHOOTING_STAR_PROBABILITY = 0.02; 
   
    const initStars = () => {
      stars.length = 0;
      const count = getStarCount(width);
      
      for (let i = 0; i < count; i++) {
-       // Significantly brighter base stars
-       const baseOpacity = Math.random() * 0.7 + 0.3;
-       // Gold stars are rarer but brighter
-       const isGold = Math.random() < 0.20; 
-       
-       // Milky Way bias: Concentrate some stars towards the center diagonal
-       const biasX = Math.random() > 0.5 ? Math.random() * width : (width/2 + (Math.random() - 0.5) * width * 0.5);
+       // Star colors: Cool White, Warm White, Rare Gold
+       const r = Math.random();
+       let color = "255, 255, 255"; // Pure white
+       if (r > 0.8) color = "200, 220, 255"; // Blue-ish
+       else if (r > 0.95) color = "255, 200, 100"; // Gold-ish (Rare)
+
+       const baseOpacity = Math.random() * 0.8 + 0.2; // Brighter range
        
        stars.push({
-         x: biasX,
+         x: Math.random() * width,
          y: Math.random() * height,
-         // Smaller, sharper stars for 4k feel (0.3px to 1.5px range)
-         size: Math.random() * 1.2 + 0.3, 
+         // Smaller size range for "4K" sharpness (0.2px to 1.2px)
+         size: Math.random() * 1.0 + 0.2, 
          baseOpacity,
          opacity: 0,
-         speed: Math.random() * 0.02, // Slower, more majestic drift
-         twinkleSpeed: 0.01 + Math.random() * 0.03, // Slower twinkle
+         speed: Math.random() * 0.02 + 0.005, // Extremely slow drift
+         twinkleSpeed: 0.005 + Math.random() * 0.02, 
          twinklePhase: Math.random() * Math.PI * 2,
-         color: isGold ? `255, 200, 50` : `220, 230, 255`
+         color
        });
      }
    };
@@ -257,38 +257,41 @@ const RyzeAI: React.FC = () => {
      // --- Static Stars ---
      stars.forEach(star => {
        star.twinklePhase += star.twinkleSpeed;
-       // Sine wave for smooth twinkling - range 0.5 to 1.5 for brightness boost
-       const twinkle = Math.sin(star.twinklePhase) * 0.5 + 1.0;
+       // Sine wave for smooth twinkling - range 0.4 to 1.4
+       const twinkle = Math.sin(star.twinklePhase) * 0.5 + 0.9;
+       const currentOpacity = Math.min(1, star.baseOpacity * twinkle);
        
-       // Draw Glow (Corona) for larger stars - subtle but high quality
-       if (star.size > 1.0) {
+       // Draw Glow (Halo) - Only for larger stars to reduce draw calls
+       if (star.size > 0.8) {
           ctx.beginPath();
-          ctx.arc(star.x, star.y, star.size * 4, 0, Math.PI * 2);
-          // Very faint, large corona for atmospheric depth
-          ctx.fillStyle = `rgba(${star.color}, ${star.baseOpacity * 0.1 * twinkle})`;
+          ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${star.color}, ${currentOpacity * 0.15})`; // Very faint bloom
           ctx.fill();
        }
 
-       // Draw Core - boosted opacity for sharpness
+       // Draw Core - The "4K" Pixel
        ctx.beginPath();
-       ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-       ctx.fillStyle = `rgba(${star.color}, ${Math.min(1, star.baseOpacity * twinkle)})`;
+       ctx.arc(star.x, star.y, star.size * 0.7, 0, Math.PI * 2); // Tight core
+       ctx.fillStyle = `rgba(${star.color}, ${currentOpacity})`;
        ctx.fill();
 
        // Parallax/Drift
        star.y -= star.speed;
-       if (star.y < -10) star.y = height + 10;
+       if (star.y < -10) {
+           star.y = height + 10;
+           star.x = Math.random() * width; // Randomize X on reset to prevent patterns
+       }
      });
 
      // --- Shooting Stars ---
      shootingStarTimer++;
-     if (shootingStarTimer > 80 && Math.random() < SHOOTING_STAR_PROBABILITY) {
+     if (shootingStarTimer > 100 && Math.random() < SHOOTING_STAR_PROBABILITY) {
         shootingStarTimer = 0;
         shootingStars.push({
            x: Math.random() * width,
-           y: Math.random() * (height * 0.5), // Start in top 50%
-           len: Math.random() * 120 + 80, // Longer tails
-           speed: Math.random() * 5 + 2, // Slower speed
+           y: Math.random() * (height * 0.4), // Start in top 40%
+           len: Math.random() * 100 + 50, // Length
+           speed: Math.random() * 4 + 2, // Slow, observable speed
            opacity: 1
         });
      }
@@ -297,34 +300,30 @@ const RyzeAI: React.FC = () => {
         const star = shootingStars[i];
         
         star.x += star.speed;
-        star.y += star.speed * 0.5; // Steep diagonal
-        star.opacity -= 0.02;
+        star.y += star.speed * 0.4; // Diagonal trajectory
+        star.opacity -= 0.015; // Slow fade out
 
         if (star.opacity <= 0) {
            shootingStars.splice(i, 1);
         } else {
            ctx.beginPath();
-           // Brighter, longer gradient tail
-           const grad = ctx.createLinearGradient(star.x, star.y, star.x - star.len, star.y - star.len * 0.5);
+           // Crisp linear gradient tail
+           const grad = ctx.createLinearGradient(star.x, star.y, star.x - star.len, star.y - star.len * 0.4);
            grad.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
-           grad.addColorStop(0.1, `rgba(200, 220, 255, ${star.opacity * 0.8})`);
            grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
            
            ctx.strokeStyle = grad;
-           ctx.lineWidth = 2; // Slightly thinner for sharpness
+           ctx.lineWidth = 1.5; // Fine line
            ctx.lineCap = 'round';
            ctx.moveTo(star.x, star.y);
-           ctx.lineTo(star.x - star.len, star.y - star.len * 0.5);
+           ctx.lineTo(star.x - star.len, star.y - star.len * 0.4);
            ctx.stroke();
            
-           // Head of the shooting star (glowing orb)
+           // Head of the shooting star
            ctx.beginPath();
-           ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
+           ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2);
            ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-           ctx.shadowBlur = 10;
-           ctx.shadowColor = "white";
            ctx.fill();
-           ctx.shadowBlur = 0;
         }
      }
 
@@ -347,43 +346,13 @@ const RyzeAI: React.FC = () => {
      className="min-h-screen bg-[#050510] text-white overflow-x-hidden selection:bg-[#FFB000] selection:text-black relative font-sans"
      style={{ fontFamily: "'Inter', sans-serif" }}
    >
-     {/* 1. Canvas Layer (Stars + Shooting Stars) - z-index 10 to sit above nebula but below content */}
-     <canvas ref={canvasRef} className="fixed inset-0 z-10 pointer-events-none mix-blend-screen" />
+     {/* 1. Canvas Layer (Stars + Shooting Stars) - The ONLY background element */}
+     <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
     
-     {/* 2. Milky Way Nebula Layer - Enhanced Visibility */}
+     {/* 2. Deep Vignette - Pure black, no color tint, just depth */}
      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Deep Galaxy Void Vignette - Reduced opacity to let stars shine through */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_80%)] opacity-60 z-20"></div>
-        
-        {/* The Milky Way Band - Boosted opacity and blending */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[70%] bg-gradient-to-r from-transparent via-indigo-600/30 to-transparent blur-[120px] rotate-[-45deg] transform-gpu mix-blend-screen"
-          style={{ willChange: 'transform' }}
-        ></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-80"></div>
      </div>
-    
-     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-       {/* Animated Atmospheric Blobs - Toned down opacity to prevent washout */}
-       <motion.div
-         animate={{
-           scale: [1, 1.2, 1],
-           opacity: [0.05, 0.1, 0.05], // Reduced opacity
-           x: [0, 50, 0]
-         }}
-         transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-         className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-[#FFB000] rounded-full blur-[150px] will-change-transform mix-blend-screen"
-       />
-       <motion.div
-          animate={{
-           scale: [1, 1.1, 1],
-           opacity: [0.05, 0.1, 0.05], // Reduced opacity
-           x: [0, -30, 0]
-         }}
-         transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-         className="absolute bottom-[-10%] right-[-10%] w-[900px] h-[900px] bg-indigo-900 rounded-full blur-[150px] will-change-transform mix-blend-screen"
-       />
-     </div>
-
 
      <motion.div
        initial={{ opacity: 0, y: -20 }}
@@ -472,9 +441,8 @@ const RyzeAI: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="mb-32 md:mb-40 relative group"
           >
-             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FFB000] via-transparent to-indigo-500 rounded-3xl opacity-20 group-hover:opacity-50 blur transition duration-1000"></div>
-             {/* Slightly more opaque background to ensure text legibility over bright stars */}
-             <div className="relative bg-[#0a0f1e]/90 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/5 shadow-2xl">
+             {/* Simple glass background, no colored gradients */}
+             <div className="relative bg-[#0a0f1e]/80 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/5 shadow-2xl">
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                   <div className="lg:col-span-4">
                      <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t("The Real Problem")}</h2>
@@ -533,7 +501,7 @@ const RyzeAI: React.FC = () => {
                     color: "#4ade80"
                   }
                 ].map((item, idx) => (
-                  <SpotlightCard key={idx} className="h-full bg-[#0d1226]/90 border-slate-800 backdrop-blur-md">
+                  <SpotlightCard key={idx} className="h-full bg-[#0d1226]/80 border-slate-800 backdrop-blur-md">
                      <div className="p-10 h-full flex flex-col relative z-10">
                         <div className="absolute top-0 right-0 p-6 opacity-10">
                            <item.icon size={80} />
@@ -621,8 +589,8 @@ const RyzeAI: React.FC = () => {
                    transition={{ duration: 0.6 }}
                    className="relative group"
                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div className="relative bg-[#0f1428]/90 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div className="relative bg-[#0f1428]/80 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
                        <div className="absolute right-[-50px] top-[-50px] opacity-5 pointer-events-none">
                           <GraduationCap size={300} />
                        </div>
@@ -655,8 +623,8 @@ const RyzeAI: React.FC = () => {
                    transition={{ duration: 0.6 }}
                    className="relative group"
                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div className="relative bg-[#0f1428]/90 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div className="relative bg-[#0f1428]/80 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
                         <div className="absolute right-[-50px] top-[-50px] opacity-5 pointer-events-none">
                           <Brain size={300} />
                        </div>
@@ -685,8 +653,7 @@ const RyzeAI: React.FC = () => {
 
 
           <section className="mb-40 relative">
-             <div className="absolute inset-0 bg-gradient-to-b from-[#FFB000]/5 to-transparent rounded-[3rem] blur-2xl"></div>
-             <div className="bg-[#0a0e1f]/90 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
+             <div className="bg-[#0a0e1f]/80 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
                 <div className="relative z-10">
                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t("Development Roadmap")}</h2>
                    <p className="text-slate-400 mb-16 max-w-2xl mx-auto text-lg">
@@ -719,9 +686,8 @@ const RyzeAI: React.FC = () => {
                whileHover={{ scale: 1.01 }}
                className="relative inline-block w-full max-w-4xl"
              >
-                <div className="absolute inset-0 bg-[#FFB000] blur-[60px] opacity-20"></div>
-                <div className="relative bg-[#050510]/95 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
-                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[#FFB000] blur-[100px] opacity-10"></div>
+                <div className="relative bg-[#050510]/80 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 relative z-10">
                       {t("Join the")} <span className="text-[#FFB000]">{t("Future")}</span>
                    </h2>
