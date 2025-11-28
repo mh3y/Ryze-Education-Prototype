@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 // @ts-ignore
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: string }) => (
@@ -25,6 +25,9 @@ const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: str
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
+  const location = useLocation();
+  const isRyzeAi = location.pathname === '/ryze-ai';
+
   const socialLinks = [
     { 
       Icon: Facebook, 
@@ -44,8 +47,16 @@ const Footer: React.FC = () => {
     }
   ];
 
+  // Dynamic Styles based on Page
+  const footerBg = isRyzeAi ? 'bg-[#050510]/90 backdrop-blur-md border-white/10' : 'bg-white border-slate-100';
+  const headingColor = isRyzeAi ? 'text-white' : 'text-slate-900';
+  const textColor = isRyzeAi ? 'text-slate-400' : 'text-slate-500';
+  const linkHoverColor = isRyzeAi ? 'hover:text-[#FFB000]' : 'hover:text-ryze';
+  const cardBg = isRyzeAi ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100';
+  const socialBg = isRyzeAi ? 'bg-white/10 text-slate-300 hover:bg-[#FFB000]' : 'bg-slate-50 text-slate-400 hover:bg-ryze';
+
   return (
-    <footer className="bg-white pt-20 pb-10 border-t border-slate-100">
+    <footer className={`${footerBg} pt-20 pb-10 border-t transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
@@ -59,7 +70,7 @@ const Footer: React.FC = () => {
                 className="h-16 w-auto mb-4"
               />
             </Link>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-xs font-medium">
+            <p className={`${textColor} text-sm leading-relaxed max-w-xs font-medium`}>
               {t("Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.")}
             </p>
             <div className="flex gap-4 pt-2">
@@ -69,7 +80,7 @@ const Footer: React.FC = () => {
                   href={href} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-ryze hover:text-white transition-all duration-300"
+                  className={`w-10 h-10 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
                 >
                   <Icon size={18} />
                 </a>
@@ -79,54 +90,54 @@ const Footer: React.FC = () => {
 
           {/* Links Columns */}
           <div className="lg:col-span-2">
-            <h4 className="font-bold text-slate-900 mb-6 text-sm uppercase tracking-wider">{t("Company")}</h4>
-            <ul className="space-y-4 text-sm text-slate-500 font-medium">
-              <li><Link to="/the-ryze-truth" className="hover:text-ryze transition-colors flex items-center gap-1">{t("The Ryze Truth")}</Link></li>
-              <li><Link to="/meet-the-team" className="hover:text-ryze transition-colors">{t("Meet the Team")}</Link></li>
-              <li><Link to="/how-it-works" className="hover:text-ryze transition-colors">{t("How It Works")}</Link></li>
-              <li><Link to="/ryze-ai" className="hover:text-ryze transition-colors flex items-center gap-2">{t("Ryze AI")} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Company")}</h4>
+            <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
+              <li><Link to="/the-ryze-truth" className={`${linkHoverColor} transition-colors flex items-center gap-1`}>{t("The Ryze Truth")}</Link></li>
+              <li><Link to="/meet-the-team" className={`${linkHoverColor} transition-colors`}>{t("Meet the Team")}</Link></li>
+              <li><Link to="/how-it-works" className={`${linkHoverColor} transition-colors`}>{t("How It Works")}</Link></li>
+              <li><Link to="/ryze-ai" className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t("Ryze AI")} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className="font-bold text-slate-900 mb-6 text-sm uppercase tracking-wider">{t("Resources")}</h4>
-            <ul className="space-y-4 text-sm text-slate-500 font-medium">
-              <li><Link to="/pricing" className="hover:text-ryze transition-colors">{t("Pricing")}</Link></li>
-              <li><Link to="/contact" className="hover:text-ryze transition-colors">{t("Contact Support")}</Link></li>
-              <li><Link to="/faq" className="hover:text-ryze transition-colors">{t("FAQ")}</Link></li>
-              <li><Link to="/login" className="hover:text-ryze transition-colors">{t("Dashboard Login")}</Link></li>
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Resources")}</h4>
+            <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
+              <li><Link to="/pricing" className={`${linkHoverColor} transition-colors`}>{t("Pricing")}</Link></li>
+              <li><Link to="/contact" className={`${linkHoverColor} transition-colors`}>{t("Contact Support")}</Link></li>
+              <li><Link to="/faq" className={`${linkHoverColor} transition-colors`}>{t("FAQ")}</Link></li>
+              <li><Link to="/login" className={`${linkHoverColor} transition-colors`}>{t("Dashboard Login")}</Link></li>
             </ul>
           </div>
 
           {/* Contact Column */}
           <div className="lg:col-span-4">
-            <h4 className="font-bold text-slate-900 mb-6 text-sm uppercase tracking-wider">{t("Contact")}</h4>
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-4">
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Contact")}</h4>
+            <div className={`p-6 rounded-2xl border space-y-4 ${cardBg}`}>
               <div className="flex items-start gap-3">
-                <MapPin size={18} className="text-ryze shrink-0 mt-1" />
-                <span className="text-sm text-slate-600 font-medium">Sydney, NSW Australia</span>
+                <MapPin size={18} className="text-[#FFB000] shrink-0 mt-1" />
+                <span className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'}`}>Sydney, NSW Australia</span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone size={18} className="text-ryze shrink-0" />
-                <a href="tel:+61413885839" className="text-sm text-slate-600 font-medium hover:text-ryze">+61 413 885 839</a>
+                <Phone size={18} className="text-[#FFB000] shrink-0" />
+                <a href="tel:+61413885839" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>+61 413 885 839</a>
               </div>
               <div className="flex items-center gap-3">
-                <Mail size={18} className="text-ryze shrink-0" />
-                <a href="mailto:ryzeeducation@outlook.com" className="text-sm text-slate-600 font-medium hover:text-ryze">ryzeeducation@outlook.com</a>
+                <Mail size={18} className="text-[#FFB000] shrink-0" />
+                <a href="mailto:ryzeeducation@outlook.com" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>ryzeeducation@outlook.com</a>
               </div>
             </div>
           </div>
 
         </div>
 
-        <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-slate-400 font-medium">
+        <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
+          <p className={`text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-400'}`}>
             © {new Date().getFullYear()} Ryze Education. All rights reserved.
           </p>
-          <div className="flex space-x-6 text-xs text-slate-400 font-medium">
-            <Link to="/privacy" className="hover:text-ryze transition-colors">{t("Privacy Policy")}</Link>
-            <Link to="/terms" className="hover:text-ryze transition-colors">{t("Terms and Conditions")}</Link>
-            <Link to="/sitemap" className="hover:text-ryze transition-colors">{t("Sitemap")}</Link>
+          <div className={`flex space-x-6 text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-400'}`}>
+            <Link to="/privacy" className={`${linkHoverColor} transition-colors`}>{t("Privacy Policy")}</Link>
+            <Link to="/terms" className={`${linkHoverColor} transition-colors`}>{t("Terms and Conditions")}</Link>
+            <Link to="/sitemap" className={`${linkHoverColor} transition-colors`}>{t("Sitemap")}</Link>
           </div>
         </div>
       </div>

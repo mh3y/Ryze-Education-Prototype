@@ -24,7 +24,7 @@ const SpotlightCard: React.FC<{ children: React.ReactNode; className?: string }>
 
  return (
    <div
-     className={`group relative border border-slate-800/50 bg-slate-900/50 overflow-hidden rounded-3xl ${className}`}
+     className={`group relative border border-slate-800/50 bg-slate-900/30 overflow-hidden rounded-3xl ${className}`}
      onMouseMove={handleMouseMove}
      onMouseEnter={() => setIsHovered(true)}
      onMouseLeave={() => setIsHovered(false)}
@@ -104,8 +104,8 @@ const CodeTerminal = () => {
 
 
  return (
-   <div className="w-full max-w-2xl mx-auto bg-[#0f1428]/90 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-2xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-     <div className="flex items-center px-4 py-3 bg-[#0a0f1e] border-b border-slate-800">
+   <div className="w-full max-w-2xl mx-auto bg-[#0f1428]/60 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-2xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
+     <div className="flex items-center px-4 py-3 bg-[#0a0f1e]/80 border-b border-slate-800">
        <div className="flex space-x-2">
          <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
          <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
@@ -291,7 +291,7 @@ const RyzeAI: React.FC = () => {
            x: Math.random() * width,
            y: Math.random() * (height * 0.4), // Start in top 40%
            len: Math.random() * 100 + 50, // Length
-           speed: Math.random() * 4 + 2, // Slow, observable speed
+           speed: Math.random() * 2 + 1, // Reduced shooting star speed
            opacity: 1
         });
      }
@@ -349,9 +349,9 @@ const RyzeAI: React.FC = () => {
      {/* 1. Canvas Layer (Stars + Shooting Stars) - The ONLY background element */}
      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
     
-     {/* 2. Deep Vignette - Pure black, no color tint, just depth */}
+     {/* 2. Deep Vignette - Pure black, reduced opacity to 40% to let stars shine through */}
      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-80"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-40"></div>
      </div>
 
      <motion.div
@@ -362,7 +362,7 @@ const RyzeAI: React.FC = () => {
      >
        <div className="relative group cursor-default">
          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FFB000] to-orange-600 rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
-         <div className="relative px-5 py-2 bg-[#0a0f1e] rounded-full border border-[#FFB000]/30 flex items-center gap-2">
+         <div className="relative px-5 py-2 bg-[#0a0f1e]/80 rounded-full border border-[#FFB000]/30 flex items-center gap-2 backdrop-blur-md">
            <span className="w-2 h-2 rounded-full bg-[#FFB000] animate-pulse"></span>
            <span className="text-[#FFB000] font-semibold text-xs tracking-wide uppercase">{t("Beta Access")}</span>
          </div>
@@ -441,8 +441,8 @@ const RyzeAI: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="mb-32 md:mb-40 relative group"
           >
-             {/* Simple glass background, no colored gradients */}
-             <div className="relative bg-[#0a0f1e]/80 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/5 shadow-2xl">
+             {/* Transparency increased from 80% to 30% for star visibility */}
+             <div className="relative bg-[#0a0f1e]/30 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/10 shadow-2xl">
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                   <div className="lg:col-span-4">
                      <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t("The Real Problem")}</h2>
@@ -501,7 +501,8 @@ const RyzeAI: React.FC = () => {
                     color: "#4ade80"
                   }
                 ].map((item, idx) => (
-                  <SpotlightCard key={idx} className="h-full bg-[#0d1226]/80 border-slate-800 backdrop-blur-md">
+                  // Transparency set to 30% via class
+                  <SpotlightCard key={idx} className="h-full bg-[#0d1226]/30 border-slate-800 backdrop-blur-md">
                      <div className="p-10 h-full flex flex-col relative z-10">
                         <div className="absolute top-0 right-0 p-6 opacity-10">
                            <item.icon size={80} />
@@ -590,7 +591,8 @@ const RyzeAI: React.FC = () => {
                    className="relative group"
                  >
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div className="relative bg-[#0f1428]/80 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
+                    {/* Transparency reduced to 30% */}
+                    <div className="relative bg-[#0f1428]/30 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
                        <div className="absolute right-[-50px] top-[-50px] opacity-5 pointer-events-none">
                           <GraduationCap size={300} />
                        </div>
@@ -624,7 +626,8 @@ const RyzeAI: React.FC = () => {
                    className="relative group"
                  >
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div className="relative bg-[#0f1428]/80 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
+                    {/* Transparency reduced to 30% */}
+                    <div className="relative bg-[#0f1428]/30 backdrop-blur-md p-10 md:p-12 rounded-[2.5rem] border border-slate-800 h-full overflow-hidden">
                         <div className="absolute right-[-50px] top-[-50px] opacity-5 pointer-events-none">
                           <Brain size={300} />
                        </div>
@@ -653,7 +656,8 @@ const RyzeAI: React.FC = () => {
 
 
           <section className="mb-40 relative">
-             <div className="bg-[#0a0e1f]/80 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
+             {/* Transparency reduced to 30% */}
+             <div className="bg-[#0a0e1f]/30 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
                 <div className="relative z-10">
                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t("Development Roadmap")}</h2>
                    <p className="text-slate-400 mb-16 max-w-2xl mx-auto text-lg">
@@ -687,7 +691,8 @@ const RyzeAI: React.FC = () => {
                className="relative inline-block w-full max-w-4xl"
              >
                 <div className="absolute inset-0 bg-[#FFB000] blur-[100px] opacity-10"></div>
-                <div className="relative bg-[#050510]/80 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
+                {/* Transparency reduced to 30% */}
+                <div className="relative bg-[#050510]/30 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 relative z-10">
                       {t("Join the")} <span className="text-[#FFB000]">{t("Future")}</span>
                    </h2>
