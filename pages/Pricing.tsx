@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, Star, MapPin, Laptop, HelpCircle, Layers, GraduationCap, Zap } from 'lucide-react';
+import { Check, Star, MapPin, Laptop, HelpCircle, Layers, GraduationCap, Zap, Calendar, CreditCard, RefreshCw, Users, Gift } from 'lucide-react';
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { motion as motionOriginal, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,8 @@ type YearLevel =
 interface PriceConfig {
   baseRate: number; // Private In-Person Hourly Rate
   lessonDuration: number; // Hours per lesson
+  fixedTermPrice?: number; // Optional override for fixed pricing (original)
+  promoTermPrice?: number; // Optional override for promo pricing
 }
 
 const PRICING_DB: Record<string, Record<string, PriceConfig>> = {
@@ -52,26 +54,123 @@ const PRICING_DB: Record<string, Record<string, PriceConfig>> = {
   },
   
   // Secondary
-  'Year 7': { 'Mathematics': { baseRate: 80, lessonDuration: 2 } },
-  'Year 8': { 'Mathematics': { baseRate: 80, lessonDuration: 2 } },
-  'Year 9': { 'Mathematics': { baseRate: 90, lessonDuration: 2 } },
-  'Year 10': { 'Mathematics': { baseRate: 90, lessonDuration: 2 } },
+  'Year 7': { 'Mathematics': { baseRate: 80, lessonDuration: 2, fixedTermPrice: 1200, promoTermPrice: 1000 } },
+  'Year 8': { 'Mathematics': { baseRate: 80, lessonDuration: 2, fixedTermPrice: 1200, promoTermPrice: 1000 } },
+  'Year 9': { 'Mathematics': { baseRate: 90, lessonDuration: 2, fixedTermPrice: 1350, promoTermPrice: 1100 } },
+  'Year 10': { 'Mathematics': { baseRate: 90, lessonDuration: 2, fixedTermPrice: 1350, promoTermPrice: 1100 } },
   
   // Senior
   'Year 11': { 
-    'Mathematics Advanced': { baseRate: 100, lessonDuration: 3 }, 
-    'Maths Ext 1': { baseRate: 120, lessonDuration: 3 }
+    'Mathematics Advanced': { baseRate: 100, lessonDuration: 3, fixedTermPrice: 2150, promoTermPrice: 1890 }, 
+    'Maths Ext 1': { baseRate: 120, lessonDuration: 3, fixedTermPrice: 2150, promoTermPrice: 1890 }
   },
   'Year 12': { 
-    'Mathematics Advanced': { baseRate: 120, lessonDuration: 3 }, 
-    'Maths Ext 1': { baseRate: 135, lessonDuration: 3 },
-    'Maths Ext 2': { baseRate: 150, lessonDuration: 3 }
+    'Mathematics Advanced': { baseRate: 120, lessonDuration: 3, fixedTermPrice: 2268, promoTermPrice: 2025 }, 
+    'Maths Ext 1': { baseRate: 135, lessonDuration: 3, fixedTermPrice: 2552, promoTermPrice: 2025 },
+    'Maths Ext 2': { baseRate: 150, lessonDuration: 3, fixedTermPrice: 2835, promoTermPrice: 2160 }
   }
 };
 
 const CATEGORY_MAP: Record<Category, YearLevel[]> = {
   'Primary': ['Year 3', 'Year 4', 'Year 5', 'Year 6', 'OC Exam Preparation', 'Selective Exam Preparation'],
   'Secondary': ['Year 7', 'Year 8', 'Year 9', 'Year 10', 'Year 11', 'Year 12']
+};
+
+// Available Discounts Component
+const DiscountsSection = () => {
+  const { t } = useLanguage();
+  return (
+    <div className="max-w-6xl mx-auto px-4 mt-24 mb-24">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl font-bold text-slate-900 mb-4">{t("Available Discounts")}</h2>
+        <p className="text-slate-500 text-lg max-w-2xl mx-auto">{t("Save up to 25% through early enrolment, multiple subjects, upfront payments, and referrals.")}</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Card 1: Early Enrolments */}
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+              <Calendar size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{t("Early Enrolments")}</h3>
+          </div>
+          <ul className="space-y-4">
+            <li className="flex items-start gap-3">
+              <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">7.5%</span>
+              <span className="text-slate-600 text-sm mt-0.5">{t("before Dec 31, 2025")} <br/><span className="text-slate-400 text-xs">{t("(included above)")}</span></span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">5%</span>
+              <span className="text-slate-600 text-sm">{t("before Jan 31, 2026")}</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Card 2: Pay Upfront */}
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+              <CreditCard size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{t("Pay Year Upfront")}</h3>
+          </div>
+          <p className="text-slate-600 text-sm leading-relaxed">
+            {t("Receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("10% discount")}</span> {t("when you pay for the full year in advance.")}
+          </p>
+        </div>
+
+        {/* Card 3: Rebate Rewards */}
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+              <RefreshCw size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{t("Rebate Rewards")}</h3>
+          </div>
+          <p className="text-slate-600 text-sm leading-relaxed">
+            {t("Alternatively, we offer")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("8% rebate")}</span> {t("/ cash back towards your next course if you decide to continue the following term.")}
+          </p>
+        </div>
+
+        {/* Card 4: Sibling Discounts */}
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+              <Users size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{t("Sibling Discounts")}</h3>
+          </div>
+          <ul className="space-y-4">
+            <li className="flex items-center gap-3">
+              <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">10% off</span>
+              <span className="text-slate-600 text-sm">{t("for the second child")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">15% off</span>
+              <span className="text-slate-600 text-sm">{t("for the 3rd child")}</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Card 5: Referral Bonus - Spans 2 cols on large screens if needed, or fits grid */}
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 lg:col-span-2">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+              <Gift size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{t("Referral Bonus")}</h3>
+          </div>
+          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+            {t("Refer a friend and you’ll both receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("$100 credit")}</span> {t("towards your enrolments.")}
+          </p>
+          <p className="text-xs text-slate-400 italic">
+            {t("*Conditions apply. Credits are applied after successful enrolment.")}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const Pricing: React.FC = () => {
@@ -114,16 +213,38 @@ const Pricing: React.FC = () => {
   const WEEKS_PER_TERM = 9;
   
   // Pricing Calcs
-  const basePrivateRate = config.baseRate;
-  const groupCampusHourly = basePrivateRate * 0.70;
-  const groupOnlineHourly = groupCampusHourly * 0.70;
-  const currentHourlyRate = learningMode === 'campus' ? groupCampusHourly : groupOnlineHourly;
-  const costPerLesson = currentHourlyRate * config.lessonDuration;
-  const totalTermCost = costPerLesson * WEEKS_PER_TERM;
+  const hasPromo = config.promoTermPrice !== undefined;
   
+  let originalPrice = 0;
+  let finalPrice = 0;
+
+  if (hasPromo) {
+      // Use fixed prices if promo exists
+      originalPrice = config.fixedTermPrice || 0;
+      finalPrice = config.promoTermPrice || 0;
+  } else {
+      // Calculate based on rate
+      const basePrivateRate = config.baseRate;
+      const groupCampusHourly = basePrivateRate * 0.70;
+      const groupOnlineHourly = groupCampusHourly * 0.70;
+      const currentHourlyRate = learningMode === 'campus' ? groupCampusHourly : groupOnlineHourly;
+      const costPerLesson = currentHourlyRate * config.lessonDuration;
+      originalPrice = costPerLesson * WEEKS_PER_TERM; // "Original" implies calculated full price here
+      finalPrice = originalPrice;
+  }
+
+  // Adjust for billing period
   const displayPrice = billingPeriod === 'quarterly' 
-    ? Math.round(totalTermCost) 
-    : Math.round(totalTermCost / 3);
+    ? Math.round(finalPrice) 
+    : Math.round(finalPrice / 3);
+    
+  const displayOriginalPrice = billingPeriod === 'quarterly'
+    ? Math.round(originalPrice)
+    : Math.round(originalPrice / 3);
+
+  const saveAmount = billingPeriod === 'quarterly' 
+    ? (displayOriginalPrice - displayPrice) 
+    : (displayOriginalPrice - displayPrice) * 3; // Total term savings shown even on monthly view for impact
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans pb-32">
@@ -281,30 +402,60 @@ const Pricing: React.FC = () => {
                </div>
 
                {/* Mode Switcher */}
-               <div className="flex gap-8 border-b-2 border-[#FFB000]/10 mb-8 relative z-10">
-                  <button 
-                    onClick={() => setLearningMode('campus')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'campus' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
-                  >
-                     <MapPin size={16} /> {t("on-campus")}
-                     {learningMode === 'campus' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
-                  </button>
-                  <button 
-                    onClick={() => setLearningMode('online')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'online' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
-                  >
-                     <Laptop size={16} /> {t("online")}
-                     {learningMode === 'online' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
-                  </button>
-               </div>
+               {!hasPromo && (
+                 <div className="flex gap-8 border-b-2 border-[#FFB000]/10 mb-8 relative z-10">
+                    <button 
+                      onClick={() => setLearningMode('campus')}
+                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'campus' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                       <MapPin size={16} /> {t("on-campus")}
+                       {learningMode === 'campus' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
+                    </button>
+                    <button 
+                      onClick={() => setLearningMode('online')}
+                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'online' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                       <Laptop size={16} /> {t("online")}
+                       {learningMode === 'online' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
+                    </button>
+                 </div>
+               )}
+               
+               {/* Fixed Promo Mode Indicator (if promo active) */}
+               {hasPromo && (
+                  <div className="mb-8 relative z-10">
+                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-200 animate-pulse">
+                        <Zap size={12} fill="currentColor" /> {t("Limited Offer")}
+                     </div>
+                  </div>
+               )}
 
                {/* Price */}
                <div className="mb-8 relative z-10">
-                  <div className="flex items-baseline gap-2">
-                     <span className="text-xl font-bold text-slate-900">$</span>
-                     <span className="text-6xl font-bold text-slate-900 tracking-tight">{displayPrice}</span>
+                  <div className="flex items-end gap-3 flex-wrap">
+                     <div className="flex items-baseline gap-1">
+                        <span className={`text-xl font-bold ${hasPromo ? 'text-red-500' : 'text-slate-900'}`}>$</span>
+                        <span className={`text-6xl font-bold tracking-tight ${
+                           hasPromo 
+                           ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600' 
+                           : 'text-slate-900'
+                        }`}>
+                           {displayPrice}
+                        </span>
+                     </div>
+                     
+                     {hasPromo && (
+                        <div className="flex flex-col mb-2">
+                           <span className="text-slate-400 text-lg font-medium line-through decoration-red-400/50 decoration-2">
+                              ${displayOriginalPrice}
+                           </span>
+                           <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wide">
+                              {t("Save")} ${saveAmount}
+                           </span>
+                        </div>
+                     )}
                   </div>
-                  <span className="text-slate-500 font-medium bg-[#FFB000]/5 px-3 py-1 rounded-lg text-xs">
+                  <span className="text-slate-500 font-medium bg-[#FFB000]/5 px-3 py-1 rounded-lg text-xs mt-2 inline-block">
                      {billingPeriod === 'quarterly' ? t("per term") : t("per month")} &bull; {t("Inc GST")}
                   </span>
                </div>
@@ -400,8 +551,11 @@ const Pricing: React.FC = () => {
 
       </div>
 
+      {/* New Discounts Section */}
+      <DiscountsSection />
+
       {/* FAQ Section */}
-      <section className="max-w-4xl mx-auto px-4 pt-24 pb-12">
+      <section className="max-w-4xl mx-auto px-4 pt-24 pb-12 border-t border-slate-100">
          <h2 className="text-3xl font-bold text-slate-900 text-center mb-16 font-sans">{t("Frequently Asked Questions")}</h2>
          <div className="grid gap-6">
             {FAQS.map((faq, idx) => (

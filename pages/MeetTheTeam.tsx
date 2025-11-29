@@ -43,13 +43,35 @@ const MeetTheTeam: React.FC = () => {
       ]
     },
     {
+      id: "gordon-ye",
+      name: "Mr Gordon Ye",
+      role: "Senior Mentor",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764433092/IMG_5350_mkfwpx.png", 
+      fallbackImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      creds: [
+        "BMaths/BCompSc | Software Engineer",
+        "UNSW Academic Teaching Staff",
+        "Girraween High School Alumni",
+        "<strong>2023 Faculty of Science Prize</strong> for 3rd Year Science (First in Cohort)",
+        "<strong>2023 Faculty of Dean's List</strong>",
+        "<strong>90 WAM</strong> Dean's List Computer Science",
+        "<strong>98</strong> Maths Ext 2 | <strong>98</strong> Maths Ext 1",
+        "<strong>97</strong> Physics | <strong>96</strong> Chemistry"
+      ],
+      bio: [
+        "Gordon brings a unique blend of academic excellence and practical experience to his tutoring. As a member of UNSW's Academic Teaching Staff and a practicing Software Engineer, he connects high school concepts to university-level applications and real-world problem-solving.",
+        "His academic achievements speak for themselves: he ranked first in his Science cohort at UNSW (Faculty Prize), maintains a High Distinction average in Computer Science, and achieved near-perfect scores in Extension 2 Mathematics during his own HSC. He was awarded a full scholarship to pursue a full-time Doctorate (PhD) in Engineering, granted to the brightest students in UNSW's Faculty of Engineering."
+      ]
+    },
+    {
       id: "michael-yang",
       name: "Mr Michael Yang", // Kept English
       role: "Founder & CEO",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
-        "BCom/BCompSc | DevOps Engineer",
+        "BCom/BCompSc UNSW",
+        "DevOps Engineer",
         "The King's School Alumni"
       ],
       bio: [
@@ -96,7 +118,11 @@ const MeetTheTeam: React.FC = () => {
                         alt={member.name} 
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className={`w-full h-full object-cover transition-transform duration-700 ${
+                          member.id === 'gordon-ye' 
+                            ? 'scale-[1.7] group-hover:scale-[1.75]' 
+                            : 'group-hover:scale-105'
+                        }`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                       <div className="absolute bottom-0 left-0 p-8 text-white w-full">
