@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { Starfield } from './components/Starfield';
+import CookieConsent from './components/CookieConsent';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import Home from './pages/Home';
@@ -174,6 +175,7 @@ const AppContent: React.FC = () => {
         </AnimatePresence>
       </main>
       {(!isDashboard && !shouldShowStarfield) && <Footer />}
+      <CookieConsent />
     </div>
   );
 };

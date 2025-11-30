@@ -46,7 +46,7 @@ const MeetTheTeam: React.FC = () => {
       id: "gordon-ye",
       name: "Mr Gordon Ye",
       role: "Senior Mentor",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764433092/IMG_5350_mkfwpx.png", 
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg", 
       fallbackImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
         "BMaths/BCompSc | Software Engineer",
@@ -118,11 +118,7 @@ const MeetTheTeam: React.FC = () => {
                         alt={member.name} 
                         loading="lazy"
                         decoding="async"
-                        className={`w-full h-full object-cover transition-transform duration-700 ${
-                          member.id === 'gordon-ye' 
-                            ? 'scale-[1.7] group-hover:scale-[1.75]' 
-                            : 'group-hover:scale-105'
-                        }`}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                       <div className="absolute bottom-0 left-0 p-8 text-white w-full">

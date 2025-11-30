@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Sitemap: https://ryze.edu.au/sitemap.xml
+
+# Block any admin or private portals
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /portal
+Disallow: /parent-portal
+Disallow: /tutor-portal

@@ -160,6 +160,7 @@ const Home: React.FC = () => {
       id: "mike-nojiri",
       name: "Mike Nojiri",
       role: "Master's in Teaching, BSc(Math)/BCompSc",
+      marks: "98 Maths Ext 2 | 99 Maths Ext 1 | 99 Maths 2U",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
@@ -167,15 +168,17 @@ const Home: React.FC = () => {
       id: "william-gong",
       name: "William Gong",
       role: "PhD - AI & Machine Learning candidate",
+      marks: "99 Maths Ext 2 | 97 Maths Ext 1 | ATAR 99.50",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
-      id: "michael-yang",
-      name: "Michael Yang",
-      role: "BCom/BCompSc | DevOps Engineer",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
-      fallback: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+      id: "gordon-ye",
+      name: "Gordon Ye",
+      role: "BMaths/BCompSc | UNSW Academic Staff",
+      marks: "98 Maths Ext 2 | 98 Maths Ext 1 | 97 Physics | 96 Chem",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
   ];
 
@@ -429,7 +432,8 @@ const Home: React.FC = () => {
                   </div>
                   <div className="pl-2">
                      <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                     <p className="text-slate-500 text-sm font-medium">{t(member.role)}</p>
+                     <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
+                     <p className="text-[#FFB000] text-xs font-bold uppercase tracking-tight">{member.marks}</p>
                   </div>
                </motion.div>
              ))}
