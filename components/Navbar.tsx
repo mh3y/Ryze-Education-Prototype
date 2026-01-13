@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
 
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: "Our philosophy and story." },
-    { name: 'How Ryze Works', path: '/how-it-works', desc: "Our process explained." },
+    { name: 'How Ryze Works', path: '/how-ryze-works', desc: "Our process explained." },
   ];
 
   const navClasses = `fixed w-full z-50 transition-all duration-300 border-b ${
@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
               <button 
                 className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${
                   isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                } ${['/the-ryze-truth', '/how-it-works'].includes(location.pathname) ? 'text-ryze' : ''}`}
+                } ${['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname) ? 'text-ryze' : ''}`}
               >
                 {t('About')} <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
