@@ -83,7 +83,7 @@ const DiscountsSection = () => {
     <div className="max-w-6xl mx-auto px-4 mt-24 mb-24">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-slate-900 mb-4">{t("Available Discounts")}</h2>
-        <p className="text-slate-500 text-lg max-w-2xl mx-auto">{t("Save up to 25% through early enrolment, multiple subjects, upfront payments, and referrals.")}</p>
+        <p className="text-slate-500 text-lg max-w-2xl mx-auto">{t("Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. Reach out to us to discuss how we can help you! ")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,7 +116,7 @@ const DiscountsSection = () => {
             <h3 className="text-xl font-bold text-slate-900">{t("Pay Year Upfront")}</h3>
           </div>
           <p className="text-slate-600 text-sm leading-relaxed">
-            {t("Receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("10% discount")}</span> {t("when you pay for the full year in advance.")}
+            {t("Receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("15% discount")}</span> {t("when you pay for the full year in advance.")}
           </p>
         </div>
 
@@ -129,7 +129,7 @@ const DiscountsSection = () => {
             <h3 className="text-xl font-bold text-slate-900">{t("Rebate Rewards")}</h3>
           </div>
           <p className="text-slate-600 text-sm leading-relaxed">
-            {t("Alternatively, we offer")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("8% rebate")}</span> {t("/ cash back towards your next course if you decide to continue the following term.")}
+            {t("Alternatively, we offer")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("7.5% rebate")}</span> {t("/ cash back towards your next course if you decide to continue the following term.")}
           </p>
         </div>
 

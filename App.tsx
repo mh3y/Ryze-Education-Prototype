@@ -20,19 +20,14 @@ import AdminLogin from './pages/AdminLogin';
 
 // Lazy load heavy pages to enable code splitting
 const TheRyzeTruth = lazy(() => import('./pages/TheRyzeTruth'));
-const MeetTheTeam = lazy(() => import('./pages/MeetTheTeam'));
+const MeetTheTeam = lazy(() => import('./pages/MeetOurTeam'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const RyzeAI = lazy(() => import('./pages/RyzeAI'));
 const Contact = lazy(() => import('./pages/Contact'));
-const PrimaryCourse = lazy(() => import('./pages/courses/PrimaryCourse'));
-const SecondaryCourse = lazy(() => import('./pages/courses/SecondaryCourse'));
-const PrimaryOverview = lazy(() => import('./pages/courses/PrimaryOverview'));
-const SecondaryOverview = lazy(() => import('./pages/courses/SecondaryOverview'));
 const Dashboard = lazy(() => import('./pages/Dashboard')); // New SaaS Dashboard
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
-const FAQ = lazy(() => import('./pages/FAQ'));
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -141,7 +136,6 @@ const AppContent: React.FC = () => {
             <Route path="/ryze-ai" element={<PageWrapper><RyzeAI /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
             <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
-            <Route path="/faq" element={<PageWrapper><FAQ /></PageWrapper>} />
             
             {/* Portal Routes - Now Eager Loaded for Performance */}
             <Route path="/login" element={<PageWrapper><PortalHome /></PageWrapper>} />
@@ -163,14 +157,6 @@ const AppContent: React.FC = () => {
             <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
             <Route path="/privacy" element={<PageWrapper><Privacy /></PageWrapper>} />
             <Route path="/sitemap" element={<PageWrapper><Sitemap /></PageWrapper>} />
-            
-            {/* Overview Routes */}
-            <Route path="/primary" element={<PageWrapper><PrimaryOverview /></PageWrapper>} />
-            <Route path="/secondary" element={<PageWrapper><SecondaryOverview /></PageWrapper>} />
-
-            {/* Specific Course Routes */}
-            <Route path="/primary/:courseId" element={<PageWrapper><PrimaryCourse /></PageWrapper>} />
-            <Route path="/secondary/:courseId" element={<PageWrapper><SecondaryCourse /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </main>

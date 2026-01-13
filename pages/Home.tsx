@@ -391,7 +391,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
              <div className="max-w-2xl">
-                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Meet the Mentors")}</h2>
+                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Meet Your Mentors")}</h2>
                 <p className="text-lg text-slate-500">
                   {t("Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.")}
                 </p>
@@ -520,7 +520,7 @@ const Home: React.FC = () => {
                                 />
                                 <div>
                                     <div className="font-bold text-slate-900 text-lg">Michael Yang</div>
-                                    <div className="text-sm text-slate-500">{t("Founder & CEO")}</div>
+                                    <div className="text-sm text-slate-500">{t("Founder of Ryze Education")}</div>
                                     
                                     {isAvailable ? (
                                       <div className="flex items-center gap-1 mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full w-fit">

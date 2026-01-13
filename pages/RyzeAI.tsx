@@ -676,7 +676,7 @@ const RyzeAI: React.FC = () => {
                        </div>
                        <div className="relative z-10 flex flex-col items-center w-64 opacity-50">
                            <div className="w-3 h-3 bg-slate-700 rounded-full mb-6 border border-slate-500"></div>
-                           <div className="text-white font-bold text-2xl mb-2 tracking-wider">2026</div>
+                           <div className="text-white font-bold text-2xl mb-2 tracking-wider">June 2026</div>
                            <div className="text-slate-400 font-medium">{t("Public Launch")}</div>
                        </div>
                    </div>

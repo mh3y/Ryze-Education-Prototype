@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
             <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Company")}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
               <li><Link to="/the-ryze-truth" className={`${linkHoverColor} transition-colors flex items-center gap-1`}>{t("The Ryze Truth")}</Link></li>
-              <li><Link to="/meet-the-team" className={`${linkHoverColor} transition-colors`}>{t("Meet the Team")}</Link></li>
+              <li><Link to="/meet-the-team" className={`${linkHoverColor} transition-colors`}>{t("Meet Our Team")}</Link></li>
               <li><Link to="/how-it-works" className={`${linkHoverColor} transition-colors`}>{t("How It Works")}</Link></li>
               <li><Link to="/ryze-ai" className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t("Ryze AI")} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
             </ul>
@@ -103,9 +103,8 @@ const Footer: React.FC = () => {
             <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Resources")}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
               <li><Link to="/pricing" className={`${linkHoverColor} transition-colors`}>{t("Pricing")}</Link></li>
-              <li><Link to="/contact" className={`${linkHoverColor} transition-colors`}>{t("Contact Support")}</Link></li>
-              <li><Link to="/faq" className={`${linkHoverColor} transition-colors`}>{t("FAQ")}</Link></li>
               <li><Link to="/login" className={`${linkHoverColor} transition-colors`}>{t("Dashboard Login")}</Link></li>
+              <li><Link to="/contact" className={`${linkHoverColor} transition-colors`}>{t("Contact Us")}</Link></li>
             </ul>
           </div>
 
@@ -123,7 +122,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={18} className="text-[#FFB000] shrink-0" />
-                <a href="mailto:ryzeeducation@outlook.com" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>ryzeeducation@outlook.com</a>
+                <a href="mailto:ryzeeducationgroup@gmail.com" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>ryzeeducationgroup@gmail.com</a>
               </div>
             </div>
           </div>

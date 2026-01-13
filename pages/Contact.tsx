@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Phone, ArrowRight, Send, MapPin, Mail, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Contact: React.FC = () => {
@@ -105,7 +105,7 @@ const Contact: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-sans font-bold text-slate-900 mb-6 tracking-tight">{t("Get in Touch")}</h1>
           <p className="text-xl font-light text-slate-500">
-             {t("Have questions? Ready to enroll? We'd love to hear from you.")}
+             {t("Ready to experience the Ryze difference? Have questions? We'd love to chat with you.")}
           </p>
         </div>
       </div>
@@ -125,7 +125,7 @@ const Contact: React.FC = () => {
                 </p>
 
                 <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center justify-center gap-3 shadow-lg">
-                  +61 413 885 839 <Phone size={20} fill="currentColor" />
+                  Call us now! <Phone size={20} fill="currentColor" />
                 </a>
             </div>
 
@@ -285,33 +285,6 @@ const Contact: React.FC = () => {
             )}
          </div>
       </section>
-
-      {/* Footer Info Strips */}
-      <div className="bg-[#0f172a] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><MapPin size={20} /></div>
-              <div>
-                 <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Location")}</div>
-                 <div className="font-bold text-lg">Sydney, NSW Australia</div>
-              </div>
-           </div>
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><Phone size={20} /></div>
-              <div>
-                 <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Phone")}</div>
-                 <div className="font-bold text-lg">+61 413 885 839</div>
-              </div>
-           </div>
-           <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-12 h-12 bg-ryze rounded-full flex items-center justify-center text-[#0f172a]"><Mail size={20} /></div>
-              <div>
-                 <div className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">{t("Email")}</div>
-                 <div className="font-bold text-lg">ryzeeducationhq@gmail.com</div>
-              </div>
-           </div>
-        </div>
-      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ export const translations: Record<string, string> = {
   // --- Global / Navigation ---
   "About": "关于我们",
   "The Ryze Truth": "Ryze 的初心",
-  "Meet the Team": "精英导师团队",
+  "Meet Our Team": "精英导师团队",
   "FAQ": "常见问题",
   "How It Works": "教学理念与方法",
   "Ryze AI": "Ryze AI", 
