@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
 
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: "Our philosophy and story." },
-    { name: 'How It Works', path: '/how-it-works', desc: "Our process explained." },
+    { name: 'How Ryze Works', path: '/how-it-works', desc: "Our process explained." },
   ];
 
   const navClasses = `fixed w-full z-50 transition-all duration-300 border-b ${
