@@ -1,4 +1,5 @@
-
+import Testimonials from '../components/Testimonials';
+import { testimonials } from '@/data/testimonials';
 import React, { useEffect, useState } from 'react';
 import { motion as motionOriginal, useAnimationControls, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
@@ -289,9 +290,12 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* Features Grid */}
+      <Testimonials />
+
+{/* Features Grid */}
+
       <section className="py-24 md:py-32 px-4 bg-white relative overflow-hidden">
         {/* Colorful Background Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

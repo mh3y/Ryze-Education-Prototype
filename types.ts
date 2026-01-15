@@ -26,6 +26,19 @@ export interface PricingPlan {
   recommended?: boolean;
 }
 
+export interface Testimonial {
+  id: string;
+  reviewerName: string;
+  reviewerType: string;
+  studentGrade: string;
+  school: string;
+  message: string;
+  achievement: string;
+  accent: string;
+  category: string;
+  successReason: string;
+}
+
 // Course Data Types
 export interface Topic {
   title: string;
