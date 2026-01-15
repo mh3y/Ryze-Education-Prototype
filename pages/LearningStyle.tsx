@@ -63,14 +63,14 @@ const LearningStyle: React.FC = () => {
                           className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-400 rounded-full px-4 py-1.5 shadow-lg shadow-orange-500/20"
                       >
                           <Zap className="w-4 h-4 text-white" />
-                          <span className="text-white text-xs font-bold uppercase tracking-wider">Limited Availabilities</span>
+                          <span className="text-white text-xs font-bold uppercase tracking-wider">Limited Availability</span>
                       </motion.div>
                   </div>
                   <div className="text-center my-6">
                       <div className="inline-block p-5 bg-indigo-900/50 rounded-2xl mb-6 border border-indigo-800/50">
                           <FaUser className="text-4xl text-indigo-300" />
                       </div>
-                      <h2 className="text-4xl font-bold text-white mb-2">Private Tutoring</h2>
+                      <h2 className="text-4xl font-bold text-white mb-2">Private Mentorship</h2>
                       <p className="text-lg text-indigo-200/80">One-on-one personalised learning</p>
                   </div>
                   <div className="flex justify-center items-center gap-4 my-4">
@@ -173,7 +173,7 @@ const StructureCard = ({ icon, title, subtitle, features, color }) => (
 
 const PrivateTutoringDetails = () => (
   <div className="bg-slate-50 p-8 md:p-12 rounded-3xl border border-slate-200">
-    <h2 className="text-4xl font-bold text-slate-900 text-center mb-12 tracking-tight">How Our Sydney Private Tutoring Works</h2>
+    <h2 className="text-4xl font-bold text-slate-900 text-center mb-12 tracking-tight">How Our Private Mentorship Works</h2>
     <div className="bg-[#1a1a2e] rounded-2xl p-8 my-12">
         <div className="flex flex-col sm:flex-row items-center gap-8">
             <div>
@@ -199,7 +199,7 @@ const PrivateTutoringDetails = () => (
             <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-indigo-500 text-3xl mr-3">•</span>Choose How You Learn Best</h3>
             <StructureCard icon={<FaLaptop className="text-indigo-500 w-7 h-7" />} title="Online Tutoring" subtitle="Live sessions via Zoom" features={["Study from anywhere in Australia", "Digital whiteboard and screen sharing"]} color="#6366F1" />
             <div className="bg-white p-6 rounded-2xl shadow-sm">
-                <div className="flex items-start gap-4 mb-4">
+                <div className="flex items-start gap-4 mb-2">
                     <div className="p-2 rounded-lg bg-indigo-100">
                         <FaHome className="text-indigo-500 w-7 h-7" />
                     </div>
@@ -208,15 +208,11 @@ const PrivateTutoringDetails = () => (
                         <p className="text-slate-500 text-sm font-light">Face-to-face learning</p>
                     </div>
                 </div>
-                <ul className="space-y-3 mb-4">
-                    <li className="flex items-center gap-3 text-sm">
-                    </li>
-                </ul>
-                <p className="text-slate-500 text-sm font-light mt-4">
+                <p className="text-slate-500 text-sm font-light mt-3">
                     Due to high demand, we’re limiting in-person tutoring to select areas to maintain our quality standards.
                 </p>
-                <p className="text-slate-500 text-sm font-light mt-4">
-                    <Link to="/contact" className="text-indigo-500 font-bold">Contact us for details.</Link>
+                <p className="text-slate-500 text-sm font-light mt-3">
+                    <Link to="/contact" className="text-indigo-500 font-bold">Get in touch for more information.</Link>
                 </p>
             </div>
         </div>
