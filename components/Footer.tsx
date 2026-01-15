@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
               <li><Link to="/the-ryze-truth" className={`${linkHoverColor} transition-colors flex items-center gap-1`}>{t("The Ryze Truth")}</Link></li>
               <li><Link to="/meet-the-team" className={`${linkHoverColor} transition-colors`}>{t("Meet Our Team")}</Link></li>
-              <li><Link to="/how-it-works" className={`${linkHoverColor} transition-colors`}>{t("How It Works")}</Link></li>
+              <li><Link to="/how-ryze-works" className={`${linkHoverColor} transition-colors`}>{t("How It Works")}</Link></li>
               <li><Link to="/ryze-ai" className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t("Ryze AI")} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
             </ul>
           </div>

@@ -132,7 +132,7 @@ const AppContent: React.FC = () => {
             <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
             <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
             <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
-            <Route path="/how-it-works" element={<PageWrapper><HowItWorks /></PageWrapper>} />
+            <Route path="/how-ryze-works" element={<PageWrapper><HowItWorks /></PageWrapper>} />
             <Route path="/ryze-ai" element={<PageWrapper><RyzeAI /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
             <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />

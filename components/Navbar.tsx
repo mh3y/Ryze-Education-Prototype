@@ -139,7 +139,7 @@ const Navbar: React.FC = () => {
                         }`
                       }
                     >
-                      <span className={`block text-sm font-bold ${['/the-ryze-truth', '/how-it-works'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
+                      <span className={`block text-sm font-bold ${['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
                         {t(link.name)}
                       </span>
                       {language === 'en' && (

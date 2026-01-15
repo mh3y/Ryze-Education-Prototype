@@ -17,7 +17,7 @@ const Sitemap: React.FC = () => {
                 { name: "Home", path: "/" },
                 { name: "The Ryze Truth", path: "/the-ryze-truth" },
                 { name: "Meet Our Team", path: "/meet-the-team" },
-                { name: "Methodology", path: "/how-it-works" },
+                { name: "Methodology", path: "/how-ryze-works" },
                 { name: "Ryze AI", path: "/ryze-ai" },
                 { name: "Pricing", path: "/pricing" },
                 { name: "Contact", path: "/contact" },
