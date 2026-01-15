@@ -218,7 +218,7 @@ const Home: React.FC = () => {
               </div>
 
               <p className="text-lg text-slate-600 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
-                {t("Get the individual attention you deserve in our focused small group classes. Experienced tutors, personalised programs, and real results.")}
+                {t("Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.")}
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
