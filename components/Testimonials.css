@@ -1,14 +1,18 @@
 
 .animate-scroll-x {
-    animation: scroll-x 40s linear infinite;
+    animation: scroll-x 15s linear infinite;
 }
 
 .animate-scroll-x-reverse {
-    animation: scroll-x-reverse 40s linear infinite;
+    animation: scroll-x-reverse 15s linear infinite;
 }
 
-.pause-animation:hover {
-    animation-play-state: paused;
+.testimonial-scroll-x {
+    animation: scroll-x 30s linear infinite;
+}
+
+.testimonial-scroll-x-reverse {
+    animation: scroll-x-reverse 30s linear infinite;
 }
 
 @keyframes scroll-x {
@@ -16,13 +20,13 @@
         transform: translateX(0);
     }
     to {
-        transform: translateX(-50%);
+        transform: translateX(-25%);
     }
 }
 
 @keyframes scroll-x-reverse {
     from {
-        transform: translateX(-50%);
+        transform: translateX(-25%);
     }
     to {
         transform: translateX(0);
@@ -37,3 +41,7 @@
   transform: translateY(-5px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
+
+/* .text-halo {
+  text-shadow: 0 0 15px rgba(14, 10, 1, 0.8), 0 0 20px rgba(255, 176, 0, 0.6);
+} */
