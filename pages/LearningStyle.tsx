@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaUsers, FaCalendar, FaCreditCard, FaSync, FaGift, FaComments, FaDollarSign, FaBrain, FaLaptop, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
-import { HelpCircle, Award, Zap, BarChart2, BookOpen, CheckCircle, Users, Clock } from 'lucide-react';
+import { HelpCircle, Award, Zap, BarChart2, BookOpen, CheckCircle, Users, Clock, Star } from 'lucide-react';
 
 const EarlyEnrolmentItem = ({ percentage, dateString }) => {
     const datePart = dateString.replace(/before /i, '').trim();
@@ -52,43 +52,7 @@ const LearningStyle: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-20">
         <div className="flex flex-col lg:flex-row gap-10 justify-center items-stretch">
-          <div className="w-full lg:w-1/2 bg-[#1a1a2e] text-white p-8 rounded-3xl border border-indigo-900/50 shadow-2xl shadow-indigo-900/20 flex flex-col relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-900/40 via-transparent to-transparent"></div>
-              <div className="relative z-10 flex-grow flex flex-col">
-                  <div className="flex justify-between items-start mb-6">
-                      <div className="bg-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">Premium Choice</div>
-                      <motion.div
-                          animate={{ opacity: [0.7, 1, 0.7] }}
-                          transition={{ duration: 1.5, repeat: Infinity, repeatType: 'loop' }}
-                          className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-400 rounded-full px-4 py-1.5 shadow-lg shadow-orange-500/20"
-                      >
-                          <Zap className="w-4 h-4 text-white" />
-                          <span className="text-white text-xs font-bold uppercase tracking-wider">Limited Availability</span>
-                      </motion.div>
-                  </div>
-                  <div className="text-center my-6">
-                      <div className="inline-block p-5 bg-indigo-900/50 rounded-2xl mb-6 border border-indigo-800/50">
-                          <FaUser className="text-4xl text-indigo-300" />
-                      </div>
-                      <h2 className="text-4xl font-bold text-white mb-2">Private Mentorship</h2>
-                      <p className="text-lg text-indigo-200/80">One-on-one personalised learning</p>
-                  </div>
-                  <div className="flex justify-center items-center gap-4 my-4">
-                      <span className="flex items-center gap-2 bg-indigo-900/60 text-indigo-200 px-4 py-2 rounded-full text-sm font-medium"><FaHome /> Face-to-Face</span>
-                      <span className="text-indigo-400/50">or</span>
-                      <span className="flex items-center gap-2 bg-indigo-900/60 text-indigo-200 px-4 py-2 rounded-full text-sm font-medium"><FaLaptop /> Online</span>
-                  </div>
-                  <div className="space-y-5 mb-10 flex-grow mt-8">
-                      <NewFeatureItem title="Mentored by the best" subtitle="Direct access to our industry leading executive team" />
-                      <NewFeatureItem title="Flexible scheduling" subtitle="Sessions that fit your timetable" />
-                      <NewFeatureItem title="100% personalised attention" subtitle="Full focus on your individual learning needs" />
-                      <NewFeatureItem title="Targeted skill development" subtitle="Focus on your specific strengths and weaknesses" />
-                  </div>
-                  <button onClick={() => handleToggle('private')} className="w-full py-4 rounded-xl font-bold text-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-lg shadow-indigo-900/30">Find Out More</button>
-              </div>
-          </div>
-
-          <div className="w-full lg:w-1/2 bg-[#2a2021] text-white p-8 rounded-3xl border border-amber-800/50 shadow-2xl shadow-amber-900/20 flex flex-col relative overflow-hidden">
+        <div className="w-full lg:w-1/2 bg-[#2a2021] text-white p-8 rounded-3xl border border-amber-800/50 shadow-2xl shadow-amber-900/20 flex flex-col relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-amber-900/40 via-transparent to-transparent"></div>
               <div className="relative z-10 flex-grow flex flex-col">
                   <div className="flex justify-between items-start mb-6">
@@ -105,12 +69,50 @@ const LearningStyle: React.FC = () => {
                       <span className="flex items-center gap-2 bg-amber-900/60 text-amber-200 px-4 py-2 rounded-full text-sm font-medium"><FaLaptop /> Online</span>
                   </div>
                   <div className="space-y-5 mb-10 flex-grow mt-8">
-                      <NewFeatureItem title="Cost-effective learning" subtitle="Share costs while maintaining quality" />
-                      <NewFeatureItem title="Peer learning benefits" subtitle="Learn from classmates and their questions" />
-                      <NewFeatureItem title="Social learning environment" subtitle="Build confidence through group interaction" />
-                      <NewFeatureItem title="Small group sizes" subtitle="Maximum 6 students for optimal attention" />
+                      <NewFeatureItem title="Cost-effective learning" subtitle="Share costs while maintaining quality" darkTheme={false} />
+                      <NewFeatureItem title="Peer learning benefits" subtitle="Learn from classmates and their questions" darkTheme={false} />
+                      <NewFeatureItem title="Social learning environment" subtitle="Build confidence through group interaction" darkTheme={false} />
+                      <NewFeatureItem title="Small group sizes" subtitle="Maximum 6 students for optimal attention" darkTheme={false} />
                   </div>
                   <button onClick={() => handleToggle('group')} className="w-full py-4 rounded-xl font-bold text-lg text-slate-900 bg-amber-500 hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-amber-900/30">Find Out More</button>
+              </div>
+          </div>
+
+          <div className="w-full lg:w-1/2 bg-[#0f172a] text-white p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 group-hover:bg-blue-600/30 transition-colors duration-500"></div>
+              <div className="relative z-10 flex-grow flex flex-col">
+                  <div className="flex justify-between items-start mb-6">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                          <Star size={14} className="text-[#FFB000]" /> Premium Choice
+                     </div>
+                      <motion.div
+                          animate={{ opacity: [0.7, 1, 0.7] }}
+                          transition={{ duration: 1.5, repeat: Infinity, repeatType: 'loop' }}
+                          className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-400 rounded-full px-4 py-1.5 shadow-lg shadow-orange-500/20"
+                      >
+                          <Zap className="w-4 h-4 text-white" />
+                          <span className="text-white text-xs font-bold uppercase tracking-wider">Limited Availability</span>
+                      </motion.div>
+                  </div>
+                  <div className="text-center my-6">
+                      <div className="inline-block p-5 bg-white/10 rounded-2xl mb-6 border border-white/10">
+                          <FaUser className="text-4xl text-white" />
+                      </div>
+                      <h2 className="text-4xl font-bold text-white mb-2">Private Mentorship</h2>
+                      <p className="text-lg text-slate-400">One-on-one personalised learning</p>
+                  </div>
+                  <div className="flex justify-center items-center gap-4 my-4">
+                      <span className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-medium"><FaHome /> Face-to-Face</span>
+                      <span className="text-slate-500">or</span>
+                      <span className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-medium"><FaLaptop /> Online</span>
+                  </div>
+                  <div className="space-y-5 mb-10 flex-grow mt-8">
+                      <NewFeatureItem title="Mentored by the best" subtitle="Direct access to our industry leading executive team" darkTheme={true} />
+                      <NewFeatureItem title="Flexible scheduling" subtitle="Sessions that fit your timetable" darkTheme={true} />
+                      <NewFeatureItem title="100% personalised attention" subtitle="Full focus on your individual learning needs" darkTheme={true} />
+                      <NewFeatureItem title="Targeted skill development" subtitle="Focus on your specific strengths and weaknesses" darkTheme={true} />
+                  </div>
+                  <button onClick={() => handleToggle('private')} className="w-full py-4 rounded-xl font-bold text-lg text-[#0f172a] bg-white hover:bg-slate-200 transition-all duration-300 shadow-lg">Find Out More</button>
               </div>
           </div>
         </div>
@@ -131,12 +133,12 @@ const LearningStyle: React.FC = () => {
   );
 };
 
-const NewFeatureItem = ({ title, subtitle }: { title: string, subtitle: string }) => (
+const NewFeatureItem = ({ title, subtitle, darkTheme = true }: { title: string, subtitle: string, darkTheme: boolean }) => (
     <div className="flex items-start gap-3">
-        <CheckCircle className="text-green-400 w-5 h-5 shrink-0 mt-1" />
+        <CheckCircle className={`w-5 h-5 shrink-0 mt-1 ${darkTheme ? 'text-green-400' : 'text-amber-400'}`} />
         <div>
-            <h4 className="font-bold text-white">{title}</h4>
-            <p className="text-slate-400 text-sm font-light">{subtitle}</p>
+            <h4 className={`font-bold ${darkTheme ? 'text-white' : 'text-amber-200/80'}`}>{title}</h4>
+            <p className={`text-sm font-light ${darkTheme ? 'text-slate-400' : 'text-slate-400'}`}>{subtitle}</p>
         </div>
     </div>
 );
@@ -220,7 +222,7 @@ const PrivateTutoringDetails = () => (
     <div className="text-center mt-16">
         <h3 className="text-2xl font-bold text-slate-800 mb-4">Ready to Start Your Success Story?</h3>
         <Link to="/contact">
-          <button className="bg-indigo-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-indigo-700 transition-all">Book Private Tutoring</button>
+          <button className="bg-indigo-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-indigo-700 transition-all">Book Private Mentorship</button>
         </Link>
     </div>
   </div>
@@ -305,10 +307,10 @@ const DiscountsSection = () => (
 );
 
 const FAQ_DATA = [
-    { q: "What is the difference between Campus and Online?", a: "On-campus classes are held at our Sydney centre with a tutor physically present. Online classes are live-streamed with the same tutor, materials, and interactivity, but at a reduced rate." },
-    { q: "Do you offer trial lessons?", a: "Yes! We believe you should experience the difference before committing. We offer a paid trial lesson which is fully refundable if you decide not to continue. This allows your child to meet the tutor and see if our small-group dynamic is the right fit." },
-    { q: "Are materials included in the fee?", a: "Yes. All course fees cover the cost of our proprietary theory books, workbooks, and access to the Ryze AI online platform. There are no hidden resource fees." },
-    { q: "What happens if my child misses a lesson?", a: "We understand that life happens. If a student misses a class, they can access a recording of the lesson via the Student Portal. All materials, homework, and notes are also available digitally so they can catch up before the next session." },
+    { q: "What makes Ryze different from other tutoring centres?", a: "Ryze sets itself apart through a dedicated student mentorship model. Our team of tutors, each with an ATAR of 99.00 or above, focuses on delivering comprehensive, individualised feedback to ensure students receive the personalised guidance necessary for exceptional results. Our mission goes beyond traditional tutoring—we aim to empower and support every student on their academic journey. \n \nIn addition to extensive out-of-class assistance, including intensive exam preparation and one-on-one mentorship sessions, our curated course content is designed to maximise performance. We specialise in high-yield exam strategies for OC, Selective School, and high school Maths assessments—proven techniques that consistently help students achieve top marks." },
+    { q: "Do you offer trial lessons?", a: "Yes. We believe it’s important to experience the Ryze difference before making a commitment. That’s why we offer a paid trial lesson, which is fully refundable if you choose not to continue. This trial gives your child the opportunity to meet their tutor and experience our small-group learning environment, ensuring it’s the right fit for their needs." },
+    { q: "Are materials included in the fee?", a: "Definitely! All course fees include our comprehensive learning resources, which consist of proprietary theory books, workbooks, and full access to the Ryze AI online platform. We ensure complete transparency—there are no hidden charges or additional resource fees." },
+    { q: "How can Ryze help beyond the classroom?", a: "Ryze offers weekly one-on-one mentorship sessions designed to provide guidance beyond our standard tutoring curriculum. These sessions give students and parents the opportunity to receive tailored advice on a wide range of topics, including university pathways, school selection, extracurricular activities, study strategies, scholarship interview preparation, and more. Our mentorship program is completely free for all enrolled Ryze students and parents. Sessions are available on a first-come, first-served basis, and we carefully match each participant with a member of our industry-leading executive team who is best suited to their needs. At Ryze, we believe in mentoring students for success that goes beyond academics—helping them build confidence and plan for the future."},
 ];
 
 const FAQSection = () => (
