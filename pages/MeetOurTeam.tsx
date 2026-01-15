@@ -10,17 +10,17 @@ const MeetTheTeam: React.FC = () => {
   const team = [
     {
       id: "mike-nojiri",
-      name: "Mr Mike Nojiri",
+      name: "Mike Nojiri",
       role: "Head of Education",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallbackImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      atar: "| 99.25",
+      atar: "99.25",
       scores: ["98 Maths Ext 2", "99 Maths Ext 1", "99 Maths 2U (Accelerated)"],
       creds: [
-        "Master's in Teaching | UNSW",
-        "BSc(Math)/BCompSc | UNSW",
+        "Master's in Teaching (UNSW)",
+        "BSc(Math)/BCompSc (UNSW)",
         "NSW Certified Teacher",
-        "Maths Teacher | Stella Maris College",
+        "Maths Teacher at Stella Maris College",
         "The King's School Alumni"
       ],
       quote: "Small groups aren't just better—they're how teaching should work. Every student deserves individual attention.",
@@ -31,15 +31,15 @@ const MeetTheTeam: React.FC = () => {
     },
     {
       id: "william-gong",
-      name: "Mr William Gong",
+      name: "William Gong",
       role: "Head of Technology",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallbackImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      atar: "| 99.50",
+      atar: "99.50",
       scores: ["99 Maths Ext 2", "97 Maths Ext 1", "97 Physics", "94 Chemistry"],
       creds: [
-        "<strong>PhD</strong> – AI & Machine Learning Candidate | UNSW",
-        "<strong>BDataSci</strong> – First Class Honours | UNSW",
+        "<strong>PhD</strong> – AI & Machine Learning Candidate (UNSW)",
+        "<strong>BDataSci</strong> – First Class Honours (UNSW)",
         "North Sydney Boys High School Alumni"
       ],
       bio: [
@@ -49,14 +49,14 @@ const MeetTheTeam: React.FC = () => {
     },
     {
       id: "gordon-ye",
-      name: "Mr Gordon Ye",
+      name: "Gordon Ye",
       role: "Senior Mentor",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      atar: "| 99.55",
+      atar: "99.55",
       scores: ["98 Maths Ext 2", "98 Maths Ext 1", "97 Physics", "96 Chemistry"],
       creds: [
-        "BMaths/BCompSc | UNSW",
+        "BMaths/BCompSc (UNSW)",
         "Software Engineer",
         "UNSW Academic Teaching Staff",
         "Girraween High School Alumni",
@@ -71,7 +71,7 @@ const MeetTheTeam: React.FC = () => {
     },
     {
       id: "michael-yang",
-      name: "Mr Michael Yang",
+      name: "Michael Yang",
       role: "Founder",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
@@ -120,10 +120,11 @@ const MeetTheTeam: React.FC = () => {
                     <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-8 border-white">
                       {member.atar && (
                         <div className="absolute bottom-4 right-4 z-20">
-                          <div className="bg-[#FFB000]/80 backdrop-blur-sm rounded-full px-4 py-2">
-                            <p className="text-white text-sm font-bold">
-                              ATAR <span className="font-mono">{member.atar}</span>
-                            </p>
+                          <div className="bg-gradient-to-br from-amber-400 to-amber-500 shadow-lg rounded-xl p-4 transform transition-transform duration-500 hover:scale-110">
+                            <div className="text-center text-white">
+                                <p className="text-xs font-bold uppercase tracking-wider">ATAR</p>
+                                <p className="text-4xl font-bold font-mono tracking-tight">{member.atar}</p>
+                            </div>
                           </div>
                         </div>
                       )}
