@@ -9,7 +9,6 @@ import { Starfield } from './components/Starfield';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import Home from './pages/Home';
-import Pricing from './pages/Pricing';
 
 // Eager load Portal pages for instant navigation and zero lag
 import PortalHome from './pages/PortalHome';
@@ -24,6 +23,7 @@ const MeetTheTeam = lazy(() => import('./pages/MeetOurTeam'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const RyzeAI = lazy(() => import('./pages/RyzeAI'));
 const Contact = lazy(() => import('./pages/Contact'));
+const LearningStyle = lazy(() => import('./pages/LearningStyle'));
 const Dashboard = lazy(() => import('./pages/Dashboard')); // New SaaS Dashboard
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
@@ -135,7 +135,7 @@ const AppContent: React.FC = () => {
             <Route path="/how-ryze-works" element={<PageWrapper><HowItWorks /></PageWrapper>} />
             <Route path="/ryze-ai" element={<PageWrapper><RyzeAI /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
-            <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
+            <Route path="/learning-style" element={<PageWrapper><LearningStyle /></PageWrapper>} />
             
             {/* Portal Routes - Now Eager Loaded for Performance */}
             <Route path="/login" element={<PageWrapper><PortalHome /></PageWrapper>} />

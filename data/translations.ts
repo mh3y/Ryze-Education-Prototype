@@ -367,7 +367,7 @@ export const translations: Record<string, string> = {
   "Pay Year Upfront": "全年预付",
   "Receive a 10% discount when you pay for the full year in advance.": "预付全年学费可享 10% 折扣。",
   "Rebate Rewards": "续费返利",
-  "Alternatively, we offer 8% rebate / cash back towards your next course if you decide to continue the following term.": "或者，如果您决定下学期继续学习，我们提供 8% 的现金返利/抵扣。",
+  "Alternatively, we offer 8% rebate towards your next course if you decide to continue the following term.": "或者，如果您决定下学期继续学习，我们提供 8% 的现金返利/抵扣。",
   "Sibling Discounts": "兄弟姐妹折扣",
   "10% off for the second child": "第二个孩子享 10% 优惠",
   "15% off for the 3rd child": "第三个孩子享 15% 优惠",

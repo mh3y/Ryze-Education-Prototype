@@ -164,7 +164,7 @@ const Navbar: React.FC = () => {
                </span>
             </NavLink>
 
-            <NavLink to="/pricing" className={({ isActive }: any) => linkClasses(isActive)}>{t('Pricing')}</NavLink>
+            <NavLink to="/learning-style" className={({ isActive }: any) => linkClasses(isActive)}>{t('Learning Style')}</NavLink>
 
             {/* Language Toggle - Desktop */}
             <button 
@@ -296,11 +296,11 @@ const Navbar: React.FC = () => {
                 </NavLink>
 
                 <NavLink 
-                  to="/pricing" 
+                  to="/learning-style" 
                   onClick={() => setIsOpen(false)}
                   className="block text-xl font-bold text-slate-900 border-b border-slate-100 pb-4"
                 >
-                  {t('Pricing')}
+                  {t('Learning Style')}
                 </NavLink>
 
               </div>

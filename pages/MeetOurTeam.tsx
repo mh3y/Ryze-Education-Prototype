@@ -75,8 +75,7 @@ const MeetTheTeam: React.FC = () => {
       role: "Founder",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      scores: ["BCom/BCompSc (UNSW)", "DevOps Engineer", "The King's School Alumni"],
-      wordsFromFounder: "At Ryze, we believe education is more than grades — it’s about unlocking potential and building confidence for life. Every student learns differently, and our mission is to create personalised pathways that make learning engaging, effective, and empowering. We’re here to turn challenges into opportunities, inspire curiosity, and help every learner achieve success—not just in school, but in life. Your goals are our goals, and together, we’ll make them happen.",
+      wordsFromFounder: "At Ryze, we believe education is more than grades — it’s about unlocking potential and building confidence for life.\n\nEvery student learns differently, and our mission is to create personalised pathways that make learning engaging, effective, and empowering.\n\nWe’re here to turn challenges into opportunities, inspire curiosity, and help every learner achieve success—not just in school, but in life.\n\nYour goals are our goals, and together, we’ll make them happen.",
     }
   ];
 
@@ -152,8 +151,8 @@ const MeetTheTeam: React.FC = () => {
                   <div className="w-full lg:w-7/12 space-y-10">
                     {member.id === 'michael-yang' ? (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                        <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-lg">Words from the Founder</h4>
-                        <p className="text-lg text-slate-600 leading-relaxed font-light">{member.wordsFromFounder}</p>
+                        <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-2xl">Words from the Founder</h4>
+                        <p className="text-lg text-slate-600 leading-relaxed font-light whitespace-pre-line">{member.wordsFromFounder}</p>
                       </div>
                     ) : (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
