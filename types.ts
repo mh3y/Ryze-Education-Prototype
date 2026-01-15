@@ -31,9 +31,8 @@ export interface Testimonial {
   reviewerName: string;
   reviewerType: string;
   studentGrade: string;
-  school: string;
-  message: string;
   achievement: string;
+  message: string;
   accent: string;
   category: string;
   successReason: string;

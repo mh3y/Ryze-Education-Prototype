@@ -40,11 +40,14 @@ const About: React.FC = () => {
       role: "Founder & CEO",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      creds: [
-        "BCom/BCompSc UNSW",
-        "DevOps Engineer",
-        "The King's School Alumni"
-      ],
+      hscMarks: {
+        "Mathematics Extension 1": "98",
+        "Mathematics Extension 2": "95",
+        "Engineering Studies": "95",
+        "English Advanced": "93",
+        "Physics": "93"
+      },
+      wordsFromFounder: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction.",
       bio: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction."
     }
   ];
@@ -291,15 +294,22 @@ const About: React.FC = () => {
                   <div className="w-full md:w-2/3 space-y-6">
                     <h3 className="text-3xl font-bold text-slate-900">{member.name}</h3>
                     <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                       <h4 className="font-bold text-slate-800 mb-4">HSC Marks</h4>
                        <ul className="space-y-2">
-                         {member.creds.map((cred, i) => (
-                           <li key={i} className="flex gap-3 text-slate-700 font-medium">
-                             <div className="w-1.5 h-1.5 rounded-full bg-ryze mt-2 shrink-0"></div>
-                             {cred}
+                         {member.hscMarks && Object.entries(member.hscMarks).map(([subject, score]) => (
+                           <li key={subject} className="flex justify-between items-center text-slate-700 font-medium">
+                             <span>{subject}</span>
+                             <span className="font-mono font-bold text-ryze">{score}</span>
                            </li>
                          ))}
                        </ul>
                     </div>
+                    {member.wordsFromFounder && (
+                      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                        <h4 className="font-bold text-slate-800 mb-4">Words from our Founder</h4>
+                        <p className="text-slate-600 leading-relaxed">{member.wordsFromFounder}</p>
+                      </div>
+                    )}
                     {member.quote && (
                        <blockquote className="border-l-4 border-ryze pl-6 italic text-slate-600 text-lg">
                          "{member.quote}"

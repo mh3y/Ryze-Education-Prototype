@@ -65,7 +65,7 @@ const MeetTheTeam: React.FC = () => {
         "<strong>90 WAM</strong> Dean's List Computer Science"
       ],
       bio: [
-        "Gordon brings a unique blend of academic excellence and practical experience to his tutoring. As a member of UNSW's Academic Teaching Staff and a practicing Software Engineer, he connects high school concepts to university-level applications and real-world problem-solving.",
+        "Gordon brings a unique blend of academic excellence and and practical experience to his tutoring. As a member of UNSW's Academic Teaching Staff and a practicing Software Engineer, he connects high school concepts to university-level applications and real-world problem-solving.",
         "His academic achievements speak for themselves: he ranked first in his Science cohort at UNSW (Faculty Prize), maintains a High Distinction average in Computer Science, and achieved near-perfect scores in Extension 2 Mathematics during his own HSC. He was awarded a full scholarship to pursue a full-time Doctorate (PhD) in Engineering, granted to the brightest students in UNSW's Faculty of Engineering."
       ]
     },
@@ -75,17 +75,8 @@ const MeetTheTeam: React.FC = () => {
       role: "Founder",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      scores: [],
-      creds: [
-        "BCom/BCompSc | UNSW",
-        "DevOps Engineer",
-        "The King's School Alumni"
-      ],
-      bio: [
-        "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. Having experienced classrooms where individual students were easily overlooked, he set out to design a model that prioritises meaningful interaction and genuine instructional attention.",
-        "Drawing on his extensive tutoring background, he observed that students rarely needed more worksheets or higher difficulty tasks; they needed a setting where they could ask questions freely, receive clear explanations, and engage with material at a pace that matched their understanding.",
-        "This insight shaped Ryze’s core principles. Instead of maximising class size, Michael built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction, and adopting operational practices centred on long-term student outcomes rather than volume."
-      ]
+      scores: ["BCom/BCompSc (UNSW)", "DevOps Engineer", "The King's School Alumni"],
+      wordsFromFounder: "At Ryze, we believe education is more than grades — it’s about unlocking potential and building confidence for life. Every student learns differently, and our mission is to create personalised pathways that make learning engaging, effective, and empowering. We’re here to turn challenges into opportunities, inspire curiosity, and help every learner achieve success—not just in school, but in life. Your goals are our goals, and together, we’ll make them happen.",
     }
   ];
 
@@ -132,10 +123,10 @@ const MeetTheTeam: React.FC = () => {
                       {member.scores && member.scores.length > 0 && (
                         <div className="absolute top-0 left-0 w-full p-4 z-10">
                           <div className="bg-[#ffb000]/75 backdrop-blur-md rounded-xl p-3">
-                            <h4 className="text-sm font-bold text-white mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                            <h4 className="text-base font-bold text-white mb-2 text-center uppercase tracking-wider underline">{member.id === 'michael-yang' ? 'Credentials' : 'HSC Marks'}</h4>
                             <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                               {member.scores.map((score, i) => (
-                                <span key={i} className="text-sm font-semibold text-white">{score}</span>
+                                <span key={i} className={`text-sm font-semibold text-white ${member.id === 'michael-yang' ? 'bg-slate-800/20 rounded-md px-2 py-1' : ''}`}>{score}</span>
                               ))}
                             </div>
                           </div>
@@ -159,7 +150,13 @@ const MeetTheTeam: React.FC = () => {
                   </div>
                   
                   <div className="w-full lg:w-7/12 space-y-10">
-                    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
+                    {member.id === 'michael-yang' ? (
+                      <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
+                        <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-lg">Words from the Founder</h4>
+                        <p className="text-lg text-slate-600 leading-relaxed font-light">{member.wordsFromFounder}</p>
+                      </div>
+                    ) : (
+                      <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
                        <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-lg">{t("Credentials")}</h4>
                        <ul className="flex flex-wrap gap-3">
                          {member.creds.map((cred, i) => (
@@ -168,7 +165,8 @@ const MeetTheTeam: React.FC = () => {
                            </li>
                          ))}
                        </ul>
-                    </div>
+                      </div>
+                    )}
                     
                     {member.quote && (
                        <div className="relative pl-8 border-l-4 border-[#FFB000]">
@@ -178,13 +176,15 @@ const MeetTheTeam: React.FC = () => {
                        </div>
                     )}
                     
-                    <div className="space-y-6 text-lg text-slate-600 leading-relaxed font-light">
-                       {member.bio.map((paragraph, i) => (
-                          <p key={i}>
-                            {paragraph}
-                          </p>
-                       ))}
-                    </div>
+                    {member.bio && member.bio.length > 0 && (
+                       <div className="space-y-6 text-lg text-slate-600 leading-relaxed font-light">
+                         {member.bio.map((paragraph, i) => (
+                            <p key={i}>
+                              {paragraph}
+                            </p>
+                         ))}
+                       </div>
+                    )}
                   </div>
               </motion.div>
             ))}

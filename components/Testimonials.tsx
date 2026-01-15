@@ -31,7 +31,7 @@ const TestimonialCard = ({ testimonial, index, className }) => {
       </blockquote>
 
       <div className="mt-auto pt-5 border-t border-slate-100 text-center">
-        <p className="font-semibold text-sm text-[#B37C00]">{t(testimonial.achievement)}</p>
+        <p className="font-semibold text-base text-[#FFB000]">{t(testimonial.achievement)}</p>
       </div>
     </li>
   );
@@ -40,10 +40,11 @@ const TestimonialCard = ({ testimonial, index, className }) => {
 const Testimonials = () => {
   const { t } = useLanguage();
   const quadrupedLogos = [...schoolLogos, ...schoolLogos, ...schoolLogos, ...schoolLogos];
-  const firstRow = testimonials.slice(0, Math.ceil(testimonials.length / 2));
-  const secondRow = testimonials.slice(Math.ceil(testimonials.length / 2));
-  const duplicatedFirstRow = [...firstRow, ...firstRow];
-  const duplicatedSecondRow = [...secondRow, ...secondRow];
+  const topPanelTestimonials = testimonials.filter(testimonial => testimonial.category === 'HSC' || testimonial.studentGrade === 'Year 12');
+  const bottomPanelTestimonials = testimonials.filter(testimonial => testimonial.category !== 'HSC' && testimonial.studentGrade !== 'Year 12');
+
+  const duplicatedTopRow = [...topPanelTestimonials, ...topPanelTestimonials];
+  const duplicatedBottomRow = [...bottomPanelTestimonials, ...bottomPanelTestimonials];
 
   return (
     <section className="bg-[#f9f5ed] text-slate-800 py-32 sm:py-40 overflow-hidden font-sans">
@@ -74,14 +75,14 @@ const Testimonials = () => {
       <div className="space-y-8">
           <div className="relative w-full overflow-hidden">
               <div className="flex testimonial-scroll-x">
-                {duplicatedFirstRow.map((testimonial, index) => (
+                {duplicatedTopRow.map((testimonial, index) => (
                   <TestimonialCard testimonial={testimonial} index={index} key={`${testimonial.id}-1-${index}`} className="mx-4" />
                 ))}
               </div>
           </div>
           <div className="relative w-full overflow-hidden">
               <div className="flex testimonial-scroll-x-reverse">
-                 {duplicatedSecondRow.map((testimonial, index) => (
+                 {duplicatedBottomRow.map((testimonial, index) => (
                   <TestimonialCard testimonial={testimonial} index={index} key={`${testimonial.id}-2-${index}`} className="mx-4" />
                 ))}
               </div>
