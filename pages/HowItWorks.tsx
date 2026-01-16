@@ -23,7 +23,7 @@ const HowItWorks: React.FC = () => {
     { number: 1, title: "Initial Consultation", desc: "We meet with you and your child to understand goals, struggles, and the full picture.", icon: Hand },
     { number: 2, title: "Comprehensive Assessment", desc: "We identify specific gaps, missing foundations, and formed misconceptions.", icon: BarChart3 },
     { number: 3, title: "Diagnosis & Feedback", desc: "Clear, actionable feedback on what we found and the realistic timeline to fix it.", icon: Search },
-    { number: 4, title: "Personalized Learning Plan", desc: "Customized plan based on findings. Right content, right pacing.", icon: FileText },
+    { number: 4, title: "Personalised Learning Plan", desc: "Customized plan based on findings. Right content, right pacing.", icon: FileText },
     { number: 5, title: "Weekly Sessions", desc: "Structured sessions with explicit teaching and guided practice. Building independence.", icon: BookOpen },
     { number: 6, title: "Continuous Tracking", desc: "We track mastery. You get updates on what\'s improved and what needs work.", icon: TrendingUp },
     { number: 7, title: "Regular Check-ins", desc: "Ongoing communication to keep everyone aligned on progress.", icon: MessageCircle },
@@ -38,7 +38,7 @@ const HowItWorks: React.FC = () => {
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:40px_40px] opacity-40 pointer-events-none"></div>
         <h1 className="text-5xl md:text-7xl font-sans font-bold text-slate-900 mb-8 tracking-tight relative z-10">{t("How Ryze Works")}</h1>
         <p className="text-xl text-slate-600 max-w-2xl mx-auto font-light leading-relaxed relative z-10">
-          {t("Our approach is simple but rigorous: diagnose the root cause, build a personalized plan, and teach for understanding.")}
+          {t("Our approach is simple but rigorous: diagnose the root cause, build a Personalised plan, and teach for understanding.")}
         </p>
       </section>
 
@@ -181,7 +181,7 @@ const HowItWorks: React.FC = () => {
                       "Systematic skill-building with diagnosed gaps",
                       "Focus on understanding and transferring skills",
                       "Regular progress reports and communication",
-                      "Personalized to each child's learning stage",
+                      "Personalised to each child's learning stage",
                       "Proactive (long-term skill development)",
                       "Clear tracking and tangible progress"
                     ].map((item, i) => (

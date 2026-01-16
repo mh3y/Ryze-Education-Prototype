@@ -235,12 +235,12 @@ const GroupTutoringDetails = () => (
           <div className="space-y-6">
               <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>What Makes Us Special</h3>
               <SpecialFeatureCard icon={<FaComments className="text-amber-500 w-7 h-7" />} title="Collaborative Learning Environment" text="Learn with peers, share ideas, and gain multiple perspectives on concepts." color="#F59E0B" />
-              <SpecialFeatureCard icon={<FaDollarSign className="text-amber-500 w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and personalized attention." color="#F59E0B" />
+              <SpecialFeatureCard icon={<FaDollarSign className="text-amber-500 w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and Personalised attention." color="#F59E0B" />
               <SpecialFeatureCard icon={<FaBrain className="text-amber-500 w-7 h-7" />} title="Motivation & Accountability" text="Stay motivated with study partners and build lasting friendships." color="#F59E0B" />
           </div>
           <div className="space-y-6">
               <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>Our Group Structure</h3>
-              <StructureCard icon={<Users className="text-amber-500 w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for personalized attention", "Everyone gets to participate actively"]} color="#F59E0B" />
+              <StructureCard icon={<Users className="text-amber-500 w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for Personalised attention", "Everyone gets to participate actively"]} color="#F59E0B" />
               <StructureCard icon={<Clock className="text-amber-500 w-7 h-7" />} title="Extended Sessions" subtitle="120-minute focused learning blocks" features={["More time for deep understanding", "Theory instruction combined with practice questions"]} color="#F59E0B" />
           </div>
       </div>

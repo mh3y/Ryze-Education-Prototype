@@ -160,7 +160,7 @@ const Home: React.FC = () => {
     {
       id: "mike-nojiri",
       name: "Mike Nojiri",
-      role: "Master's in Teaching, BSc(Math)/BCompSc",
+      role: "Master's in Teaching | BSc(Math)/BCompSc",
       marks: "98 Maths Ext 2 | 99 Maths Ext 1 | 99 Maths 2U",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
@@ -176,7 +176,7 @@ const Home: React.FC = () => {
     {
       id: "gordon-ye",
       name: "Gordon Ye",
-      role: "BMaths/BCompSc | UNSW Academic Staff",
+      role: "UNSW Academic Teaching Staff | BMaths/BCompSc",
       marks: "98 Maths Ext 2 | 98 Maths Ext 1 | 97 Physics | 96 Chem",
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
       fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
@@ -276,7 +276,7 @@ const Home: React.FC = () => {
                   <Card image="/images/class4.png" title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="/images/tutor2.png" title={t("Personalised Support")} tag="Care" />
+                  <Card image="/images/tutor2.png" title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
@@ -291,7 +291,7 @@ const Home: React.FC = () => {
                   <Card image="/images/onlinev4.png" title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Distinguished Teachers */}
-                  <Card image="/images/gordon.png" title={t("Distinguished Mentors")} tag="Success" />
+                  <Card image="/images/gordon.png" title={t("Distinguished Mentors")} tag="Experts" />
                </ScrollingColumn>
             </div>
           </div>

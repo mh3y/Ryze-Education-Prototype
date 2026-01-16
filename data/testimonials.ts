@@ -191,7 +191,7 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "99.85 ATAR & 98 in 4U",
-    message: "I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract 4U concepts so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor to guide them.",
+    message: "I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor to guide them.",
     accent: "orange",
     category: "HSC",
     successReason: "Jameson's success was rooted in his mastery of 4U mechanics and complex numbers, where we spent months building deep intuition before doing papers."
@@ -202,7 +202,7 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "98 in 2U HSC",
-    message: "So happy with my 98! It was actually my best subject in the end. The weekly practice papers at Ryze were much harder than the actual HSC, so when I sat down for the exam, I didn't feel intimidated at all.",
+    message: "Maths ended up being my best subject. The weekly practice papers at Ryze were much harder than the actual HSC so when I sat down for the exam I didn't feel intimidated at all.",
     accent: "orange",
     category: "HSC",
     successReason: "Claire's 'Exam Stamina' training meant she was as fresh in the third hour of the paper as she was in the first ten minutes."
@@ -213,36 +213,25 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "95 in 4U HSC",
-    message: "4U math is a beast, but getting a 95 made all the late nights worth it. Gordon's deep knowledge of the syllabus is crazy — he knows exactly what the markers are looking for. It gave me a real edge.",
+    message: "Hands down the highest quality of teaching I’ve experienced during my senior years and the HSC. It played a huge part in helping me achieve outstanding results.",
     accent: "orange",
     category: "HSC",
     successReason: "Benjamin learned to write 'marker-friendly' solutions—neat, logical, and clearly labeled—which secured him full marks on partial solutions."
   },
   {
     id: "hsc-5",
-    reviewerName: "Zara P.",
-    reviewerType: "Student",
-    studentGrade: "Year 12",
-    achievement: "93% after failing",
-    message: "Just found out I'm ranked 3rd in my grade for Advanced Maths. After failing my first few assessments in Year 11, Mike helped me turn everything around. I actually understand the 'why' behind the formulas now.",
-    accent: "orange",
-    category: "HSC",
-    successReason: "Zara's success was a lesson in resilience; we stripped back her knowledge to Year 10 foundations and rebuilt her understanding from the ground up."
-  },
-  {
-    id: "hsc-6",
     reviewerName: "Jason Y.",
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "Rank 1 - 99 Internal",
-    message: "Being ranked first at my tutoring school has been an incredible experience. The guidance and support I received from my tutors helped me build confidence and master challenging concepts. Their personalised approach made learning enjoyable and effective. I’m proud of my achievement and grateful for the quality education that made it possible!",
+    message: "The guidance and support I received from my tutors helped me build confidence and master challenging concepts. Their personalised approach made learning enjoyable and effective. I’m proud of my achievement and grateful for the quality education that made it possible!",
     accent: "orange",
     category: "HSC",
     successReason: "Jason is an extremely sharp thinker, so it was just a matter of paving the path for him down the right direction."
   },
 
   {
-    id: "hsc-7",
+    id: "hsc-6",
     reviewerName: "Amelia R.",
     reviewerType: "Student",
     studentGrade: "Year 12",
@@ -253,7 +242,7 @@ export const testimonials: Testimonial[] = [
     successReason: "Focused on exam patterns and timing."
   },
   {
-    id: "hsc-8",
+    id: "hsc-7",
     reviewerName: "Liam T.",
     reviewerType: "Student",
     studentGrade: "Year 12",
@@ -264,7 +253,7 @@ export const testimonials: Testimonial[] = [
     successReason: "Lots of practice and clear explanations."
   },
   {
-    id: "hsc-9",
+    id: "hsc-8",
     reviewerName: "Olivia H.",
     reviewerType: "Student",
     studentGrade: "Year 12",
@@ -275,7 +264,7 @@ export const testimonials: Testimonial[] = [
     successReason: "Built solid foundations early."
   },
   {
-    id: "hsc-10",
+    id: "hsc-9",
     reviewerName: "Ethan V.",
     reviewerType: "Student",
     studentGrade: "Year 12",
@@ -286,7 +275,7 @@ export const testimonials: Testimonial[] = [
     successReason: "Weekly mocks and stress management tips."
   },
   {
-    id: "hsc-11",
+    id: "hsc-10",
     reviewerName: "Charlotte B.",
     reviewerType: "Student",
     studentGrade: "Year 12",
@@ -297,12 +286,12 @@ export const testimonials: Testimonial[] = [
     successReason: "Focused on structure and double-checking steps."
   },
   {
-    id: "hsc-12",
+    id: "hsc-11",
     reviewerName: "Ryan C.",
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "99.40 ATAR",
-    message: "It wasn’t just tutoring—it was strategy. I knew exactly how to play the exam game.",
+    message: "A sensational tutoring experience. Highly recommend. Amazing teacher, resources and team full of intelligent and talented mentors who are also ready and willing to help.",
     accent: "orange",
     category: "HSC",
     successReason: "Prioritized high-yield questions and avoided time traps."
@@ -316,7 +305,7 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Parent",
     studentGrade: "Year 4",
     achievement: "High Distinction",
-    message: "He's always loved numbers, but the guidance here has really taught him how to think outside the box.",
+    message: "A great tutoring center that really cares about their students!",
     accent: "yellow",
     category: "Competitions",
     successReason: "Nathan thrived in our 'lateral thinking' workshops, which focus on solving problems with missing information — a key skill for success."
@@ -338,7 +327,7 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Student",
     studentGrade: "Year 6",
     achievement: "Distinction Award",
-    message: "So happy with my Distinction! I love coming to classes because we get to solve problems that are actually challenging. It's way more interesting than what we do at school.",
+    message: "I really enjoy coming to classes because we get to solve problems that are actually challenging. It's much more interesting than what we do at school.",
     accent: "yellow",
     category: "Competitions",
     successReason: "Chloe's competitive edge comes from her genuine curiosity; she often explores three or four different ways to solve the same problem."
@@ -351,7 +340,7 @@ export const testimonials: Testimonial[] = [
     reviewerType: "Parent",
     studentGrade: "Year 3",
     achievement: "Top of Class",
-    message: "Priya was really struggling with her confidence in Year 2. After six months here, her teacher says she's now leading her math group! The focus on number sense really made everything click for her.",
+    message: "As parents, we’ve never seen such a dedicated and responsible teachers. We’re very grateful for everything the Ryze team have done and would highly recommend them to any family looking for people who truly go above and beyond.",
     accent: "pink",
     category: "Primary (K-6)",
     successReason: "By solidifying Priya's 'number bonds' and place-value intuition, we gave her the mental tools to tackle Year 3 work with zero hesitation."
@@ -451,10 +440,77 @@ export const testimonials: Testimonial[] = [
     reviewerName: "Daniel K.",
     reviewerType: "Student",
     studentGrade: "Year 7",
-    achievement: "94% Mathematics",
-    message: "Year 7 math is a lot harder than primary school, but getting 94% on my first big exam was awesome.",
+    achievement: "Huge Improvement to 94%",
+    message: "Year 7 math is a lot harder than primary school, but getting 94% on my first big exam felt great.",
     accent: "indigo",
     category: "High School (7-12)",
     successReason: "Daniel's success came from early mastery of negative numbers and order of operations, the two biggest stumbling blocks in Year 7."
+  },
+  {
+    id: "high-school-6",
+    reviewerName: "Winnie T.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "Loved learning here! Very engaging and the syllabus kept me ahead of everyone else at school. Would highly recommend to all students. ",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
+  }
+  ,
+  {
+    id: "high-school-7",
+    reviewerName: "Peter K.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "Ryze has been immensely helpful in pushing me to my potential and be a mentor :) 10/10 would recommend.",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
+  },
+  {
+    id: "high-school-8",
+    reviewerName: "Praveen P.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "In my time with Michael and his team, my math skills have grown tremendously thanks to the supportive environment, expert instruction, and engaging curriculum. I recommend Ryze to any student looking to maximise their academic potential. Michael and his team are truly unparalleled!",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
+  },
+  {
+    id: "high-school-9",
+    reviewerName: "Eric Z.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "Mike has an incredible ability to break down complex ideas into understandable components. His systematic approach gives students a solid foundation to build upon. Even after class ends, he readily makes time to answer individual questions and provide additional support.",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
+  },
+  {
+    id: "high-school-10",
+    reviewerName: "Yi Z.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "I’ve been with Ryze for the past three years and honestly the experience has been amazing. The teachers really care about how we learn, and the classes are always engaging.",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
+  },
+  {
+    id: "high-school-10",
+    reviewerName: "James Z.",
+    reviewerType: "Student",
+    studentGrade: "Year 12",
+    achievement: "All-Rounder",
+    message: "If you want above and beyond in a tutoring experience that's challenging and rewarding, Ryze is more than fulfilling.",
+    accent: "indigo",
+    category: "High School (7-12)",
+    successReason: "N/A."
   }
 ];
