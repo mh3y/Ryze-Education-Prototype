@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaUsers, FaCalendar, FaCreditCard, FaSync, FaGift, FaComments, FaDollarSign, FaBrain, FaLaptop, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
-import { HelpCircle, Award, Zap, BarChart2, BookOpen, CheckCircle, Users, Clock, Star } from 'lucide-react';
+import { HelpCircle, Award, Zap, BarChart2, BookOpen, CheckCircle, Users, Clock, Star, ChevronDown } from 'lucide-react';
 
 const EarlyEnrolmentItem = ({ percentage, dateString }) => {
     const datePart = dateString.replace(/before /i, '').trim();
@@ -307,29 +307,64 @@ const DiscountsSection = () => (
 );
 
 const FAQ_DATA = [
-    { q: "What makes Ryze different from other tutoring centres?", a: "Ryze sets itself apart through a dedicated student mentorship model. Our team of tutors, each with an ATAR of 99.00 or above, focuses on delivering comprehensive, individualised feedback to ensure students receive the personalised guidance necessary for exceptional results. Our mission goes beyond traditional tutoring—we aim to empower and support every student on their academic journey. \n \nIn addition to extensive out-of-class assistance, including intensive exam preparation and one-on-one mentorship sessions, our curated course content is designed to maximise performance. We specialise in high-yield exam strategies for OC, Selective School, and high school Maths assessments—proven techniques that consistently help students achieve top marks." },
-    { q: "Do you offer trial lessons?", a: "Yes. We believe it’s important to experience the Ryze difference before making a commitment. That’s why we offer a paid trial lesson, which is fully refundable if you choose not to continue. This trial gives your child the opportunity to meet their tutor and experience our small-group learning environment, ensuring it’s the right fit for their needs." },
-    { q: "Are materials included in the fee?", a: "Definitely! All course fees include our comprehensive learning resources, which consist of proprietary theory books, workbooks, and full access to the Ryze AI online platform. We ensure complete transparency—there are no hidden charges or additional resource fees." },
-    { q: "How can Ryze help beyond the classroom?", a: "Ryze offers weekly one-on-one mentorship sessions designed to provide guidance beyond our standard tutoring curriculum. These sessions give students and parents the opportunity to receive tailored advice on a wide range of topics, including university pathways, school selection, extracurricular activities, study strategies, scholarship interview preparation, and more. Our mentorship program is completely free for all enrolled Ryze students and parents. Sessions are available on a first-come, first-served basis, and we carefully match each participant with a member of our industry-leading executive team who is best suited to their needs. At Ryze, we believe in mentoring students for success that goes beyond academics—helping them build confidence and plan for the future."},
+  { q: "What makes Ryze different from other tutoring centres?", a: "Ryze sets itself apart through a dedicated student mentorship model. Our team of tutors, each with an ATAR of 99.00 or above, focuses on delivering comprehensive, individualised feedback to ensure students receive the personalised guidance necessary for exceptional results. Our mission goes beyond traditional tutoring—we aim to empower and support every student on their academic journey. \n \nIn addition to extensive out-of-class assistance, including intensive exam preparation and one-on-one mentorship sessions, our curated course content is designed to maximise performance. We specialise in high-yield exam strategies for OC, Selective School, and high school Maths assessments—proven techniques that consistently help students achieve top marks." },
+  { q: "Do you offer trial lessons?", a: "Yes. We believe it’s important to experience the Ryze difference before making a commitment. That’s why we offer a paid trial lesson, which is fully refundable if you choose not to continue. This trial gives your child the opportunity to meet their tutor and experience our small-group learning environment, ensuring it’s the right fit for their needs." },
+  { q: "Are materials included in the fee?", a: "Definitely! All course fees include our comprehensive learning resources, which consist of proprietary theory books, workbooks, and full access to the Ryze AI online platform. We ensure complete transparency—there are no hidden charges or additional resource fees." },
+  { q: "How can Ryze help beyond the classroom?", a: "Ryze offers weekly one-on-one mentorship sessions designed to provide guidance beyond our standard tutoring curriculum. These sessions give students and parents the opportunity to receive tailored advice on a wide range of topics, including university pathways, school selection, extracurricular activities, study strategies, scholarship interview preparation, and more. Our mentorship program is completely free for all enrolled Ryze students and parents. Sessions are available on a first-come, first-served basis, and we carefully match each participant with a member of our industry-leading executive team who is best suited to their needs. At Ryze, we believe in mentoring students for success that goes beyond academics—helping them build confidence and plan for the future."},
 ];
 
-const FAQSection = () => (
-    <div className="max-w-4xl mx-auto py-16">
-      <h2 className="text-4xl font-bold text-slate-900 text-center mb-12 tracking-tight">Frequently Asked Questions</h2>
-      <div className="space-y-6">
-        {FAQ_DATA.map((faq, i) => (
-            <div key={i} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-3 flex items-start gap-3 text-lg">
-                    <HelpCircle size={24} className="text-amber-500 shrink-0 mt-0.5" />
-                    {faq.q}
-                </h3>
-                <p className="text-slate-600 leading-relaxed pl-9 font-light">
-                    {faq.a}
-                </p>
+const FAQSection = () => {
+    const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+
+    const toggleFAQ = (index: number) => {
+        setOpenFAQ(openFAQ === index ? null : index);
+    };
+
+    return (
+        <div className="max-w-4xl mx-auto py-16">
+            <h2 className="text-4xl font-bold text-slate-900 text-center mb-12 tracking-tight">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+                {FAQ_DATA.map((faq, i) => (
+                    <div key={i} className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                        <button
+                            className="w-full flex justify-between items-center text-left p-8"
+                            onClick={() => toggleFAQ(i)}
+                        >
+                            <h3 className="font-bold text-slate-900 flex items-start gap-3 text-lg">
+                                <HelpCircle size={24} className="text-amber-500 shrink-0 mt-0.5" />
+                                {faq.q}
+                            </h3>
+                            <motion.div
+                                animate={{ rotate: openFAQ === i ? 180 : 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <ChevronDown size={24} className="text-slate-500" />
+                            </motion.div>
+                        </button>
+                        <AnimatePresence>
+                            {openFAQ === i && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                    className="px-8 pb-8"
+                                >
+                                    <div className="text-slate-600 leading-relaxed pl-9 font-light">
+                                        {faq.a.split('\n \n').map((paragraph, pIndex) => (
+                                            <p key={pIndex} className={pIndex > 0 ? 'mt-4' : ''}>
+                                                {paragraph}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                ))}
             </div>
-        ))}
-      </div>
-    </div>
-);
+        </div>
+    );
+};
 
 export default LearningStyle;
