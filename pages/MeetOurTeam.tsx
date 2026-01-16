@@ -179,7 +179,7 @@ const MeetTheTeam: React.FC = () => {
                     
                     {member.quote && (
                        <div className="relative pl-8 border-l-4 border-[#FFB000]">
-                         <blockquote className="italic text-slate-900 font-medium text-2xl leading-relaxed font-sans">
+                         <blockquote className="text-slate-900 font-medium text-2xl leading-relaxed font-sans">
                            "{member.quote}"
                          </blockquote>
                        </div>

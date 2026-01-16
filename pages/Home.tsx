@@ -187,10 +187,16 @@ const Home: React.FC = () => {
     <div className="w-full font-sans overflow-hidden bg-slate-50">
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white rounded-b-[3rem] lg:rounded-b-[5rem] shadow-sm border-b border-slate-100">
+      <section 
+        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80')" }}
+      >
+        {/* Correctly placed overlay */}
+        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        {/* Content container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            
+
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -202,23 +208,23 @@ const Home: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-ryze/10 border border-ryze/20 shadow-sm text-ryze-600 text-sm font-bold tracking-wide mb-2 mx-auto lg:mx-0"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 shadow-sm text-white text-sm font-bold tracking-wide mb-2 mx-auto lg:mx-0"
                   >
                     <Sparkles size={14} className="text-ryze" />
                     <span>{t("SYDNEY'S MOST EFFECTIVE TUTORING")}</span>
                   </motion.div>
                   
-                  <h1 className="text-5xl lg:text-8xl font-sans font-extrabold text-slate-900 leading-[1.05] tracking-tight">
+                  <h1 className="text-5xl lg:text-8xl font-sans font-extrabold text-white leading-[1.05] tracking-tight">
                     {t("Teaching with")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-ryze to-orange-500">{t("purpose.")}</span> <br/>
-                    {t("Learning with")} <span className="text-slate-900">{t("clarity.")}</span>
+                    {t("Learning with")} <span className="text-white">{t("clarity.")}</span>
                   </h1>
-                  
-                  <p className="text-xl lg:text-2xl font-sans font-medium text-slate-400 leading-tight tracking-wide">
-                    {t("Think Sharper. Perform Better.")}
+
+                  <p className="text-xl lg:text-2xl font-sans font-medium text-slate-300 leading-tight tracking-wide">
+                  {t("Think Sharper. Perform Better.")}
                   </p>
               </div>
 
-              <p className="text-lg text-slate-600 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
+              <p className="text-lg text-slate-300 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
                 {t("Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.")}
               </p>
               
