@@ -20,7 +20,7 @@ const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.Props
   }, [controls, direction, speed]);
 
   return (
-    <div className="h-[750px] overflow-hidden relative transform-gpu">
+    <div className="h-[800px] overflow-hidden relative transform-gpu">
       <motion.div 
         animate={controls} 
         className="flex flex-col gap-6" 
@@ -50,7 +50,7 @@ const Card = ({ image, title, tag, priority = false }: { image: string, title: s
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90"></div>
     <div className="absolute top-4 left-4">
-       <span className="bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+       <span className="bg-[#FFB000] backdrop-blur-md border border-white/80 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
           {tag}
        </span>
     </div>
@@ -189,10 +189,10 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('/image-v1.png')" }}
+        style={{ backgroundImage: "url('/images/image-v1.png')" }}
       >
         {/* Correctly placed overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         {/* Content container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -240,10 +240,10 @@ const Home: React.FC = () => {
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
-                           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80",
-                           "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64&q=80",
-                           "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=64&h=64&q=80",
-                           "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&w=64&h=64&q=80"
+                           "/images/tes5.png",
+                           "/images/tes6.png",
+                           "/images/tes7.png",
+                           "/images/tes8.png"
                          ].map((src, i) => (
                            <img 
                               key={i} 
@@ -262,36 +262,36 @@ const Home: React.FC = () => {
             </motion.div>
 
             {/* Right Scrolling Content - Optimized with will-change */}
-            <div className="grid grid-cols-2 gap-5 h-[750px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+            <div className="grid grid-cols-2 gap-5 h-[800px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
-                    image="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80" 
+                    image="/images/personalised.png" 
                     title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
                     priority={true} 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" title={t("Small Group Focus")} tag="Method" />
+                  <Card image="/images/class4.png" title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80" title={t("Personalised Support")} tag="Care" />
+                  <Card image="/images/tutor2.png" title={t("Personalised Support")} tag="Care" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
-                    image="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80" 
+                    image="/images/image-v4.png" 
                     title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80" title={t("Hybrid Learning")} tag="Flexibility" />
+                  <Card image="/images/onlinev4.png" title={t("Hybrid Learning")} tag="Flexibility" />
                   
-                  {/* Proven Results */}
-                  <Card image="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80" title={t("Proven Results")} tag="Success" />
+                  {/* Distinguished Teachers */}
+                  <Card image="/images/gordon.png" title={t("Distinguished Mentors")} tag="Success" />
                </ScrollingColumn>
             </div>
           </div>
