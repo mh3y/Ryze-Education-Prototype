@@ -19,6 +19,10 @@ const Navbar: React.FC = () => {
 
   const isAiPage = location.pathname === '/ryze-ai';
   const isLoginPage = location.pathname === '/login';
+  const isHomePage = location.pathname === '/';
+
+  // State for homepage at top (not scrolled, menu closed)
+  const isHomePageAtTop = isHomePage && !scrolled && !isOpen;
 
   // Scroll locking for mobile menu
   useEffect(() => {
@@ -61,22 +65,41 @@ const Navbar: React.FC = () => {
   ];
 
   const navClasses = `fixed w-full z-50 transition-all duration-300 border-b ${
-    scrolled || isLoginPage
+    scrolled || isOpen || isLoginPage
       ? isAiPage || isLoginPage
         ? 'bg-[#050510]/80 backdrop-blur-xl border-white/10 py-2' 
         : 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-2 shadow-sm'
       : 'bg-transparent border-transparent py-6'
   }`;
 
-  const linkClasses = (isActive: boolean) => `
-    relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap
-    ${isActive 
-      ? 'text-ryze' 
-      : isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-    }
-  `;
+  const linkClasses = (isActive: boolean) => {
+    if (isActive) return 'text-ryze';
+    if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
+    if (isAiPage || isLoginPage) return 'text-slate-300 hover:text-white';
+    return 'text-slate-900 hover:text-ryze';
+  };
 
-  // Animation variants for accordion
+  const aboutButtonClasses = () => {
+    const isActive = ['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname);
+    if (isActive) return 'text-ryze';
+    if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
+    if (isAiPage || isLoginPage) return 'text-slate-300 hover:text-white';
+    return 'text-slate-900 hover:text-ryze';
+  };
+
+  const loginButtonClasses = `h-11 w-[130px] rounded-full text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 ${
+    isHomePageAtTop 
+      ? 'bg-[#ffb000]/70 border-2 border-[#FFB000] text-white hover:bg-[#FFB000] hover:text-black' 
+      : 'bg-[#ffb000] text-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]'
+  }`;
+  
+  const trialButtonClasses = `h-11 w-[130px] ml-2 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 flex items-center justify-center whitespace-nowrap ${
+    isHomePageAtTop 
+      ? 'bg-[#ffb000]/70 border-2 border-[#FFB000] text-white hover:bg-[#FFB000] hover:text-black'
+      : 'bg-[#ffb000] text-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]'
+  }`;
+
+  // Animation variants
   const accordionVariants: Variants = {
     open: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] } },
     collapsed: { opacity: 0, height: 0, transition: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] } }
@@ -85,15 +108,6 @@ const Navbar: React.FC = () => {
   const menuVariants: Variants = {
     closed: { x: "100%", opacity: 0, transition: { type: "tween", duration: 0.3 } },
     open: { x: 0, opacity: 1, transition: { type: "tween", duration: 0.3 } }
-  };
-
-  // Helper for dynamic language colors
-  const getLangColorClass = () => {
-    if (language === 'en') {
-      return isAiPage || isLoginPage ? 'text-blue-400' : 'text-[#002B7F]';
-    } else {
-      return isAiPage || isLoginPage ? 'text-red-400' : 'text-[#DE2910]';
-    }
   };
 
   return (
@@ -106,7 +120,7 @@ const Navbar: React.FC = () => {
             <img 
               src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
               alt="Ryze Education" 
-              className={`h-10 md:h-16 w-auto transition-all duration-500 ${isAiPage || isLoginPage ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
+              className={`h-10 md:h-16 w-auto transition-all duration-500 ${(isAiPage || isLoginPage || isHomePageAtTop) ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
             />
           </div>
 
@@ -120,14 +134,12 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => setAboutDropdownOpen(false)}
             >
               <button 
-                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${
-                  isAiPage || isLoginPage ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                } ${['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname) ? 'text-ryze' : ''}`}
+                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${aboutButtonClasses()}`}
               >
                 {t('About')} <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
-              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 pt-4 transition-all duration-300 origin-top ${aboutDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
+              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 pt-4 transition-all duration-300 origin-top ${aboutDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>\
                 <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-2 overflow-hidden">
                   {aboutSubLinks.map((link) => (
                     <NavLink
@@ -139,7 +151,7 @@ const Navbar: React.FC = () => {
                         }`
                       }
                     >
-                      <span className={`block text-sm font-bold ${['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname) && link.path === location.pathname ? 'text-ryze' : 'text-slate-800 group-hover/item:text-ryze'}`}>
+                      <span className={`block text-sm font-bold text-slate-800 group-hover/item:text-ryze`}>
                         {t(link.name)}
                       </span>
                       {language === 'en' && (
@@ -153,9 +165,9 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <NavLink to="/meet-the-team" className={({ isActive }: any) => linkClasses(isActive)}>{t('Meet Our Team')}</NavLink>
+            <NavLink to="/meet-the-team" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Meet Our Team')}</NavLink>
             
-            <NavLink to="/ryze-ai" className={({ isActive }: any) => linkClasses(isActive)}>
+            <NavLink to="/ryze-ai" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>
                <span className="flex items-center gap-1.5 whitespace-nowrap">
                  {t('Ryze AI')}
                  <span className={`flex items-center justify-center w-5 h-5 rounded-full ${isAiPage || isLoginPage ? 'bg-white/10 text-ryze' : 'bg-ryze/10 text-ryze'}`}>
@@ -164,41 +176,20 @@ const Navbar: React.FC = () => {
                </span>
             </NavLink>
 
-            <NavLink to="/learning-style" className={({ isActive }: any) => linkClasses(isActive)}>{t('Learning Style')}</NavLink>
+            <NavLink to="/learning-style" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Learning Style')}</NavLink>
 
-            {/* Language Toggle - Desktop */}
-            {/*
-            <button 
-              onClick={toggleLanguage}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 border ${
-                isAiPage || isLoginPage 
-                  ? 'bg-white/10 border-white/20 hover:bg-white/20' 
-                  : 'bg-slate-100 border-slate-200 hover:bg-slate-200'
-              }`}
-              title={language === 'en' ? "Switch to Chinese" : "Switch to English"}
-            >
-              <Globe 
-                size={18} 
-                className={`transition-colors duration-300 ${getLangColorClass()}`}
-              />
-              <span className={`text-xs font-bold w-4 transition-colors duration-300 ${getLangColorClass()}`}>
-                {language === 'en' ? 'EN' : 'CN'}
-              </span>
-            </button>
-            */}
-
-            <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage ? 'bg-white/20' : 'bg-slate-200'}`}></div>
+            <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage || isHomePageAtTop ? 'bg-white/20' : 'bg-slate-200'}`}></div>
 
             <button
               onClick={() => navigate('/login')}
-              className="h-11 w-[130px] rounded-full bg-[#ffb000]/100 text-white text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]"
+              className={loginButtonClasses}
             >
               <LogIn size={16} /> {t('Login')}
             </button>
 
             <button
               onClick={() => navigate('/contact')}
-              className="h-11 w-[130px] ml-2 rounded-full bg-[#ffb000]/100 text-white text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 flex items-center justify-center whitespace-nowrap shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]"
+              className={trialButtonClasses}
             >
               {t('Book a Trial')}
             </button>
@@ -206,29 +197,9 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4 z-50">
-            {/* Mobile Language Toggle */}
-            {/*
-            <button 
-              onClick={toggleLanguage}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-full border transition-all ${
-                 isAiPage || isLoginPage 
-                  ? 'bg-white/10 border-white/20' 
-                  : 'bg-slate-100 border-slate-200'
-              }`}
-            >
-              <Globe 
-                size={20} 
-                className={`transition-colors duration-300 ${getLangColorClass()}`}
-              />
-              <span className={`text-xs font-bold transition-colors duration-300 ${getLangColorClass()}`}>
-                {language === 'en' ? 'EN' : 'CN'}
-              </span>
-            </button>
-            */}
-
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-full transition-colors ${isOpen || isAiPage || isLoginPage ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'} ${isOpen ? '!text-slate-900 hover:!bg-slate-100' : ''}`}
+              className={`p-2 rounded-full transition-colors ${isHomePageAtTop ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'}`}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
