@@ -103,54 +103,57 @@ const MeetTheTeam: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6 }}
-                className={`flex flex-col ${idx % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-16 lg:gap-24 items-center scroll-mt-32`}
+                className={`flex flex-col ${idx % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-16 lg:gap-24 items-start scroll-mt-32`}
               >
-                  <div className="w-full lg:w-5/12 shrink-0 relative group">
-                    <div className={`absolute top-10 ${idx % 2 === 0 ? '-left-10' : '-right-10'} w-full h-full bg-[#FFB000]/10 rounded-[3rem] -z-10 transform rotate-3 group-hover:rotate-6 transition-transform duration-500`}></div>
+                  <div className="w-full lg:w-5/12 shrink-0">
                     
-                    <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-8 border-white">
-                      {member.atar && (
-                        <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 z-20">
-                          <div 
-                            style={{ willChange: 'transform' }}
-                            className="bg-black/20 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
-                          >
-                            <div className="p-3 md:p-4 text-center text-white">
-                                <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
-                                    <Star className="text-amber-300 w-4 h-4 md:w-5 md:h-5" fill="currentColor" />
-                                    <p className="text-[10px] md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
-                                </div>
-                                <p className="text-3xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
-                            </div>
+                    {member.scores && member.scores.length > 0 && (
+                      <div className="mb-6">
+                        <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
+                          <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                            {member.scores.map((score, i) => (
+                              <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
+                            ))}
                           </div>
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {member.scores && member.scores.length > 0 && (
-                        <div className="absolute top-0 left-0 w-full p-4 z-10">
-                          <div className="bg-[#ffb000]/75 backdrop-blur-md rounded-xl p-3">
-                            <h4 className="text-base font-bold text-white mb-2 text-center uppercase tracking-wider underline">{member.id === 'michael-yang' ? 'Credentials' : 'HSC Marks'}</h4>
-                            <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
-                              {member.scores.map((score, i) => (
-                                <span key={i} className={`text-sm font-semibold text-white ${member.id === 'michael-yang' ? 'bg-slate-800/20 rounded-md px-2 py-1' : ''}`}>{score}</span>
-                              ))}
+                    <div className="relative group">
+                      <div className={`absolute top-10 ${idx % 2 === 0 ? '-left-10' : '-right-10'} w-full h-full bg-[#FFB000]/10 rounded-[3rem] -z-10 transform rotate-3 group-hover:rotate-6 transition-transform duration-500`}></div>
+                      
+                      <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-8 border-white">
+                        {member.atar && (
+                          <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
+                            <div 
+                              style={{ willChange: 'transform' }}
+                              className="bg-black/20 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                            >
+                              <div className="p-3 md:p-4 text-center text-white">
+                                  <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
+                                      <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
+                                      <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                                  </div>
+                                  <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      <img 
-                        src={member.image} 
-                        onError={(e) => {e.currentTarget.src = member.fallbackImage}}
-                        alt={member.name} 
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
-                      <div className="absolute bottom-0 left-0 p-8 text-white w-full">
-                         <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{t(member.name)}</h3>
-                         <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
+                        <img 
+                          src={member.image} 
+                          onError={(e) => {e.currentTarget.src = member.fallbackImage}}
+                          alt={member.name} 
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                        <div className="absolute bottom-0 left-0 p-8 text-white w-full">
+                           <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{t(member.name)}</h3>
+                           <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
