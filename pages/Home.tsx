@@ -20,7 +20,7 @@ const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.Props
   }, [controls, direction, speed]);
 
   return (
-    <div className="h-[600px] overflow-hidden relative transform-gpu">
+    <div className="h-[750px] overflow-hidden relative transform-gpu">
       <motion.div 
         animate={controls} 
         className="flex flex-col gap-6" 
@@ -189,10 +189,10 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80')" }}
+        style={{ backgroundImage: "url('/image-v1.png')" }}
       >
         {/* Correctly placed overlay */}
-        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
         {/* Content container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -219,12 +219,12 @@ const Home: React.FC = () => {
                     {t("Learning with")} <span className="text-white">{t("clarity.")}</span>
                   </h1>
 
-                  <p className="text-xl lg:text-2xl font-sans font-medium text-slate-300 leading-tight tracking-wide">
+                  <p className="text-xl lg:text-2xl font-sans font-medium text-white leading-tight tracking-wide">
                   {t("Think Sharper. Perform Better.")}
                   </p>
               </div>
 
-              <p className="text-lg text-slate-300 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
+              <p className="text-lg text-white max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
                 {t("Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.")}
               </p>
               
@@ -262,7 +262,7 @@ const Home: React.FC = () => {
             </motion.div>
 
             {/* Right Scrolling Content - Optimized with will-change */}
-            <div className="grid grid-cols-2 gap-5 h-[650px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+            <div className="grid grid-cols-2 gap-5 h-[750px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
