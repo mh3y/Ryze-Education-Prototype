@@ -11,12 +11,12 @@ const HowItWorks: React.FC = () => {
   const { t } = useLanguage();
 
   const principles = [
-    { title: "Build Strong Foundations", desc: "Math is hierarchical. We identify gaps systematically and fill them first. You can't build on sand." },
+    { title: "Build Strong Foundations", desc: "Math is hierarchical. We identify gaps systematically and fill them first. You can\'t build on sand." },
     { title: "Understand the \"Why\"", desc: "Students need both conceptual understanding (why it works) and procedural fluency (how to do it). We teach both." },
     { title: "Meet Them Where They Are", desc: "Different students need different representations. We match the teaching to the student, not the other way around." },
     { title: "Explicit Instruction First", desc: "Students need to be shown and taught first. Success breeds confidence, not confusion." },
     { title: "Build Confidence, Not Anxiety", desc: "We sequence lessons in small, manageable steps. Confusion is a barrier to learning, not a feature of it." },
-    { title: "Teacher Knowledge Matters", desc: "Our tutors aren't generic helpers—they're certified teachers who understand subject depth." }
+    { title: "Teacher Knowledge Matters", desc: "Our tutors aren\'t generic helpers—they\'re certified teachers who understand subject depth." }
   ];
 
   const journeySteps = [
@@ -25,7 +25,7 @@ const HowItWorks: React.FC = () => {
     { number: 3, title: "Diagnosis & Feedback", desc: "Clear, actionable feedback on what we found and the realistic timeline to fix it.", icon: Search },
     { number: 4, title: "Personalized Learning Plan", desc: "Customized plan based on findings. Right content, right pacing.", icon: FileText },
     { number: 5, title: "Weekly Sessions", desc: "Structured sessions with explicit teaching and guided practice. Building independence.", icon: BookOpen },
-    { number: 6, title: "Continuous Tracking", desc: "We track mastery. You get updates on what's improved and what needs work.", icon: TrendingUp },
+    { number: 6, title: "Continuous Tracking", desc: "We track mastery. You get updates on what\'s improved and what needs work.", icon: TrendingUp },
     { number: 7, title: "Regular Check-ins", desc: "Ongoing communication to keep everyone aligned on progress.", icon: MessageCircle },
     { number: 8, title: "Exam Preparation", desc: "Shift to revision strategy and exam technique as assessments approach.", icon: Target }
   ];
@@ -75,7 +75,7 @@ const HowItWorks: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
            <div className="text-center mb-20">
               <h2 className="text-4xl font-sans font-bold text-slate-900 mb-6">{t("Our Teaching Philosophy")}</h2>
-              <p className="text-slate-600 max-w-3xl mx-auto text-lg" dangerouslySetInnerHTML={{ __html: t("Ryze Tutoring is built on evidence-based principles developed by <strong>certified NSW teachers.</strong> We don't create generic lesson plans. Every course is hand-crafted.") }}>
+              <p className="text-slate-600 max-w-3xl mx-auto text-lg" dangerouslySetInnerHTML={{ __html: t("Ryze Tutoring is built on evidence-based principles developed by <strong>certified NSW teachers.</strong> We don\'t create generic lesson plans. Every course is hand-crafted.") }}>
               </p>
            </div>
 
@@ -144,15 +144,15 @@ const HowItWorks: React.FC = () => {
       </section>
 
       {/* Comparison Table */}
-      <section className="py-24 bg-slate-900 text-white">
+      <section className="py-24 bg-slate-100 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <h2 className="text-4xl font-sans font-bold text-white mb-16 text-center">{t("What Sets Ryze Apart")}</h2>
+            <h2 className="text-4xl font-sans font-bold text-[#ffb000] mb-16 text-center">{t("What Sets Ryze Apart")}</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-12">
               
               {/* Traditional */}
-              <div className="bg-white/5 backdrop-blur-sm p-10 rounded-3xl border border-white/10">
-                 <h3 className="text-xl font-bold text-slate-400 mb-8 uppercase tracking-widest border-b border-white/10 pb-4">{t("Traditional Tutoring")}</h3>
+              <div className="bg-slate-800 backdrop-blur-sm p-10 rounded-3xl border border-white">
+                 <h3 className="text-xl font-bold text-red mb-8 uppercase tracking-widest border-b border-white/10 pb-4">{t("Traditional Tutoring")}</h3>
                  <ul className="space-y-6">
                     {[
                       "Generic materials and worksheets",
@@ -163,7 +163,7 @@ const HowItWorks: React.FC = () => {
                       "Reactive (crisis mode before exams)",
                       "Progress unclear"
                     ].map((item, i) => (
-                      <li key={i} className="flex gap-4 text-slate-400 items-start">
+                      <li key={i} className="flex gap-4 text-red items-start">
                         <X className="shrink-0 text-red-400 mt-1" size={18} />
                         <span>{t(item)}</span>
                       </li>
@@ -199,63 +199,6 @@ const HowItWorks: React.FC = () => {
         </div>
       </section>
 
-      {/* Programs & Formats */}
-      <section className="py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-             <h2 className="text-4xl font-sans font-bold text-slate-900 mb-6">{t("Our Programs & Formats")}</h2>
-             <div className="flex justify-center gap-2">
-                <div className="w-2 h-2 bg-ryze rounded-full"></div>
-                <div className="w-2 h-2 bg-ryze rounded-full opacity-50"></div>
-                <div className="w-2 h-2 bg-ryze rounded-full opacity-25"></div>
-             </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Primary")}</h3>
-              <p className="text-slate-600 leading-relaxed">{t("Strong focus on foundational skills in Mathematics and English, with specialized preparation for OC and Selective Exams to help your child get into their target school.")}</p>
-            </div>
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Secondary")}</h3>
-              <p className="text-slate-600 mb-3"><strong className="text-ryze">Mathematics:</strong> {t("Core expertise across all levels. Algebra, geometry, trigonometry—we diagnose gaps and rebuild systematically.")}</p>
-              <p className="text-slate-600"><strong className="text-ryze">English:</strong> {t("Developing comprehensive curriculum.")}</p>
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-bold text-slate-900 mb-10 text-center">{t("Choose Your Format")}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-             {[
-               { title: "1-on-1 Tutoring", desc: "Fully personalized. Your child's pace, your schedule, maximum flexibility.", icon: User },
-               { title: "Small Group Classes", desc: "2-6 students. Peer learning, collaboration, community, and cost-effectiveness.", icon: Users },
-               { title: "Online Sessions", desc: "Delivered digitally. Flexible scheduling, no travel time.", icon: Laptop },
-               { title: "In-Person Sessions", desc: "Face-to-face learning. Direct feedback, concrete tools.", icon: Home },
-               { title: "Hybrid Option", desc: "Mix of online and in-person. Flexibility plus personal connection.", icon:  MessageCircle }
-             ].map((fmt, i) => (
-               <div key={i} className="bg-white border border-slate-100 p-8 rounded-2xl hover:border-ryze hover:shadow-lg transition-all group">
-                  <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-ryze group-hover:text-white transition-colors mb-6">
-                      <fmt.icon size={24} />
-                  </div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">{t(fmt.title)}</h4>
-                  <p className="text-slate-500 text-sm leading-relaxed">{t(fmt.desc)}</p>
-               </div>
-             ))}
-          </div>
-
-          <div className="mt-20 text-center">
-             <div className="bg-ryze/5 border border-ryze/20 p-12 rounded-[3rem] inline-block max-w-4xl w-full">
-                <h4 className="text-2xl font-bold text-slate-900 mb-4">{t("Ready to Get Started?")}</h4>
-                <p className="text-slate-600 mb-8 text-lg max-w-2xl mx-auto">{t("Every student begins with a free consultation and assessment. We'll discuss which format works best for your situation.")}</p>
-                <button 
-                    onClick={() => navigate('/contact')}
-                    className="px-10 py-4 bg-ryze text-white font-bold rounded-full shadow-lg hover:bg-ryze-600 transition-all transform hover:-translate-y-1"
-                >
-                    {t("Book Free Consultation")}
-                </button>
-             </div>
-          </div>
-        </div>
-      </section>
 
       {/* Why This Matters Section */}
       <section className="py-24 px-4 bg-white border-t border-slate-100">
@@ -265,7 +208,7 @@ const HowItWorks: React.FC = () => {
             <div className="prose prose-lg prose-slate mx-auto font-sans text-slate-600 leading-relaxed">
                 <p dangerouslySetInnerHTML={{ __html: t("Research is clear: <strong className=\"text-slate-900\">foundational skills in primary school predict achievement in secondary school and beyond.</strong> Students with strong number sense, procedural fluency, and conceptual understanding are more likely to succeed in advanced maths and science.") }}>
                 </p>
-                <p className="mt-6" dangerouslySetInnerHTML={{ __html: t("But here's what's important: <strong className=\"text-slate-900\">intervention only works if it's done right.</strong> Homework help doesn't work. Generic tutoring doesn't work. Guessing at what a student needs doesn't work.") }}>
+                <p className="mt-6" dangerouslySetInnerHTML={{ __html: t("But here's what's important: <strong className=\"text-slate-900\">intervention only works if it's done right.</strong> Homework help doesn\'t work. Generic tutoring doesn\'t work. Guessing at what a student needs doesn\'t work.") }}>
                 </p>
                 <p className="mt-6" dangerouslySetInnerHTML={{ __html: t("Systematic, diagnostic, evidence-based tutoring works.</strong> It's the difference between your child getting through the next test versus actually understanding the subject. It's the difference between struggling and succeeding.") }}>
                 </p>
@@ -281,9 +224,20 @@ const HowItWorks: React.FC = () => {
                    {t("Supported by longitudinal studies (Geary, 2011; Price, Mazzocco & Ansari, 2013), intervention research (Fuchs et al., 2021), and cognitive science on how expertise develops (Chi et al., 1981).")}
                 </p>
             </div>
+            <div className="mt-20 text-center">
+             <div className="bg-ryze/5 border border-ryze/20 p-12 rounded-[3rem] inline-block max-w-4xl w-full">
+                <h4 className="text-2xl font-bold text-slate-900 mb-4">{t("Ready to Get Started?")}</h4>
+                <p className="text-slate-600 mb-8 text-lg max-w-2xl mx-auto">{t("Every student begins with a free consultation and assessment. We'll discuss which format works best for your situation.")}</p>
+                <button 
+                    onClick={() => navigate('/contact')}
+                    className="px-10 py-4 bg-ryze text-white font-bold rounded-full shadow-lg hover:bg-ryze-600 transition-all transform hover:-translate-y-1"
+                >
+                    {t("Book Free Consultation")}
+                </button>
+             </div>
+          </div>
         </div>
       </section>
-
     </div>
   );
 };

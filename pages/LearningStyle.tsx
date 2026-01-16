@@ -56,7 +56,7 @@ const LearningStyle: React.FC = () => {
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-amber-900/40 via-transparent to-transparent"></div>
               <div className="relative z-10 flex-grow flex flex-col">
                   <div className="flex justify-between items-start mb-6">
-                      <div className="bg-amber-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">Best Value</div>
+                      <div className="bg-amber-500 text-white text-s font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">Best Value</div>
                   </div>
                   <div className="text-center my-6">
                       <div className="inline-block p-5 bg-amber-800/30 rounded-2xl mb-6 border border-amber-700/50">
@@ -82,7 +82,7 @@ const LearningStyle: React.FC = () => {
               <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 group-hover:bg-blue-600/30 transition-colors duration-500"></div>
               <div className="relative z-10 flex-grow flex flex-col">
                   <div className="flex justify-between items-start mb-6">
-                      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <div className="text-s font-bold text-white uppercase tracking-widest mb-2 flex items-center gap-2">
                           <Star size={14} className="text-[#FFB000]" /> Premium Choice
                      </div>
                       <motion.div

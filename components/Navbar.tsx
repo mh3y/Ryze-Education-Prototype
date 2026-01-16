@@ -167,6 +167,7 @@ const Navbar: React.FC = () => {
             <NavLink to="/learning-style" className={({ isActive }: any) => linkClasses(isActive)}>{t('Learning Style')}</NavLink>
 
             {/* Language Toggle - Desktop */}
+            {/*
             <button 
               onClick={toggleLanguage}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 border ${
@@ -184,6 +185,7 @@ const Navbar: React.FC = () => {
                 {language === 'en' ? 'EN' : 'CN'}
               </span>
             </button>
+            */}
 
             <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage ? 'bg-white/20' : 'bg-slate-200'}`}></div>
 
@@ -205,6 +207,7 @@ const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4 z-50">
             {/* Mobile Language Toggle */}
+            {/*
             <button 
               onClick={toggleLanguage}
               className={`flex items-center gap-1.5 px-2 py-1 rounded-full border transition-all ${
@@ -221,6 +224,7 @@ const Navbar: React.FC = () => {
                 {language === 'en' ? 'EN' : 'CN'}
               </span>
             </button>
+            */}
 
             <button
               onClick={() => setIsOpen(!isOpen)}

@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion as motionOriginal } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Star } from 'lucide-react';
 const motion = motionOriginal as any;
 
 const MeetTheTeam: React.FC = () => {
@@ -109,11 +110,17 @@ const MeetTheTeam: React.FC = () => {
                     
                     <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-8 border-white">
                       {member.atar && (
-                        <div className="absolute bottom-4 right-4 z-20">
-                          <div className="bg-gradient-to-br from-amber-400 to-amber-500 shadow-lg rounded-xl p-4 transform transition-transform duration-500 hover:scale-110">
-                            <div className="text-center text-white">
-                                <p className="text-xs font-bold uppercase tracking-wider">ATAR</p>
-                                <p className="text-4xl font-bold font-mono tracking-tight">{member.atar}</p>
+                        <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 z-20">
+                          <div 
+                            style={{ willChange: 'transform' }}
+                            className="bg-black/20 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                          >
+                            <div className="p-3 md:p-4 text-center text-white">
+                                <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
+                                    <Star className="text-amber-300 w-4 h-4 md:w-5 md:h-5" fill="currentColor" />
+                                    <p className="text-[10px] md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                                </div>
+                                <p className="text-3xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
                             </div>
                           </div>
                         </div>
