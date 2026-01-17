@@ -38,7 +38,7 @@ const Card = ({ image, title, tag, priority = false }: { image: string, title: s
   <motion.div 
     whileHover={{ scale: 1.02 }}
     transition={{ duration: 0.3 }}
-    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-500 aspect-[3/4] w-full group cursor-default border border-slate-100 transform-gpu"
+    className="relative rounded-3xl overflow-hidden shadow-lg card-shadow-wrapper duration-500 aspect-[3/4] w-full group cursor-default border border-slate-100 transform-gpu"
     style={{ willChange: 'transform' }}
   >
     <img 
@@ -94,57 +94,65 @@ const Home: React.FC = () => {
         icon: Users, 
         title: "Small Classes", 
         desc: "Max 6 students. You won't get lost in the crowd.",
-        colorClass: "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-200",
-        borderClass: "group-hover:border-blue-200"
+        colorClass: "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white",
+        borderClass: "hover:border-blue-200",
+        shadowClass: "blue-shadow"
     },
     { 
         icon: Star, 
         title: "Signature Curriculum", 
         desc: "Syllabus-aligned resources developed by NSW teachers.",
-        colorClass: "bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-amber-200",
-        borderClass: "group-hover:border-amber-200"
+        colorClass: "bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white",
+        borderClass: "hover:border-amber-200",
+        shadowClass: "amber-shadow"
     },
     { 
         icon: Trophy, 
         title: "Complete Support", 
         desc: "Help between sessions, subject selection, and uni pathways.",
-        colorClass: "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-purple-200",
-        borderClass: "group-hover:border-purple-200"
+        colorClass: "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white",
+        borderClass: "hover:border-purple-200",
+        shadowClass: "purple-shadow"
     },
     { 
         icon: Activity, 
         title: "Progress Tracking", 
         desc: "Regular sessions to monitor, analyse, and optimise performance.",
-        colorClass: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-emerald-200",
-        borderClass: "group-hover:border-emerald-200"
+        colorClass: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white",
+        borderClass: "hover:border-emerald-200",
+        shadowClass: "emerald-shadow"
     },
     { 
         icon: GraduationCap, 
-        title: "Expert Tutors", 
-        desc: "Genuine care and expertise to build student confidence.",
-        colorClass: "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-200",
-        borderClass: "group-hover:border-indigo-200"
+        title: "Expert Mentors", 
+        desc: "Genuine care and expertise to build student success.",
+        colorClass: "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white",
+        borderClass: "hover:border-indigo-200",
+        shadowClass: "indigo-shadow"
     },
     { 
         icon: PenTool, 
-        title: "Personalised Plans", 
-        desc: "Tailored to your unique strengths and learning style.",
-        colorClass: "bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-pink-200",
-        borderClass: "group-hover:border-pink-200"
+        title: "Accredited Teachers", 
+        desc: "Founded by leading NSW teachers and academics.",
+        colorClass: "bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white",
+        borderClass: "hover:border-pink-200",
+        shadowClass: "pink-shadow"
     },
     { 
         icon: Smile, 
         title: "Risk-Free Trial", 
         desc: "First lesson free. You only pay if you decide to continue.",
-        colorClass: "bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-sky-200",
-        borderClass: "group-hover:border-sky-200"
+        colorClass: "bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white",
+        borderClass: "hover:border-sky-200",
+        shadowClass: "sky-shadow"
     },
     { 
         icon: Laptop, 
         title: "Flexible Options", 
         desc: "Private, group, online, or in-person learning.",
-        colorClass: "bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-orange-200",
-        borderClass: "group-hover:border-orange-200"
+        colorClass: "bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white",
+        borderClass: "hover:border-orange-200",
+        shadowClass: "orange-shadow"
     }
   ];
 
@@ -229,14 +237,14 @@ const Home: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/contact')}
-                  className="group px-8 py-4 bg-ryze text-white rounded-full font-bold text-lg shadow-xl shadow-ryze/30 hover:shadow-2xl hover:bg-ryze-600 transition-all flex items-center gap-3 w-full sm:w-auto justify-center"
-                >
-                  {t('Book a Trial Lesson')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/contact')}
+                className="group px-8 py-4 bg-ryze text-white rounded-full font-bold text-lg shadow-xl shadow-ryze/30 hover:bg-ryze-600 transition-all flex items-center gap-3 w-full sm:w-auto justify-center cta-button-shadow relative z-0"
+              >
+                {t('Book a Trial Lesson')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </motion.button>
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
@@ -302,7 +310,7 @@ const Home: React.FC = () => {
 
 {/* Features Grid */}
 
-      <section className="py-24 md:py-32 px-4 bg-white relative overflow-hidden">
+      <section className="py-24 md:py-32 px-4 bg-white relative overflow-hidden transform-gpu">
         {/* Colorful Background Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
             <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] transform-gpu" style={{ willChange: 'transform' }}></div>
@@ -321,7 +329,7 @@ const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 isolate">
             {features.map((feature, idx) => (
               <motion.div 
                 key={idx}
@@ -329,9 +337,9 @@ const Home: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: idx * 0.05 }}
-                className={`bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 group flex flex-col hover:-translate-y-2 ${feature.borderClass}`}
+                className={`bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 transition-transform transition-colors duration-300 group flex flex-col hover:-translate-y-2 feature-card-shadow ${feature.shadowClass} ${feature.borderClass}`}
               >
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-inner ${feature.colorClass}`}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300 shadow-inner ${feature.colorClass}`}>
                   <feature.icon size={28} strokeWidth={2} />
                 </div>
                 <h3 className="text-xl font-bold font-sans text-slate-900 mb-3 leading-tight">{t(feature.title)}</h3>
