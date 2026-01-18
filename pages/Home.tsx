@@ -1,6 +1,5 @@
-import Testimonials from '../components/Testimonials';
-import { testimonials } from '@/data/testimonials';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
+const Testimonials = React.lazy(() => import('../components/Testimonials'));
 import { motion as motionOriginal, useAnimationControls, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
 import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
@@ -168,28 +167,31 @@ const Home: React.FC = () => {
     {
       id: "mike-nojiri",
       name: "Mike Nojiri",
-      role: "Master's in Teaching | BSc(Math)/BCompSc",
-      marks: "98 Maths Ext 2 | 99 Maths Ext 1 | 99 Maths 2U",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
+      role: "Master\'s in Teaching | BSc(Math)/BCompSc",
+      atar: "99.25",
+      scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: "william-gong",
       name: "William Gong",
       role: "PhD - AI & Machine Learning candidate",
-      marks: "99 Maths Ext 2 | 97 Maths Ext 1 | ATAR 99.50",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
+      atar: "99.50",
+      scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: "gordon-ye",
       name: "Gordon Ye",
       role: "UNSW Academic Teaching Staff | BMaths/BCompSc",
-      marks: "98 Maths Ext 2 | 98 Maths Ext 1 | 97 Physics | 96 Chem",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      atar: "99.55",
+      scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
       fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
-  ];
+  ];  
 
   return (
     <div className="w-full font-sans overflow-hidden bg-slate-50">
@@ -306,7 +308,9 @@ const Home: React.FC = () => {
         </div>
         </section>
 
+    <Suspense fallback={<div className="w-full h-[50vh] bg-slate-50" />}>
       <Testimonials />
+    </Suspense>
 
 {/* Features Grid */}
 
@@ -425,36 +429,64 @@ const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              {team.map((member, idx) => (
-               <motion.div 
-                  key={idx} 
-                  className="group cursor-pointer" 
-                  onClick={() => navigate(`/meet-the-team#${member.id}`)}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
-                     <img 
-                        src={member.image}
-                        onError={(e) => {e.currentTarget.src = member.fallback}}
-                        alt={member.name} 
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                      />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                     <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
-                        <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">{t("Read Bio")}</span>
+               <motion.div
+               key={idx}
+               className="group cursor-pointer"
+               onClick={() => navigate(`/meet-the-team#${member.id}`)}
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true }}
+               transition={{ delay: idx * 0.1 }}
+             >
+              {member.scores && member.scores.length > 0 && (
+                <div className="mb-6">
+                  <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
+                    <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                      {member.scores.map((score, i) => (
+                        <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+               <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
+                 {member.atar && (
+                   <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
+                     <div
+                       style={{ willChange: 'transform' }}
+                       className="bg-black/20 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                     >
+                       <div className="p-3 md:p-4 text-center text-white">
+                         <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
+                           <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
+                           <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                         </div>
+                         <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
+                       </div>
                      </div>
-                  </div>
-                  <div className="pl-2">
-                     <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                     <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
-                     <p className="text-[#FFB000] text-xs font-bold uppercase tracking-tight">{member.marks}</p>
-                  </div>
-               </motion.div>
-             ))}
+                   </div>
+                 )}
+
+                 <img
+                   src={member.image}
+                   onError={(e) => { e.currentTarget.src = member.fallback }}
+                   alt={member.name}
+                   loading="lazy"
+                   decoding="async"
+                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                 <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+                   <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">{t("Read Bio")}</span>
+                 </div>
+               </div>
+               <div className="pl-2">
+                 <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
+                 <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
+               </div>
+             </motion.div>             
+            ))}
           </div>
         </div>
       </section>

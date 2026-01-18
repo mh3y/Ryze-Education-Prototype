@@ -11,7 +11,7 @@ const About: React.FC = () => {
     {
       name: "Mr Mike Nojiri",
       role: "Co-Founder & Head of Education",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
       fallbackImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
         "Master of Teaching | UNSW",
@@ -26,7 +26,7 @@ const About: React.FC = () => {
     {
       name: "Mr William Gong",
       role: "Co-Founder & Head of Technology",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
       fallbackImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
         "PhD - AI & Machine Learning Candidate | UNSW",

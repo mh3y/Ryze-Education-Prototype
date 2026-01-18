@@ -25,7 +25,7 @@ const MOCK_USERS: Record<string, { profile: User, passwordHash: string }> = {
     passwordHash: 'password123'
   },
   'tutor@ryze.edu.au': {
-    profile: { id: 'u3', email: 'tutor@ryze.edu.au', name: 'Mike Tutor', role: 'tutor', avatar: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png' },
+    profile: { id: 'u3', email: 'tutor@ryze.edu.au', name: 'Mike Tutor', role: 'tutor', avatar: 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png' },
     passwordHash: 'password123'
   },
   'admin@ryze.edu.au': {
