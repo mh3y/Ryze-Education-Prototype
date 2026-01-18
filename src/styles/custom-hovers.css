@@ -1,0 +1,78 @@
+
+.card-shadow-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 1.5rem; /* 24px */
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+  z-index: -1;
+}
+
+.card-shadow-wrapper:hover::after {
+  opacity: 1;
+}
+
+.feature-card-shadow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 2rem; /* 32px */
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+  z-index: -1;
+}
+
+.feature-card-shadow:hover::after {
+  opacity: 1;
+}
+
+.feature-card-shadow.blue-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.1), 0 4px 6px -4px rgb(59 130 246 / 0.1);
+}
+.feature-card-shadow.amber-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(245 158 11 / 0.1), 0 4px 6px -4px rgb(245 158 11 / 0.1);
+}
+.feature-card-shadow.purple-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(168 85 247 / 0.1), 0 4px 6px -4px rgb(168 85 247 / 0.1);
+}
+.feature-card-shadow.emerald-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(16 185 129 / 0.1), 0 4px 6px -4px rgb(16 185 129 / 0.1);
+}
+.feature-card-shadow.indigo-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.1), 0 4px 6px -4px rgb(99 102 241 / 0.1);
+}
+.feature-card-shadow.pink-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(236 72 153 / 0.1), 0 4px 6px -4px rgb(236 72 153 / 0.1);
+}
+.feature-card-shadow.sky-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(14 165 233 / 0.1), 0 4px 6px -4px rgb(14 165 233 / 0.1);
+}
+.feature-card-shadow.orange-shadow:hover::after {
+  box-shadow: 0 10px 15px -3px rgb(249 115 22 / 0.1), 0 4px 6px -4px rgb(249 115 22 / 0.1);
+}
+
+.cta-button-shadow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 9999px;
+  box-shadow: 0 25px 50px -12px rgb(255 176 0 / 0.4);
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+  z-index: -1;
+}
+
+.cta-button-shadow:hover::after {
+  opacity: 1;
+}
