@@ -221,7 +221,7 @@ const Home: React.FC = () => {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 shadow-sm text-white text-sm font-bold tracking-wide mb-2 mx-auto lg:mx-0"
                   >
                     <Sparkles size={14} className="text-ryze" />
-                    <span>{t("SYDNEY'S MOST EFFECTIVE TUTORING")}</span>
+                    <span>{t("FOUNDED BY ACCREDITED TEACHERS AND ACADEMIC SCHOLARS")}</span>
                   </motion.div>
                   
                   <h1 className="text-5xl lg:text-8xl font-sans font-extrabold text-white leading-[1.05] tracking-tight">
