@@ -9,7 +9,7 @@ export const Starfield: React.FC = memo(() => {
     if (canvasRef.current) {
       // Ensure we only create the worker once
       if (!workerRef.current) {
-        const worker = new Worker(new URL('../starfield.worker.ts', import.meta.url), { type: 'module' });
+        const worker = new Worker('/starfield.worker.ts', { type: 'module' });
         workerRef.current = worker;
 
         const offscreenCanvas = canvasRef.current.transferControlToOffscreen();
