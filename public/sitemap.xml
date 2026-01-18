@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ryze.edu.au/</loc>
+    <loc>https://ryzeeducation.com.au/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://ryze.edu.au/meet-the-team</loc>
+    <loc>https://ryzeeducation.com.au/meet-the-team</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ryze.edu.au/pricing</loc>
+    <loc>https://ryzeeducation.com.au/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ryze.edu.au/how-ryze-works</loc>
+    <loc>https://ryzeeducation.com.au/how-ryze-works</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
