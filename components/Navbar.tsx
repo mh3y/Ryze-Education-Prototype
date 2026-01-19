@@ -10,19 +10,23 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   
-  // Mobile state management
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
   
   const location = useLocation();
   const navigate = useNavigate();
   const { language, toggleLanguage, t } = useLanguage();
 
-  const isAiPage = location.pathname === '/ryze-ai';
-  const isLoginPage = location.pathname === '/login';
+  // Centralized list for pages that require white navbar text when transparent
+  const darkThemeRoutes = ['/ryze-ai', '/login', '/contact', '/learning-style'];
+  const isDarkThemePage = darkThemeRoutes.includes(location.pathname);
   const isHomePage = location.pathname === '/';
 
-  // State for homepage at top (not scrolled, menu closed)
+  // Determine if the navbar is transparent at the top of the homepage
   const isHomePageAtTop = isHomePage && !scrolled && !isOpen;
+
+  // Unified condition for when text/icons should be white
+  // White text is used for dark pages OR the homepage when at the top.
+  const useWhiteText = isDarkThemePage || isHomePageAtTop;
 
   // Scroll locking for mobile menu
   useEffect(() => {
@@ -47,6 +51,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpen]);
 
+  // Detect scroll position
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
@@ -64,26 +69,40 @@ const Navbar: React.FC = () => {
     { name: 'How Ryze Works', path: '/how-ryze-works', desc: "Our process explained." },
   ];
 
+  // --- DYNAMIC STYLING ---
+
+  // Navbar background: Transparent at top, then colored on scroll/open
   const navClasses = `fixed w-full z-50 transition-all duration-300 border-b ${
-    scrolled || isOpen || isLoginPage
-      ? isAiPage || isLoginPage
+    scrolled || isOpen
+      ? isDarkThemePage // When scrolled/open, pick bg based on page theme
         ? 'bg-[#050510]/80 backdrop-blur-xl border-white/10 py-2' 
         : 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-2 shadow-sm'
-      : 'bg-transparent border-transparent py-6'
+      : 'bg-transparent border-transparent py-6' // Transparent at the top
   }`;
 
+  // Nav links color: White for dark pages/homepage-top, dark for light pages
   const linkClasses = (isActive: boolean) => {
-    if (isActive) return 'text-ryze';
-    if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
-    if (isAiPage || isLoginPage) return 'text-slate-300 hover:text-white';
-    return 'text-slate-900 hover:text-ryze';
+    if (isActive) {
+      // Special active color for the Learning Style page
+      if (location.pathname === '/learning-style') return 'text-[#FFB000]';
+      return 'text-ryze';
+    }
+    if (useWhiteText) {
+      // Homepage gets a different hover color
+      if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
+      return 'text-white hover:text-slate-300'; // Other dark pages
+    }
+    return 'text-slate-900 hover:text-ryze'; // Default for light pages
   };
 
   const aboutButtonClasses = () => {
     const isActive = ['/the-ryze-truth', '/how-ryze-works'].includes(location.pathname);
     if (isActive) return 'text-ryze';
-    if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
-    if (isAiPage || isLoginPage) return 'text-slate-300 hover:text-white';
+    
+    if (useWhiteText) {
+      if (isHomePageAtTop) return 'text-white hover:text-yellow-300';
+      return 'text-white hover:text-slate-300';
+    }
     return 'text-slate-900 hover:text-ryze';
   };
 
@@ -99,7 +118,7 @@ const Navbar: React.FC = () => {
       : 'bg-[#ffb000] text-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]'
   }`;
 
-  // Animation variants
+  // --- ANIMATION VARIANTS ---
   const accordionVariants: Variants = {
     open: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] } },
     collapsed: { opacity: 0, height: 0, transition: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] } }
@@ -115,19 +134,16 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           
-          {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer group z-50" onClick={() => { setIsOpen(false); navigate('/'); }}>
             <img 
               src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
               alt="Ryze Education" 
-              className={`h-10 md:h-16 w-auto transition-all duration-500 ${(isAiPage || isLoginPage || isHomePageAtTop) ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
+              className={`h-10 md:h-16 w-auto transition-all duration-500 ${useWhiteText ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
             />
           </div>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-4 lg:gap-8">
             
-            {/* About Dropdown */}
             <div 
               className="relative group"
               onMouseEnter={() => setAboutDropdownOpen(true)}
@@ -170,7 +186,7 @@ const Navbar: React.FC = () => {
             <NavLink to="/ryze-ai" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>
                <span className="flex items-center gap-1.5 whitespace-nowrap">
                  {t('Ryze AI')}
-                 <span className={`flex items-center justify-center w-5 h-5 rounded-full ${isAiPage || isLoginPage ? 'bg-white/10 text-ryze' : 'bg-ryze/10 text-ryze'}`}>
+                 <span className={`flex items-center justify-center w-5 h-5 rounded-full ${useWhiteText ? 'bg-white/10 text-ryze' : 'bg-ryze/10 text-ryze'}`}>
                     <Zap size={10} fill="currentColor" />
                  </span>
                </span>
@@ -178,7 +194,7 @@ const Navbar: React.FC = () => {
 
             <NavLink to="/learning-style" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Learning Style')}</NavLink>
 
-            <div className={`h-6 w-px mx-2 ${isAiPage || isLoginPage || isHomePageAtTop ? 'bg-white/20' : 'bg-slate-200'}`}></div>
+            <div className={`h-6 w-px mx-2 ${useWhiteText ? 'bg-white/20' : 'bg-slate-200'}`}></div>
 
             <button
               onClick={() => navigate('/login')}
@@ -195,11 +211,10 @@ const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4 z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-full transition-colors ${isHomePageAtTop ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'}`}
+              className={`p-2 rounded-full transition-colors ${useWhiteText && !isOpen ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'}`}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -207,7 +222,6 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -221,7 +235,6 @@ const Navbar: React.FC = () => {
               
               <div className="flex-grow space-y-6">
                 
-                {/* 1. About Accordion */}
                 <div className="border-b border-slate-100 pb-4">
                   <button 
                     onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
@@ -280,7 +293,6 @@ const Navbar: React.FC = () => {
 
               </div>
 
-              {/* Bottom Actions */}
               <div className="mt-8 space-y-4">
                  <button 
                     onClick={() => { navigate('/login'); setIsOpen(false); }}
