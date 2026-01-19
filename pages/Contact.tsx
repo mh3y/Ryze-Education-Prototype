@@ -130,7 +130,7 @@ const Contact: React.FC = () => {
               <div className="pb-20 pt-24 px-4">
                 <div className="max-w-4xl mx-auto text-center">
                   <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">{t("Get in Touch")}</h1>
-                  <p className="text-xl font-light text-slate-300">
+                  <p className="text-xl font-light text-slate-200">
                     {t("Ready to experience the Ryze difference? Have questions? We'd love to chat with you.")}
                   </p>
                 </div>
@@ -150,8 +150,8 @@ const Contact: React.FC = () => {
                         {t("Sometimes it's just easier to talk. Call us directly and we'll help you out.")}
                       </p>
 
-                      <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center justify-center gap-3 shadow-lg">
-                        Call us now! <Phone size={20} fill="currentColor" />
+                      <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
+                        Give us a call! <Phone size={20} fill="currentColor" />
                       </a>
                   </div>
 
@@ -238,7 +238,7 @@ const Contact: React.FC = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-slate-700 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                                 placeholder={t("Your Full Name")}
                               />
                             </div>
@@ -252,7 +252,7 @@ const Contact: React.FC = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-slate-700 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                                 placeholder={t("email@address.com")}
                               />
                             </div>
@@ -268,7 +268,7 @@ const Contact: React.FC = () => {
                               value={formData.phone}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-slate-700 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                               placeholder={t("Mobile Number")}
                             />
                           </div>
@@ -289,7 +289,7 @@ const Contact: React.FC = () => {
                               value={formData.message}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-slate-700 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-ryze focus:bg-black/30 outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
                               placeholder={t("How can we help you?")}
                             ></textarea>
                           </div>
