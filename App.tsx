@@ -9,6 +9,7 @@ import { Starfield } from './components/Starfield';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import Home from './pages/Home';
+import LandingPage from './pages/LandingPage';
 
 // Eager load Portal pages for instant navigation and zero lag
 import PortalHome from './pages/PortalHome';
@@ -96,7 +97,8 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
-  
+  const isLandingPagePage = location.pathname === '/LandingPage';
+
   // Routes that share the "Portal" aesthetic (Starfield background)
   // We include Dashboard here to keep the background persistent when logging in
   const shouldShowStarfield = location.pathname === '/login' || 
@@ -108,8 +110,8 @@ const AppContent: React.FC = () => {
 
   // Determine background class based on route type
   // Marketing pages get slate-50, App/Portal pages get dark background
-  const bgClass = (shouldShowStarfield || location.pathname === '/ryze-ai') 
-    ? 'bg-[#050510]' 
+  const bgClass = (shouldShowStarfield || location.pathname === '/ryze-ai' || isLandingPagePage) 
+    ? 'bg-[#0D0D0D]' 
     : 'bg-slate-50';
 
   return (
@@ -123,12 +125,13 @@ const AppContent: React.FC = () => {
         </div>
       )}
 
-      {(!isDashboard && !shouldShowStarfield) && <Navbar />}
+      {(!isDashboard && !shouldShowStarfield && !isLandingPagePage) && <Navbar />}
       
       <main className="flex-grow flex flex-col relative z-10 w-full">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+            <Route path="/LandingPage" element={<LandingPage />} />
             <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
             <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
             <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
@@ -160,7 +163,7 @@ const AppContent: React.FC = () => {
           </Routes>
         </AnimatePresence>
       </main>
-      {(!isDashboard && !shouldShowStarfield) && <Footer />}
+      {(!isDashboard && !shouldShowStarfield && !isLandingPagePage) && <Footer />}
       {/* <CookieConsent /> */}
     </div>
   );

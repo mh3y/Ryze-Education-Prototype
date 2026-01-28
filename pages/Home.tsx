@@ -170,7 +170,7 @@ const Home: React.FC = () => {
       role: "Master\'s in Teaching | BSc(Math)/BCompSc",
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105290/Screenshot_2025-11-20_at_11.13.56_pm_gwdxn2.png",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -179,7 +179,7 @@ const Home: React.FC = () => {
       role: "PhD - AI & Machine Learning candidate",
       atar: "99.50",
       scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764105292/Screenshot_2025-11-26_at_12.50.43_am_plfzbu.png",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -452,10 +452,10 @@ const Home: React.FC = () => {
               )}
                <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
                  {member.atar && (
-                   <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
+                   <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
                      <div
                        style={{ willChange: 'transform' }}
-                       className="bg-black/20 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                       className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
                      >
                        <div className="p-3 md:p-4 text-center text-white">
                          <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">

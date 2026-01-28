@@ -15,6 +15,7 @@ const Sitemap: React.FC = () => {
             icon: Home,
             links: [
                 { name: "Home", path: "/" },
+                { name: "Landing Page", path: "/LandingPage" },
                 { name: "The Ryze Truth", path: "/the-ryze-truth" },
                 { name: "Meet Our Team", path: "/meet-the-team" },
                 { name: "Methodology", path: "/how-ryze-works" },
@@ -22,39 +23,6 @@ const Sitemap: React.FC = () => {
                 { name: "Pricing", path: "/pricing" },
                 { name: "Contact", path: "/contact" },
                 { name: "FAQ", path: "/faq" },
-            ]
-        },
-        {
-            title: "Primary Courses",
-            icon: BookOpen,
-            links: [
-                { name: "Primary Overview", path: "/primary" },
-                { name: "Year 3 Mathematics", path: "/primary/year-3-maths" },
-                { name: "Year 3 English", path: "/primary/year-3-english" },
-                { name: "Year 4 Mathematics", path: "/primary/year-4-maths" },
-                { name: "Year 4 English", path: "/primary/year-4-english" },
-                { name: "Year 5 Mathematics", path: "/primary/year-5-maths" },
-                { name: "Year 5 English", path: "/primary/year-5-english" },
-                { name: "Year 6 Mathematics", path: "/primary/year-6-maths" },
-                { name: "Year 6 English", path: "/primary/year-6-english" },
-                { name: "OC Exam Preparation", path: "/primary/oc-preparation" },
-                { name: "Selective Exam Preparation", path: "/primary/selective-preparation" },
-            ]
-        },
-        {
-            title: "Secondary Courses",
-            icon: BookOpen,
-            links: [
-                { name: "Secondary Overview", path: "/secondary" },
-                { name: "Year 7 Maths", path: "/secondary/year-7-maths" },
-                { name: "Year 8 Maths", path: "/secondary/year-8-maths" },
-                { name: "Year 9 Maths", path: "/secondary/year-9-maths" },
-                { name: "Year 10 Maths", path: "/secondary/year-10-maths" },
-                { name: "Year 11 Maths Advanced", path: "/secondary/year-11-maths-advanced" },
-                { name: "Year 11 Maths Ext 1", path: "/secondary/year-11-maths-ext1" },
-                { name: "Year 12 Maths Advanced", path: "/secondary/year-12-maths-advanced" },
-                { name: "Year 12 Maths Ext 1", path: "/secondary/year-12-maths-ext1" },
-                { name: "Year 12 Maths Ext 2", path: "/secondary/year-12-maths-ext2" },
             ]
         },
         {
