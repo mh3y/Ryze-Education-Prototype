@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
             {/* Header */}
             <header className="container mx-auto px-6 py-6 flex justify-between items-center">
-                <div className="text-3xl font-bold text-white">Ryze Education</div>
+                <div className="text-3xl font-bold text-[#FFB000]">Ryze Education</div>
                 <nav className="hidden md:flex items-center space-x-10">
                     <a href="#" className="hover:text-green-400 transition-colors text-lg">Features</a>
                     <a href="#" className="hover:text-green-400 transition-colors text-lg">How it works?</a>
@@ -117,7 +117,7 @@ const LandingPage: React.FC = () => {
                         transition={{ duration: 0.8, ease: "easeInOut" }}
                         className="text-5xl md:text-7xl font-bold leading-tight"
                     >
-                        Become a straight <span className="relative inline-block">A+ <img src="/images/tes8.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span> student
+                        Become a straight <span className="relative inline-block">A+ <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span> student
                         <br />
                         with live tutoring
                     </motion.h1>
@@ -179,9 +179,9 @@ const LandingPage: React.FC = () => {
                             </motion.div>
                         </div>
                         <div className="relative h-[500px] flex items-center justify-center">
-                           <img src="/images/tutor1.png" alt="Tutor 1" className="w-48 h-48 rounded-full object-cover absolute top-0 left-0 border-4 border-green-500 shadow-lg" />
-                           <img src="/images/tutor2.png" alt="Tutor 2" className="w-64 h-64 rounded-full object-cover absolute border-4 border-purple-500 shadow-lg" />
-                           <img src="/images/gordon.png" alt="Tutor 3" className="w-40 h-40 rounded-full object-cover absolute bottom-0 right-0 border-4 border-yellow-500 shadow-lg" />
+                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg" alt="Tutor 1" className="w-48 h-48 rounded-full object-cover absolute top-0 left-0 border-4 border-green-500 shadow-lg" />
+                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg" alt="Tutor 2" className="w-64 h-64 rounded-full object-cover absolute border-4 border-purple-500 shadow-lg" />
+                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/gordon_rytlim.png" alt="Tutor 3" className="w-40 h-40 rounded-full object-cover absolute bottom-0 right-0 border-4 border-yellow-500 shadow-lg" />
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@ const LandingPage: React.FC = () => {
                     <p className="text-lg text-gray-400 mt-4">Be a part of the LandingPage success story, where numbers speak volumes about us</p>
                     <div className="grid md:grid-cols-4 gap-8 mt-16">
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">50,000</p>
+                            <p className="text-5xl font-bold text-green-400">500</p>
                             <p className="text-gray-400 mt-2">students served & counting</p>
                         </div>
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
@@ -202,7 +202,7 @@ const LandingPage: React.FC = () => {
                             <p className="text-gray-400 mt-2">certified tutors with subject expertise</p>
                         </div>
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">4.8/5</p>
+                            <p className="text-5xl font-bold text-green-400">4.9/5</p>
                             <p className="text-gray-400 mt-2">Avg rating for tutor session</p>
                         </div>
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
@@ -217,14 +217,14 @@ const LandingPage: React.FC = () => {
             <section className="py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="/images/tes8.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
+                        <h2 className="text-4xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
                         <p className="text-lg text-gray-400 mt-4">Join over 10,000+ other students excelling in their academics with LandingPage</p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-16 items-center">
                         <div className="bg-gray-900/50 p-10 rounded-3xl border border-gray-800">
                              <p className="text-2xl italic text-gray-300">"As a Class 12 student preparing for board exams, I needed expert guidance. LandingPage connected me with a tutor who not only helped with my studies but also boosted my motivation. Highly recommend!"</p>
                             <div className="mt-8 flex items-center gap-4">
-                                <img src="/images/tutor2.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Rohan"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Rohan"/>
                                 <div>
                                     <p className="font-bold text-lg">Rohan Nathani</p>
                                     <p className="text-gray-400">Class 12th, DPS Kaushambhi</p>
@@ -233,14 +233,14 @@ const LandingPage: React.FC = () => {
                         </div>
                         <div className="flex flex-col items-center">
                             <div className="grid grid-cols-4 gap-4 max-w-sm">
-                                <img src="/images/tes1.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes2.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes3.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes4.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes5.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes6.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="/images/tes7.png" className="w-20 h-20 rounded-full object-cover opacity-70 hover:opacity-100" alt="student"/>
-                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+500</div>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
                             </div>
                             <p className="text-center mt-6 text-gray-400">Join the community of 10K+ students in becoming a better student</p>
                         </div>
@@ -253,14 +253,14 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                     <div>
                         <p className="text-lg text-green-400 font-bold">NO STRINGS ATTACHED</p>
-                        <h2 className="text-4xl md:text-5xl font-bold mt-4">Your first session <br/> absolutely <span className="relative inline-block">free<img src="/images/tes8.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
+                        <h2 className="text-4xl md:text-5xl font-bold mt-4">Your first session <br/> absolutely <span className="relative inline-block">free<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
                         <p className="text-lg text-gray-400 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
                         <button className="bg-green-500 text-black font-bold px-10 py-4 rounded-lg text-lg hover:bg-green-600 transition-colors mt-8 shadow-lg shadow-green-500/20">
                             Get Started for Free
                         </button>
                     </div>
                     <div className="relative h-[400px] bg-black rounded-3xl border border-gray-800 flex items-center justify-center">
-                        <img src="/images/onlinev4.png" className="w-full h-full object-cover rounded-3xl opacity-80" alt="online class"/>
+                        <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/onlinev4_rytlim.png" className="w-full h-full object-cover rounded-3xl opacity-80" alt="online class"/>
                         <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 text-sm rounded-full font-semibold animate-pulse">LIVE</div>
                     </div>
                 </div>
@@ -440,7 +440,7 @@ const LandingPage: React.FC = () => {
 
             {/* Footer */}
             <footer className="container mx-auto px-6 py-8 mt-10 border-t border-gray-800 flex justify-between items-center">
-                <p className="text-gray-500">&copy; 2023, LandingPage. All rights reserved</p>
+                <p className="text-gray-500">&copy; 2026, Ryze Education. All rights reserved</p>
                 <div className="flex space-x-6 items-center">
                     <a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a>
                     <a href="#" className="text-gray-400 hover:text-white">Terms of service</a>
