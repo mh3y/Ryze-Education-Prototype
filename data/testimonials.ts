@@ -187,14 +187,14 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "hsc-2",
-    reviewerName: "Jameson K.",
+    reviewerName: "Jason Y.",
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "99.85 ATAR & 98 in 4U",
     message: "I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor to guide them.",
     accent: "orange",
     category: "HSC",
-    successReason: "Jameson's success was rooted in his mastery of 4U mechanics and complex numbers, where we spent months building deep intuition before doing papers."
+    successReason: "Jason's success was rooted in his mastery of 4U mechanics and complex numbers, where we spent months building deep intuition before doing papers."
   },
   {
     id: "hsc-3",
@@ -220,7 +220,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "hsc-5",
-    reviewerName: "Jason Y.",
+    reviewerName: "Jason L.",
     reviewerType: "Student",
     studentGrade: "Year 12",
     achievement: "Rank 1 - 99 Internal",

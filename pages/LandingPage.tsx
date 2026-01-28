@@ -99,7 +99,7 @@ const LandingPage: React.FC = () => {
                 </nav>
                 <div>
                     <button className="border border-green-500 text-green-500 px-8 py-3 rounded-lg hover:bg-green-500 hover:text-black transition-colors font-semibold">
-                        Sign up
+                        Book your free consultation
                     </button>
                 </div>
             </header>
@@ -127,7 +127,7 @@ const LandingPage: React.FC = () => {
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeInOut" }}
                         className="text-lg md:text-xl text-gray-400 mt-8 max-w-2xl mx-auto"
                     >
-                        Book 1.1 sessions with subjects matter experts that will unleash your true academic potential.
+                        Book 1 on 1 sessions with subjects matter experts that will unleash your true academic potential.
                     </motion.p>
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
@@ -191,10 +191,10 @@ const LandingPage: React.FC = () => {
             <section className="py-24 bg-black">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-4xl md:text-5xl font-bold">Unmatched expertise at your fingertips</h2>
-                    <p className="text-lg text-gray-400 mt-4">Be a part of the LandingPage success story, where numbers speak volumes about us</p>
+                    <p className="text-lg text-gray-400 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
                     <div className="grid md:grid-cols-4 gap-8 mt-16">
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">500</p>
+                            <p className="text-5xl font-bold text-green-400">500+</p>
                             <p className="text-gray-400 mt-2">students served & counting</p>
                         </div>
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
@@ -218,16 +218,16 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-4xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
-                        <p className="text-lg text-gray-400 mt-4">Join over 10,000+ other students excelling in their academics with LandingPage</p>
+                        <p className="text-lg text-gray-400 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-16 items-center">
                         <div className="bg-gray-900/50 p-10 rounded-3xl border border-gray-800">
-                             <p className="text-2xl italic text-gray-300">"As a Class 12 student preparing for board exams, I needed expert guidance. LandingPage connected me with a tutor who not only helped with my studies but also boosted my motivation. Highly recommend!"</p>
+                             <p className="text-2xl italic text-gray-300">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Rohan"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Jason"/>
                                 <div>
-                                    <p className="font-bold text-lg">Rohan Nathani</p>
-                                    <p className="text-gray-400">Class 12th, DPS Kaushambhi</p>
+                                    <p className="font-bold text-lg">Jason Y.</p>
+                                    <p className="text-gray-400">99.85 ATAR | Ext 2 - 98</p>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +242,7 @@ const LandingPage: React.FC = () => {
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
                                 <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
                             </div>
-                            <p className="text-center mt-6 text-gray-400">Join the community of 10K+ students in becoming a better student</p>
+                            <p className="text-center mt-6 text-gray-400">Join the Ryze community in becoming higher achievers</p>
                         </div>
                     </div>
                 </div>
