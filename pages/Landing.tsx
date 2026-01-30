@@ -35,16 +35,28 @@ const Landing: React.FC = () => {
         answer: "Ryze is an online platform that connects students with expert tutors for personalized one-on-one sessions. You simply sign up, find a tutor that matches your needs, and book a session at your convenience."
       },
       {
-        question: "Are the tutors qualified?",
-        answer: "Absolutely. All our tutors are handpicked and go through a rigorous vetting process. They are experts in their subjects with proven teaching experience to ensure you receive the highest quality education."
+        question: "What makes Ryze different?",
+        answer: `Most tutors are university students who did well in maths.
+
+      We are founded and led by NSW accredited teachers who've marked HSC papers and taught in NSW classrooms while also being high achievers themselves. That means you learn with syllabus‑aligned resources built by educators who understand the marking criteria, the common mistakes, and what separates strong performances from exceptional ones.
+
+      While other students work through generic materials, you're training with resources that mirror your actual exams: same structure, same standards.
+
+      The result? 
+      
+      Faster improvement. Deeper understanding. And a real competitive edge over other students.`
       },
       {
-        question: "Can I choose my own tutor?",
-        answer: "Yes! We believe in the power of a good student-tutor match. You can browse our tutor profiles, check their expertise and reviews, and select the one that best fits your learning style."
+        question: "What qualifications do the tutors hold?",
+        answer: "All our tutors are handpicked and go through a rigorous vetting process. They are experts in their subjects with proven teaching experience to ensure you receive the highest quality education."
+      },
+      {
+        question: "What does Ryze mentorship program offer?",
+        answer: "We have a mentorship group with distinguished scholars with a history of accredited academic execellence at your disposal to access for you to connect with and learn from. "
       },
       {
         question: "What subjects do you offer?",
-        answer: "We offer a wide range of subjects across various curricula, from primary school foundations to advanced high school topics like HSC Extension Mathematics. Our platform will help you find a specialist in the exact area you need help with."
+        answer: "We specialise in mathematics, from primary through HSC Extension 2, with dedicated support for NAPLAN, OC and Selective Exam Preparation."
       }
     ];
     
@@ -615,7 +627,7 @@ const Landing: React.FC = () => {
             <section id="contact-form-section" className="py-20 md:py-24 bg-[#0069b0]/40">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h3 className="text-3xl font-bold text-white mb-4">Send us a Message</h3>
+                        <h3 className="text-4xl font-bold text-white mb-4">Send us a Message</h3>
                         <p className="text-slate-300">We typically respond within 24 hours.</p>
                     </div>
                     
@@ -773,7 +785,7 @@ const Landing: React.FC = () => {
                                                 exit={{ opacity: 0, height: 0 }}
                                                 className="overflow-hidden"
                                             >
-                                                <p className="text-gray-700 pb-6 px-6">
+                                                <p className="text-gray-700 pb-6 px-6 whitespace-pre-line">
                                                     {faq.answer}
                                                 </p>
                                             </motion.div>
