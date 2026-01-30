@@ -5,7 +5,6 @@ import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Sta
 import { FaMinus } from 'react-icons/fa6';
 
 const Landing: React.FC = () => {
-    const [activeFeature, setActiveFeature] = useState(1);
     const featuresData = [
       {
         title: "1-to-1 Live Tutoring",
@@ -237,11 +236,11 @@ const Landing: React.FC = () => {
 
             {/* Simplified Header */}
             <header className="relative z-20 container mx-auto px-6 py-6 flex justify-between items-center">
-                <div className="text-3xl font-bold text-white">Ryze Education</div>
+                <div className="text-3xl font-bold text-white">RYZE EDUCATION</div>
                 <div>
                     <button 
                       onClick={scrollToContact} 
-                      className="border border-[#FFB000] text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
+                      className="border border-[#FFB000] bg-[#FFB000]/75 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
                         Book your free consultation
                     </button>
@@ -316,75 +315,32 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Unlock Potential Section - NEW */}
-            <section className="py-20 md:py-32">
+            <section className="py-20 md:py-32 bg-[#faf5ed]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold">Unlock your learning potential</h2>
-                        <p className="text-lg text-gray-400 mt-4">We've crafted the platform to make sure you get the results you want</p>
+                        <h2 className="text-3xl md:text-5xl text-[#FFB000] font-bold">Unlock your learning potential</h2>
+                        <p className="text-lg text-gray-700 mt-4">We've crafted the platform to make sure you get the results you want</p>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[500px]">
-                        {/* Left Column: Feature List */}
-                        <div className="flex flex-col gap-8">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="flex flex-col gap-12">
                             {featuresData.map((feature, index) => (
-                                <div 
-                                    key={index} 
-                                    className="relative cursor-pointer"
-                                    onMouseEnter={() => setActiveFeature(index)}
-                                >
-                                    {activeFeature === index && (
-                                        <motion.div layoutId="active-feature-highlight" className="absolute -left-6 top-0 bottom-0 w-1 bg-teal-400 rounded-full" />
-                                    )}
-                                    <h3 className="text-3xl font-bold mb-2">{feature.title}</h3>
-                                    <AnimatePresence>
-                                        {activeFeature === index && (
-                                            <motion.p 
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -10 }}
-                                                className="text-gray-400 text-lg"
-                                            >
-                                                {feature.description}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
+                                <div key={index}>
+                                    <h3 className="text-3xl text-[#FFB000] font-bold mb-2">{feature.title}</h3>
+                                    <p className="text-gray-700 text-lg">
+                                        {feature.description}
+                                    </p>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* Right Column: Image Collage */}
-                        <div className="relative h-[500px] w-full">
-                            <AnimatePresence>
-                                {featuresData[activeFeature].images.map((image) => (
-                                    <motion.div
-                                        key={image.src}
-                                        initial={{ opacity: 0, scale: 0.8, rotate: Math.random() * 20 - 10 }}
-                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                                        exit={{ opacity: 0, scale: 0.8 }}
-                                        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                                        className={`absolute ${image.position} ${image.size} p-1 rounded-2xl bg-white/10 border-2`}
-                                        style={{ borderColor: image.color }}
-                                    >
-                                        <img src={image.src} alt={image.subject} className="w-full h-full object-cover rounded-xl" />
-                                        <span 
-                                            className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 text-sm font-semibold text-white rounded-full"
-                                            style={{ backgroundColor: image.color }}
-                                        >
-                                            {image.subject}
-                                        </span>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
                         </div>
                     </div>
                 </div>
             </section>
 
              {/* Expertise Section */}
-            <section className="py-24 bg-black">
+            <section className="py-24 bg-[#faf5ed]">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-3xl md:text-5xl font-bold">Unmatched expertise at your fingertips</h2>
-                    <p className="text-lg text-gray-400 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
+                    <h2 className="text-3xl md:text-5xl text-black font-bold">Unmatched expertise at your fingertips</h2>
+                    <p className="text-lg text-gray-700 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-16">
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
                             <p className="text-5xl font-bold text-green-400">500+</p>
@@ -410,7 +366,7 @@ const Landing: React.FC = () => {
             <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
+                        <h2 className="text-3xl md:text-5xl font-bold">Our students love us </h2>
                         <p className="text-lg text-gray-400 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -466,30 +422,30 @@ const Landing: React.FC = () => {
                             {/* Step 1 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 1</h3>
-                                <h4 className="text-2xl font-bold mb-3">Sign up for your free account</h4>
+                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 1</h3>
+                                <h4 className="text-2xl font-bold mb-3">Schedule in a free consultation</h4>
                                 <p className="text-gray-400">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
                             </div>
 
                             {/* Step 2 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 2</h3>
-                                <h4 className="text-2xl font-bold mb-3">Find your perfect tutor</h4>
+                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 2</h3>
+                                <h4 className="text-2xl font-bold mb-3">Diagnosis & Feedback </h4>
                                 <p className="text-gray-400">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
                             </div>
 
                             {/* Step 3 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 3</h3>
-                                <h4 className="text-2xl font-bold mb-3">Book session with the tutor right away</h4>
+                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 3</h3>
+                                <h4 className="text-2xl font-bold mb-3">Personalised Learning Plan </h4>
                                 <p className="text-gray-400">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
                             </div>
                         </div>
@@ -696,7 +652,7 @@ const Landing: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {/* Column 1: Brand */}
                         <div className="md:col-span-1">
-                            <h3 className="text-2xl font-bold mb-4">Ryze Education</h3>
+                            <h3 className="text-2xl font-bold mb-4">RYZE EDUCATION</h3>
                             <p className="text-gray-400 leading-relaxed">Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.</p>
                         </div>
 
