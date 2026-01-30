@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaUsers, FaCalendar, FaCreditCard, FaSync, FaGift, FaComments, FaDollarSign, FaBrain, FaLaptop, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
@@ -56,10 +56,43 @@ const EarlyEnrolmentItem = ({ percentage, dateString }) => {
 
 const LearningStyle: React.FC = () => {
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = (section: string) => {
     setOpenSection(openSection === section ? null : section);
   };
+
+  useEffect(() => {
+    if (openSection && detailsRef.current) {
+      // The timeout ensures the animation has time to start before we calculate positions.
+      const timer = setTimeout(() => {
+        // 1. Check if the screen is mobile or desktop width.
+        //    We use 768px as the breakpoint, which is a standard for tablets
+        //    and is consistent with your Navbar's responsive logic.
+        const isMobile = window.innerWidth < 768;
+  
+        // 2. Define a different offset for each device type.
+        //    Mobile navbars are typically shorter. You can adjust these
+        //    values to get the perfect position on all devices.
+        const navbarOffset = isMobile ? 80 : 110; 
+        
+        // 3. Calculate the element's absolute top position on the page.
+        const elementPosition = detailsRef.current.getBoundingClientRect().top + window.scrollY;
+        
+        // 4. Calculate the final scroll position using our new dynamic offset.
+        const offsetPosition = elementPosition - navbarOffset;
+        
+        // 5. Scroll the window to the calculated position.
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }, 110);
+  
+      // Cleanup function to clear the timer
+      return () => clearTimeout(timer);
+    }
+  }, [openSection]); // This effect runs whenever the 'openSection' state changes.
 
   return (
     <motion.div
@@ -155,7 +188,7 @@ const LearningStyle: React.FC = () => {
 
           <AnimatePresence>
             {openSection && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.5, ease: 'easeInOut' }}>
+              <motion.div ref={detailsRef} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.5, ease: 'easeInOut' }}>
                 {openSection === 'private' ? <PrivateTutoringDetails /> : <GroupTutoringDetails />}
               </motion.div>
             )}
@@ -273,12 +306,12 @@ const GroupTutoringDetails = () => (
           <div className="space-y-6">
               <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>What Makes Us Special</h3>
               <SpecialFeatureCard icon={<FaComments className="text-amber-500 w-7 h-7" />} title="Collaborative Learning Environment" text="Learn with peers, share ideas, and gain multiple perspectives on concepts." color="#F59E0B" />
-              <SpecialFeatureCard icon={<FaDollarSign className="text-amber-500 w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and Personalised attention." color="#F59E0B" />
+              <SpecialFeatureCard icon={<FaDollarSign className="text-amber-500 w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and personalised attention." color="#F59E0B" />
               <SpecialFeatureCard icon={<FaBrain className="text-amber-500 w-7 h-7" />} title="Motivation & Accountability" text="Stay motivated with study partners and build lasting friendships." color="#F59E0B" />
           </div>
           <div className="space-y-6">
               <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>Our Group Structure</h3>
-              <StructureCard icon={<Users className="text-amber-500 w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for Personalised attention", "Everyone gets to participate actively"]} color="#F59E0B" />
+              <StructureCard icon={<Users className="text-amber-500 w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for personalised attention", "Everyone gets to participate actively"]} color="#F59E0B" />
               <StructureCard icon={<Clock className="text-amber-500 w-7 h-7" />} title="Extended Sessions" subtitle="120-minute focused learning blocks" features={["More time for deep understanding", "Theory instruction combined with practice questions"]} color="#F59E0B" />
           </div>
       </div>
