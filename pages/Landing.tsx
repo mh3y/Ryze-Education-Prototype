@@ -212,7 +212,7 @@ const Landing: React.FC = () => {
                 {[...features, ...features].map((feature, idx) => (
                     <div 
                       key={idx} 
-                      className="flex-shrink-0 w-80 bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
+                      className="flex-shrink-0 w-[300px] sm:w-80 bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
                     >
                         <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 bg-[#FFB000] border border-[#FF8A00]/30 mx-auto">
                             <feature.icon size={28} className="text-white" />
@@ -241,7 +241,7 @@ const Landing: React.FC = () => {
                 <div>
                     <button 
                       onClick={scrollToContact} 
-                      className="border border-[#FFB000] text-white px-8 py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold"
+                      className="border border-[#FFB000] text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
                         Book your free consultation
                     </button>
@@ -262,7 +262,7 @@ const Landing: React.FC = () => {
                       clipPath: "inset(0% 0% 0% 0%)"
                     }}
                     transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white"
+                    className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white"
                 >
                     <span className="block">YOUR PATH TO SUCCESS</span>
                     <span className="relative block">
@@ -293,7 +293,7 @@ const Landing: React.FC = () => {
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-                    className="text-lg md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
+                    className="text-base md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
                 >
                     Book 1 on 1 sessions with subjects matter experts that will unleash your true academic potential.
                 </motion.p>
@@ -301,11 +301,11 @@ const Landing: React.FC = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
-                    className="mt-12"
+                    className="mt-12 flex flex-col items-center gap-4"
                 >
                     <button 
                       onClick={scrollToContact}
-                      className="bg-[#FFB000]/85 text-white font-bold px-12 py-4 rounded-lg text-xl hover:bg-[#FF8A00] transition-colors shadow-lg shadow-[#FFB000]/20"
+                      className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FF8A00] transition-colors shadow-lg shadow-[#FFB000]/20"
                     >
                         Get Started for Free
                     </button>
@@ -316,14 +316,14 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Unlock Potential Section - NEW */}
-            <section className="py-32">
+            <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold">Unlock your learning potential</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold">Unlock your learning potential</h2>
                         <p className="text-lg text-gray-400 mt-4">We've crafted the platform to make sure you get the results you want</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-16 items-center min-h-[500px]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[500px]">
                         {/* Left Column: Feature List */}
                         <div className="flex flex-col gap-8">
                             {featuresData.map((feature, index) => (
@@ -383,9 +383,9 @@ const Landing: React.FC = () => {
              {/* Expertise Section */}
             <section className="py-24 bg-black">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl md:text-5xl font-bold">Unmatched expertise at your fingertips</h2>
+                    <h2 className="text-3xl md:text-5xl font-bold">Unmatched expertise at your fingertips</h2>
                     <p className="text-lg text-gray-400 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
-                    <div className="grid md:grid-cols-4 gap-8 mt-16">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-16">
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
                             <p className="text-5xl font-bold text-green-400">500+</p>
                             <p className="text-gray-400 mt-2">students served & counting</p>
@@ -407,13 +407,13 @@ const Landing: React.FC = () => {
             </section>
 
              {/* Testimonials Section */}
-            <section className="py-32">
+            <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
+                        <h2 className="text-3xl md:text-5xl font-bold">Our students <span className="relative inline-block">love us<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
                         <p className="text-lg text-gray-400 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <div className="bg-gray-900/50 p-10 rounded-3xl border border-gray-800">
                              <p className="text-2xl italic text-gray-300">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
@@ -442,14 +442,14 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Discover Section - NEW */}
-            <section className="py-32">
+            <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold">Discover the perfect tutor-match</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold">Discover the perfect tutor-match</h2>
                         <p className="text-lg text-gray-400 mt-4">3 simple steps to connect with your best tutor ever.</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         {/* Left Column: Phone Mockup */}
                         <div className="flex justify-center">
                             <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
@@ -498,11 +498,11 @@ const Landing: React.FC = () => {
             </section>
 
              {/* CTA Section */}
-            <section className="py-24">
+            <section className="py-20 md:py-24">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                     <div>
                         <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
-                        <h2 className="text-4xl md:text-5xl font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
                         <p className="text-lg text-gray-400 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
                         <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
                             Get Started for Free
@@ -516,7 +516,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Contact Form Section */}
-            <section id="contact-form-section" className="py-24">
+            <section id="contact-form-section" className="py-20 md:py-24">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <h3 className="text-3xl font-bold text-white mb-4">Send us a Message</h3>
@@ -648,12 +648,12 @@ const Landing: React.FC = () => {
               </section>
 
             {/* FAQ Section */}
-            <section className="py-32">
+            <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="grid md:grid-cols-3 gap-16">
                         <div className="md:col-span-1">
                             <FaQuestionCircle size={40} className="text-[#FFB000] mb-6" />
-                            <h2 className="text-4xl md:text-5xl font-bold mb-4">Still not convinced?</h2>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4">Still not convinced?</h2>
                             <p className="text-gray-400 text-lg">
                                 Have more questions? Feel free to reach out to us. 
                                 <a onClick={scrollToContact} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
