@@ -312,6 +312,91 @@ const Home: React.FC = () => {
       <Testimonials />
     </Suspense>
 
+{/* Team Preview */}
+<section className="py-32 bg-slate-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,176,0,0.05),transparent_40%)]"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+             <div className="max-w-2xl">
+                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Meet Your Mentors")}</h2>
+                <p className="text-lg text-slate-500">
+                  {t("Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.")}
+                </p>
+             </div>
+             <motion.button 
+                whileHover={{ scale: 1.05 }}
+                onClick={() => navigate('/meet-the-team')} 
+                className="text-ryze font-bold flex items-center gap-2 hover:gap-4 transition-all bg-white px-6 py-3 rounded-full shadow-sm hover:shadow-md"
+             >
+                {t("View All Team")} <ArrowRight size={20} />
+             </motion.button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             {team.map((member, idx) => (
+               <motion.div
+               key={idx}
+               className="group cursor-pointer"
+               onClick={() => navigate(`/meet-the-team#${member.id}`)}
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true }}
+               transition={{ delay: idx * 0.1 }}
+             >
+              {member.scores && member.scores.length > 0 && (
+                <div className="mb-6">
+                  <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
+                    <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                      {member.scores.map((score, i) => (
+                        <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+               <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
+                 {member.atar && (
+                   <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
+                     <div
+                       style={{ willChange: 'transform' }}
+                       className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                     >
+                       <div className="p-3 md:p-4 text-center text-white">
+                         <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
+                           <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
+                           <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                         </div>
+                         <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
+                       </div>
+                     </div>
+                   </div>
+                 )}
+
+                 <img
+                   src={member.image}
+                   onError={(e) => { e.currentTarget.src = member.fallback }}
+                   alt={member.name}
+                   loading="lazy"
+                   decoding="async"
+                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                 <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+                   <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">{t("Read Bio")}</span>
+                 </div>
+               </div>
+               <div className="pl-2">
+                 <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
+                 <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
+               </div>
+             </motion.div>          
+            ))}
+          </div>
+        </div>
+      </section>
+
 {/* Features Grid */}
 
       <section className="py-24 md:py-32 px-4 bg-white relative overflow-hidden transform-gpu">
@@ -405,92 +490,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Team Preview */}
-      <section className="py-32 bg-slate-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,176,0,0.05),transparent_40%)]"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-             <div className="max-w-2xl">
-                <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Meet Your Mentors")}</h2>
-                <p className="text-lg text-slate-500">
-                  {t("Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.")}
-                </p>
-             </div>
-             <motion.button 
-                whileHover={{ scale: 1.05 }}
-                onClick={() => navigate('/meet-the-team')} 
-                className="text-ryze font-bold flex items-center gap-2 hover:gap-4 transition-all bg-white px-6 py-3 rounded-full shadow-sm hover:shadow-md"
-             >
-                {t("View All Team")} <ArrowRight size={20} />
-             </motion.button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {team.map((member, idx) => (
-               <motion.div
-               key={idx}
-               className="group cursor-pointer"
-               onClick={() => navigate(`/meet-the-team#${member.id}`)}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ delay: idx * 0.1 }}
-             >
-              {member.scores && member.scores.length > 0 && (
-                <div className="mb-6">
-                  <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
-                    <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
-                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
-                      {member.scores.map((score, i) => (
-                        <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-               <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
-                 {member.atar && (
-                   <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
-                     <div
-                       style={{ willChange: 'transform' }}
-                       className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
-                     >
-                       <div className="p-3 md:p-4 text-center text-white">
-                         <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
-                           <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
-                           <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
-                         </div>
-                         <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
-                       </div>
-                     </div>
-                   </div>
-                 )}
-
-                 <img
-                   src={member.image}
-                   onError={(e) => { e.currentTarget.src = member.fallback }}
-                   alt={member.name}
-                   loading="lazy"
-                   decoding="async"
-                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                 />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                 <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
-                   <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">{t("Read Bio")}</span>
-                 </div>
-               </div>
-               <div className="pl-2">
-                 <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                 <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
-               </div>
-             </motion.div>          
-            ))}
-          </div>
-        </div>
-      </section>
-
+      
       {/* CTA Section - Redesigned to Light/Brand Aesthetic */}
       <section className="py-24 px-4 bg-slate-50 relative">
         <div className="max-w-7xl mx-auto">

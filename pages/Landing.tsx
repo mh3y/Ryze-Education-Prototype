@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
-const LandingPage: React.FC = () => {
+const Landing: React.FC = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -412,7 +412,7 @@ const LandingPage: React.FC = () => {
                         {/* Accordion Item */}
                         <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-800">
                             <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-lg font-semibold">How does LandingPage work?</h3>
+                                <h3 className="text-lg font-semibold">How does Landing work?</h3>
                                 <FaPlus className="text-green-400"/>
                             </div>
                         </div>
@@ -455,4 +455,4 @@ const LandingPage: React.FC = () => {
     );
 };
 
-export default LandingPage;
+export default Landing;
