@@ -102,7 +102,7 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-2">
             <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Resources")}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
-              <li><Link to="/pricing" className={`${linkHoverColor} transition-colors`}>{t("Pricing")}</Link></li>
+              <li><Link to="/learningstyle" className={`${linkHoverColor} transition-colors`}>{t("Learning Style")}</Link></li>
               <li><Link to="/login" className={`${linkHoverColor} transition-colors`}>{t("Dashboard Login")}</Link></li>
               <li><Link to="/contact" className={`${linkHoverColor} transition-colors`}>{t("Contact Us")}</Link></li>
             </ul>

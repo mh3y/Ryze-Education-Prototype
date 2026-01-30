@@ -1,9 +1,64 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
-import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
+import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop } from 'lucide-react';
+import { FaMinus } from 'react-icons/fa6';
 
 const Landing: React.FC = () => {
+    const [activeFeature, setActiveFeature] = useState(1);
+    const featuresData = [
+      {
+        title: "1-to-1 Live Tutoring",
+        description: "Get undivided attention from top tutors in a live, interactive setting designed to target your specific needs and learning style.",
+        images: []
+      },
+      {
+        title: "Handpicked teacher",
+        description: "Undivided attention to you so no more struggling alone with complex concepts or last-minute questions.",
+        images: [
+          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg', position: 'top-10 left-10 z-10', size: 'w-48 h-48', color: 'pink', subject: 'Economics' },
+          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg', position: 'top-0 right-10 z-20', size: 'w-40 h-40', color: 'yellow', subject: 'Maths' },
+          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1770116812/female-teacher_pvvca7.png', position: 'left-1/2 -translate-x-1/2 top-1/4 z-30', size: 'w-64 h-64', color: 'green', subject: 'Science' },
+          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/gordon_rytlim.png', position: 'bottom-10 left-0 z-20', size: 'w-40 h-40', color: 'purple', subject: 'Accounts' },
+          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1770116812/male-teacher_q1j1vj.png', position: 'bottom-0 right-0 z-10', size: 'w-52 h-52', color: 'blue', subject: 'Physics' }
+        ]
+      },
+      {
+        title: "Personalized Learning",
+        description: "Your learning plan is tailored to your unique needs and goals, ensuring efficient progress and mastery of subjects.",
+        images: []
+      },
+    ];
+
+    const faqData = [
+      {
+        question: "How does Ryze work?",
+        answer: "Ryze is an online platform that connects students with expert tutors for personalized one-on-one sessions. You simply sign up, find a tutor that matches your needs, and book a session at your convenience."
+      },
+      {
+        question: "Are the tutors qualified?",
+        answer: "Absolutely. All our tutors are handpicked and go through a rigorous vetting process. They are experts in their subjects with proven teaching experience to ensure you receive the highest quality education."
+      },
+      {
+        question: "Can I choose my own tutor?",
+        answer: "Yes! We believe in the power of a good student-tutor match. You can browse our tutor profiles, check their expertise and reviews, and select the one that best fits your learning style."
+      },
+      {
+        question: "What subjects do you offer?",
+        answer: "We offer a wide range of subjects across various curricula, from primary school foundations to advanced high school topics like HSC Extension Mathematics. Our platform will help you find a specialist in the exact area you need help with."
+      }
+    ];
+    
+    const [openFaq, setOpenFaq] = useState<number | null>(0);    
+
+    const socialLinks = [
+      { Icon: FaFacebook, href: "https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr" },
+      { Icon: FaInstagram, href: "https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#" },
+      { Icon: FaLinkedin, href: "https://www.linkedin.com/company/ryze-education" },
+      { Icon: FaWhatsapp, href: "https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0" }
+    ];
+    
+    const reduce = useReducedMotion();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -86,102 +141,240 @@ const Landing: React.FC = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (status === 'error') setStatus('idle');
       };
+
+      const scrollToContact = () => {
+        const contactSection = document.getElementById('contact-form-section');
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      };
+
+      const features = [
+        { 
+            icon: Users, 
+            title: "Small Classes", 
+            desc: "Max 6 students. You won\'t get lost in the crowd, ensuring personal attention.",
+        },
+        { 
+            icon: Star, 
+            title: "Signature Curriculum", 
+            desc: "Syllabus-aligned resources developed by expert NSW teachers for targeted learning.",
+        },
+        { 
+            icon: Trophy, 
+            title: "Complete Support", 
+            desc: "Holistic help between sessions, including subject selection and university pathways.",
+        },
+        { 
+            icon: Activity, 
+            title: "Progress Tracking", 
+            desc: "Regular monitoring and analysis to optimise your academic performance.",
+        },
+        { 
+            icon: GraduationCap, 
+            title: "Expert Mentors", 
+            desc: "Benefit from the genuine care and expertise of our high-achieving mentors.",
+        },
+        { 
+            icon: PenTool, 
+            title: "Accredited Teachers", 
+            desc: "Our founding team consists of leading NSW teachers and academics.",
+        },
+        { 
+            icon: Smile, 
+            title: "Risk-Free Trial", 
+            desc: "Your first lesson is free. You only pay if you decide to continue with us.",
+        },
+        { 
+            icon: Laptop, 
+            title: "Flexible Options", 
+            desc: "Choose from private, group, online, or in-person learning to suit your needs.",
+        }
+    ];
+    
+    // 2. Define the Carousel Component
+    const FeatureCarousel = () => (
+        <div className="w-full overflow-hidden mt-24 relative [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
+            <motion.div
+                className="flex gap-6"
+                animate={{
+                    x: ['0%', '-50%']
+                }}
+                transition={{
+                    ease: 'linear',
+                    duration: 30,
+                    repeat: Infinity,
+                    repeatType: 'loop'
+                }}
+            >
+
+                {/* Duplicate the items for a seamless infinite scroll effect */}
+                {[...features, ...features].map((feature, idx) => (
+                    <div 
+                      key={idx} 
+                      className="flex-shrink-0 w-80 bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
+                    >
+                        <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 bg-[#FFB000] border border-[#FF8A00]/30 mx-auto">
+                            <feature.icon size={28} className="text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                        <p className="text-gray-300 text-base leading-relaxed">{feature.desc}</p>
+                    </div>
+                ))}
+            </motion.div>
+        </div>
+    );
+    
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
-            {/* Header */}
-            <header className="container mx-auto px-6 py-6 flex justify-between items-center">
-                <div className="text-3xl font-bold text-[#FFB000]">Ryze Education</div>
-                <nav className="hidden md:flex items-center space-x-10">
-                    <a href="#" className="hover:text-green-400 transition-colors text-lg">Features</a>
-                    <a href="#" className="hover:text-green-400 transition-colors text-lg">How it works?</a>
-                    <a href="#" className="hover:text-green-400 transition-colors text-lg">Testimonials</a>
-                    <a href="#" className="hover:text-green-400 transition-colors text-lg">FAQ</a>
-                </nav>
+          {/* Header */}
+          <section 
+            className="relative text-white bg-slate-900 bg-cover bg-center"
+            style={{ backgroundImage: "url('/images/image-v1.png')" }}
+          >
+            {/* Background Overlay */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+            {/* Simplified Header */}
+            <header className="relative z-20 container mx-auto px-6 py-6 flex justify-between items-center">
+                <div className="text-3xl font-bold text-white">Ryze Education</div>
                 <div>
-                    <button className="border border-green-500 text-green-500 px-8 py-3 rounded-lg hover:bg-green-500 hover:text-black transition-colors font-semibold">
+                    <button 
+                      onClick={scrollToContact} 
+                      className="border border-[#FFB000] text-white px-8 py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold"
+                    >
                         Book your free consultation
                     </button>
                 </div>
             </header>
 
-            {/* Hero Section */}
-            <main className="container mx-auto px-6 text-center pt-20 pb-16 relative">
-                 {/* Background Glows */}
-                <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-[150px]"></div>
-                <div className="absolute top-1/4 right-0 w-96 h-96 bg-green-500/20 rounded-full blur-[150px]"></div>
+            {/* Hero Content */}
+            <div className="relative z-10 container mx-auto px-6 text-center pt-20 pb-16">
+                <motion.h1
+                    initial={{
+                      opacity: 0,
+                      scale: reduce ? 1 : 0.98,
+                      clipPath: reduce ? "inset(0% 0% 0% 0%)" : "inset(0% 0% 100% 0%)"
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      clipPath: "inset(0% 0% 0% 0%)"
+                    }}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white"
+                >
+                    <span className="block">YOUR PATH TO SUCCESS</span>
+                    <span className="relative block">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFE29A] via-[#FFB000] to-[#FF8A00]">
+                            STARTS HERE
+                        </span>
+                        {/* shimmer */}
+                        <span
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0 overflow-hidden rounded"
+                        >
+                            <motion.span
+                                initial={{ x: "-100%" }}
+                                animate={{ x: "100%" }}
+                                transition={{
+                                    duration: 2.5,
+                                    ease: "linear",
+                                    repeat: Infinity,
+                                    delay: 1,
+                                    repeatDelay: 5
+                                }}
+                                className="block h-full w-full -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                            />
+                        </span>
+                    </span>
+                </motion.h1>
+                <motion.p
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+                    className="text-lg md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
+                >
+                    Book 1 on 1 sessions with subjects matter experts that will unleash your true academic potential.
+                </motion.p>
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
+                    className="mt-12"
+                >
+                    <button 
+                      onClick={scrollToContact}
+                      className="bg-[#FFB000]/85 text-white font-bold px-12 py-4 rounded-lg text-xl hover:bg-[#FF8A00] transition-colors shadow-lg shadow-[#FFB000]/20"
+                    >
+                        Get Started for Free
+                    </button>
+                    <p className="text-gray-400 mt-5">Join 1000+ other satisfied students</p>
+                </motion.div>
+                <FeatureCarousel />
+              </div>
+            </section>
 
-                <div className="relative z-10">
-                    <motion.h1 
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, ease: "easeInOut" }}
-                        className="text-5xl md:text-7xl font-bold leading-tight"
-                    >
-                        Become a straight <span className="relative inline-block">A+ <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span> student
-                        <br />
-                        with live tutoring
-                    </motion.h1>
-                    <motion.p 
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.2, ease: "easeInOut" }}
-                        className="text-lg md:text-xl text-gray-400 mt-8 max-w-2xl mx-auto"
-                    >
-                        Book 1 on 1 sessions with subjects matter experts that will unleash your true academic potential.
-                    </motion.p>
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
-                        className="mt-12"
-                    >
-                        <button className="bg-green-500 text-black font-bold px-12 py-4 rounded-lg text-xl hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20">
-                            Get Started for Free
-                        </button>
-                        <p className="text-gray-500 mt-5">Join 10K+ of other satisfied learners</p>
-                    </motion.div>
-                </div>
-                 <div className="mt-24 text-gray-400 flex flex-wrap justify-center items-center gap-x-8 gap-y-2">
-                    <span>+ English</span>
-                    <span>+ Science</span>
-                    <span>+ Maths</span>
-                    <span>+ History</span>
-                    <span>+ Geography</span>
-                    <span>+ Civics</span>
-                    <span>+ Economics</span>
-                    <span>+ Physics</span>
-                    <span>+ Chemistry</span>
-                    <span>+ Biology</span>
-                    <span>+ Accountancy</span>
-                </div>
-            </main>
-
-            {/* Unlock Potential Section */}
+            {/* Unlock Potential Section - NEW */}
             <section className="py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-4xl md:text-5xl font-bold">Unlock your learning potential</h2>
                         <p className="text-lg text-gray-400 mt-4">We've crafted the platform to make sure you get the results you want</p>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-24 items-center">
-                        <div className="space-y-16">
-                            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <h3 className="text-3xl font-bold mb-4 text-green-400">1-to-1 Live Tutoring</h3>
-                                <p className="text-gray-400 text-lg">Get undivided attention from top tutors in a live, interactive setting.</p>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <h3 className="text-3xl font-bold mb-4 text-green-400">Handpicked teacher</h3>
-                                <p className="text-gray-400 text-lg">Our tutors are experts in their fields, dedicated to your success.</p>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <h3 className="text-3xl font-bold mb-4 text-green-400">Personalized Learning</h3>
-                                <p className="text-gray-400 text-lg">Your learning plan is tailored to your unique needs and goals.</p>
-                            </motion.div>
+
+                    <div className="grid md:grid-cols-2 gap-16 items-center min-h-[500px]">
+                        {/* Left Column: Feature List */}
+                        <div className="flex flex-col gap-8">
+                            {featuresData.map((feature, index) => (
+                                <div 
+                                    key={index} 
+                                    className="relative cursor-pointer"
+                                    onMouseEnter={() => setActiveFeature(index)}
+                                >
+                                    {activeFeature === index && (
+                                        <motion.div layoutId="active-feature-highlight" className="absolute -left-6 top-0 bottom-0 w-1 bg-teal-400 rounded-full" />
+                                    )}
+                                    <h3 className="text-3xl font-bold mb-2">{feature.title}</h3>
+                                    <AnimatePresence>
+                                        {activeFeature === index && (
+                                            <motion.p 
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                className="text-gray-400 text-lg"
+                                            >
+                                                {feature.description}
+                                            </motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
                         </div>
-                        <div className="relative h-[500px] flex items-center justify-center">
-                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg" alt="Tutor 1" className="w-48 h-48 rounded-full object-cover absolute top-0 left-0 border-4 border-green-500 shadow-lg" />
-                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg" alt="Tutor 2" className="w-64 h-64 rounded-full object-cover absolute border-4 border-purple-500 shadow-lg" />
-                           <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/gordon_rytlim.png" alt="Tutor 3" className="w-40 h-40 rounded-full object-cover absolute bottom-0 right-0 border-4 border-yellow-500 shadow-lg" />
+
+                        {/* Right Column: Image Collage */}
+                        <div className="relative h-[500px] w-full">
+                            <AnimatePresence>
+                                {featuresData[activeFeature].images.map((image) => (
+                                    <motion.div
+                                        key={image.src}
+                                        initial={{ opacity: 0, scale: 0.8, rotate: Math.random() * 20 - 10 }}
+                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                                        className={`absolute ${image.position} ${image.size} p-1 rounded-2xl bg-white/10 border-2`}
+                                        style={{ borderColor: image.color }}
+                                    >
+                                        <img src={image.src} alt={image.subject} className="w-full h-full object-cover rounded-xl" />
+                                        <span 
+                                            className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 text-sm font-semibold text-white rounded-full"
+                                            style={{ backgroundColor: image.color }}
+                                        >
+                                            {image.subject}
+                                        </span>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </div>
@@ -248,14 +441,70 @@ const Landing: React.FC = () => {
                 </div>
             </section>
 
+            {/* Discover Section - NEW */}
+            <section className="py-32">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl md:text-5xl font-bold">Discover the perfect tutor-match</h2>
+                        <p className="text-lg text-gray-400 mt-4">3 simple steps to connect with your best tutor ever.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        {/* Left Column: Phone Mockup */}
+                        <div className="flex justify-center">
+                            <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
+                                <div className="bg-gray-900 rounded-[30px] overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1770132381/Screenshot_2024-07-28_at_15.42.06_n12j2o.png" alt="Phone Screen Mockup" className="w-full h-auto" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column: Steps */}
+                        <div className="relative flex flex-col gap-16">
+                            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700/50"></div>
+                            
+                            {/* Step 1 */}
+                            <div className="pl-12 relative">
+                                <div className="absolute left-0 top-1.5 flex items-center">
+                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                </div>
+                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 1</h3>
+                                <h4 className="text-2xl font-bold mb-3">Sign up for your free account</h4>
+                                <p className="text-gray-400">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
+                            </div>
+
+                            {/* Step 2 */}
+                            <div className="pl-12 relative">
+                                <div className="absolute left-0 top-1.5 flex items-center">
+                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                </div>
+                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 2</h3>
+                                <h4 className="text-2xl font-bold mb-3">Find your perfect tutor</h4>
+                                <p className="text-gray-400">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
+                            </div>
+
+                            {/* Step 3 */}
+                            <div className="pl-12 relative">
+                                <div className="absolute left-0 top-1.5 flex items-center">
+                                    <div className="w-8 h-8 rounded-full bg-teal-900/50 border-2 border-teal-500"></div>
+                                </div>
+                                <h3 className="text-sm font-bold text-teal-400 mb-2">STEP 3</h3>
+                                <h4 className="text-2xl font-bold mb-3">Book session with the tutor right away</h4>
+                                <p className="text-gray-400">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
              {/* CTA Section */}
             <section className="py-24">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                     <div>
-                        <p className="text-lg text-green-400 font-bold">NO STRINGS ATTACHED</p>
-                        <h2 className="text-4xl md:text-5xl font-bold mt-4">Your first session <br/> absolutely <span className="relative inline-block">free<img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tes8_rytlim.png" className="absolute bottom-0 left-0 w-full h-auto" alt="underline"/></span></h2>
+                        <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
+                        <h2 className="text-4xl md:text-5xl font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
                         <p className="text-lg text-gray-400 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
-                        <button className="bg-green-500 text-black font-bold px-10 py-4 rounded-lg text-lg hover:bg-green-600 transition-colors mt-8 shadow-lg shadow-green-500/20">
+                        <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
                             Get Started for Free
                         </button>
                     </div>
@@ -275,12 +524,12 @@ const Landing: React.FC = () => {
                     </div>
                     
                     {status === 'success' ? (
-                      <div className="bg-green-900/50 backdrop-blur-md border border-green-400 rounded-[2rem] p-10 text-center animate-in fade-in zoom-in duration-300">
+                      <div className="bg-[#FFB000]/50 backdrop-blur-md border border-[#FFB000] rounded-[2rem] p-10 text-center animate-in fade-in zoom-in duration-300">
                          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle2 size={40} />
                          </div>
                          <h4 className="text-2xl font-bold text-white mb-4">Message Sent!</h4>
-                         <p className="text-green-200 mb-8 max-w-md mx-auto">
+                         <p className="text-[#FFB000] mb-8 max-w-md mx-auto">
                             Thanks for reaching out to Ryze. We've received your enquiry and will be in touch with you shortly.
                          </p>
                          <button 
@@ -324,7 +573,7 @@ const Landing: React.FC = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-green-500 focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                                 placeholder="Your Full Name"
                               />
                             </div>
@@ -354,7 +603,7 @@ const Landing: React.FC = () => {
                               value={formData.phone}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-green-500 focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                               placeholder="Mobile Number"
                             />
                           </div>
@@ -383,7 +632,7 @@ const Landing: React.FC = () => {
                           <button
                             type="submit"
                             disabled={status === 'sending'}
-                            className="w-full bg-green-500 text-black font-bold py-5 rounded-2xl shadow-xl hover:bg-green-600 hover:-translate-y-1 active:scale-95 active:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
+                            className="w-full bg-[#FFB000] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-[#FF8A00]/90 hover:-translate-y-1 active:scale-95 active:bg-[#FFB000] focus:outline-none focus:ring-4 focus:ring-[#FFB000]/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
                           >
                             {status === 'sending' ? (
                               <>
@@ -400,54 +649,78 @@ const Landing: React.FC = () => {
 
             {/* FAQ Section */}
             <section className="py-32">
-                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
-                    <div>
-                        <div className="w-16 h-16 bg-green-900/50 flex items-center justify-center rounded-2xl mb-6">
-                            <FaQuestionCircle className="text-green-400 text-4xl" />
+                <div className="container mx-auto px-6">
+                    <div className="grid md:grid-cols-3 gap-16">
+                        <div className="md:col-span-1">
+                            <FaQuestionCircle size={40} className="text-[#FFB000] mb-6" />
+                            <h2 className="text-4xl md:text-5xl font-bold mb-4">Still not convinced?</h2>
+                            <p className="text-gray-400 text-lg">
+                                Have more questions? Feel free to reach out to us. 
+                                <a onClick={scrollToContact} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
+                            </p>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-bold">Still not convinced?</h2>
-                        <p className="text-lg text-gray-400 mt-6">Talk to our customer support executives to resolve any other doubts you may have. <a href="#" className="text-green-400 underline">Contact us</a></p>
-                    </div>
-                    <div className="space-y-4">
-                        {/* Accordion Item */}
-                        <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-800">
-                            <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-lg font-semibold">How does Landing work?</h3>
-                                <FaPlus className="text-green-400"/>
-                            </div>
-                        </div>
-                         <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-800">
-                            <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-lg font-semibold">Are the tutors qualified?</h3>
-                                <FaPlus className="text-green-400"/>
-                            </div>
-                        </div>
-                         <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-800">
-                            <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-lg font-semibold">How long is each tutoring session?</h3>
-                                <FaPlus className="text-green-400"/>
-                            </div>
-                        </div>
-                        <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-800">
-                            <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-lg font-semibold">What if I need help with multiple subjects?</h3>
-                                <FaPlus className="text-green-400"/>
-                            </div>
+                        <div className="md:col-span-2">
+                            {faqData.map((faq, index) => (
+                                <div key={index} className="border-b border-gray-800/50">
+                                    <div 
+                                        className="flex justify-between items-center p-6 cursor-pointer"
+                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                    >
+                                        <p className="text-lg font-semibold">{faq.question}</p>
+                                        {openFaq === index ? <FaMinus className="text-[#FFB000]" /> : <FaPlus className="text-[#FFB000]" />}
+                                    </div>
+                                    <AnimatePresence>
+                                        {openFaq === index && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <p className="text-gray-400 pb-6 px-6">
+                                                    {faq.answer}
+                                                </p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="container mx-auto px-6 py-8 mt-10 border-t border-gray-800 flex justify-between items-center">
-                <p className="text-gray-500">&copy; 2026, Ryze Education. All rights reserved</p>
-                <div className="flex space-x-6 items-center">
-                    <a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a>
-                    <a href="#" className="text-gray-400 hover:text-white">Terms of service</a>
-                    <div className="flex space-x-4">
-                        <a href="#" className="text-gray-500 hover:text-white"><FaTwitter/></a>
-                        <a href="#" className="text-gray-500 hover:text-white"><FaLinkedin/></a>
-                        <a href="#" className="text-gray-500 hover:text-white"><FaInstagram/></a>
+            <footer className="bg-black/30 text-white pt-24 pb-12">
+                <div className="container mx-auto px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        {/* Column 1: Brand */}
+                        <div className="md:col-span-1">
+                            <h3 className="text-2xl font-bold mb-4">Ryze Education</h3>
+                            <p className="text-gray-400 leading-relaxed">Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.</p>
+                        </div>
+
+                        {/* Column 2: Connect With Us */}
+                        <div>
+                            <h4 className="text-lg font-semibold mb-4 tracking-wide">Connect With Us</h4>
+                            <p className="text-gray-400 mb-4">Follow us on our social media channels.</p>
+                            <div className="flex space-x-4">
+                                {socialLinks.map(({ Icon, href }, i) => (
+                                  <a 
+                                    key={i} 
+                                    href={href} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#FFB000] hover:text-white transition-all duration-300"
+                                  >
+                                    <Icon size={20} />
+                                  </a>
+                                ))}
+                              </div>
+                        </div>
+                    </div>
+                    <div className="mt-16 pt-8 border-t border-gray-800 text-center text-gray-500">
+                        <p>&copy; {new Date().getFullYear()} Ryze Education. All Rights Reserved.</p>
                     </div>
                 </div>
             </footer>
@@ -456,3 +729,4 @@ const Landing: React.FC = () => {
 };
 
 export default Landing;
+
