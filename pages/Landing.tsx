@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
-import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop } from 'lucide-react';
+import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp, CalendarDays, Wallet, RefreshCw, Gift } from 'lucide-react';
 import { FaMinus } from 'react-icons/fa6';
 
 const Landing: React.FC = () => {
@@ -76,7 +76,26 @@ const Landing: React.FC = () => {
         image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
         fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
       }
-    ];   
+    ];
+
+    const [duration, setDuration] = useState(30);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setDuration(15);
+            } else {
+                setDuration(30);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const [openFaq, setOpenFaq] = useState<number | null>(0);    
 
@@ -230,10 +249,10 @@ const Landing: React.FC = () => {
                     x: ['0%', '-50%']
                 }}
                 transition={{
-                    ease: 'linear',
-                    duration: 30,
-                    repeat: Infinity,
-                    repeatType: 'loop'
+                  ease: 'linear',
+                  duration: duration,
+                  repeat: Infinity,
+                  repeatType: 'loop'
                 }}
             >
 
@@ -253,6 +272,29 @@ const Landing: React.FC = () => {
             </motion.div>
         </div>
     );
+
+    const statsData = [
+      {
+        icon: <GraduationCap size={40} className="text-green-500" />,
+        value: "500+",
+        description: "students served & counting"
+      },
+      {
+        icon: <Award size={40} className="text-green-500" />,
+        value: "1500+",
+        description: "certified tutors with subject expertise"
+      },
+      {
+        icon: <Star size={40} className="text-green-500" />,
+        value: "4.9/5",
+        description: "Avg rating for tutor session"
+      },
+      {
+        icon: <TrendingUp size={40} className="text-green-500" />,
+        value: "100%",
+        description: "of students' grades improved significantly"
+      }
+    ];
     
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
@@ -338,7 +380,7 @@ const Landing: React.FC = () => {
                     >
                         Get Started for Free
                     </button>
-                    <p className="text-gray-400 mt-5">Join 1000+ other satisfied students</p>
+                    <p className="text-gray-400 mt-5">Join 500+ other satisfied students</p>
                 </motion.div>
                 <FeatureCarousel />
               </div>
@@ -348,14 +390,14 @@ const Landing: React.FC = () => {
             <section className="py-20 md:py-32 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl text-[#FFB000] font-bold">Unlock your learning potential</h2>
+                        <h2 className="text-3xl md:text-5xl text-black font-bold">Unlock your learning potential</h2>
                         <p className="text-lg text-gray-700 mt-4">We've crafted the platform to make sure you get the results you want</p>
                     </div>
                     <div className="max-w-3xl mx-auto">
                         <div className="flex flex-col gap-12">
                             {featuresData.map((feature, index) => (
                                 <div key={index}>
-                                    <h3 className="text-3xl text-[#FFB000] font-bold mb-2">{feature.title}</h3>
+                                    <h3 className="text-3xl text-black font-bold mb-2">{feature.title}</h3>
                                     <p className="text-gray-700 text-lg">
                                         {feature.description}
                                     </p>
@@ -366,70 +408,28 @@ const Landing: React.FC = () => {
                 </div>
             </section>
 
-             {/* Expertise Section */}
-            <section className="py-24 bg-[#faf5ed]">
+            {/* Expertise Section */}
+            <section className="py-24 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-5xl text-black font-bold">Unmatched expertise at your fingertips</h2>
                     <p className="text-lg text-gray-700 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-16">
-                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-[#f7cc86]/40">
-                            <p className="text-5xl font-bold text-[#FFB000]">500+</p>
-                            <p className="text-gray-700 mt-2">students served & counting</p>
-                        </div>
-                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">1500+</p>
-                            <p className="text-gray-400 mt-2">certified tutors with subject expertise</p>
-                        </div>
-                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">4.9/5</p>
-                            <p className="text-gray-400 mt-2">Avg rating for tutor session</p>
-                        </div>
-                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">100%</p>
-                            <p className="text-gray-400 mt-2">students say their grades improved significantly</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-             {/* Testimonials Section */}
-            <section className="py-20 bg-[#faf5ed] md:py-32">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-20">
-                        <h2 className="text-3xl text-[#FFB000] md:text-5xl font-bold">Our students love us </h2>
-                        <p className="text-lg text-gray-700 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div className="bg-white p-10 rounded-3xl border border-gray-800">
-                             <p className="text-2xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
-                            <div className="mt-8 flex items-center gap-4">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Jason"/>
-                                <div>
-                                    <p className="font-bold text-lg text-black">Jason Y.</p>
-                                    <p className="font-bold text-black">99.85 ATAR | Ext 2 - 98</p>
+                        {statsData.map((stat, index) => (
+                            <div key={index} className="text-center">
+                                <div className="flex justify-center mb-4">
+                                    {stat.icon}
                                 </div>
+                                <p className="text-5xl font-bold text-black">{stat.value}</p>
+                                <p className="text-gray-700 mt-2">{stat.description}</p>
                             </div>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <div className="grid grid-cols-4 gap-4 max-w-sm">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
-                            </div>
-                            <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* Team Preview */}
             <section className="py-32 bg-slate-50 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,176,0,0.05),transparent_40%)]"></div>
+                    <div className="absolute inset-0 bg-[#f9f9f7]"></div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                       <div className="flex flex-col md:flex-row justify-center items-center mb-16 gap-6">
                          <div className="max-w-2xl text-center">
@@ -494,20 +494,55 @@ const Landing: React.FC = () => {
                            </div>
                            <div className="pl-2">
                              <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                             <p className="text-slate-700 text-sm font-medium mb-1.5">(member.role)</p>
+                             <p className="text-slate-700 text-sm font-medium mb-1.5">{member.role}</p>
                            </div>
                          </motion.div>          
                         ))}
                       </div>
                     </div>
-                  </section>
+            </section>
 
-            {/* Discover Section */}
-            <section className="py-20 md:py-32">
+            {/* Testimonials Section */}
+            <section className="py-20 bg-[#f9f9f7] md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold">Our approach is simple</h2>
-                        <p className="text-lg text-gray-400 mt-4">3 simple steps to connect with your best tutor ever.</p>
+                        <h2 className="text-3xl text-black md:text-5xl font-bold">Our students love us </h2>
+                        <p className="text-lg text-gray-700 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <div className="bg-white p-10 rounded-3xl border border-gray-800">
+                             <p className="text-2xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
+                            <div className="mt-8 flex items-center gap-4">
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Jason"/>
+                                <div>
+                                    <p className="font-bold text-lg text-black">Jason Y.</p>
+                                    <p className="font-bold text-black">99.85 ATAR | Ext 2 - 98</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <div className="grid grid-cols-4 gap-4 max-w-sm">
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
+                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
+                            </div>
+                            <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Discover Section */}
+            <section className="py-20 md:py-32 bg-[#f9f9f7]">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-20">
+                        <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
+                        <p className="text-lg text-gray-700 mt-4">3 simple steps to connect with your best tutor ever.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -515,7 +550,7 @@ const Landing: React.FC = () => {
                         <div className="flex justify-center">
                             <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
                                 <div className="bg-gray-900 rounded-[30px] overflow-hidden">
-                                    <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1770132381/Screenshot_2024-07-28_at_15.42.06_n12j2o.png" alt="Phone Screen Mockup" className="w-full h-auto" />
+                                    <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561936/online_xnzlfr.jpg" alt="Online Consultation" className="w-full h-auto" />
                                 </div>
                             </div>
                         </div>
@@ -530,8 +565,8 @@ const Landing: React.FC = () => {
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
                                 <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 1</h3>
-                                <h4 className="text-2xl font-bold mb-3">Schedule in a free consultation</h4>
-                                <p className="text-gray-400">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
+                                <h4 className="text-2xl font-bold text-black mb-3">Schedule in a free consultation</h4>
+                                <p className="text-gray-700">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
                             </div>
 
                             {/* Step 2 */}
@@ -540,8 +575,8 @@ const Landing: React.FC = () => {
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
                                 <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 2</h3>
-                                <h4 className="text-2xl font-bold mb-3">Diagnosis & Feedback </h4>
-                                <p className="text-gray-400">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
+                                <h4 className="text-2xl font-bold text-black mb-3">Diagnosis & Feedback </h4>
+                                <p className="text-gray-700">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
                             </div>
 
                             {/* Step 3 */}
@@ -550,8 +585,8 @@ const Landing: React.FC = () => {
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
                                 <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 3</h3>
-                                <h4 className="text-2xl font-bold mb-3">Personalised Learning Plan </h4>
-                                <p className="text-gray-400">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
+                                <h4 className="text-2xl font-bold text-black mb-3">Personalised Learning Plan </h4>
+                                <p className="text-gray-700">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
                             </div>
                         </div>
                     </div>
@@ -559,25 +594,25 @@ const Landing: React.FC = () => {
             </section>
 
              {/* CTA Section */}
-            <section className="py-20 md:py-24">
+            <section className="py-20 md:py-24 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                     <div>
                         <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
-                        <h2 className="text-3xl md:text-5xl font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
-                        <p className="text-lg text-gray-400 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
+                        <h2 className="text-3xl md:text-5xl text-black font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
+                        <p className="text-lg text-gray-700 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
                         <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
                             Get Started for Free
                         </button>
                     </div>
-                    <div className="relative h-[400px] bg-black rounded-3xl border border-gray-800 flex items-center justify-center">
-                        <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/onlinev4_rytlim.png" className="w-full h-full object-cover rounded-3xl opacity-80" alt="online class"/>
+                    <div className="relative h-[400px] bg-black rounded-3xl flex items-center justify-center">
+                        <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561940/personalised_ctuogs.png" className="w-full h-full object-cover rounded-3xl opacity-80" alt="Online Consultation"/>
                         <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 text-sm rounded-full font-semibold animate-pulse">LIVE</div>
                     </div>
                 </div>
             </section>
 
             {/* Contact Form Section */}
-            <section id="contact-form-section" className="py-20 md:py-24">
+            <section id="contact-form-section" className="py-20 md:py-24 bg-[#0069b0]/40">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <h3 className="text-3xl font-bold text-white mb-4">Send us a Message</h3>
@@ -709,13 +744,13 @@ const Landing: React.FC = () => {
               </section>
 
             {/* FAQ Section */}
-            <section className="py-20 md:py-32">
+            <section className="py-20 md:py-32 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="grid md:grid-cols-3 gap-16">
                         <div className="md:col-span-1">
                             <FaQuestionCircle size={40} className="text-[#FFB000] mb-6" />
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4">Still not convinced?</h2>
-                            <p className="text-gray-400 text-lg">
+                            <h2 className="text-3xl md:text-5xl text-black font-bold mb-4">Still not convinced?</h2>
+                            <p className="text-gray-700 text-lg">
                                 Have more questions? Feel free to reach out to us. 
                                 <a onClick={scrollToContact} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
                             </p>
@@ -727,7 +762,7 @@ const Landing: React.FC = () => {
                                         className="flex justify-between items-center p-6 cursor-pointer"
                                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
                                     >
-                                        <p className="text-lg font-semibold">{faq.question}</p>
+                                        <p className="text-lg text-black font-semibold">{faq.question}</p>
                                         {openFaq === index ? <FaMinus className="text-[#FFB000]" /> : <FaPlus className="text-[#FFB000]" />}
                                     </div>
                                     <AnimatePresence>
@@ -738,7 +773,7 @@ const Landing: React.FC = () => {
                                                 exit={{ opacity: 0, height: 0 }}
                                                 className="overflow-hidden"
                                             >
-                                                <p className="text-gray-400 pb-6 px-6">
+                                                <p className="text-gray-700 pb-6 px-6">
                                                     {faq.answer}
                                                 </p>
                                             </motion.div>
@@ -752,7 +787,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-black/30 text-white pt-24 pb-12">
+            <footer className="bg-black/30 text-white pt-24 pb-12 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {/* Column 1: Brand */}
