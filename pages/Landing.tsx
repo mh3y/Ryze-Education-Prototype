@@ -48,6 +48,36 @@ const Landing: React.FC = () => {
       }
     ];
     
+    const team = [
+      {
+        id: "mike-nojiri",
+        name: "Mike Nojiri",
+        role: "Master\'s in Teaching | BSc(Math)/BCompSc",
+        atar: "99.25",
+        scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+        fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        id: "william-gong",
+        name: "William Gong",
+        role: "PhD - AI & Machine Learning candidate",
+        atar: "99.50",
+        scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+        fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        id: "gordon-ye",
+        name: "Gordon Ye",
+        role: "UNSW Academic Teaching Staff | BMaths/BCompSc",
+        atar: "99.55",
+        scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+        fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+      }
+    ];   
+
     const [openFaq, setOpenFaq] = useState<number | null>(0);    
 
     const socialLinks = [
@@ -315,7 +345,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Unlock Potential Section - NEW */}
-            <section className="py-20 md:py-32 bg-[#faf5ed]">
+            <section className="py-20 md:py-32 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-[#FFB000] font-bold">Unlock your learning potential</h2>
@@ -342,9 +372,9 @@ const Landing: React.FC = () => {
                     <h2 className="text-3xl md:text-5xl text-black font-bold">Unmatched expertise at your fingertips</h2>
                     <p className="text-lg text-gray-700 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-16">
-                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
-                            <p className="text-5xl font-bold text-green-400">500+</p>
-                            <p className="text-gray-400 mt-2">students served & counting</p>
+                        <div className="text-center p-8 border border-gray-800 rounded-2xl bg-[#f7cc86]/40">
+                            <p className="text-5xl font-bold text-[#FFB000]">500+</p>
+                            <p className="text-gray-700 mt-2">students served & counting</p>
                         </div>
                         <div className="text-center p-8 border border-gray-800 rounded-2xl bg-gray-900/30">
                             <p className="text-5xl font-bold text-green-400">1500+</p>
@@ -363,20 +393,20 @@ const Landing: React.FC = () => {
             </section>
 
              {/* Testimonials Section */}
-            <section className="py-20 md:py-32">
+            <section className="py-20 bg-[#faf5ed] md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold">Our students love us </h2>
-                        <p className="text-lg text-gray-400 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
+                        <h2 className="text-3xl text-[#FFB000] md:text-5xl font-bold">Our students love us </h2>
+                        <p className="text-lg text-gray-700 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div className="bg-gray-900/50 p-10 rounded-3xl border border-gray-800">
-                             <p className="text-2xl italic text-gray-300">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
+                        <div className="bg-white p-10 rounded-3xl border border-gray-800">
+                             <p className="text-2xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Jason"/>
                                 <div>
-                                    <p className="font-bold text-lg">Jason Y.</p>
-                                    <p className="text-gray-400">99.85 ATAR | Ext 2 - 98</p>
+                                    <p className="font-bold text-lg text-black">Jason Y.</p>
+                                    <p className="font-bold text-black">99.85 ATAR | Ext 2 - 98</p>
                                 </div>
                             </div>
                         </div>
@@ -391,17 +421,92 @@ const Landing: React.FC = () => {
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
                                 <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
                             </div>
-                            <p className="text-center mt-6 text-gray-400">Join the Ryze community in becoming higher achievers</p>
+                            <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Discover Section - NEW */}
+            {/* Team Preview */}
+            <section className="py-32 bg-slate-50 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,176,0,0.05),transparent_40%)]"></div>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                      <div className="flex flex-col md:flex-row justify-center items-center mb-16 gap-6">
+                         <div className="max-w-2xl text-center">
+                            <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">Meet Your Mentors</h2>
+                            <p className="text-lg text-slate-500">
+                              Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.
+                            </p>
+                         </div>
+                      </div>
+            
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                         {team.map((member, idx) => (
+                           <motion.div
+                           key={idx}
+                           className="group cursor-pointer"
+                           initial={{ opacity: 0, y: 20 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true }}
+                           transition={{ delay: idx * 0.1 }}
+                         >
+                          {member.scores && member.scores.length > 0 && (
+                            <div className="mb-6">
+                              <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
+                                <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                                  {member.scores.map((score, i) => (
+                                    <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                           <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
+                             {member.atar && (
+                               <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
+                                 <div
+                                   style={{ willChange: 'transform' }}
+                                   className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                                 >
+                                   <div className="p-3 md:p-4 text-center text-white">
+                                     <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
+                                       <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
+                                       <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                                     </div>
+                                     <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
+                                   </div>
+                                 </div>
+                               </div>
+                             )}
+            
+                             <img
+                               src={member.image}
+                               onError={(e) => { e.currentTarget.src = member.fallback }}
+                               alt={member.name}
+                               loading="lazy"
+                               decoding="async"
+                               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                             />
+                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                             <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+                             </div>
+                           </div>
+                           <div className="pl-2">
+                             <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
+                             <p className="text-slate-700 text-sm font-medium mb-1.5">(member.role)</p>
+                           </div>
+                         </motion.div>          
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+
+            {/* Discover Section */}
             <section className="py-20 md:py-32">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold">Discover the perfect tutor-match</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold">Our approach is simple</h2>
                         <p className="text-lg text-gray-400 mt-4">3 simple steps to connect with your best tutor ever.</p>
                     </div>
 
