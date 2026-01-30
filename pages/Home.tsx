@@ -462,7 +462,7 @@ const Home: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/contact')}
-                  className="group px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-lg shadow-lg hover:bg-ryze hover:text-slate-900 transition-all inline-flex items-center gap-3"
+                  className="group px-8 py-4 bg-[#FFB000] text-white rounded-full font-bold text-lg shadow-lg hover:bg-ryze hover:text-slate-900 transition-all inline-flex items-center gap-3"
                 >
                   {t("Start your journey")} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
@@ -490,7 +490,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section - Redesigned to Light/Brand Aesthetic */}
       <section className="py-24 px-4 bg-slate-50 relative">
         <div className="max-w-7xl mx-auto">
