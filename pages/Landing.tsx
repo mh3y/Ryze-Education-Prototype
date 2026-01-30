@@ -23,7 +23,7 @@ const Landing: React.FC = () => {
         ]
       },
       {
-        title: "Personalized Learning",
+        title: "Personalised Learning",
         description: "Your learning plan is tailored to your unique needs and goals, ensuring efficient progress and mastery of subjects.",
         images: []
       },
@@ -32,7 +32,7 @@ const Landing: React.FC = () => {
     const faqData = [
       {
         question: "How does Ryze work?",
-        answer: "Ryze is an online platform that connects students with expert tutors for personalized one-on-one sessions. You simply sign up, find a tutor that matches your needs, and book a session at your convenience."
+        answer: "Ryze is an online platform that connects students with expert tutors for personalised one-on-one sessions. You simply sign up, find a tutor that matches your needs, and book a session at your convenience."
       },
       {
         question: "What makes Ryze different?",
@@ -293,8 +293,8 @@ const Landing: React.FC = () => {
       },
       {
         icon: <Award size={40} className="text-green-500" />,
-        value: "1500+",
-        description: "certified tutors with subject expertise"
+        value: "13 years",
+        description: "of teaching experience and mentoring students"
       },
       {
         icon: <Star size={40} className="text-green-500" />,
@@ -390,7 +390,7 @@ const Landing: React.FC = () => {
                       onClick={scrollToContact}
                       className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FF8A00] transition-colors shadow-lg shadow-[#FFB000]/20"
                     >
-                        Get Started for Free
+                        Start your journey now
                     </button>
                     <p className="text-gray-400 mt-5">Join 500+ other satisfied students</p>
                 </motion.div>
@@ -398,30 +398,8 @@ const Landing: React.FC = () => {
               </div>
             </section>
 
-            {/* Unlock Potential Section - NEW */}
-            <section className="py-20 md:py-32 bg-[#f9f9f7]">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl text-black font-bold">Unlock your learning potential</h2>
-                        <p className="text-lg text-gray-700 mt-4">We've crafted the platform to make sure you get the results you want</p>
-                    </div>
-                    <div className="max-w-3xl mx-auto">
-                        <div className="flex flex-col gap-12">
-                            {featuresData.map((feature, index) => (
-                                <div key={index}>
-                                    <h3 className="text-3xl text-black font-bold mb-2">{feature.title}</h3>
-                                    <p className="text-gray-700 text-lg">
-                                        {feature.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Expertise Section */}
-            <section className="py-24 bg-[#f9f9f7]">
+            <section className="py-32 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-5xl text-black font-bold">Unmatched expertise at your fingertips</h2>
                     <p className="text-lg text-gray-700 mt-4">Be a part of the Ryze success story, where numbers speak volumes about us</p>
@@ -440,7 +418,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Team Preview */}
-            <section className="py-32 bg-slate-50 relative overflow-hidden">
+            <section className="py-12 bg-slate-50 relative overflow-hidden">
                     <div className="absolute inset-0 bg-[#f9f9f7]"></div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                       <div className="flex flex-col md:flex-row justify-center items-center mb-16 gap-6">
@@ -525,7 +503,7 @@ const Landing: React.FC = () => {
                         <div className="bg-white p-10 rounded-3xl border border-gray-800">
                              <p className="text-2xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/tutor2_rytlim.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-400" alt="Jason"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769796889/Screenshot_2026-01-31_at_5.14.34_am_d9s1nz.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
                                 <div>
                                     <p className="font-bold text-lg text-black">Jason Y.</p>
                                     <p className="font-bold text-black">99.85 ATAR | Ext 2 - 98</p>
@@ -544,6 +522,28 @@ const Landing: React.FC = () => {
                                 <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
                             </div>
                             <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Unlock Potential Section - NEW */}
+            <section className="py-20 md:py-32 bg-[#f9f9f7]">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-20">
+                        <h2 className="text-3xl md:text-5xl text-black font-bold">Unlock your learning potential</h2>
+                        <p className="text-lg text-gray-700 mt-4">We've crafted the platform to make sure you get the results you want</p>
+                    </div>
+                    <div className="max-w-3xl mx-auto">
+                        <div className="flex flex-col gap-12">
+                            {featuresData.map((feature, index) => (
+                                <div key={index}>
+                                    <h3 className="text-3xl text-black font-bold mb-2">{feature.title}</h3>
+                                    <p className="text-gray-700 text-lg">
+                                        {feature.description}
+                                    </p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -611,9 +611,9 @@ const Landing: React.FC = () => {
                     <div>
                         <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
                         <h2 className="text-3xl md:text-5xl text-black font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
-                        <p className="text-lg text-gray-700 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalized learning.</p>
+                        <p className="text-lg text-gray-700 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalised learning.</p>
                         <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
-                            Get Started for Free
+                            I'M READY, SIGN ME UP!
                         </button>
                     </div>
                     <div className="relative h-[400px] bg-black rounded-3xl flex items-center justify-center">
@@ -799,7 +799,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-black/30 text-white pt-24 pb-12 bg-[#f9f9f7]">
+            <footer className="bg-black/30 text-[#FFB000] pt-24 pb-12">
                 <div className="container mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {/* Column 1: Brand */}
@@ -819,7 +819,7 @@ const Landing: React.FC = () => {
                                     href={href} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#FFB000] hover:text-white transition-all duration-300"
+                                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-[#FFB000] hover:text-white transition-all duration-300"
                                   >
                                     <Icon size={20} />
                                   </a>
