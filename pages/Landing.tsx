@@ -287,22 +287,22 @@ const Landing: React.FC = () => {
 
     const statsData = [
       {
-        icon: <GraduationCap size={40} className="text-green-500" />,
+        icon: <GraduationCap size={40} className="text-[#FFB000]" />,
         value: "500+",
         description: "students served & counting"
       },
       {
-        icon: <Award size={40} className="text-green-500" />,
+        icon: <Award size={40} className="text-[#FFB000]" />,
         value: "13 years",
         description: "of teaching experience and mentoring students"
       },
       {
-        icon: <Star size={40} className="text-green-500" />,
+        icon: <Star size={40} className="text-[#FFB000]" />,
         value: "4.9/5",
         description: "Avg rating for tutor session"
       },
       {
-        icon: <TrendingUp size={40} className="text-green-500" />,
+        icon: <TrendingUp size={40} className="text-[#FFB000]" />,
         value: "100%",
         description: "of students' grades improved significantly"
       }
@@ -324,7 +324,7 @@ const Landing: React.FC = () => {
                 <div>
                     <button 
                       onClick={scrollToContact} 
-                      className="border border-[#FFB000] bg-[#FFB000]/75 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
+                      className="border border-[#FFB000] bg-[#FFB000]/85 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
                         Book your free consultation
                     </button>
@@ -388,7 +388,7 @@ const Landing: React.FC = () => {
                 >
                     <button 
                       onClick={scrollToContact}
-                      className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FF8A00] transition-colors shadow-lg shadow-[#FFB000]/20"
+                      className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FFB000] transition-colors shadow-lg shadow-[#FFB000]/20"
                     >
                         Start your journey now
                     </button>
@@ -497,16 +497,16 @@ const Landing: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl text-black md:text-5xl font-bold">Our students love us </h2>
-                        <p className="text-lg text-gray-700 mt-4">Join over 250+ other students excelling in their academics with Ryze</p>
+                        <p className="text-lg text-gray-700 mt-4">Join over 500+ other students excelling in their academics with Ryze</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div className="bg-white p-10 rounded-3xl border border-gray-800">
-                             <p className="text-2xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
+                        <div className="bg-white p-10 rounded-3xl border-2 border-green-500">
+                             <p className="text-xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769796889/Screenshot_2026-01-31_at_5.14.34_am_d9s1nz.png" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
                                 <div>
-                                    <p className="font-bold text-lg text-black">Jason Y.</p>
-                                    <p className="font-bold text-black">99.85 ATAR | Ext 2 - 98</p>
+                                    <p className="font-bold text-xl text-green-500">Jason Y.</p>
+                                    <p className="font-bold text-lg text-green-500">99.85 ATAR | 98 Ext 2 </p>
                                 </div>
                             </div>
                         </div>
@@ -519,7 +519,7 @@ const Landing: React.FC = () => {
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+250</div>
+                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+500</div>
                             </div>
                             <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
                         </div>
@@ -576,7 +576,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 1</h3>
+                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 1</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Schedule in a free consultation</h4>
                                 <p className="text-gray-700">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
                             </div>
@@ -586,7 +586,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 2</h3>
+                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 2</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Diagnosis & Feedback </h4>
                                 <p className="text-gray-700">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
                             </div>
@@ -596,7 +596,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-sm font-bold text-[#FFB000] mb-2">STEP 3</h3>
+                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 3</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Personalised Learning Plan </h4>
                                 <p className="text-gray-700">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
                             </div>
@@ -695,7 +695,7 @@ const Landing: React.FC = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-green-500 focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                                 placeholder="email@address.com"
                               />
                             </div>
@@ -732,7 +732,7 @@ const Landing: React.FC = () => {
                               value={formData.message}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-green-500 focus:bg-black/30 outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
                               placeholder="How can we help you?"
                             ></textarea>
                           </div>
@@ -799,7 +799,7 @@ const Landing: React.FC = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-black/30 text-[#FFB000] pt-24 pb-12">
+            <footer className="bg-black/30 text-[#FFB000] pt-6 pb-6">
                 <div className="container mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {/* Column 1: Brand */}
@@ -827,7 +827,7 @@ const Landing: React.FC = () => {
                               </div>
                         </div>
                     </div>
-                    <div className="mt-16 pt-8 border-t border-gray-800 text-center text-gray-500">
+                    <div className="mt-6 pt-6 border-t border-gray-800 text-center text-gray-500">
                         <p>&copy; {new Date().getFullYear()} Ryze Education. All Rights Reserved.</p>
                     </div>
                 </div>
