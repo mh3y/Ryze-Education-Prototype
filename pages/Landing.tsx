@@ -500,26 +500,26 @@ const Landing: React.FC = () => {
                         <p className="text-lg text-gray-700 mt-4">Join over 500+ other students excelling in their academics with Ryze</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div className="bg-white p-10 rounded-3xl border-2 border-green-500">
+                        <div className="bg-white p-10 rounded-3xl border-2 border-[#FFB000]">
                              <p className="text-xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
                                 <div>
-                                    <p className="font-bold text-xl text-green-500">Jason Y.</p>
-                                    <p className="font-bold text-lg text-green-500">99.85 ATAR | 98 Ext 2 </p>
+                                    <p className="font-bold text-xl text-[#FFB000]">Jason Y.</p>
+                                    <p className="font-bold text-lg text-[#FFB000]">99.85 ATAR | 98 Ext 2 </p>
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-col items-center">
                             <div className="grid grid-cols-4 gap-4 max-w-sm">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-green-400 opacity-70 hover:opacity-100" alt="student"/>
-                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-lg">+500</div>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                                <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-[#FFB000] font-bold text-lg">+500</div>
                             </div>
                             <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
                         </div>
