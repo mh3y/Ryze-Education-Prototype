@@ -573,7 +573,7 @@ const Landing: React.FC = () => {
             </section> */}
 
             {/* Discover Section */}
-            <section className="py-10 md:py-16 bg-[#f9f9f7]">
+            <section className="pt-10 pb-20 md:pt-16 md:pb-28 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
