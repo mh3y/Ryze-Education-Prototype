@@ -337,8 +337,8 @@ const DiscountsSection = () => (
             <h3 className="text-xl font-bold text-slate-900">Early Enrolments</h3>
           </div>
           <ul className="space-y-4">
-            <EarlyEnrolmentItem percentage="7.5%" dateString="before Dec 31, 2025" />
-            <EarlyEnrolmentItem percentage="5%" dateString="before Jan 31, 2026" />
+            <EarlyEnrolmentItem percentage="7.5%" dateString="before Jan 31, 2025" />
+            <EarlyEnrolmentItem percentage="5%" dateString="before Feb 31, 2026" />
           </ul>
         </div>
         <div className="bg-white/70 p-8 rounded-3xl border border-slate-200 shadow-xl">
@@ -362,7 +362,7 @@ const DiscountsSection = () => (
           </div>
           <ul className="space-y-4">
             <li className="flex items-center gap-3"><span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">10% off</span><span className="text-slate-600 text-sm">for the second child</span></li>
-            <li className="flex items-center gap-3"><span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">15% off</span><span className="text-slate-600 text-sm">for the 3rd child</span></li>
+            <li className="flex items-center gap-3"><span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">15% off</span><span className="text-slate-600 text-sm">for any additional siblings</span></li>
           </ul>
         </div>
         <div className="bg-white/70 p-8 rounded-3xl border border-slate-200 shadow-xl md:col-span-2 lg:col-span-2">
