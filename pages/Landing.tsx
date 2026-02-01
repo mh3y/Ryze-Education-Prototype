@@ -596,7 +596,7 @@ const Landing: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
-                        <p className="text-lg text-gray-700 mt-4">3 simple steps we take to ensure that we have a plan of action on how to best help meet your needs before we proceed.</p>
+                        <p className="text-lg text-gray-700 mt-4">We take three steps to ensure we understand your child's needs and create a clear path forward</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -620,7 +620,7 @@ const Landing: React.FC = () => {
                                 </div>
                                 <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 1</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Schedule a free consultation</h4>
-                                <p className="text-gray-700">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
+                                <p className="text-gray-700">We start with a conversation to understand where your child currently stands, what challenges they're facing, and what you hope to achieve with us. We'll discuss your child's academic goals, learning preferences, and any specific concerns you have. This is also an opportunity for you to learn about our teaching approach and ask any questions.</p>
                             </div>
 
                             {/* Step 2 */}
@@ -630,7 +630,7 @@ const Landing: React.FC = () => {
                                 </div>
                                 <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 2</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Diagnosis & Feedback </h4>
-                                <p className="text-gray-700">Every student is unique, and so are our tutoring sessions. Receive one-on-one attention tailored to your specific needs and learning pace.</p>
+                                <p className="text-gray-700">The first lesson serves as a detailed assesment. We'll be working to identify specific knowledge gaps, learning patterns or areas that need attention and then provide clear feedback on what we've observed and what needs focus.</p>
                             </div>
 
                             {/* Step 3 */}
@@ -640,7 +640,7 @@ const Landing: React.FC = () => {
                                 </div>
                                 <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 3</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Personalised Learning Plan </h4>
-                                <p className="text-gray-700">Choose a convenient time slot and book your first free tutoring session with your selected tutor.</p>
+                                <p className="text-gray-700">Based on the assessment, we develop a tailored plan that addresses your child's specific needs. This outlines our focus areas, the approach we'll take and the goals we're working toward together.</p>
                             </div>
                         </div>
                     </div>
