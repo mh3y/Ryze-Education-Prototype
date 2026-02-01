@@ -640,8 +640,8 @@ const Landing: React.FC = () => {
                     {/* Background Image and Overlay Layer */}
                     <div
                       className="absolute inset-0 bg-cover bg-center bg-fixed"
-                      style={{ backgroundImage: `url('/images/home-background-overlayv2.png')` }}
-                    />
+                      style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561938/home-background-overlayv2_mpshjc.png')` }}
+                      />
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
                     {/* Content Layer */}
