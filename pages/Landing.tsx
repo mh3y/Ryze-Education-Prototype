@@ -87,20 +87,29 @@ const Landing: React.FC = () => {
 
     useEffect(() => {
         const handleResize = () => {
+            // Mobile screens
             if (window.innerWidth < 768) {
-                setDuration(15);
-            } else {
+                setDuration(20);
+            // Tablets and small laptops
+            } else if (window.innerWidth >= 768 && window.innerWidth < 1280) {
                 setDuration(30);
+            // Large desktops
+            } else {
+                setDuration(40);
             }
         };
-
+    
+        // Set the initial duration when the component mounts
         handleResize();
+        
+        // Add event listener to update duration on window resize
         window.addEventListener('resize', handleResize);
-
+    
+        // Cleanup by removing the event listener when the component unmounts
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, []); // The empty dependency array ensures this runs only once on mount    
 
     const [openFaq, setOpenFaq] = useState<number | null>(0);    
 
@@ -498,7 +507,7 @@ const Landing: React.FC = () => {
                             <div className="mt-8 flex items-center gap-4">
                                 <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
                                 <div>
-                                    <p className="font-bold text-xl text-[#FFB000]">Jason Y.</p>
+                                    <p className="font-bold text-xl text-slate-700">Jason Y.</p>
                                     <p className="font-bold text-lg text-[#FFB000]">99.85 ATAR | 98 Ext 2 </p>
                                 </div>
                             </div>
