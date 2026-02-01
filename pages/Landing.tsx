@@ -150,7 +150,7 @@ const Landing: React.FC = () => {
         };
     }, []); // The empty array ensures this runs only once on mount and on cleanup
   
-    const [openFaq, setOpenFaq] = useState<number | null>(0);    
+    const [openFaq, setOpenFaq] = useState<number | null>(null);    
 
     const socialLinks = [
       { Icon: FaFacebook, href: "https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr" },
