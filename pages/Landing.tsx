@@ -52,6 +52,8 @@ const Landing: React.FC = () => {
         answer: "We specialise in mathematics, from primary through HSC Extension 2, with dedicated support for NAPLAN, OC and Selective Exam Preparation."
       }
     ];
+
+    const [bgImage, setBgImage] = useState('');
     
     const team = [
       {
@@ -86,31 +88,50 @@ const Landing: React.FC = () => {
     const [duration, setDuration] = useState(30);
 
     useEffect(() => {
+        const getImageUrl = (width: number) => {
+            const baseUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload';
+            const imageId = 'home-background-overlayv2_mpshjc';
+            let transformations = 'q_auto,f_auto';
+        
+            if (width < 768) {
+                transformations += ',w_800'; // Optimized for mobile
+            } else if (width >= 768 && width < 1280) {
+                transformations += ',w_1280'; // Optimized for tablet
+            } else {
+                transformations += ',w_1920'; // Optimized for desktop
+            }
+            
+            return `${baseUrl}/${transformations}/${imageId}`;
+        };
+    
         const handleResize = () => {
-            // Mobile screens
-            if (window.innerWidth < 768) {
+            const screenWidth = window.innerWidth;
+            
+            // 1. Set the background image URL
+            setBgImage(getImageUrl(screenWidth));
+    
+            // 2. Set the carousel duration
+            if (screenWidth < 768) {
                 setDuration(20);
-            // Tablets and small laptops
-            } else if (window.innerWidth >= 768 && window.innerWidth < 1280) {
+            } else if (screenWidth >= 768 && screenWidth < 1280) {
                 setDuration(30);
-            // Large desktops
             } else {
                 setDuration(40);
             }
         };
     
-        // Set the initial duration when the component mounts
+        // Set the initial values when the component mounts
         handleResize();
         
-        // Add event listener to update duration on window resize
+        // Add event listener to update values on window resize
         window.addEventListener('resize', handleResize);
     
         // Cleanup by removing the event listener when the component unmounts
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []); // The empty dependency array ensures this runs only once on mount    
-
+    }, []); // The empty array ensures this runs only once on mount and on cleanup
+  
     const [openFaq, setOpenFaq] = useState<number | null>(0);    
 
     const socialLinks = [
@@ -639,14 +660,14 @@ const Landing: React.FC = () => {
                   <div className="relative pt-20">
                     {/* Background Image and Overlay Layer */}
                     <div
-                      className="absolute inset-0 bg-cover bg-center bg-fixed"
-                      style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561938/home-background-overlayv2_mpshjc.png')` }}
+                      className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
+                      style={{ backgroundImage: `url('${bgImage}')` }}
                       />
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
                     {/* Content Layer */}
                     <div className="relative">
-                      <div className="pb-20 pt-24 px-4">
+                      <div className="pb-28 pt-24 px-4">
                         <div className="max-w-4xl mx-auto text-center">
                           <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Ready to see real results?</h1>
                           <p className="text-xl font-light text-slate-200">
