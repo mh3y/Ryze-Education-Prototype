@@ -24,34 +24,52 @@ const Landing: React.FC = () => {
 
     const faqData = [
       {
-        question: "How does Ryze work?",
-        answer: "Ryze is an online platform that connects students with expert tutors for personalised one-on-one sessions. You simply sign up, find a tutor that matches your needs, and book a session at your convenience."
-      },
-      {
         question: "What makes Ryze different?",
         answer: `Most tutors are university students who did well in maths.
-
-      We are founded and led by NSW accredited teachers who've marked HSC papers and taught in NSW classrooms while also being high achievers themselves. That means you learn with syllabus‑aligned resources built by educators who understand the marking criteria, the common mistakes, and what separates strong performances from exceptional ones.
-
-      While other students work through generic materials, you're training with resources that mirror your actual exams: same structure, same standards.
-
-      The result? 
-      
-      Faster improvement. Deeper understanding. And a real competitive edge over other students.`
-      },
-      {
-        question: "What qualifications do the tutors hold?",
-        answer: "All our tutors are handpicked and go through a rigorous vetting process. They are experts in their subjects with proven teaching experience to ensure you receive the highest quality education."
-      },
-      {
-        question: "What does Ryze mentorship program offer?",
-        answer: "We have a mentorship group with distinguished scholars with a history of accredited academic execellence at your disposal to access for you to connect with and learn from. "
+    
+    We are founded and led by NSW accredited teachers who've marked HSC papers and taught in NSW classrooms while also being high achievers themselves. That means you learn with syllabus‑aligned resources built by educators who understand the marking criteria, the common mistakes, and what separates strong performances from exceptional ones.
+    
+    While other students work through generic materials, you're training with resources that mirror your actual exams: same structure, same standards.
+    
+    The result?
+    
+    Faster improvement. Deeper understanding. And a real competitive edge over other students.`
       },
       {
         question: "What subjects do you offer?",
-        answer: "We specialise in mathematics, from primary through HSC Extension 2, with dedicated support for NAPLAN, OC and Selective Exam Preparation."
+        answer: `Mathematics. From primary through to HSC Extension 2.
+    
+    We offer dedicated support for NAPLAN, OC, and Selective Exam Preparation.
+    
+    We specialise. We don't spread ourselves thin across every subject. We focus on maths — and we do it better than anyone else.`
+      },
+      {
+        question: "What discounts do you have?",
+        answer: `You can save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals.
+        
+    We believe every student deserves access to exceptional education. That's why we offer substantial discounts to make it happen.
+    
+    Reach out and let's discuss how we can support you.`
+      },
+      {
+        question: "What qualifications do we hold?",
+        answer: `NSW accredited teachers. PhD scholars. HSC markers.
+    
+    Not just high achievers — actual teachers or educators with extensive classroom experience.
+    
+    We don't just know the content. We know how it's taught, how it's tested, and how to help you master it.
+    
+    That's the standard. No exceptions.`
+      },
+      {
+        question: "What does Ryze mentorship program offer?",
+        answer: `More than theory. More than practice questions.
+    
+    Our founders and educators aren't just teachers — they're accomplished scholars and passionate mentors who have excelled at the highest levels of mathematics and education. They bring real-world expertise, academic rigor, and genuine care to every session. Students gain more than subject knowledge; they receive career guidance, study strategies, and inspiration from mentors who truly understand the path to success. 
+    
+    When you join Ryze Education, you become part of a community dedicated to academic excellence and personal growth. Our students support each other, learn from the best, and develop the skills and mindset needed to thrive — not just in maths, but in all their future endeavors.`
       }
-    ];
+    ];    
 
     const [bgImage, setBgImage] = useState('');
     
@@ -349,7 +367,7 @@ const Landing: React.FC = () => {
                       onClick={scrollToContact} 
                       className="border border-[#FFB000] bg-[#FFB000]/85 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
-                        Book your free consultation
+                        Start your journey today
                     </button>
                 </div>
             </header>
@@ -401,7 +419,8 @@ const Landing: React.FC = () => {
                     transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
                     className="text-base md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
                 >
-                    Book 1 on 1 sessions with subjects matter experts that will unleash your true academic potential.
+                    Selective entry. Top bands. Extension 2 excellence. It all starts with the right mentor.
+                    {/* Founded by accredited teachers and PhD scholars, we specialise in MATHEMATICS from primary through to HSC Extension 2 */}
                 </motion.p>
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
@@ -413,7 +432,7 @@ const Landing: React.FC = () => {
                       onClick={scrollToContact}
                       className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FFB000] transition-colors shadow-lg shadow-[#FFB000]/20"
                     >
-                        Start your journey now
+                        Book your free consultation
                     </button>
                     <p className="text-gray-400 mt-5">Join 500+ other satisfied students</p>
                 </motion.div>
@@ -577,7 +596,7 @@ const Landing: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
-                        <p className="text-lg text-gray-700 mt-4">3 simple steps to connect with your best tutor ever.</p>
+                        <p className="text-lg text-gray-700 mt-4">3 simple steps we take to ensure that we have a plan of action on how to best help meet your needs before we proceed.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
