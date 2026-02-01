@@ -72,6 +72,20 @@ const Landing: React.FC = () => {
     ];    
 
     const [bgImage, setBgImage] = useState('');
+
+    const SalesBanner = () => (
+        <div className="sticky top-0 z-50 bg-gradient-to-r from-[#FFB000] to-[#FF8A00] text-white text-center p-3 shadow-lg animate-in fade-in slide-in-from-top-2 duration-500">
+            <div className="container mx-auto px-4">
+                <p className="font-semibold text-sm sm:text-base">
+                    Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. 
+                    <a href="tel:+61413885839" className="underline hover:text-yellow-200 font-bold ml-2 inline-flex items-center gap-1.5">
+                        Call us to find out more!
+                        <Phone size={16} />
+                    </a>
+                </p>
+            </div>
+        </div>
+    );
     
     const team = [
       {
@@ -351,6 +365,7 @@ const Landing: React.FC = () => {
     
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
+          <SalesBanner />
           {/* Header */}
           <section 
             className="relative text-white bg-slate-900 bg-cover bg-center"
