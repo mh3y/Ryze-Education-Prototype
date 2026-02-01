@@ -639,9 +639,9 @@ const Landing: React.FC = () => {
                     <div className="relative">
                       <div className="pb-20 pt-24 px-4">
                         <div className="max-w-4xl mx-auto text-center">
-                          <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Get in Touch</h1>
+                          <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Ready to see real results?</h1>
                           <p className="text-xl font-light text-slate-200">
-                            Ready to experience the Ryze difference? Have questions? We'd love to chat with you.
+                            Join the 500+ students who've transformed their grades with Ryze Education.
                           </p>
                         </div>
                       </div>
@@ -651,7 +651,7 @@ const Landing: React.FC = () => {
                           
                           {/* Card 1: Speak Now */}
                           <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
-                              <div className="w-20 h-20 bg-ryze rounded-full flex items-center justify-center text-white mb-8 shadow-lg shadow-ryze/30 group-hover:scale-110 transition-transform">
+                              <div className="w-20 h-20 bg-ryze/80 rounded-full flex items-center justify-center text-white mb-8 shadow-lg shadow-ryze/30 group-hover:bg-[#FFB000] group-hover:scale-110 transition-transform">
                                 <Phone size={32} />
                               </div>
                               <h2 className="text-3xl font-bold text-white mb-4">Prefer to Speak now?</h2>
@@ -660,14 +660,14 @@ const Landing: React.FC = () => {
                                 Sometimes it's just easier to talk. Call us directly and we'll help you out.
                               </p>
 
-                              <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
-                                Give us a call! <Phone size={20} fill="currentColor" />
+                              <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze/75 hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
+                                Give us a call <Phone size={20} fill="currentColor" />
                               </a>
                           </div>
 
                           {/* Card 2: Message Us */}
                           <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
-                              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 mb-8 group-hover:bg-slate-200 transition-colors">
+                              <div className="w-20 h-20 bg-ryze/80 rounded-full flex items-center justify-center text-white mb-8 group-hover:bg-[#FFB000] transition-colors">
                                 <Send size={32} />
                               </div>
                               <h2 className="text-3xl font-bold text-white mb-4">Message Us</h2>
