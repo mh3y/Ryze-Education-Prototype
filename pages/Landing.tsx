@@ -598,8 +598,8 @@ const Landing: React.FC = () => {
                 </div>
             </section>
 
-             {/* CTA Section */}
-            <section className="py-20 md:py-24 bg-[#f9f9f7]">
+            {/* CTA Section */}
+            {/* <section className="py-20 md:py-24 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                     <div>
                         <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
@@ -614,10 +614,84 @@ const Landing: React.FC = () => {
                         <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 text-sm rounded-full font-semibold animate-pulse">LIVE</div>
                     </div>
                 </div>
-            </section>
+            </section> */}
+
+            <motion.div
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={{
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1, transition: { duration: 0.5, ease: 'easeInOut' } },
+                    exit: { opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }
+                }}
+            >
+                <div className="font-sans">
+                  <div className="relative pt-20">
+                    {/* Background Image and Overlay Layer */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center bg-fixed"
+                      style={{ backgroundImage: `url('/images/home-background-overlayv2.png')` }}
+                    />
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+                    {/* Content Layer */}
+                    <div className="relative">
+                      <div className="pb-20 pt-24 px-4">
+                        <div className="max-w-4xl mx-auto text-center">
+                          <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Get in Touch</h1>
+                          <p className="text-xl font-light text-slate-200">
+                            Ready to experience the Ryze difference? Have questions? We'd love to chat with you.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-4 sm:px-6 lg:px-8 py-20">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto -mt-32">
+                          
+                          {/* Card 1: Speak Now */}
+                          <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
+                              <div className="w-20 h-20 bg-ryze rounded-full flex items-center justify-center text-white mb-8 shadow-lg shadow-ryze/30 group-hover:scale-110 transition-transform">
+                                <Phone size={32} />
+                              </div>
+                              <h2 className="text-3xl font-bold text-white mb-4">Prefer to Speak now?</h2>
+                              
+                              <p className="text-slate-300 mb-12 text-lg font-normal leading-relaxed">
+                                Sometimes it's just easier to talk. Call us directly and we'll help you out.
+                              </p>
+
+                              <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
+                                Give us a call! <Phone size={20} fill="currentColor" />
+                              </a>
+                          </div>
+
+                          {/* Card 2: Message Us */}
+                          <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
+                              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 mb-8 group-hover:bg-slate-200 transition-colors">
+                                <Send size={32} />
+                              </div>
+                              <h2 className="text-3xl font-bold text-white mb-4">Message Us</h2>
+                              
+                              <p className="text-slate-300 mb-12 text-lg font-normal leading-relaxed">
+                                Send us your question or request a call back at a time that suits you.
+                              </p>
+
+                              <button 
+                                onClick={() => {
+                                  const formElement = document.getElementById('contact-form-section');
+                                  formElement?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="mt-auto w-full py-5 bg-transparent border-2 border-slate-300 text-slate-300 font-bold rounded-2xl hover:bg-slate-700 hover:text-white transition-all flex items-center justify-center gap-3"
+                              >
+                                Send Message <ArrowRight size={20} />
+                              </button>
+                          </div>
+
+                        </div>
+                      </div>
 
             {/* Contact Form Section */}
-            <section id="contact-form-section" className="py-20 md:py-24 bg-[#0069b0]/40">
+            <section id="contact-form-section" className="py-20 md:py-24">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <h3 className="text-4xl font-bold text-white mb-4">Send us a Message</h3>
@@ -747,6 +821,10 @@ const Landing: React.FC = () => {
                     )}
                  </div>
               </section>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
             {/* FAQ Section */}
             <section className="py-20 md:py-32 bg-[#f9f9f7]">
