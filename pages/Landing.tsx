@@ -243,11 +243,11 @@ const Landing: React.FC = () => {
         if (status === 'error') setStatus('idle');
       };
 
-      const scrollToContact = () => {
-        const contactSection = document.getElementById('contact-form-section');
-        if (contactSection) {
-          contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+      const scrollToResults = () => {
+          const resultsSection = document.getElementById('real-results-section');
+          if (resultsSection) {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
       };
 
       const features = [
@@ -364,10 +364,10 @@ const Landing: React.FC = () => {
                 <div className="text-3xl font-bold text-white">RYZE EDUCATION</div>
                 <div>
                     <button 
-                      onClick={scrollToContact} 
+                      onClick={scrollToResults}
                       className="border border-[#FFB000] bg-[#FFB000]/85 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
-                        Start your journey today
+                        Book your free consultation
                     </button>
                 </div>
             </header>
@@ -429,10 +429,10 @@ const Landing: React.FC = () => {
                     className="mt-12 flex flex-col items-center gap-4"
                 >
                     <button 
-                      onClick={scrollToContact}
+                      onClick={scrollToResults}
                       className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FFB000] transition-colors shadow-lg shadow-[#FFB000]/20"
                     >
-                        Book your free consultation
+                        Start your journey now
                     </button>
                     <p className="text-gray-400 mt-5">Join 500+ other satisfied students</p>
                 </motion.div>
@@ -665,7 +665,7 @@ const Landing: React.FC = () => {
                 </div>
             </section> */}
 
-            <motion.div
+            <motion.div id="real-results-section"
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -884,7 +884,7 @@ const Landing: React.FC = () => {
                             <h2 className="text-3xl md:text-5xl text-black font-bold mb-4">Still not convinced?</h2>
                             <p className="text-gray-700 text-lg">
                                 Have more questions? Feel free to reach out to us. 
-                                <a onClick={scrollToContact} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
+                                <a onClick={scrollToResults} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
                             </p>
                         </div>
                         <div className="md:col-span-2">
