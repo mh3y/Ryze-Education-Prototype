@@ -97,7 +97,7 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
-  const isLanding = location.pathname === '/Landing';
+  const isLanding = location.pathname.toLowerCase() === '/landing';
 
   // Routes that share the "Portal" aesthetic (Starfield background)
   // We include Dashboard here to keep the background persistent when logging in
@@ -131,7 +131,7 @@ const AppContent: React.FC = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-            <Route path="/Landing" element={<Landing />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
             <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
             <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
