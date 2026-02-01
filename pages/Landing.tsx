@@ -7,24 +7,17 @@ import { FaMinus } from 'react-icons/fa6';
 const Landing: React.FC = () => {
     const featuresData = [
       {
-        title: "1-to-1 Live Tutoring",
-        description: "Get undivided attention from top tutors in a live, interactive setting designed to target your specific needs and learning style.",
+        title: "Expert-Led Tutoring You Can Trust",
+        description: "Learn from NSW‑certified teachers and PhD scholars with proven academic excellence. Our team isn’t made of random tutors — we are specialists who understand the curriculum deeply and deliver guidance with authority, expertise, and real educational leadership.",
         images: []
       },
       {
-        title: "Handpicked teacher",
-        description: "Undivided attention to you so no more struggling alone with complex concepts or last-minute questions.",
-        images: [
-          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg', position: 'top-10 left-10 z-10', size: 'w-48 h-48', color: 'pink', subject: 'Economics' },
-          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg', position: 'top-0 right-10 z-20', size: 'w-40 h-40', color: 'yellow', subject: 'Maths' },
-          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1770116812/female-teacher_pvvca7.png', position: 'left-1/2 -translate-x-1/2 top-1/4 z-30', size: 'w-64 h-64', color: 'green', subject: 'Science' },
-          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581194/gordon_rytlim.png', position: 'bottom-10 left-0 z-20', size: 'w-40 h-40', color: 'purple', subject: 'Accounts' },
-          { src: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1770116812/male-teacher_q1j1vj.png', position: 'bottom-0 right-0 z-10', size: 'w-52 h-52', color: 'blue', subject: 'Physics' }
-        ]
+        title: "Signature Syllabus‑Aligned Resources",
+        description: "Forget generic textbook material. Our tutoring is powered by exclusive, syllabus‑aligned resources created by expert NSW teachers. Every lesson is backed by purpose-built content that targets what students actually need to excel in school assessments and statewide standards.",
       },
       {
-        title: "Personalised Learning",
-        description: "Your learning plan is tailored to your unique needs and goals, ensuring efficient progress and mastery of subjects.",
+        title: "Mentorship Beyond Tutoring",
+        description: "We don’t just teach — we guide. Our student‑centred mentorship offers genuine care, support, and direction for academic decisions, subject selections, uni pathways, and life choices. Students get complete help between sessions from mentors who are not only educators, but trusted allies in their success.",
         images: []
       },
     ];
@@ -299,7 +292,7 @@ const Landing: React.FC = () => {
       {
         icon: <Star size={40} className="text-[#FFB000]" />,
         value: "4.9/5",
-        description: "Avg rating for tutor session"
+        description: "overall experience at Ryze"
       },
       {
         icon: <TrendingUp size={40} className="text-[#FFB000]" />,
@@ -527,7 +520,7 @@ const Landing: React.FC = () => {
                 </div>
             </section>
 
-            {/* Unlock Potential Section - NEW */}
+            {/* Unlock Potential Section - NEW
             <section className="py-20 md:py-32 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
@@ -547,10 +540,10 @@ const Landing: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Discover Section */}
-            <section className="py-20 md:py-32 bg-[#f9f9f7]">
+            <section className="py-10 md:py-16 bg-[#f9f9f7]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
@@ -577,7 +570,7 @@ const Landing: React.FC = () => {
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
                                 <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 1</h3>
-                                <h4 className="text-2xl font-bold text-black mb-3">Schedule in a free consultation</h4>
+                                <h4 className="text-2xl font-bold text-black mb-3">Schedule a free consultation</h4>
                                 <p className="text-gray-700">Get immediate help when you need it the most. No more struggling alone with complex concepts or last-minute questions. Our tutors are just a click away!</p>
                             </div>
 
