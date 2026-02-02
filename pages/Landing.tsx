@@ -78,7 +78,7 @@ const Landing: React.FC = () => {
             <div className="container mx-auto px-4">
                 <p className="font-semibold text-sm sm:text-base">
                     Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. 
-                    <a href="tel:+61413885839" className="underline hover:text-yellow-200 font-bold ml-2 inline-flex items-center gap-1.5">
+                    <a href="tel:+61413885839" onClick={handlePhoneClick} className="underline hover:text-yellow-200 font-bold ml-2 inline-flex items-center gap-1.5">
                         Call us to find out more!
                         <Phone size={16} />
                     </a>
@@ -194,6 +194,24 @@ const Landing: React.FC = () => {
         const stripped = phone.replace(/[\s\-]/g, '');
         return /^\+?[\d]{8,15}$/.test(stripped);
       };
+
+      const handlePhoneClick = async () => {
+        try {
+          await fetch('/api/meta-conversion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              eventName: 'Lead',
+              userAgent: navigator.userAgent,
+              sourceUrl: window.location.href,
+            }),
+          });
+        } catch (capiError) {
+          console.error('Meta CAPI (Lead) submission error:', capiError);
+        }
+      };
     
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -240,6 +258,28 @@ const Landing: React.FC = () => {
     
           if (response.ok) {
             setStatus('success');
+              // --- META CAPI INTEGRATION ---
+
+            try {
+              await fetch('/api/meta-conversion', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  eventName: 'Contact',
+                  name: formData.name,
+                  email: formData.email,
+                  phone: formData.phone,
+                  userAgent: navigator.userAgent,
+                  sourceUrl: window.location.href,
+                }),
+              });
+            } catch (capiError) {
+              console.error('Meta CAPI submission error:', capiError);
+            }
+            // --- END META CAPI INTEGRATION ---            
+            
             setFormData({ name: '', email: '', phone: '', message: '', honey: '' });
           } else {
             setStatus('error');
@@ -724,7 +764,7 @@ const Landing: React.FC = () => {
                                 Sometimes it's just easier to talk. Call us directly and we'll help you out.
                               </p>
 
-                              <a href="tel:+61413885839" className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze/75 hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
+                              <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze/75 hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
                                 Give us a call <Phone size={20} fill="currentColor" />
                               </a>
                           </div>
