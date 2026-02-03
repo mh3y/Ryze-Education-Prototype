@@ -29,7 +29,7 @@ export default async function handler(
     // Base user data (always include)
     const userData: any = {
       client_user_agent: userAgent,
-      country: ['au']
+      country: [hashValue('au')]
     };
 
     // Add additional data only for Contact events
