@@ -206,7 +206,6 @@ const Landing: React.FC = () => {
               eventName: 'Lead',
               userAgent: navigator.userAgent,
               sourceUrl: window.location.href,
-              test_event_code: process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE
             }),
           });
         } catch (capiError) {
@@ -274,7 +273,6 @@ const Landing: React.FC = () => {
                   phone: formData.phone,
                   userAgent: navigator.userAgent,
                   sourceUrl: window.location.href,
-                  test_event_code: process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE
                 }),
               });
             } catch (capiError) {
