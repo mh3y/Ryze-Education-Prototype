@@ -19,7 +19,7 @@ export default async function handler(
   }
 
   try {
-    const { eventName, name, email, phone, userAgent, sourceUrl } = req.body;
+    const { eventName, name, email, phone, userAgent, sourceUrl, test_event_code } = req.body;
 
     // Validate required fields
     if (!eventName || !sourceUrl) {
@@ -41,7 +41,7 @@ export default async function handler(
     }
 
     // Build CAPI payload
-    const payload = {
+    const payload: any = {
       data: [
         {
           event_name: eventName,
@@ -58,6 +58,10 @@ export default async function handler(
       ],
       access_token: process.env.META_CAPI_ACCESS_TOKEN
     };
+    
+    if (test_event_code) {
+        payload.test_event_code = test_event_code;
+    }
 
     // Send to Meta CAPI
     const metaResponse = await fetch(

@@ -206,6 +206,7 @@ const Landing: React.FC = () => {
               eventName: 'Lead',
               userAgent: navigator.userAgent,
               sourceUrl: window.location.href,
+              test_event_code: process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE
             }),
           });
         } catch (capiError) {
@@ -258,8 +259,8 @@ const Landing: React.FC = () => {
     
           if (response.ok) {
             setStatus('success');
-              // --- META CAPI INTEGRATION ---
 
+            // --- META CAPI INTEGRATION ---
             try {
               await fetch('/api/meta-conversion', {
                 method: 'POST',
@@ -273,12 +274,13 @@ const Landing: React.FC = () => {
                   phone: formData.phone,
                   userAgent: navigator.userAgent,
                   sourceUrl: window.location.href,
+                  test_event_code: process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE
                 }),
               });
             } catch (capiError) {
               console.error('Meta CAPI submission error:', capiError);
             }
-            // --- END META CAPI INTEGRATION ---            
+            // --- END META CAPI INTEGRATION ---                     
             
             setFormData({ name: '', email: '', phone: '', message: '', honey: '' });
           } else {
