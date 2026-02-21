@@ -7,6 +7,12 @@ import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, A
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
 // Optimized Scrolling Column
 const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.PropsWithChildren<{ direction?: "up" | "down", speed?: number }>) => {
   const controls = useAnimationControls();
@@ -71,6 +77,17 @@ const Home: React.FC = () => {
 
   // Business Logic for Availability
   const [isAvailable, setIsAvailable] = useState(false);
+
+  const handlePhoneClick = () => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+        'event_callback': () => {
+          console.log('Google Ads conversion event successfully sent from Home page.');
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     const checkAvailability = () => {
@@ -167,7 +184,7 @@ const Home: React.FC = () => {
     {
       id: "mike-nojiri",
       name: "Mike Nojiri",
-      role: "Master\'s in Teaching | BSc(Math)/BCompSc",
+      role: "Master's in Teaching | BSc(Math)/BCompSc",
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
@@ -521,6 +538,7 @@ const Home: React.FC = () => {
                             </motion.button>
                             <a 
                                 href="tel:+61413885839"
+                                onClick={handlePhoneClick}
                                 className="px-8 py-4 bg-orange-600/20 text-white border border-white/30 font-bold rounded-full text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
                             >
                                 <Phone size={20} />

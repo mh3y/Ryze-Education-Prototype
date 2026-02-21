@@ -5,6 +5,12 @@ import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
 const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: string }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -27,6 +33,17 @@ const Footer: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
   const isRyzeAi = location.pathname === '/ryze-ai';
+
+  const handlePhoneClick = () => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+        'event_callback': () => {
+          console.log('Google Ads conversion event successfully sent from Footer.');
+        }
+      });
+    }
+  };
 
   const socialLinks = [
     { 
@@ -118,7 +135,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone size={18} className="text-[#FFB000] shrink-0" />
-                <a href="tel:+61413885839" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>+61 413 885 839</a>
+                <a href="tel:+61413885839" onClick={handlePhoneClick} className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>+61 413 885 839</a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={18} className="text-[#FFB000] shrink-0" />

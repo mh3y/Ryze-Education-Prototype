@@ -4,6 +4,12 @@ import { motion } from 'framer-motion';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
 const pageVariants = {
     initial: {
         opacity: 0,
@@ -48,6 +54,15 @@ const Contact: React.FC = () => {
   };
 
   const handlePhoneClick = async () => {
+    // Google Ads conversion tracking
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+        'event_callback': () => {
+          console.log('Google Ads conversion event successfully sent.');
+        }
+      });
+    }
     try {
       await fetch('/api/meta-conversion', {
         method: 'POST',

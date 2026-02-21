@@ -4,6 +4,12 @@ import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram, FaFaceboo
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp, CalendarDays, Wallet, RefreshCw, Gift } from 'lucide-react';
 import { FaMinus } from 'react-icons/fa6';
 
+declare global {
+    interface Window {
+      gtag: (...args: any[]) => void;
+    }
+  }
+
 const Landing: React.FC = () => {
     const featuresData = [
       {
@@ -73,6 +79,35 @@ const Landing: React.FC = () => {
 
     const [bgImage, setBgImage] = useState('');
 
+    const handlePhoneClick = async () => {
+        // Google Ads conversion tracking
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'conversion', {
+            'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+            'event_callback': () => {
+              console.log('Google Ads conversion event successfully sent from Landing page.');
+            }
+          });
+        }
+
+        // Meta CAPI (Facebook) conversion tracking
+        try {
+          await fetch('/api/meta-conversion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              eventName: 'Lead',
+              userAgent: navigator.userAgent,
+              sourceUrl: window.location.href,
+            }),
+          });
+        } catch (capiError) {
+          console.error('Meta CAPI (Lead) submission error:', capiError);
+        }
+      };
+
     const SalesBanner = () => (
         <div className="sticky top-0 z-50 bg-gradient-to-r from-[#FFB000] to-[#FF8A00] text-white text-center p-3 shadow-lg animate-in fade-in slide-in-from-top-2 duration-500">
             <div className="container mx-auto px-4">
@@ -91,7 +126,7 @@ const Landing: React.FC = () => {
       {
         id: "mike-nojiri",
         name: "Mike Nojiri",
-        role: "Master\'s in Teaching | BSc(Math)/BCompSc",
+        role: "Master's in Teaching | BSc(Math)/BCompSc",
         atar: "99.25",
         scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
         image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
@@ -194,24 +229,6 @@ const Landing: React.FC = () => {
         const stripped = phone.replace(/[\s\-]/g, '');
         return /^\+?[\d]{8,15}$/.test(stripped);
       };
-
-      const handlePhoneClick = async () => {
-        try {
-          await fetch('/api/meta-conversion', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              eventName: 'Lead',
-              userAgent: navigator.userAgent,
-              sourceUrl: window.location.href,
-            }),
-          });
-        } catch (capiError) {
-          console.error('Meta CAPI (Lead) submission error:', capiError);
-        }
-      };
     
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -308,7 +325,7 @@ const Landing: React.FC = () => {
         { 
             icon: Users, 
             title: "Small Classes", 
-            desc: "Max 6 students. You won\'t get lost in the crowd, ensuring personal attention.",
+            desc: "Max 6 students. You won't get lost in the crowd, ensuring personal attention.",
         },
         { 
             icon: Star, 
@@ -629,7 +646,7 @@ const Landing: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="text-3xl md:text-5xl text-black font-bold">Unlock your learning potential</h2>
-                        <p className="text-lg text-gray-700 mt-4">We've crafted the platform to make sure you get the results you want</p>
+                        <p className="text-lg text-gray-700 mt-4">We\'ve crafted the platform to make sure you get the results you want</p>
                     </div>
                     <div className="max-w-3xl mx-auto">
                         <div className="flex flex-col gap-12">
@@ -710,7 +727,7 @@ const Landing: React.FC = () => {
                         <h2 className="text-3xl md:text-5xl text-black font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
                         <p className="text-lg text-gray-700 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalised learning.</p>
                         <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
-                            I'M READY, SIGN ME UP!
+                            I\'M READY, SIGN ME UP!
                         </button>
                     </div>
                     <div className="relative h-[400px] bg-black rounded-3xl flex items-center justify-center">
@@ -980,7 +997,10 @@ const Landing: React.FC = () => {
                         {/* Column 1: Brand */}
                         <div className="md:col-span-1">
                             <h3 className="text-2xl font-bold mb-4">RYZE EDUCATION</h3>
-                            <p className="text-gray-400 leading-relaxed">Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.</p>
+                            <p className="text-gray-400 leading-relaxed">
+                              Education that sees you.<br />
+                              Diagnosing gaps, building understanding, and creating confidence in every student.
+                            </p>
                         </div>
 
                         {/* Column 2: Connect With Us */}
@@ -1012,4 +1032,3 @@ const Landing: React.FC = () => {
 };
 
 export default Landing;
-
