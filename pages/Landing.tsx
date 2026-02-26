@@ -432,7 +432,7 @@ const Landing: React.FC = () => {
           <section className="relative text-white bg-slate-900 bg-cover bg-center">
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,w_800/image-v1_vv46di')" }}
+              style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,${window.innerWidth < 768 ? 'w_480' : window.innerWidth < 1280 ? 'w_1024' : 'w_1920'}/image-v1_vv46di')` }}
             />
             {/* Background Overlay */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
