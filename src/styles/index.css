@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ryze: #FFB000;
+  --color-ryze-50: #FFF8E5;
+  --color-ryze-100: #FFF0CC;
+  --color-ryze-200: #FFE099;
+  --color-ryze-300: #FFD166;
+  --color-ryze-400: #FFC133;
+  --color-ryze-500: #FFB000;
+  --color-ryze-600: #CC8D00;
+  --color-ryze-700: #996A00;
+  --color-ryze-800: #664700;
+  --color-ryze-900: #332300;
+  --color-slate-850: #151F32;
+  --color-slate-950: #020617;
+  --font-sans: 'Poppins', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-display: 'Poppins', sans-serif;
+}

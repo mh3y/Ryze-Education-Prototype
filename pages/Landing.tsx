@@ -77,7 +77,9 @@ const Landing: React.FC = () => {
       }
     ];    
 
-    const [bgImage, setBgImage] = useState('');
+    const [bgImage, setBgImage] = useState(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,w_1920/home-background-overlayv2_mpshjc'
+    );
 
     const handlePhoneClick = async () => {
         // Google Ads conversion tracking
@@ -274,30 +276,33 @@ const Landing: React.FC = () => {
           });
     
           if (response.ok) {
-            setStatus('success');
-
-            // --- META CAPI INTEGRATION ---
-            try {
-              await fetch('/api/meta-conversion', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  eventName: 'Contact',
-                  name: formData.name,
-                  email: formData.email,
-                  phone: formData.phone,
-                  userAgent: navigator.userAgent,
-                  sourceUrl: window.location.href,
-                }),
-              });
-            } catch (capiError) {
-              console.error('Meta CAPI submission error:', capiError);
+            // Fire Google Ads conversion on successful form submission
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', 'conversion', {
+                    'send_to': 'AW-17763964178/[FORM_CONVERSION_LABEL]',
+                });
             }
-            // --- END META CAPI INTEGRATION ---                     
-            
+
+            // Meta CAPI
+            try {
+                await fetch('/api/meta-conversion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        eventName: 'Contact',
+                        name: formData.name,
+                        email: formData.email,
+                        phone: formData.phone,
+                        userAgent: navigator.userAgent,
+                        sourceUrl: window.location.href,
+                    }),
+                });
+            } catch (capiError) {
+                console.error('Meta CAPI submission error:', capiError);
+            }
+
             setFormData({ name: '', email: '', phone: '', message: '', honey: '' });
+            setStatus('success');
           } else {
             setStatus('error');
             setErrorMessage('');
