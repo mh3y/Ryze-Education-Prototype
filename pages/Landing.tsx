@@ -631,16 +631,16 @@ const Landing: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-center">
-                            <div className="grid grid-cols-4 gap-4 max-w-sm">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes5_cropped_gdj3jx.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601232/tes4_cropped_bflbaz.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601239/tes1_cropped_slcxdg.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581187/tes7_ujk1je.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769581193/tes6_dcowey.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601234/tes3_cropped_qh0olo.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769601233/tes8_cropped_a3j3tv.png" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                                <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-[#FFB000] font-bold text-lg">+500</div>
-                            </div>
+                        <div className="grid grid-cols-4 gap-4 max-w-sm">
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes5_cropped_gdj3jx.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601232/tes4_cropped_bflbaz.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes1_cropped_slcxdg.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581187/tes7_ujk1je.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581193/tes6_dcowey.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601234/tes3_cropped_qh0olo.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601233/tes8_cropped_a3j3tv.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
+                            <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-[#FFB000] font-bold text-lg">+500</div>
+                        </div>
                             <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
                         </div>
                     </div>
