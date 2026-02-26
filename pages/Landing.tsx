@@ -429,10 +429,11 @@ const Landing: React.FC = () => {
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
           <SalesBanner />
           {/* Header */}
-          <section 
-            className="relative text-white bg-slate-900 bg-cover bg-center"
-            style={{ backgroundImage: "url('/images/image-v1.png')" }}
-          >
+          <section className="relative text-white bg-slate-900 bg-cover bg-center">
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,w_800/image-v1_vv46di')" }}
+            />
             {/* Background Overlay */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
