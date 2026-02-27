@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { initAnalytics } from './src/analytics';
 import './src/styles/index.css';
 import './src/styles/custom-hovers.css';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
+const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);
+
+initAnalytics();
+
 root.render(
   <React.StrictMode>
     <App />

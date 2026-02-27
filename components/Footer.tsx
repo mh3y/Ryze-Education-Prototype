@@ -1,9 +1,9 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 // @ts-ignore
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ROUTES } from '../src/constants/routes';
 
 declare global {
   interface Window {
@@ -12,16 +12,16 @@ declare global {
 }
 
 const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
@@ -32,36 +32,36 @@ const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: str
 const Footer: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
-  const isRyzeAi = location.pathname === '/ryze-ai';
+  const isRyzeAi = location.pathname === ROUTES.RYZE_AI;
 
   const handlePhoneClick = () => {
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
-        'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
-        'event_callback': () => {
+        send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+        event_callback: () => {
           console.log('Google Ads conversion event successfully sent from Footer.');
-        }
+        },
       });
     }
   };
 
   const socialLinks = [
-    { 
-      Icon: Facebook, 
-      href: "https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr" 
+    {
+      Icon: Facebook,
+      href: 'https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr',
     },
-    { 
-      Icon: Instagram, 
-      href: "https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#" 
+    {
+      Icon: Instagram,
+      href: 'https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#',
     },
-    { 
-      Icon: Linkedin, 
-      href: "https://www.linkedin.com/company/ryze-education" 
+    {
+      Icon: Linkedin,
+      href: 'https://www.linkedin.com/company/ryze-education',
     },
-    { 
-      Icon: WhatsappIcon, 
-      href: "https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0" 
-    }
+    {
+      Icon: WhatsappIcon,
+      href: 'https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0',
+    },
   ];
 
   // Dynamic Styles based on Page
@@ -75,28 +75,26 @@ const Footer: React.FC = () => {
   return (
     <footer className={`${footerBg} pt-20 pb-10 border-t transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
-          
           {/* Brand Column */}
           <div className="lg:col-span-4 space-y-6">
-            <Link to="/" className="block">
-              <img 
-                src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
-                alt="Ryze Education" 
+            <Link to={ROUTES.HOME} className="block">
+              <img
+                src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+                alt="Ryze Education"
                 className="h-16 w-auto mb-4"
               />
             </Link>
             <p className={`${textColor} text-sm leading-relaxed max-w-xs font-medium`}>
-              {t("Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.")}
+              {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
             </p>
             <div className="flex gap-4 pt-2">
               {socialLinks.map(({ Icon, href }, i) => (
-                <a 
-                  key={i} 
-                  href={href} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  key={i}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`w-10 h-10 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
                 >
                   <Icon size={18} />
@@ -107,27 +105,25 @@ const Footer: React.FC = () => {
 
           {/* Links Columns */}
           <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Company")}</h4>
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Company')}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
-              <li><Link to="/the-ryze-truth" className={`${linkHoverColor} transition-colors flex items-center gap-1`}>{t("The Ryze Truth")}</Link></li>
-              <li><Link to="/meet-the-team" className={`${linkHoverColor} transition-colors`}>{t("Meet Our Team")}</Link></li>
-              <li><Link to="/how-ryze-works" className={`${linkHoverColor} transition-colors`}>{t("How It Works")}</Link></li>
-              <li><Link to="/ryze-ai" className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t("Ryze AI")} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
+              <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
+              <li><Link to={ROUTES.HOW_IT_WORKS} className={`${linkHoverColor} transition-colors`}>{t('How It Works')}</Link></li>
+              <li><Link to={ROUTES.RYZE_AI} className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t('Ryze AI')} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Resources")}</h4>
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
-              <li><Link to="/learningstyle" className={`${linkHoverColor} transition-colors`}>{t("Learning Style")}</Link></li>
-              <li><Link to="/login" className={`${linkHoverColor} transition-colors`}>{t("Dashboard Login")}</Link></li>
-              <li><Link to="/contact" className={`${linkHoverColor} transition-colors`}>{t("Contact Us")}</Link></li>
+              <li><Link to={ROUTES.HOME} className={`${linkHoverColor} transition-colors`}>{t('Home')}</Link></li>
+              <li><Link to={ROUTES.CONTACT} className={`${linkHoverColor} transition-colors`}>{t('Contact Us')}</Link></li>
             </ul>
           </div>
 
           {/* Contact Column */}
           <div className="lg:col-span-4">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t("Contact")}</h4>
+            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Contact')}</h4>
             <div className={`p-6 rounded-2xl border space-y-4 ${cardBg}`}>
               <div className="flex items-start gap-3">
                 <MapPin size={18} className="text-[#FFB000] shrink-0 mt-1" />
@@ -143,7 +139,6 @@ const Footer: React.FC = () => {
               </div>
             </div>
           </div>
-
         </div>
 
         <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
@@ -151,9 +146,9 @@ const Footer: React.FC = () => {
             © {new Date().getFullYear()} Ryze Education. All rights reserved.
           </p>
           <div className={`flex space-x-6 text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-400'}`}>
-            <Link to="/privacy" className={`${linkHoverColor} transition-colors`}>{t("Privacy Policy")}</Link>
-            <Link to="/terms" className={`${linkHoverColor} transition-colors`}>{t("Terms and Conditions")}</Link>
-            <Link to="/sitemap" className={`${linkHoverColor} transition-colors`}>{t("Sitemap")}</Link>
+            <Link to={ROUTES.PRIVACY} className={`${linkHoverColor} transition-colors`}>{t('Privacy Policy')}</Link>
+            <Link to={ROUTES.TERMS} className={`${linkHoverColor} transition-colors`}>{t('Terms and Conditions')}</Link>
+            <Link to={ROUTES.SITEMAP} className={`${linkHoverColor} transition-colors`}>{t('Sitemap')}</Link>
           </div>
         </div>
       </div>
