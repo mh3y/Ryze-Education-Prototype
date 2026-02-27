@@ -425,14 +425,34 @@ const Landing: React.FC = () => {
       }
     ];
     
+    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill';
+    const heroImageId = 'image-v1_vv46di';
+    const heroImageSrc = `${heroImageBase},w_1024/${heroImageId}`;
+    const heroImageSrcSet = [
+      `${heroImageBase},w_480/${heroImageId} 480w`,
+      `${heroImageBase},w_768/${heroImageId} 768w`,
+      `${heroImageBase},w_1024/${heroImageId} 1024w`,
+      `${heroImageBase},w_1440/${heroImageId} 1440w`,
+      `${heroImageBase},w_1920/${heroImageId} 1920w`,
+    ].join(', ');
+
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
           <SalesBanner />
           {/* Header */}
-          <section className="relative text-white bg-slate-900 bg-cover bg-center">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,${window.innerWidth < 768 ? 'w_480' : window.innerWidth < 1280 ? 'w_1024' : 'w_1920'}/image-v1_vv46di')` }}
+          <section className="relative text-white bg-slate-900">
+            <img
+              src={heroImageSrc}
+              srcSet={heroImageSrcSet}
+              sizes="100vw"
+              width={1920}
+              height={1080}
+              alt=""
+              aria-hidden="true"
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
             />
             {/* Background Overlay */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -594,6 +614,8 @@ const Landing: React.FC = () => {
                                src={member.image}
                                onError={(e) => { e.currentTarget.src = member.fallback }}
                                alt={member.name}
+                               width={900}
+                               height={1200}
                                loading="lazy"
                                decoding="async"
                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -623,7 +645,15 @@ const Landing: React.FC = () => {
                         <div className="bg-white p-10 rounded-3xl border-2 border-[#FFB000]">
                              <p className="text-xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
-                                <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg" className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"/>
+                                <img
+                                  src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg"
+                                  width={64}
+                                  height={64}
+                                  loading="lazy"
+                                  decoding="async"
+                                  className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"
+                                  alt="Student testimonial avatar"
+                                />
                                 <div>
                                     <p className="font-bold text-xl text-slate-700">Jason Y.</p>
                                     <p className="font-bold text-lg text-[#FFB000]">99.85 ATAR | 98 Ext 2 </p>
@@ -682,7 +712,15 @@ const Landing: React.FC = () => {
                         <div className="flex justify-center">
                             <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
                                 <div className="bg-gray-900 rounded-[30px] overflow-hidden">
-                                    <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561936/online_xnzlfr.jpg" alt="Online Consultation" className="w-full h-auto" />
+                                    <img
+                                      src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561936/online_xnzlfr.jpg"
+                                      width={720}
+                                      height={1280}
+                                      loading="lazy"
+                                      decoding="async"
+                                      alt="Online Consultation"
+                                      className="w-full h-auto"
+                                    />
                                 </div>
                             </div>
                         </div>

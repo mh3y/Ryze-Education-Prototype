@@ -1,4 +1,51 @@
 {
+  "redirects": [
+    {
+      "source": "/landing",
+      "destination": "/hsc-maths-tutoring",
+      "permanent": true
+    },
+    {
+      "source": "/landing/",
+      "destination": "/hsc-maths-tutoring",
+      "permanent": true
+    },
+    {
+      "source": "/Landing",
+      "destination": "/hsc-maths-tutoring",
+      "permanent": true
+    },
+    {
+      "source": "/learningstyle",
+      "destination": "/how-ryze-works",
+      "permanent": true
+    },
+    {
+      "source": "/pricing",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/Pricing",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/faq",
+      "destination": "/how-ryze-works",
+      "permanent": true
+    },
+    {
+      "source": "/FAQ",
+      "destination": "/how-ryze-works",
+      "permanent": true
+    },
+    {
+      "source": "/learning-style",
+      "destination": "/how-ryze-works",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
