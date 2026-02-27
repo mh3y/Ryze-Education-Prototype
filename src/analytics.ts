@@ -7,14 +7,6 @@ export const initAnalytics = () => {
   // Google Ads/GA stub
   w.dataLayer = w.dataLayer || [];
   w.gtag = w.gtag || function () { w.dataLayer.push(arguments); };
-  let gaConfigured = false;
-  const configureGaOnce = () => {
-    if (gaConfigured) return;
-    gaConfigured = true;
-    w.gtag('js', new Date());
-    w.gtag('config', 'G-7XJFCSB41D');
-    w.gtag('config', 'AW-17763964178');
-  };
 
   // Meta Pixel stub
   if (!w.fbq) {
@@ -29,25 +21,32 @@ export const initAnalytics = () => {
     w.fbq('init', '1218919857096197');
     w.fbq('track', 'PageView');
   }
+};
 
-  const loadScripts = () => {
+export function initTrackingDeferred() {
+  if (typeof window === 'undefined') return;
+  const w = window as any;
+  if (w.__trackingDeferredInit) return;
+  w.__trackingDeferredInit = true;
+
+  const configureGaOnce = () => {
+    if (w.__gaConfigured) return;
+    w.__gaConfigured = true;
+    w.gtag('js', new Date());
+    w.gtag('config', 'G-7XJFCSB41D');
+    w.gtag('config', 'AW-17763964178');
+  };
+
+  const load = () => {
     if (!document.getElementById('gtag-js')) {
       const gtagScript = document.createElement('script');
       gtagScript.id = 'gtag-js';
       gtagScript.async = true;
       gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-17763964178';
-      gtagScript.onload = () => {
-        gtagScript.dataset.loaded = 'true';
-        configureGaOnce();
-      };
+      gtagScript.onload = configureGaOnce;
       document.head.appendChild(gtagScript);
     } else {
-      const existingGtagScript = document.getElementById('gtag-js') as HTMLScriptElement;
-      if (existingGtagScript.dataset.loaded === 'true') {
-        configureGaOnce();
-      } else {
-        existingGtagScript.addEventListener('load', configureGaOnce, { once: true });
-      }
+      configureGaOnce();
     }
 
     if (!document.getElementById('fb-pixel')) {
@@ -59,9 +58,9 @@ export const initAnalytics = () => {
     }
   };
 
-  if (document.readyState === 'complete') {
-    loadScripts();
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(load);
   } else {
-    window.addEventListener('load', loadScripts, { once: true });
+    window.setTimeout(load, 1800);
   }
-};
+}

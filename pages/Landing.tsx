@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { FaQuestionCircle, FaPlus, FaTwitter, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
-import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp, CalendarDays, Wallet, RefreshCw, Gift } from 'lucide-react';
+import { FaQuestionCircle, FaPlus, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
+import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp } from 'lucide-react';
 import { FaMinus } from 'react-icons/fa6';
+import { initTrackingDeferred } from '../src/analytics';
 
 declare global {
     interface Window {
@@ -80,6 +81,7 @@ const Landing: React.FC = () => {
     const [bgImage, setBgImage] = useState(
       'https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,w_1920/home-background-overlayv2_mpshjc'
     );
+    const [isMobileViewport, setIsMobileViewport] = useState(true);
 
     const handlePhoneClick = async () => {
         // Google Ads conversion tracking
@@ -131,7 +133,7 @@ const Landing: React.FC = () => {
         role: "Master's in Teaching | BSc(Math)/BCompSc",
         atar: "99.25",
         scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
-        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
         fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
       },
       {
@@ -140,7 +142,7 @@ const Landing: React.FC = () => {
         role: "PhD - AI & Machine Learning candidate",
         atar: "99.50",
         scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
-        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
         fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
       },
       {
@@ -149,7 +151,7 @@ const Landing: React.FC = () => {
         role: "UNSW Academic Teaching Staff | BMaths/BCompSc",
         atar: "99.55",
         scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
-        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+        image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
         fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
       }
     ];
@@ -200,6 +202,18 @@ const Landing: React.FC = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []); // The empty array ensures this runs only once on mount and on cleanup
+
+    useEffect(() => {
+      const mediaQuery = window.matchMedia('(max-width: 767px)');
+      const updateViewport = () => setIsMobileViewport(mediaQuery.matches);
+      updateViewport();
+      mediaQuery.addEventListener('change', updateViewport);
+      return () => mediaQuery.removeEventListener('change', updateViewport);
+    }, []);
+
+    useEffect(() => {
+      initTrackingDeferred();
+    }, []);
   
     const [openFaq, setOpenFaq] = useState<number | null>(null);    
 
@@ -371,6 +385,22 @@ const Landing: React.FC = () => {
     
     // 2. Define the Carousel Component
     const FeatureCarousel = () => (
+      isMobileViewport ? (
+        <div className="grid grid-cols-1 gap-4 mt-12">
+          {features.slice(0, 3).map((feature, idx) => (
+            <div
+              key={idx}
+              className="bg-black/20 p-6 rounded-3xl border border-white/10 backdrop-blur-lg text-left"
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-[#FFB000] border border-[#FF8A00]/30">
+                <feature.icon size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-300 text-sm leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
         <div className="w-full overflow-hidden mt-24 relative [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
             <motion.div
                 className="flex gap-6"
@@ -400,6 +430,7 @@ const Landing: React.FC = () => {
                 ))}
             </motion.div>
         </div>
+      )
     );
 
     const statsData = [
@@ -425,15 +456,15 @@ const Landing: React.FC = () => {
       }
     ];
     
-    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill';
+    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto';
     const heroImageId = 'image-v1_vv46di';
-    const heroImageSrc = `${heroImageBase},w_1024/${heroImageId}`;
+    const heroImageSrc = `${heroImageBase},w_768/${heroImageId}`;
     const heroImageSrcSet = [
       `${heroImageBase},w_480/${heroImageId} 480w`,
+      `${heroImageBase},w_640/${heroImageId} 640w`,
       `${heroImageBase},w_768/${heroImageId} 768w`,
-      `${heroImageBase},w_1024/${heroImageId} 1024w`,
-      `${heroImageBase},w_1440/${heroImageId} 1440w`,
-      `${heroImageBase},w_1920/${heroImageId} 1920w`,
+      `${heroImageBase},w_960/${heroImageId} 960w`,
+      `${heroImageBase},w_1200/${heroImageId} 1200w`,
     ].join(', ');
 
     return (
@@ -444,11 +475,10 @@ const Landing: React.FC = () => {
             <img
               src={heroImageSrc}
               srcSet={heroImageSrcSet}
-              sizes="100vw"
-              width={1920}
-              height={1080}
-              alt=""
-              aria-hidden="true"
+              sizes="(max-width: 767px) 100vw, 1200px"
+              width={1200}
+              height={800}
+              alt="HSC Maths tutoring - Ryze Education"
               fetchPriority="high"
               loading="eager"
               decoding="async"
@@ -473,17 +503,17 @@ const Landing: React.FC = () => {
             {/* Hero Content */}
             <div className="relative z-10 container mx-auto px-6 text-center pt-20 pb-16">
                 <motion.h1
-                    initial={{
+                    initial={isMobileViewport ? false : {
                       opacity: 0,
                       scale: reduce ? 1 : 0.98,
                       clipPath: reduce ? "inset(0% 0% 0% 0%)" : "inset(0% 0% 100% 0%)"
                     }}
-                    animate={{
+                    animate={isMobileViewport ? { opacity: 1 } : {
                       opacity: 1,
                       scale: 1,
                       clipPath: "inset(0% 0% 0% 0%)"
                     }}
-                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    transition={isMobileViewport ? { duration: 0 } : { duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
                     className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white"
                 >
                     <span className="block">YOUR PATH TO SUCCESS</span>
@@ -491,39 +521,40 @@ const Landing: React.FC = () => {
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFE29A] via-[#FFB000] to-[#FF8A00]">
                             STARTS HERE
                         </span>
-                        {/* shimmer */}
-                        <span
-                            aria-hidden="true"
-                            className="pointer-events-none absolute inset-0 overflow-hidden rounded"
-                        >
-                            <motion.span
-                                initial={{ x: "-100%" }}
-                                animate={{ x: "100%" }}
-                                transition={{
-                                    duration: 2.5,
-                                    ease: "linear",
-                                    repeat: Infinity,
-                                    delay: 1,
-                                    repeatDelay: 5
-                                }}
-                                className="block h-full w-full -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
-                            />
-                        </span>
+                        {!isMobileViewport && (
+                          <span
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-0 overflow-hidden rounded"
+                          >
+                              <motion.span
+                                  initial={{ x: "-100%" }}
+                                  animate={{ x: "100%" }}
+                                  transition={{
+                                      duration: 2.5,
+                                      ease: "linear",
+                                      repeat: Infinity,
+                                      delay: 1,
+                                      repeatDelay: 5
+                                  }}
+                                  className="block h-full w-full -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                              />
+                          </span>
+                        )}
                     </span>
                 </motion.h1>
                 <motion.p
-                    initial={{ y: 16, opacity: 0 }}
+                    initial={isMobileViewport ? false : { y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+                    transition={isMobileViewport ? { duration: 0 } : { delay: 0.3, duration: 0.6, ease: "easeOut" }}
                     className="text-base md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
                 >
                     Selective entry. Top bands. Extension 2 excellence. It all starts with the right mentor.
                     {/* Founded by accredited teachers and PhD scholars, we specialise in MATHEMATICS from primary through to HSC Extension 2 */}
                 </motion.p>
                 <motion.div
-                    initial={{ y: 20, opacity: 0 }}
+                    initial={isMobileViewport ? false : { y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
+                    transition={isMobileViewport ? { duration: 0 } : { duration: 0.8, delay: 0.4, ease: "easeInOut" }}
                     className="mt-12 flex flex-col items-center gap-4"
                 >
                     <button 
@@ -575,10 +606,10 @@ const Landing: React.FC = () => {
                            <motion.div
                            key={idx}
                            className="group cursor-pointer"
-                           initial={{ opacity: 0, y: 20 }}
-                           whileInView={{ opacity: 1, y: 0 }}
+                           initial={isMobileViewport ? false : { opacity: 0, y: 20 }}
+                           whileInView={isMobileViewport ? undefined : { opacity: 1, y: 0 }}
                            viewport={{ once: true }}
-                           transition={{ delay: idx * 0.1 }}
+                           transition={isMobileViewport ? { duration: 0 } : { delay: idx * 0.1 }}
                          >
                           {member.scores && member.scores.length > 0 && (
                             <div className="mb-6">
@@ -614,10 +645,11 @@ const Landing: React.FC = () => {
                                src={member.image}
                                onError={(e) => { e.currentTarget.src = member.fallback }}
                                alt={member.name}
-                               width={900}
-                               height={1200}
+                               width={700}
+                               height={900}
                                loading="lazy"
                                decoding="async"
+                               sizes="(max-width: 767px) 90vw, (max-width: 1200px) 33vw, 350px"
                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                              />
                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
