@@ -107,7 +107,7 @@ const LearningStyle: React.FC = () => {
         <div className="pt-40 pb-24 px-4 relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center -z-10"
-          style={{ backgroundImage: `url('/images/online.png')` }}
+          style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/online')` }}
         />
         <div className="absolute inset-0 bg-black/60 -z-10" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-slate-50 to-transparent opacity-50 rounded-full blur-3xl -z-10"></div>

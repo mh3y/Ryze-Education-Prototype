@@ -80,7 +80,7 @@ const Landing: React.FC = () => {
     ];    
 
     const [bgImage, setBgImage] = useState(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,dpr_auto,w_960/home-background-overlayv2_mpshjc'
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,dpr_auto,w_960/ryze/images/home-background-overlayv2'
     );
     const [isMobileViewport, setIsMobileViewport] = useState(true);
 
@@ -162,7 +162,7 @@ const Landing: React.FC = () => {
     useEffect(() => {
         const getImageUrl = (width: number) => {
             const baseUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload';
-            const imageId = 'home-background-overlayv2_mpshjc';
+            const imageId = 'ryze/images/home-background-overlayv2';
             let transformations = 'f_auto,q_auto:good,dpr_auto';
         
             if (width < 768) {
@@ -929,14 +929,21 @@ const Landing: React.FC = () => {
                 <div className="font-sans">
                   <div className="relative pt-20">
                     {/* Background Image and Overlay Layer */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
-                      style={{ backgroundImage: `url('${bgImage}')` }}
-                      />
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+                    <img
+                      src={bgImage}
+                      width={1440}
+                      height={900}
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <div className="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm" />
 
                     {/* Content Layer */}
-                    <div className="relative">
+                    <div className="relative z-20">
                       <div className="pb-28 pt-24 px-4">
                         <div className="max-w-4xl mx-auto text-center">
                           <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Ready to see real results?</h1>

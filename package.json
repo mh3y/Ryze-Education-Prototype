@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "images:upload": "node scripts/upload-to-cloudinary.mjs",
+    "images:replace": "node scripts/replace-image-refs.mjs --write",
+    "images:replace:dry": "node scripts/replace-image-refs.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
@@ -23,6 +26,7 @@
     "@types/react-dom": "^18.2.22",
     "@vercel/node": "^5.5.28",
     "@vitejs/plugin-react": "^4.2.1",
+    "cloudinary": "^2.7.0",
     "typescript": "^5.2.2",
     "vite": "^6.4.1"
   },
