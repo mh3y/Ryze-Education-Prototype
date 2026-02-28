@@ -1,0 +1,224 @@
+{
+  "generatedAt": "2026-02-28T10:01:52.790Z",
+  "mode": "dry-run",
+  "totals": {
+    "filesScanned": 53,
+    "filesChanged": 0,
+    "replacements": 0,
+    "detectedReferences": 41,
+    "unmatchedReferences": 11
+  },
+  "detectedReferences": [
+    {
+      "file": "components/dashboard/Sidebar.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "components/Footer.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "components/Navbar.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/favicon-32x32.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/favicon-16x16.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/apple-touch-icon.png"
+    },
+    {
+      "file": "pages/About.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"
+    },
+    {
+      "file": "pages/About.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"
+    },
+    {
+      "file": "pages/About.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg"
+    },
+    {
+      "file": "pages/Home.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"
+    },
+    {
+      "file": "pages/Home.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"
+    },
+    {
+      "file": "pages/Home.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg"
+    },
+    {
+      "file": "pages/Home.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_700,h_900,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes5_cropped_gdj3jx.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601232/tes4_cropped_bflbaz.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes1_cropped_slcxdg.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581187/tes7_ujk1je.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581193/tes6_dcowey.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601234/tes3_cropped_qh0olo.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601233/tes8_cropped_a3j3tv.png"
+    },
+    {
+      "file": "pages/Landing.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561940/personalised_ctuogs.png"
+    },
+    {
+      "file": "pages/MeetOurTeam.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"
+    },
+    {
+      "file": "pages/MeetOurTeam.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"
+    },
+    {
+      "file": "pages/MeetOurTeam.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg"
+    },
+    {
+      "file": "pages/MeetOurTeam.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg"
+    },
+    {
+      "file": "pages/PortalHome.tsx",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+    },
+    {
+      "file": "public/site.webmanifest",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "public/site.webmanifest",
+      "reference": "/android-chrome-512x512.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/favicon-16x16.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/favicon-32x32.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/apple-touch-icon.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/android-chrome-512x512.png"
+    },
+    {
+      "file": "services/auth.ts",
+      "reference": "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"
+    }
+  ],
+  "changedFiles": [],
+  "unmatched": [
+    {
+      "file": "index.html",
+      "reference": "/favicon-32x32.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/favicon-16x16.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "index.html",
+      "reference": "/apple-touch-icon.png"
+    },
+    {
+      "file": "public/site.webmanifest",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "public/site.webmanifest",
+      "reference": "/android-chrome-512x512.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/favicon-16x16.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/favicon-32x32.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/apple-touch-icon.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/android-chrome-192x192.png"
+    },
+    {
+      "file": "README.md",
+      "reference": "/android-chrome-512x512.png"
+    }
+  ]
+}

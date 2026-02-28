@@ -216,7 +216,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('/images/image-v1.png')" }}
+        style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/image-v1')" }}
       >
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -267,10 +267,10 @@ const Home: React.FC = () => {
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
-                           "/images/tes5.png",
-                           "/images/tes6.png",
-                           "/images/tes7.png",
-                           "/images/tes8.png"
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes5",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes6",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes7",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes8"
                          ].map((src, i) => (
                            <img 
                               key={i} 
@@ -293,32 +293,32 @@ const Home: React.FC = () => {
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
-                    image="/images/personalised.png" 
+                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/personalised" 
                     title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
                     priority={true} 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="/images/class4.png" title={t("Small Group Focus")} tag="Method" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/class4" title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="/images/tutor2.png" title={t("NSW Accredited Teachers")} tag="Experienced" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tutor2" title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
-                    image="/images/image-v4.png" 
+                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/image-v4" 
                     title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="/images/onlinev4.png" title={t("Hybrid Learning")} tag="Flexibility" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/onlinev4" title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Distinguished Teachers */}
-                  <Card image="/images/gordon.png" title={t("Distinguished Mentors")} tag="Experts" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/gordon" title={t("Distinguished Mentors")} tag="Experts" />
                </ScrollingColumn>
             </div>
           </div>

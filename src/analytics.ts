@@ -61,26 +61,29 @@ export function initTrackingDeferred() {
   const queueLoad = () => {
     if (w.__trackingScriptsQueued) return;
     w.__trackingScriptsQueued = true;
-
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(load, { timeout: 2000 });
-    } else {
-      window.setTimeout(load, 1200);
-    }
+    load();
   };
 
-  const deferUntilInteractive = () => {
+  const startAfterLoad = () => {
     let settled = false;
+    let pendingSettle = false;
+    let lcpSeen = !('PerformanceObserver' in window);
     let cleanup = () => {};
-    const settle = () => {
+
+    const settle = (force = false) => {
       if (settled) return;
+      if (!force && !lcpSeen) {
+        pendingSettle = true;
+        return;
+      }
+
       settled = true;
       cleanup();
       queueLoad();
     };
 
-    const onInteraction = () => settle();
     const interactionEvents: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+    const onInteraction = () => settle(false);
     interactionEvents.forEach((eventName) => {
       window.addEventListener(eventName, onInteraction, { once: true, passive: true });
     });
@@ -89,18 +92,30 @@ export function initTrackingDeferred() {
     if ('PerformanceObserver' in window) {
       try {
         lcpObserver = new PerformanceObserver((list) => {
-          if (list.getEntries().length > 0) settle();
+          if (list.getEntries().length > 0) {
+            lcpSeen = true;
+            if (pendingSettle) settle(false);
+          }
         });
         lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true } as PerformanceObserverInit);
       } catch {
-        // no-op
+        lcpSeen = true;
       }
     }
 
-    const fallbackTimer = window.setTimeout(() => settle(), 3000);
+    const idleId =
+      'requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(() => settle(false), { timeout: 5000 })
+        : null;
+
+    // Guaranteed eventual start, measured after load.
+    const fallbackTimer = window.setTimeout(() => settle(true), 5000);
 
     cleanup = () => {
       window.clearTimeout(fallbackTimer);
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
       interactionEvents.forEach((eventName) => {
         window.removeEventListener(eventName, onInteraction);
       });
@@ -109,8 +124,8 @@ export function initTrackingDeferred() {
   };
 
   if (document.readyState === 'complete') {
-    deferUntilInteractive();
+    startAfterLoad();
   } else {
-    window.addEventListener('load', deferUntilInteractive, { once: true });
+    window.addEventListener('load', startAfterLoad, { once: true });
   }
 }

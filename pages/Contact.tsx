@@ -177,7 +177,7 @@ const Contact: React.FC = () => {
             {/* Background Image and Overlay Layer */}
             <div
               className="absolute inset-0 bg-cover bg-center bg-fixed"
-              style={{ backgroundImage: `url('/images/home-background-overlayv2.png')` }}
+              style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/home-background-overlayv2')` }}
             />
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
