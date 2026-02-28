@@ -214,6 +214,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden flex items-center gap-4 z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
               className={`p-2 rounded-full transition-colors ${useWhiteText && !isOpen ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'}`}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
