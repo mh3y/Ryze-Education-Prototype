@@ -8,6 +8,7 @@ import { initTrackingDeferred } from '../src/analytics';
 declare global {
     interface Window {
       gtag: (...args: any[]) => void;
+      fbq?: (...args: any[]) => void;
     }
   }
 
@@ -79,7 +80,7 @@ const Landing: React.FC = () => {
     ];    
 
     const [bgImage, setBgImage] = useState(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/q_auto,f_auto,w_1920/home-background-overlayv2_mpshjc'
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,dpr_auto,w_960/home-background-overlayv2_mpshjc'
     );
     const [isMobileViewport, setIsMobileViewport] = useState(true);
 
@@ -162,14 +163,14 @@ const Landing: React.FC = () => {
         const getImageUrl = (width: number) => {
             const baseUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload';
             const imageId = 'home-background-overlayv2_mpshjc';
-            let transformations = 'q_auto,f_auto';
+            let transformations = 'f_auto,q_auto:good,dpr_auto';
         
             if (width < 768) {
-                transformations += ',w_800'; // Optimized for mobile
+                transformations += ',w_640';
             } else if (width >= 768 && width < 1280) {
-                transformations += ',w_1280'; // Optimized for tablet
+                transformations += ',w_960';
             } else {
-                transformations += ',w_1920'; // Optimized for desktop
+                transformations += ',w_1440';
             }
             
             return `${baseUrl}/${transformations}/${imageId}`;
@@ -214,14 +215,101 @@ const Landing: React.FC = () => {
     useEffect(() => {
       initTrackingDeferred();
     }, []);
+
+    useEffect(() => {
+      document.title = 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert';
+
+      let descriptionTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+      if (!descriptionTag) {
+        descriptionTag = document.createElement('meta');
+        descriptionTag.name = 'description';
+        document.head.appendChild(descriptionTag);
+      }
+      descriptionTag.content = 'Premium small-group tutoring in Sydney for HSC Maths, Extension 1 and Extension 2. Expert-led programs focused on faster improvement and stronger exam performance.';
+
+      let canonicalTag = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!canonicalTag) {
+        canonicalTag = document.createElement('link');
+        canonicalTag.rel = 'canonical';
+        document.head.appendChild(canonicalTag);
+      }
+      canonicalTag.href = window.location.origin + window.location.pathname;
+    }, []);
+
+    useEffect(() => {
+      if (!import.meta.env.PROD) return;
+      if (new URLSearchParams(window.location.search).get('debug') !== 'perf') return;
+      if (!('PerformanceObserver' in window)) return;
+
+      let lastLcp: any = null;
+      const observer = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        lastLcp = entries[entries.length - 1];
+      });
+
+      try {
+        observer.observe({ type: 'largest-contentful-paint', buffered: true } as PerformanceObserverInit);
+      } catch {
+        return;
+      }
+
+      const logLcp = () => {
+        if (!lastLcp) return;
+        const element = (lastLcp as any).element as HTMLElement | null;
+        const imageElement = element as HTMLImageElement | null;
+        const lcpUrl = (lastLcp as any).url || imageElement?.currentSrc || imageElement?.src || '';
+
+        console.info('[perf-debug] largest-contentful-paint', {
+          startTimeMs: Math.round(lastLcp.startTime),
+          renderTimeMs: Math.round((lastLcp as any).renderTime || 0),
+          loadTimeMs: Math.round((lastLcp as any).loadTime || 0),
+          size: Math.round((lastLcp as any).size || 0),
+          elementTag: element?.tagName || 'unknown',
+          elementClass: element?.className || '',
+          url: lcpUrl,
+          textSample: element?.textContent?.trim().slice(0, 120) || ''
+        });
+      };
+
+      const onVisibilityChange = () => {
+        if (document.visibilityState === 'hidden') {
+          logLcp();
+          observer.disconnect();
+        }
+      };
+
+      document.addEventListener('visibilitychange', onVisibilityChange);
+      window.addEventListener('pagehide', logLcp, { once: true });
+
+      return () => {
+        observer.disconnect();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+      };
+    }, []);
   
     const [openFaq, setOpenFaq] = useState<number | null>(null);    
 
     const socialLinks = [
-      { Icon: FaFacebook, href: "https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr" },
-      { Icon: FaInstagram, href: "https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#" },
-      { Icon: FaLinkedin, href: "https://www.linkedin.com/company/ryze-education" },
-      { Icon: FaWhatsapp, href: "https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0" }
+      {
+        Icon: FaFacebook,
+        href: 'https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr',
+        label: 'Visit Ryze Education on Facebook'
+      },
+      {
+        Icon: FaInstagram,
+        href: 'https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#',
+        label: 'Visit Ryze Education on Instagram'
+      },
+      {
+        Icon: FaLinkedin,
+        href: 'https://www.linkedin.com/company/ryze-education',
+        label: 'Visit Ryze Education on LinkedIn'
+      },
+      {
+        Icon: FaWhatsapp,
+        href: 'https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0',
+        label: 'Chat with Ryze Education on WhatsApp'
+      }
     ];
     
     const reduce = useReducedMotion();
@@ -466,6 +554,17 @@ const Landing: React.FC = () => {
       `${heroImageBase},w_960/${heroImageId} 960w`,
       `${heroImageBase},w_1200/${heroImageId} 1200w`,
     ].join(', ');
+    const consultationImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,dpr_auto';
+    const consultationImageId = 'v1769561936/online_xnzlfr';
+    const consultationImageSrc = `${consultationImageBase},w_540/${consultationImageId}`;
+    const consultationImageSrcSet = [
+      `${consultationImageBase},w_360/${consultationImageId} 360w`,
+      `${consultationImageBase},w_540/${consultationImageId} 540w`,
+      `${consultationImageBase},w_720/${consultationImageId} 720w`,
+    ].join(', ');
+    const testimonialAvatarBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,dpr_auto';
+    const testimonialAvatarId = 'v1769866078/images_qbe5xh';
+    const testimonialAvatarSrc = `${testimonialAvatarBase},w_128,h_128/${testimonialAvatarId}`;
 
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
@@ -678,7 +777,9 @@ const Landing: React.FC = () => {
                              <p className="text-xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
                             <div className="mt-8 flex items-center gap-4">
                                 <img
-                                  src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769866078/images_qbe5xh.jpg"
+                                  src={testimonialAvatarSrc}
+                                  srcSet={`${testimonialAvatarBase},w_96,h_96/${testimonialAvatarId} 96w, ${testimonialAvatarBase},w_128,h_128/${testimonialAvatarId} 128w, ${testimonialAvatarBase},w_160,h_160/${testimonialAvatarId} 160w`}
+                                  sizes="64px"
                                   width={64}
                                   height={64}
                                   loading="lazy"
@@ -745,7 +846,9 @@ const Landing: React.FC = () => {
                             <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
                                 <div className="bg-gray-900 rounded-[30px] overflow-hidden">
                                     <img
-                                      src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561936/online_xnzlfr.jpg"
+                                      src={consultationImageSrc}
+                                      srcSet={consultationImageSrcSet}
+                                      sizes="(max-width: 767px) 90vw, 720px"
                                       width={720}
                                       height={1280}
                                       loading="lazy"
@@ -1032,7 +1135,7 @@ const Landing: React.FC = () => {
                             <h2 className="text-3xl md:text-5xl text-black font-bold mb-4">Still not convinced?</h2>
                             <p className="text-gray-700 text-lg">
                                 Have more questions? Feel free to reach out to us. 
-                                <a onClick={scrollToResults} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
+                                <a href="#real-results-section" onClick={(event) => { event.preventDefault(); scrollToResults(); }} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
                             </p>
                         </div>
                         <div className="md:col-span-2">
@@ -1084,12 +1187,14 @@ const Landing: React.FC = () => {
                             <h4 className="text-lg font-semibold mb-4 tracking-wide">Connect With Us</h4>
                             <p className="text-gray-400 mb-4">Follow us on our social media channels.</p>
                             <div className="flex space-x-4">
-                                {socialLinks.map(({ Icon, href }, i) => (
+                                {socialLinks.map(({ Icon, href, label }, i) => (
                                   <a 
                                     key={i} 
                                     href={href} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
+                                    aria-label={label}
+                                    title={label}
                                     className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-[#FFB000] hover:text-white transition-all duration-300"
                                   >
                                     <Icon size={20} />

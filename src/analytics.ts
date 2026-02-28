@@ -58,9 +58,59 @@ export function initTrackingDeferred() {
     }
   };
 
-  if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(load);
+  const queueLoad = () => {
+    if (w.__trackingScriptsQueued) return;
+    w.__trackingScriptsQueued = true;
+
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(load, { timeout: 2000 });
+    } else {
+      window.setTimeout(load, 1200);
+    }
+  };
+
+  const deferUntilInteractive = () => {
+    let settled = false;
+    let cleanup = () => {};
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      queueLoad();
+    };
+
+    const onInteraction = () => settle();
+    const interactionEvents: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+    interactionEvents.forEach((eventName) => {
+      window.addEventListener(eventName, onInteraction, { once: true, passive: true });
+    });
+
+    let lcpObserver: PerformanceObserver | null = null;
+    if ('PerformanceObserver' in window) {
+      try {
+        lcpObserver = new PerformanceObserver((list) => {
+          if (list.getEntries().length > 0) settle();
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true } as PerformanceObserverInit);
+      } catch {
+        // no-op
+      }
+    }
+
+    const fallbackTimer = window.setTimeout(() => settle(), 3000);
+
+    cleanup = () => {
+      window.clearTimeout(fallbackTimer);
+      interactionEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, onInteraction);
+      });
+      if (lcpObserver) lcpObserver.disconnect();
+    };
+  };
+
+  if (document.readyState === 'complete') {
+    deferUntilInteractive();
   } else {
-    window.setTimeout(load, 1800);
+    window.addEventListener('load', deferUntilInteractive, { once: true });
   }
 }
