@@ -694,7 +694,7 @@ const Landing: React.FC = () => {
                       <div className="flex flex-col md:flex-row justify-center items-center mb-16 gap-6">
                          <div className="max-w-2xl text-center">
                             <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">Meet Your Mentors</h2>
-                            <p className="text-lg text-slate-500">
+                            <p className="text-lg text-slate-700">
                               Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.
                             </p>
                          </div>
@@ -713,7 +713,7 @@ const Landing: React.FC = () => {
                           {member.scores && member.scores.length > 0 && (
                             <div className="mb-6">
                               <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
-                                <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                                <h4 className="text-xl font-bold text-amber-700 mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
                                 <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                                   {member.scores.map((score, i) => (
                                     <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
@@ -789,7 +789,7 @@ const Landing: React.FC = () => {
                                 />
                                 <div>
                                     <p className="font-bold text-xl text-slate-700">Jason Y.</p>
-                                    <p className="font-bold text-lg text-[#FFB000]">99.85 ATAR | 98 Ext 2 </p>
+                                    <p className="font-bold text-lg text-amber-700">99.85 ATAR | 98 Ext 2 </p>
                                 </div>
                             </div>
                         </div>
@@ -802,7 +802,7 @@ const Landing: React.FC = () => {
                             <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581193/tes6_dcowey.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
                             <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601234/tes3_cropped_qh0olo.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
                             <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601233/tes8_cropped_a3j3tv.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-[#FFB000] font-bold text-lg">+500</div>
+                            <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-amber-700 font-bold text-lg">+500</div>
                         </div>
                             <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
                         </div>
@@ -869,7 +869,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 1</h3>
+                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 1</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Schedule a free consultation</h4>
                                 <p className="text-gray-700">We start with a conversation to understand where your child currently stands, what challenges they're facing, and what you hope to achieve with us. We'll discuss your child's academic goals, learning preferences, and any specific concerns you have. This is also an opportunity for you to learn about our teaching approach and ask any questions.</p>
                             </div>
@@ -879,7 +879,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 2</h3>
+                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 2</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Diagnosis & Feedback </h4>
                                 <p className="text-gray-700">The first lesson serves as a detailed assesment. We'll be working to identify specific knowledge gaps, learning patterns or areas that need attention and then provide clear feedback on what we've observed and what needs focus.</p>
                             </div>
@@ -889,7 +889,7 @@ const Landing: React.FC = () => {
                                 <div className="absolute left-0 top-1.5 flex items-center">
                                     <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-[#FFB000] mb-2">STEP 3</h3>
+                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 3</h3>
                                 <h4 className="text-2xl font-bold text-black mb-3">Personalised Learning Plan </h4>
                                 <p className="text-gray-700">Based on the assessment, we develop a tailored plan that addresses your child's specific needs. This outlines our focus areas, the approach we'll take and the goals we're working toward together.</p>
                             </div>
@@ -1093,7 +1093,7 @@ const Landing: React.FC = () => {
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label htmlFor="message" className="block text-sm font-bold text-slate-200 uppercase tracking-wider">Message</label>
-                                <span className={`text-xs font-medium ${formData.message.length >= 2000 ? 'text-red-500' : 'text-slate-400'}`}>
+                                <span className={`text-xs font-medium ${formData.message.length >= 2000 ? 'text-red-500' : 'text-slate-300'}`}>
                                     {formData.message.length}/2000
                                 </span>
                             </div>

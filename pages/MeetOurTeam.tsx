@@ -13,7 +13,7 @@ const MeetTheTeam: React.FC = () => {
       id: "mike-nojiri",
       name: "Mike Nojiri",
       role: "Head of Education",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
@@ -34,7 +34,7 @@ const MeetTheTeam: React.FC = () => {
       id: "william-gong",
       name: "William Gong",
       role: "Head of Technology",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       atar: "99.50",
       scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "|", "94 Chemistry"],
@@ -52,7 +52,7 @@ const MeetTheTeam: React.FC = () => {
       id: "gordon-ye",
       name: "Gordon Ye",
       role: "Senior Mentor",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       atar: "99.55",
       scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "|", "96 Chemistry"],
@@ -74,7 +74,7 @@ const MeetTheTeam: React.FC = () => {
       id: "michael-yang",
       name: "Michael Yang",
       role: "Founder",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       wordsFromFounder: "At Ryze, we believe education is more than grades — it’s about unlocking potential and building confidence for life.\n\nEvery student learns differently, and our mission is to create personalised pathways that make learning engaging, effective, and empowering.\n\nWe’re here to turn challenges into opportunities, inspire curiosity, and help every learner achieve success—not just in school, but in life.\n\nYour goals are our goals, and together, we’ll make them happen.",
     }
@@ -110,7 +110,7 @@ const MeetTheTeam: React.FC = () => {
                     {member.scores && member.scores.length > 0 && (
                       <div className="mb-6">
                         <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
-                          <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                          <h4 className="text-xl font-bold text-amber-700 mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
                           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                             {member.scores.map((score, i) => (
                               <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
@@ -145,6 +145,8 @@ const MeetTheTeam: React.FC = () => {
                           src={member.image} 
                           onError={(e) => {e.currentTarget.src = member.fallbackImage}}
                           alt={member.name} 
+                          width={720}
+                          height={900}
                           loading="lazy"
                           decoding="async"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -152,7 +154,7 @@ const MeetTheTeam: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                         <div className="absolute bottom-0 left-0 p-8 text-white w-full">
                            <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{t(member.name)}</h3>
-                           <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
+                           <p className="text-amber-700 font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
                         </div>
                       </div>
                     </div>
@@ -161,12 +163,12 @@ const MeetTheTeam: React.FC = () => {
                   <div className="w-full lg:w-7/12 space-y-10">
                     {member.id === 'michael-yang' ? (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                        <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-2xl">Words from the Founder</h4>
+                        <h4 className="text-amber-700 font-bold mb-6 uppercase tracking-widest text-2xl">Words from the Founder</h4>
                         <p className="text-lg text-slate-600 leading-relaxed font-light whitespace-pre-line">{member.wordsFromFounder}</p>
                       </div>
                     ) : (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                       <h4 className="text-[#ffb000] font-bold mb-6 uppercase tracking-widest text-lg">{t("Credentials")}</h4>
+                       <h4 className="text-amber-700 font-bold mb-6 uppercase tracking-widest text-lg">{t("Credentials")}</h4>
                        <ul className="flex flex-wrap gap-3">
                          {member.creds.map((cred, i) => (
                            <li key={i} className="inline-flex items-center px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-medium">

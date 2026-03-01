@@ -12,7 +12,7 @@ const Terms: React.FC = () => {
       <div className="bg-white pt-24 pb-24 px-4 border-b border-slate-100">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-sans font-bold mb-6 text-slate-900 tracking-tight">Terms and Conditions</h1>
-          <p className="text-slate-500 font-medium">Last Updated: November 2025</p>
+          <p className="text-slate-600 font-medium">Last Updated: November 2025</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ const Terms: React.FC = () => {
           <section className="mb-12">
             <h3 className="text-2xl font-bold text-slate-900 mb-4">6. Cancellation and Termination</h3>
             <p className="text-slate-600 leading-relaxed mb-4">
-              <strong className="text-slate-900">Cancellation by you:</strong> You may cancel services by providing written notice to <a href="mailto:ryzeeducation@outlook.com" className="text-[#FFB000] font-bold hover:underline">ryzeeducation@outlook.com</a>. Your cancellation notice should specify whether you wish to retain or request deletion of the Student's data.
+              <strong className="text-slate-900">Cancellation by you:</strong> You may cancel services by providing written notice to <a href="mailto:ryzeeducation@outlook.com" className="text-amber-700 font-bold hover:underline">ryzeeducation@outlook.com</a>. Your cancellation notice should specify whether you wish to retain or request deletion of the Student's data.
             </p>
             <p className="text-slate-600 leading-relaxed mb-4">
               <strong className="text-slate-900">Termination by us:</strong> We reserve the right to terminate services if:

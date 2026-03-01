@@ -51,11 +51,11 @@ const HowItWorks: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100">
            <div className="bg-slate-50 p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-slate-200">
-               <h3 className="text-2xl font-bold text-slate-400 mb-6 uppercase tracking-wider text-sm">{t("Expectation")}</h3>
+               <h3 className="text-2xl font-bold text-slate-700 mb-6 uppercase tracking-wider text-sm">{t("Expectation")}</h3>
                <p className="text-3xl font-bold text-slate-800 mb-6 leading-tight">
                  "{t("Tutoring is about doing homework together or cramming before tests.")}"
                </p>
-               <p className="text-slate-500 font-medium">{t("Most people think hiring someone to help with current struggles is enough.")}</p>
+               <p className="text-slate-700 font-medium">{t("Most people think hiring someone to help with current struggles is enough.")}</p>
            </div>
 
            <div className="bg-white p-12 flex flex-col justify-center relative">
@@ -92,7 +92,7 @@ const HowItWorks: React.FC = () => {
                 >
                   <div className="w-12 h-1 bg-ryze mb-6 rounded-full group-hover:w-full transition-all duration-500"></div>
                   <h3 className="text-xl font-bold text-slate-900 mb-4">{t(p.title)}</h3>
-                  <p className="text-slate-500 leading-relaxed text-sm">{t(p.desc)}</p>
+                  <p className="text-slate-700 leading-relaxed text-sm">{t(p.desc)}</p>
                </motion.div>
              ))}
            </div>
@@ -104,7 +104,7 @@ const HowItWorks: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4">
            <div className="text-center mb-24">
              <h2 className="text-4xl font-sans font-bold text-slate-900 mb-4">{t("Your Child's Learning Journey")}</h2>
-             <p className="text-slate-500 text-lg">{t("A structured approach to build skills systematically.")}</p>
+             <p className="text-slate-700 text-lg">{t("A structured approach to build skills systematically.")}</p>
            </div>
 
            <div className="relative">
@@ -124,7 +124,7 @@ const HowItWorks: React.FC = () => {
                      <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-16 mb-4 md:mb-0">
                         <div className={`bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow ${i % 2 === 0 ? 'text-left' : 'md:text-right text-left'}`}>
                            <h3 className="text-lg font-bold text-slate-900 mb-2">{t(step.title)}</h3>
-                           <p className="text-slate-500 text-sm leading-relaxed">{t(step.desc)}</p>
+                           <p className="text-slate-700 text-sm leading-relaxed">{t(step.desc)}</p>
                         </div>
                      </div>
                      
@@ -219,8 +219,8 @@ const HowItWorks: React.FC = () => {
             </div>
 
             <div className="mt-16 bg-slate-50 p-8 rounded-3xl border border-slate-100 text-center">
-                <h4 className="text-slate-400 font-bold mb-4 uppercase tracking-widest text-xs">{t("Backed By Research")}</h4>
-                <p className="text-slate-500 text-sm leading-relaxed max-w-2xl mx-auto italic">
+                <h4 className="text-slate-700 font-bold mb-4 uppercase tracking-widest text-xs">{t("Backed By Research")}</h4>
+                <p className="text-slate-700 text-sm leading-relaxed max-w-2xl mx-auto italic">
                    {t("Supported by longitudinal studies (Geary, 2011; Price, Mazzocco & Ansari, 2013), intervention research (Fuchs et al., 2021), and cognitive science on how expertise develops (Chi et al., 1981).")}
                 </p>
             </div>

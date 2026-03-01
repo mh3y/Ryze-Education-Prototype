@@ -33,6 +33,7 @@ const Footer: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
   const isRyzeAi = location.pathname === ROUTES.RYZE_AI;
+  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
 
   const handlePhoneClick = () => {
     if (typeof window.gtag === 'function') {
@@ -49,28 +50,32 @@ const Footer: React.FC = () => {
     {
       Icon: Facebook,
       href: 'https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr',
+      label: 'Ryze Education on Facebook'
     },
     {
       Icon: Instagram,
       href: 'https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#',
+      label: 'Ryze Education on Instagram'
     },
     {
       Icon: Linkedin,
       href: 'https://www.linkedin.com/company/ryze-education',
+      label: 'Ryze Education on LinkedIn'
     },
     {
       Icon: WhatsappIcon,
       href: 'https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0',
+      label: 'Chat with Ryze Education on WhatsApp'
     },
   ];
 
   // Dynamic Styles based on Page
   const footerBg = isRyzeAi ? 'bg-[#050510]/90 backdrop-blur-md border-white/10' : 'bg-white border-slate-100';
   const headingColor = isRyzeAi ? 'text-white' : 'text-slate-900';
-  const textColor = isRyzeAi ? 'text-slate-400' : 'text-slate-500';
+  const textColor = isRyzeAi ? 'text-slate-400' : 'text-slate-700';
   const linkHoverColor = isRyzeAi ? 'hover:text-[#FFB000]' : 'hover:text-ryze';
   const cardBg = isRyzeAi ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100';
-  const socialBg = isRyzeAi ? 'bg-white/10 text-slate-300 hover:bg-[#FFB000]' : 'bg-slate-50 text-slate-400 hover:bg-ryze';
+  const socialBg = isRyzeAi ? 'bg-white/10 text-slate-300 hover:bg-[#FFB000]' : 'bg-slate-50 text-slate-600 hover:bg-ryze';
 
   return (
     <footer className={`${footerBg} pt-20 pb-10 border-t transition-colors duration-300`}>
@@ -80,8 +85,10 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-4 space-y-6">
             <Link to={ROUTES.HOME} className="block">
               <img
-                src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png"
+                src={brandLogoUrl}
                 alt="Ryze Education"
+                width={250}
+                height={64}
                 className="h-16 w-auto mb-4"
               />
             </Link>
@@ -89,12 +96,14 @@ const Footer: React.FC = () => {
               {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
             </p>
             <div className="flex gap-4 pt-2">
-              {socialLinks.map(({ Icon, href }, i) => (
+              {socialLinks.map(({ Icon, href, label }, i) => (
                 <a
                   key={i}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
                   className={`w-10 h-10 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
                 >
                   <Icon size={18} />
@@ -142,10 +151,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
-          <p className={`text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-400'}`}>
+          <p className={`text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-600'}`}>
             © {new Date().getFullYear()} Ryze Education. All rights reserved.
           </p>
-          <div className={`flex space-x-6 text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-400'}`}>
+          <div className={`flex space-x-6 text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-600'}`}>
             <Link to={ROUTES.PRIVACY} className={`${linkHoverColor} transition-colors`}>{t('Privacy Policy')}</Link>
             <Link to={ROUTES.TERMS} className={`${linkHoverColor} transition-colors`}>{t('Terms and Conditions')}</Link>
             <Link to={ROUTES.SITEMAP} className={`${linkHoverColor} transition-colors`}>{t('Sitemap')}</Link>
