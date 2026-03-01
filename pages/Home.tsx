@@ -6,6 +6,9 @@ import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, A
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
+
+const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_800,dpr_auto/ryze/images/image-v1';
 
 declare global {
   interface Window {
@@ -39,7 +42,27 @@ const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.Props
 };
 
 // Optimized Card with smooth scaling and LCP support
-const Card = ({ image, title, tag, priority = false }: { image: string, title: string, tag: string, priority?: boolean }) => (
+type CardImageSource = {
+  src: string;
+  srcSet: string;
+  sizes: string;
+  width: number;
+  height: number;
+};
+
+const Card = ({
+  image,
+  title,
+  tag,
+  priority = false,
+  fetchPriority = 'auto',
+}: {
+  image: CardImageSource;
+  title: string;
+  tag: string;
+  priority?: boolean;
+  fetchPriority?: 'high' | 'low' | 'auto';
+}) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
     transition={{ duration: 0.3 }}
@@ -47,9 +70,14 @@ const Card = ({ image, title, tag, priority = false }: { image: string, title: s
     style={{ willChange: 'transform' }}
   >
     <img 
-      src={image} 
+      src={image.src}
+      srcSet={image.srcSet}
+      sizes={image.sizes}
+      width={image.width}
+      height={image.height}
       alt={title} 
       loading={priority ? "eager" : "lazy"}
+      fetchPriority={fetchPriority}
       decoding="async"
       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
     />
@@ -77,6 +105,24 @@ const Home: React.FC = () => {
 
   // Business Logic for Availability
   const [isAvailable, setIsAvailable] = useState(false);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    let disposePerfDebug: undefined | (() => void);
+    void import('../src/utils/perfDebug').then(({ initPerfDebug }) => {
+      disposePerfDebug = initPerfDebug('home');
+    });
+
+    return () => {
+      if (disposePerfDebug) disposePerfDebug();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Defer non-critical hover effects CSS off initial render-blocking path.
+    void import('../src/styles/custom-hovers.css');
+  }, []);
 
   const handlePhoneClick = () => {
     if (typeof window.gtag === 'function') {
@@ -180,6 +226,35 @@ const Home: React.FC = () => {
     "You are not a number"
   ];
 
+  const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
+  const buildMarketingCardImage = (sourceUrl: string) =>
+    responsiveCloudinaryImage(sourceUrl, {
+      widths: [320, 360, 420, 480],
+      aspectRatio: [3, 4],
+      sizes: marketingCardSizes,
+      crop: 'fill',
+      gravity: 'auto',
+    });
+
+  const marketingCardImages = {
+    ocSelectiveExam: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised'),
+    smallGroupFocus: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4'),
+    nswAccreditedTeachers: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2'),
+    hscExcellence: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4'),
+    hybridLearning: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4'),
+    distinguishedMentors: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon'),
+  };
+
+  const teamCardSizes = '(max-width: 768px) 88vw, (max-width: 1280px) 33vw, 410px';
+  const buildTeamCardImage = (sourceUrl: string) =>
+    responsiveCloudinaryImage(sourceUrl, {
+      widths: [320, 410, 512, 640],
+      aspectRatio: [4, 5],
+      sizes: teamCardSizes,
+      crop: 'fill',
+      gravity: 'auto',
+    });
+
   const team = [
     {
       id: "mike-nojiri",
@@ -188,6 +263,7 @@ const Home: React.FC = () => {
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"),
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -197,6 +273,7 @@ const Home: React.FC = () => {
       atar: "99.50",
       scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"),
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -206,9 +283,10 @@ const Home: React.FC = () => {
       atar: "99.55",
       scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg"),
       fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
-  ];    
+  ];
 
   return (
     <div className="w-full font-sans overflow-hidden bg-slate-50">
@@ -216,7 +294,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_1280,dpr_auto/ryze/images/image-v1')" }}
+        style={{ backgroundImage: `url('${HOME_HERO_BG_IMAGE_URL}')` }}
       >
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -293,32 +371,33 @@ const Home: React.FC = () => {
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised" 
+                    image={marketingCardImages.ocSelectiveExam} 
                     title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
-                    priority={true} 
+                    priority={true}
+                    fetchPriority="high" 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4" title={t("Small Group Focus")} tag="Method" />
+                  <Card image={marketingCardImages.smallGroupFocus} title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2" title={t("NSW Accredited Teachers")} tag="Experienced" />
+                  <Card image={marketingCardImages.nswAccreditedTeachers} title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4" 
+                    image={marketingCardImages.hscExcellence} 
                     title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4" title={t("Hybrid Learning")} tag="Flexibility" />
+                  <Card image={marketingCardImages.hybridLearning} title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Distinguished Teachers */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon" title={t("Distinguished Mentors")} tag="Experts" />
+                  <Card image={marketingCardImages.distinguishedMentors} title={t("Distinguished Mentors")} tag="Experts" />
                </ScrollingColumn>
             </div>
           </div>
@@ -392,8 +471,16 @@ const Home: React.FC = () => {
                  )}
 
                  <img
-                   src={member.image}
-                   onError={(e) => { e.currentTarget.src = member.fallback }}
+                   src={member.imageOptimized.src}
+                   srcSet={member.imageOptimized.srcSet}
+                   sizes={member.imageOptimized.sizes}
+                   width={member.imageOptimized.width}
+                   height={member.imageOptimized.height}
+                   onError={(e) => {
+                     e.currentTarget.removeAttribute('srcset');
+                     e.currentTarget.removeAttribute('sizes');
+                     e.currentTarget.src = member.fallback;
+                   }}
                    alt={member.name}
                    loading="lazy"
                    decoding="async"
@@ -618,3 +705,5 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+
