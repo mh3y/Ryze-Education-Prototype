@@ -128,6 +128,8 @@ const Footer: React.FC = () => {
             <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
               <li><Link to={ROUTES.HOME} className={`${linkHoverColor} transition-colors`}>{t('Home')}</Link></li>
+              <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
+              <li><Link to={ROUTES.MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('Maths Tutoring')}</Link></li>
               <li><Link to={ROUTES.CONTACT} className={`${linkHoverColor} transition-colors`}>{t('Contact Us')}</Link></li>
             </ul>
           </div>

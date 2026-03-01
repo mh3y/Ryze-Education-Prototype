@@ -10,7 +10,8 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import FeatureGate from './components/FeatureGate';
 import Home from './pages/Home';
-import Landing from './pages/Landing';
+import HscMathsTutoring from './pages/HscMathsTutoring';
+import MathsTutoring from './pages/MathsTutoring';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
 import StickyMobileCTA from './components/StickyMobileCTA';
@@ -104,9 +105,11 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
-  const isLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_TUTORING;
+  const isHscLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_TUTORING;
+  const isMathsLanding = location.pathname.toLowerCase() === ROUTES.MATHS_TUTORING;
+  const isLanding = isHscLanding || isMathsLanding;
   const isHome = location.pathname === ROUTES.HOME;
-  const showStickyPrimaryCta = isHome || isLanding;
+  const showStickyPrimaryCta = isHome || isHscLanding;
 
   // Routes that share the "Portal" aesthetic (Starfield background)
   // We include Dashboard here to keep the background persistent when logging in
@@ -138,8 +141,9 @@ const AppContent: React.FC = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
-            <Route path={ROUTES.HSC_MATHS_TUTORING} element={<Landing />} />
-            <Route path="/landing" element={<Navigate to={ROUTES.HSC_MATHS_TUTORING} replace />} />
+            <Route path={ROUTES.HSC_MATHS_TUTORING} element={<HscMathsTutoring />} />
+            <Route path={ROUTES.MATHS_TUTORING} element={<MathsTutoring />} />
+            <Route path="/landing" element={<Navigate to={ROUTES.MATHS_TUTORING} replace />} />
             <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
             <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
             <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
@@ -211,7 +215,7 @@ const AppContent: React.FC = () => {
       {showStickyPrimaryCta && (
         <StickyMobileCTA
           page={isHome ? 'home' : 'hsc_landing'}
-          href={isHome ? `${ROUTES.HSC_MATHS_TUTORING}#book` : '#book'}
+          href={isHome ? `${ROUTES.HSC_MATHS_TUTORING}#book` : `${ROUTES.HSC_MATHS_TUTORING}#book`}
         />
       )}
       {!isDashboard && !shouldShowStarfield && !isLanding && <Footer />}

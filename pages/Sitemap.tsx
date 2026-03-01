@@ -16,6 +16,7 @@ const Sitemap: React.FC = () => {
       links: [
         { name: 'Home', path: ROUTES.HOME },
         { name: 'HSC Maths Tutoring', path: ROUTES.HSC_MATHS_TUTORING },
+        { name: 'Maths Tutoring', path: ROUTES.MATHS_TUTORING },
         { name: 'How It Works', path: ROUTES.HOW_IT_WORKS },
         { name: 'Ryze AI', path: ROUTES.RYZE_AI },
         { name: 'Contact', path: ROUTES.CONTACT },
