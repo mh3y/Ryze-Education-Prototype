@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useMemo, useState } from 'react';
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
 import { motion as motionOriginal, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
-import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
+import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, MessageCircle, Sparkles, Clock, Phone } from 'lucide-react';
 // @ts-ignore
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -441,13 +441,14 @@ const Home: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
                 <PrimaryCTA
                   variant="link"
-                  href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
-                  size="lg"
+                  href={ROUTES.CONTACT}
+                  size="md"
+                  label="Enrol Now"
                   page="home"
                   placement="home_hero"
-                  className="w-full sm:w-auto justify-center cta-button-shadow relative z-0"
+                  className="w-full sm:w-auto sm:min-w-[220px] !h-16 !py-0 !text-lg !font-bold whitespace-nowrap justify-center cta-button-shadow relative z-0 !bg-white/10 hover:!bg-white/16 !text-white !border-[3px] !border-white/80 !backdrop-blur-[8px] !shadow-[0_12px_30px_-18px_rgba(15,23,42,0.5)]"
                 />
-                <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
+                <div className="flex h-16 items-center gap-6 px-6 py-0 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
                            "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes5",
@@ -468,7 +469,7 @@ const Home: React.FC = () => {
                            />
                          ))}
                     </div>
-                    <div className="text-sm font-bold text-slate-700">
+                    <div className="ml-3 text-sm font-bold text-slate-700">
                         <span className="text-ryze">100%</span> {t("Client Satisfaction")}
                     </div>
                 </div>
@@ -758,11 +759,11 @@ const Home: React.FC = () => {
                </p>
               <PrimaryCTA
                 variant="link"
-                href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                href={ROUTES.CONTACT}
                 size="lg"
                 page="home"
                 placement="home_philosophy"
-                className="inline-flex"
+                className="inline-flex !bg-transparent !text-[#B87400] hover:!bg-[#FFB000]/10 !border-[3px] !border-[#FFB000]/70 !backdrop-blur-[4px] !shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)]"
               />
             </div>
 
@@ -811,18 +812,19 @@ const Home: React.FC = () => {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <PrimaryCTA
                               variant="link"
-                              href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                              href={ROUTES.CONTACT}
                               size="lg"
                               page="home"
                               placement="home_bottom_cta"
-                              className="bg-white text-orange-600 hover:bg-slate-50 hover:text-orange-700 shadow-xl"
+                              label="Book a Free Consultation"
+                              className="w-full sm:w-[228px] !h-[72px] !justify-between !rounded-[36px] !px-6 !py-0 !bg-white/12 hover:!bg-white/20 !text-white !border-[3px] !border-white/70 !backdrop-blur-[8px] !shadow-[0_12px_30px_-18px_rgba(15,23,42,0.55)] !transition-all !duration-300 !ease-out hover:-translate-y-[2px] hover:!shadow-[0_18px_36px_-18px_rgba(15,23,42,0.65)] active:translate-y-0 active:!shadow-[0_10px_22px_-16px_rgba(15,23,42,0.5)] focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-white/60 focus-visible:!ring-offset-2 focus-visible:!ring-offset-transparent !text-[1rem] !font-bold leading-snug"
                             />
                             <a 
                                 href="tel:+61413885839"
                                 onClick={handlePhoneClick}
-                                className="px-8 py-4 bg-orange-600/20 text-white border border-white/30 font-bold rounded-full text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+                                className="w-full sm:w-[228px] inline-flex h-[72px] items-center justify-center gap-2 rounded-[36px] px-6 py-0 text-[1rem] font-bold leading-snug bg-white/12 text-white border-[3px] border-white/70 backdrop-blur-[8px] shadow-[0_12px_30px_-18px_rgba(15,23,42,0.55)] transition-all duration-300 ease-out hover:bg-white/20 hover:-translate-y-[2px] hover:shadow-[0_18px_36px_-18px_rgba(15,23,42,0.65)] active:translate-y-0 active:shadow-[0_10px_22px_-16px_rgba(15,23,42,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                             >
-                                <Phone size={20} />
+                                <Phone size={17} strokeWidth={2.1} />
                                 <span>{t("Give us a call now!")}</span>
                             </a>
                         </div>
@@ -899,3 +901,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

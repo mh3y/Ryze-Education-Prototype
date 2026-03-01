@@ -25,6 +25,20 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-ryze-brand: var(--accent);
+  --color-ryze-brandHover: #FFC133;
+  --color-ryze-brandSoft: #FFF0CC;
+  --color-ryze-surface2: var(--surface);
+  --color-ryze-ink: var(--text);
+  --color-ryze-ink2: #1E293B;
+  --color-ryze-line: var(--border);
+  --color-ryze-navy: #0F1B2D;
+  --radius-xl2: 1.25rem;
+  --shadow-card: 0 10px 30px -24px rgba(2, 6, 23, 0.65);
+  --shadow-cardHover: 0 14px 36px -24px rgba(2, 6, 23, 0.72);
+  --shadow-focus: 0 0 0 3px rgba(143, 162, 196, 0.45);
+  --text-body: 1rem;
+  --leading-body: 1.5rem;
   --radius-ds-sm: var(--radius-sm);
   --radius-ds: var(--radius);
   --radius-ds-lg: var(--radius-lg);
@@ -239,3 +253,4 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
     transform: none !important;
   }
 }
+
