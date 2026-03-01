@@ -1,5 +1,6 @@
 import React from 'react';
 import DesignCard from './DesignCard';
+import { cn } from '../../src/utils/cn';
 
 type TestimonialCardProps = {
   achievement: string;
@@ -17,11 +18,15 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   className = '',
 }) => {
   return (
-    <DesignCard className={`h-full p-6 ${className}`.trim()}>
-      <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">{achievement}</p>
-      <p className="mt-4 text-sm leading-relaxed text-text">"{quote}"</p>
-      <p className="mt-5 text-sm font-bold">{reviewerName}</p>
-      <p className="text-xs text-muted">{reviewerMeta}</p>
+    <DesignCard className={cn('h-full p-6', className)}>
+      <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--primary)]">{achievement}</p>
+      <blockquote className="mt-4 border-l-2 border-[var(--border)] pl-4">
+        <p className="text-sm md:text-base leading-relaxed text-[var(--text)]">{quote}</p>
+      </blockquote>
+      <footer className="mt-5">
+        <p className="text-sm font-bold text-[var(--text)]">{reviewerName}</p>
+        <p className="text-xs text-[var(--muted)]">{reviewerMeta}</p>
+      </footer>
     </DesignCard>
   );
 };
