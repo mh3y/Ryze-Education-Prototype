@@ -286,29 +286,35 @@ const Home: React.FC = () => {
   const programs = [
     {
       id: 'program-hsc',
+      badge: 'PRIMARY PATHWAY',
       title: 'HSC Maths',
-      blurb: 'Advanced, Extension 1, and Extension 2 pathways with exam-focused teaching.',
-      ctaLabel: 'Explore HSC Program',
-      href: '/hsc-maths-tutoring',
-      isPrimary: true,
+      blurb:
+        'Band 6 systems for Advanced + Extension 1/2. Timed exam training, past-paper mastery, and rank-focused feedback \u2014 built around NSW syllabus outcomes.',
+      bestFor: 'Best for: Years 10\u201312 \u2022 Advanced / Ext 1 / Ext 2',
+      whatYouGet: 'What you get: Weekly plan \u2022 Topic tests \u2022 Exam technique \u2022 Marking + fixes',
+      ctaLabel: 'View HSC Pathway',
+      href: ROUTES.HSC_MATHS_TUTORING,
     },
     {
-      id: 'program-selective',
-      title: 'Selective and OC',
-      blurb: 'Structured preparation for OC and selective exam maths and problem solving.',
+      id: 'program-selective-details',
+      badge: 'PROGRAM',
+      title: 'Selective & OC',
+      blurb: 'High-difficulty reasoning + speed training for competitive exam outcomes.',
+      bestFor: 'Best for: Years 4\u20136',
       ctaLabel: 'View Selective Pathway',
       href: '#program-selective-details',
-      isPrimary: false,
     },
     {
-      id: 'program-junior',
+      id: 'program-junior-details',
+      badge: 'PROGRAM',
       title: 'Junior Foundations',
-      blurb: 'Strong numeracy and algebra foundations for Years 3-10 before senior years.',
+      blurb: 'Build algebra fluency and problem-solving habits early \u2014 so senior maths becomes easier.',
+      bestFor: 'Best for: Years 3\u20139',
       ctaLabel: 'See Junior Program',
       href: '#program-junior-details',
-      isPrimary: false,
     },
   ];
+  const [hscProgram, ...secondaryPrograms] = programs;
 
   const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
@@ -520,52 +526,77 @@ const Home: React.FC = () => {
         <div className="mb-10 max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Programs</h2>
           <p className="mt-3 text-slate-600">
-            Start in the program that matches your exact goal. HSC Maths is our primary performance pathway.
+            Choose the pathway that matches your goal &mdash; HSC Maths is our primary performance track.
+            <br className="hidden sm:block" />
+            Short, structured coaching with clear weekly systems. Pick where you're starting and we'll map the
+            fastest path forward.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {programs.map((program) => {
-            const shouldHighlight = program.isPrimary && campaignParams.isHscOffer;
-            const cardClass = shouldHighlight
-              ? 'border-ryze bg-ryze-50 shadow-[0_12px_40px_-24px_rgba(255,176,0,0.9)]'
-              : 'border-slate-200 bg-white';
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <article
+            id={hscProgram.id}
+            className="ryze-card relative overflow-hidden rounded-2xl border-2 border-ryze/40 bg-ryze/5 p-6 sm:p-7 lg:col-span-2"
+          >
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-ryze" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-ryze">{hscProgram.badge}</p>
+            <h3 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">{hscProgram.title}</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-700">{hscProgram.blurb}</p>
+            <p className="mt-5 text-sm font-medium text-slate-800">{hscProgram.bestFor}</p>
+            <p className="mt-1 text-sm text-slate-700">{hscProgram.whatYouGet}</p>
+            <a
+              href={hscProgram.href}
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-ryze px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:bg-ryze/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
+            >
+              {hscProgram.ctaLabel} <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </article>
 
-            return (
-              <article key={program.id} id={program.id} className={`ryze-card rounded-2xl border p-6 ${cardClass}`}>
-                <p className="text-xs font-semibold uppercase tracking-wide text-ryze">
-                  {program.isPrimary ? 'Primary Focus' : 'Program'}
-                </p>
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">{program.title}</h3>
+          <div className="flex flex-col gap-4">
+            {secondaryPrograms.map((program) => (
+              <article
+                key={program.id}
+                id={program.id}
+                className="ryze-card rounded-2xl border border-slate-200 bg-white p-5"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{program.badge}</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">{program.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{program.blurb}</p>
+                <p className="mt-3 text-sm font-medium text-slate-700">{program.bestFor}</p>
                 <a
                   href={program.href}
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-900 transition-colors hover:text-ryze"
+                  className="mt-4 inline-flex items-center gap-2 rounded-sm text-sm font-semibold text-slate-900 transition-colors hover:text-ryze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
                 >
                   {program.ctaLabel} <ArrowRight size={16} aria-hidden="true" />
                 </a>
               </article>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <article id="program-selective-details" className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h3 className="text-lg font-bold text-slate-900">Selective and OC Pathway</h3>
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="text-sm text-slate-700">
+            Trusted by families across Sydney. Structured weekly programs &bull; Clear progress tracking &bull; Exam-ready confidence.
+          </p>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Not sure which to choose?</h3>
             <p className="mt-2 text-sm text-slate-600">
-              Structured progression in reasoning, speed, and exam confidence for high-stakes selective outcomes.
+              Tell us your year level and goal &mdash; we'll recommend the best start point.
             </p>
-          </article>
-          <article id="program-junior-details" className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h3 className="text-lg font-bold text-slate-900">Junior Foundations Pathway</h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Build core numeracy, algebra, and problem-solving habits early to accelerate senior performance later.
-            </p>
-          </article>
+          </div>
+          <a
+            href={ROUTES.CONTACT}
+            aria-label="Get a program recommendation"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:border-ryze hover:text-ryze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 sm:mt-0"
+          >
+            Get a recommendation <ArrowRight size={16} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
-
     <Suspense fallback={<div className="w-full h-[50vh] bg-slate-50" />}>
       <Testimonials />
     </Suspense>
@@ -868,4 +899,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
