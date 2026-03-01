@@ -13,12 +13,12 @@ import Home from './pages/Home';
 import Landing from './pages/Landing';
 import { ROUTES } from './src/constants/routes';
 
-// Eager load Portal pages for instant navigation and zero lag
-import PortalHome from './pages/PortalHome';
-import StudentPortal from './pages/StudentPortal';
-import ParentPortal from './pages/ParentPortal';
-import TutorLogin from './pages/TutorLogin';
-import AdminLogin from './pages/AdminLogin';
+// Lazy load portal and heavy pages to keep the marketing bundle lean.
+const PortalHome = lazy(() => import('./pages/PortalHome'));
+const StudentPortal = lazy(() => import('./pages/StudentPortal'));
+const ParentPortal = lazy(() => import('./pages/ParentPortal'));
+const TutorLogin = lazy(() => import('./pages/TutorLogin'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 
 // Lazy load heavy pages to enable code splitting
 const TheRyzeTruth = lazy(() => import('./pages/TheRyzeTruth'));
@@ -230,3 +230,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
