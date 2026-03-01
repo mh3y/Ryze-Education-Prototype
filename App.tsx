@@ -215,7 +215,7 @@ const AppContent: React.FC = () => {
       {showStickyPrimaryCta && (
         <StickyMobileCTA
           page={isHome ? 'home' : 'hsc_landing'}
-          href={isHome ? `${ROUTES.HSC_MATHS_TUTORING}#book` : `${ROUTES.HSC_MATHS_TUTORING}#book`}
+          href={ROUTES.CONTACT}
         />
       )}
       {!isDashboard && !shouldShowStarfield && !isLanding && <Footer />}

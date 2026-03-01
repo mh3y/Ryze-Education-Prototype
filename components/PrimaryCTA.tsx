@@ -35,7 +35,7 @@ const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   variant = 'link',
   size = 'md',
   className = '',
-  href = '/hsc-maths-tutoring#book',
+  href = '/contact',
   onClick,
   label = PRIMARY_CTA_LABEL,
   page,
