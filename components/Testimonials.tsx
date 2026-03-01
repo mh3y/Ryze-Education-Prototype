@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, UserCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { testimonials } from '../data/testimonials';
 import { schoolLogos } from '../data/schoolLogos';
+import { useInViewAnimationPause } from '../src/hooks/useInViewAnimationPause';
 import './Testimonials.css';
 
 const TestimonialCard = ({ testimonial, index, className }) => {
@@ -39,6 +40,21 @@ const TestimonialCard = ({ testimonial, index, className }) => {
 
 const Testimonials = () => {
   const { t } = useLanguage();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener('change', updatePreference);
+    return () => mediaQuery.removeEventListener('change', updatePreference);
+  }, []);
+
+  const { ref: logosRef, isInView: logosInView } = useInViewAnimationPause<HTMLDivElement>(prefersReducedMotion);
+  const { ref: topRowRef, isInView: topRowInView } = useInViewAnimationPause<HTMLUListElement>(prefersReducedMotion);
+  const { ref: bottomRowRef, isInView: bottomRowInView } = useInViewAnimationPause<HTMLUListElement>(prefersReducedMotion);
+
   const optimizeCloudinaryImage = (url: string, width: number, height: number) => {
     if (!url.includes('res.cloudinary.com')) return url;
     return url.replace(
@@ -64,7 +80,7 @@ const Testimonials = () => {
         <div className="mb-32">
            <p className="text-center text-black text-xl font-bold tracking-widest mb-12 text-halo">TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS</p>
            <div className="relative w-full overflow-hidden group">
-              <div className="flex animate-scroll-x">
+              <div ref={logosRef} className={`flex animate-scroll-x ${!logosInView ? 'paused' : ''}`}>
                 {quadrupedLogos.map((school, index) => (
                     <div key={index} className="flex-shrink-0 w-[200px] h-[80px] flex items-center justify-center mx-8">
                       <img 
@@ -85,14 +101,14 @@ const Testimonials = () => {
 
       <div className="space-y-8">
           <div className="relative w-full overflow-hidden">
-              <ul className="flex testimonial-scroll-x" aria-label="Senior student testimonials">
+              <ul ref={topRowRef} className={`flex testimonial-scroll-x ${!topRowInView ? 'paused' : ''}`} aria-label="Senior student testimonials">
                 {duplicatedTopRow.map((testimonial, index) => (
                   <TestimonialCard testimonial={testimonial} index={index} key={`${testimonial.id}-1-${index}`} className="mx-4" />
                 ))}
               </ul>
           </div>
           <div className="relative w-full overflow-hidden">
-              <ul className="flex testimonial-scroll-x-reverse" aria-label="Junior student testimonials">
+              <ul ref={bottomRowRef} className={`flex testimonial-scroll-x-reverse ${!bottomRowInView ? 'paused' : ''}`} aria-label="Junior student testimonials">
                  {duplicatedBottomRow.map((testimonial, index) => (
                   <TestimonialCard testimonial={testimonial} index={index} key={`${testimonial.id}-2-${index}`} className="mx-4" />
                 ))}
