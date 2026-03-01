@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 
+const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_960,dpr_auto/ryze/images/image-v1';
+
 declare global {
   interface Window {
     gtag: (...args: any[]) => void;
@@ -266,7 +268,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_1280,dpr_auto/ryze/images/image-v1')" }}
+        style={{ backgroundImage: `url('${HOME_HERO_BG_IMAGE_URL}')` }}
       >
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -669,4 +671,5 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
 
