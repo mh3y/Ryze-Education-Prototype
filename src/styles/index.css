@@ -14,14 +14,48 @@
   --color-ryze-900: #332300;
   --color-slate-850: #151F32;
   --color-slate-950: #020617;
+  /* Components should use semantic tokens; palette tokens are for semantic definitions and legacy compatibility only. */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-ds-sm: var(--radius-sm);
+  --radius-ds: var(--radius);
+  --radius-ds-lg: var(--radius-lg);
   --font-sans: 'Poppins', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-serif: 'Poppins', sans-serif;
   --font-display: 'Poppins', sans-serif;
 }
 
 :root {
+  color-scheme: light;
+  --bg: #F7F9FC;
+  --surface: #EEF3FA;
+  --text: #0F172A;
+  --muted: #475569;
+  --primary: #10213F;
+  --primary-foreground: #F8FAFC;
+  --accent: #FFB000;
+  --accent-foreground: #1E293B;
+  --border: #D7DFEC;
+  --ring: #8FA2C4;
+  --radius: 1rem;
+  --radius-sm: 0.75rem;
+  --radius-lg: 1.5rem;
   --ryze-container-max-width: 80rem;
   --ryze-container-inline-padding: 1rem;
+  --ryze-sticky-cta-height: 0px;
+  --ryze-radius-card: 1rem;
+  --ryze-radius-panel: 1.5rem;
+  --ryze-shadow-soft: 0 10px 30px -24px rgba(2, 6, 23, 0.65);
+  --ryze-shadow-panel: 0 20px 40px -28px rgba(15, 23, 42, 0.45);
+  --ryze-section-space: clamp(4rem, 8vw, 6rem);
 
   --ryze-motion-feature-marquee-duration: 26s;
   --ryze-motion-logo-marquee-duration: 36s;
@@ -29,6 +63,30 @@
   --ryze-motion-testimonial-duration-reverse: 72s;
   --ryze-motion-vertical-scroll-fast: 30s;
   --ryze-motion-vertical-scroll-slow: 38s;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+body.ryze-sticky-cta-active .ryze-main-with-sticky {
+  padding-bottom: calc(var(--ryze-sticky-cta-height) + env(safe-area-inset-bottom));
+}
+
+.ryze-section {
+  padding-block: var(--ryze-section-space);
+}
+
+.ryze-card {
+  border-radius: var(--ryze-radius-card);
+  box-shadow: var(--ryze-shadow-soft);
 }
 
 @media (min-width: 640px) {

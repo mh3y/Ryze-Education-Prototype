@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: '/',
   HSC_MATHS_TUTORING: '/hsc-maths-tutoring',
+  MATHS_TUTORING: '/maths-tutoring',
   HOW_IT_WORKS: '/how-ryze-works',
   RYZE_AI: '/ryze-ai',
   CONTACT: '/contact',

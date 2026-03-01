@@ -23,6 +23,35 @@ export const initAnalytics = () => {
   }
 };
 
+type TrackingParams = Record<string, string | number | boolean | undefined>;
+
+const sanitizeParams = (params: TrackingParams) =>
+  Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== undefined),
+  ) as Record<string, string | number | boolean>;
+
+export const trackEvent = (eventName: string, params: TrackingParams = {}) => {
+  if (typeof window === 'undefined') return;
+  const w = window as any;
+  const payload = sanitizeParams(params);
+
+  try {
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', eventName, payload);
+    }
+
+    if (typeof w.fbq === 'function') {
+      w.fbq('trackCustom', eventName, payload);
+    }
+  } catch {
+    // Never allow analytics calls to block user flows.
+  }
+};
+
+export const trackPrimaryCtaClick = (page: string, placement: string) => {
+  trackEvent('cta_primary_click', { page, placement });
+};
+
 export function initTrackingDeferred() {
   if (typeof window === 'undefined') return;
   const w = window as any;

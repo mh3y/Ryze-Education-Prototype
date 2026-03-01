@@ -4,6 +4,7 @@ import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ROUTES } from '../src/constants/routes';
+import { trackEvent } from '../src/analytics';
 
 declare global {
   interface Window {
@@ -36,6 +37,7 @@ const Footer: React.FC = () => {
   const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
 
   const handlePhoneClick = () => {
+    trackEvent('phone_click', { page: 'global_footer', placement: 'footer' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
         send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
@@ -126,6 +128,8 @@ const Footer: React.FC = () => {
             <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
             <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
               <li><Link to={ROUTES.HOME} className={`${linkHoverColor} transition-colors`}>{t('Home')}</Link></li>
+              <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
+              <li><Link to={ROUTES.MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('Maths Tutoring')}</Link></li>
               <li><Link to={ROUTES.CONTACT} className={`${linkHoverColor} transition-colors`}>{t('Contact Us')}</Link></li>
             </ul>
           </div>

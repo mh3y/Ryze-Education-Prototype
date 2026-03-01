@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { FaQuestionCircle, FaPlus, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp } from 'lucide-react';
 import { FaMinus } from 'react-icons/fa6';
-import { initTrackingDeferred } from '../src/analytics';
 
 declare global {
     interface Window {
@@ -12,7 +11,7 @@ declare global {
     }
   }
 
-const Landing: React.FC = () => {
+const MathsTutoring: React.FC = () => {
     const featuresData = [
       {
         title: "Expert-Led Tutoring You Can Trust",
@@ -90,7 +89,7 @@ const Landing: React.FC = () => {
           window.gtag('event', 'conversion', {
             'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
             'event_callback': () => {
-              console.log('Google Ads conversion event successfully sent from Landing page.');
+              console.log('Google Ads conversion event successfully sent from Maths Tutoring page.');
             }
           });
         }
@@ -202,11 +201,7 @@ const Landing: React.FC = () => {
     }, []);
 
     useEffect(() => {
-      initTrackingDeferred();
-    }, []);
-
-    useEffect(() => {
-      document.title = 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert';
+      document.title = 'Ryze Education | Maths Tutoring Sydney';
 
       let descriptionTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
       if (!descriptionTag) {
@@ -214,7 +209,7 @@ const Landing: React.FC = () => {
         descriptionTag.name = 'description';
         document.head.appendChild(descriptionTag);
       }
-      descriptionTag.content = 'Premium small-group tutoring in Sydney for HSC Maths, Extension 1 and Extension 2. Expert-led programs focused on faster improvement and stronger exam performance.';
+      descriptionTag.content = 'Premium small-group maths tutoring in Sydney. Expert-led programs from primary foundations through advanced secondary mathematics.';
 
       let canonicalTag = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
       if (!canonicalTag) {
@@ -521,15 +516,17 @@ const Landing: React.FC = () => {
       }
     ];
     
-    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto';
-    const heroImageId = 'image-v1_vv46di';
+    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+    const heroImageId = 'ryze/images/image-v1';
     const heroImageSrc = `${heroImageBase},w_768/${heroImageId}`;
     const heroImageSrcSet = [
+      `${heroImageBase},w_360/${heroImageId} 360w`,
       `${heroImageBase},w_480/${heroImageId} 480w`,
       `${heroImageBase},w_640/${heroImageId} 640w`,
       `${heroImageBase},w_768/${heroImageId} 768w`,
       `${heroImageBase},w_960/${heroImageId} 960w`,
       `${heroImageBase},w_1200/${heroImageId} 1200w`,
+      `${heroImageBase},w_1280/${heroImageId} 1280w`,
     ].join(', ');
     const consultationImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,dpr_auto';
     const consultationImageId = 'v1769561936/online_xnzlfr';
@@ -551,10 +548,8 @@ const Landing: React.FC = () => {
             <img
               src={heroImageSrc}
               srcSet={heroImageSrcSet}
-              sizes="(max-width: 767px) 100vw, 1200px"
-              width={1200}
-              height={800}
-              alt="HSC Maths tutoring - Ryze Education"
+              sizes="(max-width: 768px) 100vw, 1200px"
+              alt="Maths tutoring - Ryze Education"
               fetchPriority="high"
               loading="eager"
               decoding="async"
@@ -1196,4 +1191,5 @@ const Landing: React.FC = () => {
     );
 };
 
-export default Landing;
+export default MathsTutoring;
+

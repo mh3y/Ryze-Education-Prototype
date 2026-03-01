@@ -1,14 +1,29 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
 import { motion as motionOriginal, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
 import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
 // @ts-ignore
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
+import PrimaryCTA from '../components/PrimaryCTA';
+import { ROUTES } from '../src/constants/routes';
+import { applySeo } from '../src/utils/seo';
+import { trackEvent } from '../src/analytics';
 
-const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_800,dpr_auto/ryze/images/image-v1';
+const HOME_HERO_IMAGE_BASE =
+  'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+const HOME_HERO_IMAGE_ID = 'ryze/images/image-v1';
+const HOME_HERO_IMAGE_SRC = `${HOME_HERO_IMAGE_BASE},w_768/${HOME_HERO_IMAGE_ID}`;
+const HOME_HERO_IMAGE_SRC_SET = [
+  `${HOME_HERO_IMAGE_BASE},w_360/${HOME_HERO_IMAGE_ID} 360w`,
+  `${HOME_HERO_IMAGE_BASE},w_480/${HOME_HERO_IMAGE_ID} 480w`,
+  `${HOME_HERO_IMAGE_BASE},w_640/${HOME_HERO_IMAGE_ID} 640w`,
+  `${HOME_HERO_IMAGE_BASE},w_768/${HOME_HERO_IMAGE_ID} 768w`,
+  `${HOME_HERO_IMAGE_BASE},w_1024/${HOME_HERO_IMAGE_ID} 1024w`,
+  `${HOME_HERO_IMAGE_BASE},w_1280/${HOME_HERO_IMAGE_ID} 1280w`,
+].join(', ');
 
 declare global {
   interface Window {
@@ -92,6 +107,7 @@ const Card = ({
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const { scrollY } = useScroll();
   const reduceMotion = useReducedMotion();
@@ -102,6 +118,28 @@ const Home: React.FC = () => {
 
   // Business Logic for Availability
   const [isAvailable, setIsAvailable] = useState(false);
+
+  const campaignParams = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const offer = (params.get('offer') || '').toLowerCase();
+    const utmCampaign = (params.get('utm_campaign') || '').toLowerCase();
+    const isHscOffer =
+      offer.includes('hsc') ||
+      utmCampaign.includes('hsc') ||
+      utmCampaign.includes('advanced') ||
+      utmCampaign.includes('ext1') ||
+      utmCampaign.includes('ext2');
+
+    return {
+      offer,
+      utmCampaign,
+      isHscOffer,
+    };
+  }, [location.search]);
+
+  const heroSubheading = campaignParams.isHscOffer
+    ? 'HSC Maths Advanced and Extension tutoring built for high marks, clean exam technique, and real confidence.'
+    : t('Think Sharper. Perform Better.');
 
   useEffect(() => {
     if (!import.meta.env.DEV) return;
@@ -117,11 +155,33 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    applySeo({
+      title: 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert',
+      description:
+        'Premium small-group tutoring in Sydney for HSC Maths, Extension 1, and Extension 2. Expert mentoring with measurable progress.',
+      path: ROUTES.HOME,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'EducationOrganization',
+        name: 'Ryze Education',
+        url: `${window.location.origin}${ROUTES.HOME}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Sydney',
+          addressRegion: 'NSW',
+          addressCountry: 'AU',
+        },
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     // Defer non-critical hover effects CSS off initial render-blocking path.
     void import('../src/styles/custom-hovers.css');
   }, []);
 
   const handlePhoneClick = () => {
+    trackEvent('phone_click', { page: 'home', placement: 'home_bottom_cta' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
         'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
@@ -223,6 +283,39 @@ const Home: React.FC = () => {
     "You are not a number"
   ];
 
+  const programs = [
+    {
+      id: 'program-hsc',
+      badge: 'PRIMARY PATHWAY',
+      title: 'HSC Maths',
+      blurb:
+        'Band 6 systems for Advanced + Extension 1/2. Timed exam training, past-paper mastery, and rank-focused feedback \u2014 built around NSW syllabus outcomes.',
+      bestFor: 'Best for: Years 10\u201312 \u2022 Advanced / Ext 1 / Ext 2',
+      whatYouGet: 'What you get: Weekly plan \u2022 Topic tests \u2022 Exam technique \u2022 Marking + fixes',
+      ctaLabel: 'View HSC Pathway',
+      href: ROUTES.HSC_MATHS_TUTORING,
+    },
+    {
+      id: 'program-selective-details',
+      badge: 'PROGRAM',
+      title: 'Selective & OC',
+      blurb: 'High-difficulty reasoning + speed training for competitive exam outcomes.',
+      bestFor: 'Best for: Years 4\u20136',
+      ctaLabel: 'View Selective Pathway',
+      href: '#program-selective-details',
+    },
+    {
+      id: 'program-junior-details',
+      badge: 'PROGRAM',
+      title: 'Junior Foundations',
+      blurb: 'Build algebra fluency and problem-solving habits early \u2014 so senior maths becomes easier.',
+      bestFor: 'Best for: Years 3\u20139',
+      ctaLabel: 'See Junior Program',
+      href: '#program-junior-details',
+    },
+  ];
+  const [hscProgram, ...secondaryPrograms] = programs;
+
   const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
     responsiveCloudinaryImage(sourceUrl, {
@@ -289,10 +382,19 @@ const Home: React.FC = () => {
     <div className="w-full font-sans overflow-hidden bg-slate-50">
       
       {/* Hero Section */}
-      <section 
-        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: `url('${HOME_HERO_BG_IMAGE_URL}')` }}
-      >
+      <section className="relative overflow-hidden rounded-b-[3rem] bg-slate-900 pb-20 pt-32 lg:rounded-b-[5rem] lg:pb-32 lg:pt-48">
+        <picture className="absolute inset-0">
+          <img
+            src={HOME_HERO_IMAGE_SRC}
+            srcSet={HOME_HERO_IMAGE_SRC_SET}
+            sizes="(max-width: 768px) 100vw, 100vw"
+            alt="HSC Maths tutoring in Sydney - Ryze Education"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </picture>
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         {/* Content container */}
@@ -321,9 +423,15 @@ const Home: React.FC = () => {
                     {t("Learning with")} <span className="text-white">{t("clarity.")}</span>
                   </h1>
 
-                  <p className="text-xl lg:text-2xl font-sans font-medium text-white leading-tight tracking-wide">
-                  {t("Think Sharper. Perform Better.")}
+                  <p className="text-lg lg:text-2xl font-sans font-medium text-white leading-tight tracking-wide">
+                    {heroSubheading}
                   </p>
+
+                  {campaignParams.isHscOffer && (
+                    <p className="inline-flex items-center gap-2 rounded-full border border-ryze/40 bg-ryze/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ryze-100">
+                      Message match active: HSC Maths Advanced and Extension
+                    </p>
+                  )}
               </div>
 
               <p className="text-lg text-white max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
@@ -331,14 +439,14 @@ const Home: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/contact')}
-                className="group px-8 py-4 bg-ryze text-white rounded-full font-bold text-lg shadow-xl shadow-ryze/30 hover:bg-ryze-600 transition-all flex items-center gap-3 w-full sm:w-auto justify-center cta-button-shadow relative z-0"
-              >
-                {t('Book a Trial Lesson')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </motion.button>
+                <PrimaryCTA
+                  variant="link"
+                  href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                  size="lg"
+                  page="home"
+                  placement="home_hero"
+                  className="w-full sm:w-auto justify-center cta-button-shadow relative z-0"
+                />
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
@@ -347,12 +455,16 @@ const Home: React.FC = () => {
                            "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes7",
                            "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes8"
                          ].map((src, i) => (
-                           <img 
-                              key={i} 
-                              src={src} 
-                              alt="Client" 
-                              loading="eager"
-                              className="w-8 h-8 rounded-full border-2 border-white object-cover" 
+                           <img
+                             key={i}
+                             src={src}
+                             alt=""
+                             aria-hidden="true"
+                             width={32}
+                             height={32}
+                             loading="lazy"
+                             decoding="async"
+                             className="w-8 h-8 rounded-full border-2 border-white object-cover"
                            />
                          ))}
                     </div>
@@ -409,6 +521,82 @@ const Home: React.FC = () => {
         </div>
         </section>
 
+    <section id="programs" className="ryze-section bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Programs</h2>
+          <p className="mt-3 text-slate-600">
+            Choose the pathway that matches your goal &mdash; HSC Maths is our primary performance track.
+            <br className="hidden sm:block" />
+            Short, structured coaching with clear weekly systems. Pick where you're starting and we'll map the
+            fastest path forward.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <article
+            id={hscProgram.id}
+            className="ryze-card relative overflow-hidden rounded-2xl border-2 border-ryze/40 bg-ryze/5 p-6 sm:p-7 lg:col-span-2"
+          >
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-ryze" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-ryze">{hscProgram.badge}</p>
+            <h3 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">{hscProgram.title}</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-700">{hscProgram.blurb}</p>
+            <p className="mt-5 text-sm font-medium text-slate-800">{hscProgram.bestFor}</p>
+            <p className="mt-1 text-sm text-slate-700">{hscProgram.whatYouGet}</p>
+            <a
+              href={hscProgram.href}
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-ryze px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:bg-ryze/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
+            >
+              {hscProgram.ctaLabel} <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </article>
+
+          <div className="flex flex-col gap-4">
+            {secondaryPrograms.map((program) => (
+              <article
+                key={program.id}
+                id={program.id}
+                className="ryze-card rounded-2xl border border-slate-200 bg-white p-5"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{program.badge}</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">{program.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{program.blurb}</p>
+                <p className="mt-3 text-sm font-medium text-slate-700">{program.bestFor}</p>
+                <a
+                  href={program.href}
+                  className="mt-4 inline-flex items-center gap-2 rounded-sm text-sm font-semibold text-slate-900 transition-colors hover:text-ryze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
+                >
+                  {program.ctaLabel} <ArrowRight size={16} aria-hidden="true" />
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="text-sm text-slate-700">
+            Trusted by families across Sydney. Structured weekly programs &bull; Clear progress tracking &bull; Exam-ready confidence.
+          </p>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Not sure which to choose?</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Tell us your year level and goal &mdash; we'll recommend the best start point.
+            </p>
+          </div>
+          <a
+            href={ROUTES.CONTACT}
+            aria-label="Get a program recommendation"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:border-ryze hover:text-ryze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 sm:mt-0"
+          >
+            Get a recommendation <ArrowRight size={16} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </section>
     <Suspense fallback={<div className="w-full h-[50vh] bg-slate-50" />}>
       <Testimonials />
     </Suspense>
@@ -436,9 +624,10 @@ const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              {team.map((member, idx) => (
-               <motion.div
+               <motion.button
+               type="button"
                key={idx}
-               className="group cursor-pointer"
+               className="group cursor-pointer bg-transparent border-0 p-0 text-left"
                onClick={() => navigate(`/meet-the-team#${member.id}`)}
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
@@ -500,7 +689,7 @@ const Home: React.FC = () => {
                  <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
                  <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
                </div>
-             </motion.div>          
+             </motion.button>          
             ))}
           </div>
         </div>
@@ -567,14 +756,14 @@ const Home: React.FC = () => {
                <p className="text-lg text-slate-600 mb-8 leading-relaxed font-normal">
                  {t("At Ryze, we believe learning happens in relationship, not in crowds. We have built everything around small classes and genuine mentorships because we know it works.")}
                </p>
-               <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/contact')}
-                  className="group px-8 py-4 bg-[#FFB000] text-white rounded-full font-bold text-lg shadow-lg hover:bg-ryze hover:text-slate-900 transition-all inline-flex items-center gap-3"
-                >
-                  {t("Start your journey")} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </motion.button>
+              <PrimaryCTA
+                variant="link"
+                href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                size="lg"
+                page="home"
+                placement="home_philosophy"
+                className="inline-flex"
+              />
             </div>
 
             <div className="space-y-5">
@@ -620,14 +809,14 @@ const Home: React.FC = () => {
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <motion.button 
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate('/contact')}
-                                className="px-8 py-4 bg-white text-orange-600 font-bold rounded-full text-lg shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
-                            >
-                                {t("Book a Trial Lesson")} <ArrowRight size={20} />
-                            </motion.button>
+                            <PrimaryCTA
+                              variant="link"
+                              href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                              size="lg"
+                              page="home"
+                              placement="home_bottom_cta"
+                              className="bg-white text-orange-600 hover:bg-slate-50 hover:text-orange-700 shadow-xl"
+                            />
                             <a 
                                 href="tel:+61413885839"
                                 onClick={handlePhoneClick}
@@ -710,5 +899,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-
