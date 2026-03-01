@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Landing from './pages/Landing';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
+import StickyMobileCTA from './components/StickyMobileCTA';
 
 // Lazy load portal and heavy pages to keep the marketing bundle lean.
 const PortalHome = lazy(() => import('./pages/PortalHome'));
@@ -104,6 +105,8 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
   const isLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_TUTORING;
+  const isHome = location.pathname === ROUTES.HOME;
+  const showStickyPrimaryCta = isHome || isLanding;
 
   // Routes that share the "Portal" aesthetic (Starfield background)
   // We include Dashboard here to keep the background persistent when logging in
@@ -131,7 +134,7 @@ const AppContent: React.FC = () => {
 
       {!isDashboard && !shouldShowStarfield && !isLanding && <Navbar />}
 
-      <main className="flex-grow flex flex-col relative z-10 w-full">
+      <main className="ryze-main-with-sticky flex-grow flex flex-col relative z-10 w-full">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
@@ -205,6 +208,12 @@ const AppContent: React.FC = () => {
           </Routes>
         </AnimatePresence>
       </main>
+      {showStickyPrimaryCta && (
+        <StickyMobileCTA
+          page={isHome ? 'home' : 'hsc_landing'}
+          href={isHome ? `${ROUTES.HSC_MATHS_TUTORING}#book` : '#book'}
+        />
+      )}
       {!isDashboard && !shouldShowStarfield && !isLanding && <Footer />}
       {/* <CookieConsent /> */}
     </div>

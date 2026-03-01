@@ -22,6 +22,7 @@
 :root {
   --ryze-container-max-width: 80rem;
   --ryze-container-inline-padding: 1rem;
+  --ryze-sticky-cta-height: 0px;
 
   --ryze-motion-feature-marquee-duration: 26s;
   --ryze-motion-logo-marquee-duration: 36s;
@@ -29,6 +30,10 @@
   --ryze-motion-testimonial-duration-reverse: 72s;
   --ryze-motion-vertical-scroll-fast: 30s;
   --ryze-motion-vertical-scroll-slow: 38s;
+}
+
+body.ryze-sticky-cta-active .ryze-main-with-sticky {
+  padding-bottom: calc(var(--ryze-sticky-cta-height) + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 640px) {
