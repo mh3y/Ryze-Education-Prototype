@@ -7,6 +7,8 @@ import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, A
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
+import PrimaryCTA from '../components/PrimaryCTA';
+import { ROUTES } from '../src/constants/routes';
 
 const HOME_HERO_IMAGE_BASE =
   'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
@@ -351,14 +353,14 @@ const Home: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 pt-4">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/contact')}
-                className="group px-8 py-4 bg-ryze text-white rounded-full font-bold text-lg shadow-xl shadow-ryze/30 hover:bg-ryze-600 transition-all flex items-center gap-3 w-full sm:w-auto justify-center cta-button-shadow relative z-0"
-              >
-                {t('Book a Trial Lesson')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </motion.button>
+                <PrimaryCTA
+                  variant="link"
+                  href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                  size="lg"
+                  page="home"
+                  placement="home_hero"
+                  className="w-full sm:w-auto justify-center cta-button-shadow relative z-0"
+                />
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
@@ -590,14 +592,14 @@ const Home: React.FC = () => {
                <p className="text-lg text-slate-600 mb-8 leading-relaxed font-normal">
                  {t("At Ryze, we believe learning happens in relationship, not in crowds. We have built everything around small classes and genuine mentorships because we know it works.")}
                </p>
-               <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/contact')}
-                  className="group px-8 py-4 bg-[#FFB000] text-white rounded-full font-bold text-lg shadow-lg hover:bg-ryze hover:text-slate-900 transition-all inline-flex items-center gap-3"
-                >
-                  {t("Start your journey")} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </motion.button>
+              <PrimaryCTA
+                variant="link"
+                href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                size="lg"
+                page="home"
+                placement="home_philosophy"
+                className="inline-flex"
+              />
             </div>
 
             <div className="space-y-5">
@@ -643,14 +645,14 @@ const Home: React.FC = () => {
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <motion.button 
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate('/contact')}
-                                className="px-8 py-4 bg-white text-orange-600 font-bold rounded-full text-lg shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
-                            >
-                                {t("Book a Trial Lesson")} <ArrowRight size={20} />
-                            </motion.button>
+                            <PrimaryCTA
+                              variant="link"
+                              href={`${ROUTES.HSC_MATHS_TUTORING}#book`}
+                              size="lg"
+                              page="home"
+                              placement="home_bottom_cta"
+                              className="bg-white text-orange-600 hover:bg-slate-50 hover:text-orange-700 shadow-xl"
+                            />
                             <a 
                                 href="tel:+61413885839"
                                 onClick={handlePhoneClick}

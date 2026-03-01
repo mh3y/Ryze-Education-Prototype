@@ -4,6 +4,8 @@ import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
 import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight, LogIn, Globe } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { trackPrimaryCtaClick } from '../src/analytics';
+import { PRIMARY_CTA_LABEL } from './PrimaryCTA';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -113,7 +115,7 @@ const Navbar: React.FC = () => {
       : 'bg-[#ffb000] text-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]'
   }`;
   
-  const trialButtonClasses = `h-11 w-[130px] ml-2 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 flex items-center justify-center whitespace-nowrap ${
+  const trialButtonClasses = `h-11 px-4 ml-2 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 active:translate-y-0 flex items-center justify-center whitespace-nowrap ${
     isHomePageAtTop 
       ? 'bg-[#ffb000]/70 border-2 border-[#FFB000] text-white hover:bg-[#FFB000] hover:text-black'
       : 'bg-[#ffb000] text-white shadow-[0_0_20px_rgba(255,176,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]'
@@ -207,10 +209,13 @@ const Navbar: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => {
+                trackPrimaryCtaClick('nav', 'nav_desktop');
+                navigate('/hsc-maths-tutoring#book');
+              }}
               className={trialButtonClasses}
             >
-              {t('Book a Trial')}
+              {PRIMARY_CTA_LABEL}
             </button>
           </div>
 
@@ -305,10 +310,14 @@ const Navbar: React.FC = () => {
                     <LogIn size={20} /> {t('Dashboard Login')}
                  </button>
                  <button 
-                    onClick={() => { navigate('/contact'); setIsOpen(false); }}
+                    onClick={() => {
+                      trackPrimaryCtaClick('nav', 'nav_mobile');
+                      navigate('/hsc-maths-tutoring#book');
+                      setIsOpen(false);
+                    }}
                     className="w-full py-4 bg-[#ffb000] text-black rounded-2xl font-bold text-lg shadow-lg hover:bg-[#ffb000]/80 active:scale-95 transition-all flex items-center justify-center gap-2"
                  >
-                    {t('Book a Trial Lesson')} <ArrowRight size={20} />
+                    {PRIMARY_CTA_LABEL} <ArrowRight size={20} />
                  </button>
               </div>
 
