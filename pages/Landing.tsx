@@ -206,7 +206,8 @@ const Landing: React.FC = () => {
               <a
                 href="tel:+61413885839"
                 onClick={handlePhoneClick}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 sm:w-auto"
+                aria-label="Call Ryze Education"
               >
                 <Phone size={16} aria-hidden="true" />
                 Call +61 413 885 839
@@ -307,7 +308,8 @@ const Landing: React.FC = () => {
               <a
                 href="tel:+61413885839"
                 onClick={handlePhoneClick}
-                className="inline-flex w-full items-center justify-between rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold hover:bg-white/10"
+                className="inline-flex w-full items-center justify-between rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
+                aria-label="Call Ryze Education"
               >
                 <span className="inline-flex items-center gap-2"><Phone size={16} aria-hidden="true" /> Call Us</span>
                 <ArrowRight size={16} aria-hidden="true" />
@@ -317,7 +319,8 @@ const Landing: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWhatsappClick}
-                className="inline-flex w-full items-center justify-between rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold hover:bg-white/10"
+                className="inline-flex w-full items-center justify-between rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2"
+                aria-label="Open WhatsApp chat with Ryze Education"
               >
                 <span className="inline-flex items-center gap-2"><MessageCircle size={16} aria-hidden="true" /> WhatsApp</span>
                 <ArrowRight size={16} aria-hidden="true" />
@@ -327,9 +330,10 @@ const Landing: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
             <div className="grid grid-cols-1 gap-4">
-              <label className="text-sm font-medium">
+              <label htmlFor="hsc-name" className="text-sm font-medium">
                 Name
                 <input
+                  id="hsc-name"
                   type="text"
                   name="name"
                   required
@@ -339,9 +343,10 @@ const Landing: React.FC = () => {
                 />
               </label>
 
-              <label className="text-sm font-medium">
+              <label htmlFor="hsc-email" className="text-sm font-medium">
                 Email
                 <input
+                  id="hsc-email"
                   type="email"
                   name="email"
                   required
@@ -351,9 +356,10 @@ const Landing: React.FC = () => {
                 />
               </label>
 
-              <label className="text-sm font-medium">
+              <label htmlFor="hsc-phone" className="text-sm font-medium">
                 Phone
                 <input
+                  id="hsc-phone"
                   type="tel"
                   name="phone"
                   required
@@ -363,9 +369,10 @@ const Landing: React.FC = () => {
                 />
               </label>
 
-              <label className="text-sm font-medium">
+              <label htmlFor="hsc-student-level" className="text-sm font-medium">
                 Student Level
                 <select
+                  id="hsc-student-level"
                   name="studentLevel"
                   value={formData.studentLevel}
                   onChange={handleChange}
@@ -383,20 +390,20 @@ const Landing: React.FC = () => {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ryze px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-ryze-600 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ryze px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-ryze-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <BookOpenCheck size={16} aria-hidden="true" />
               {status === 'sending' ? 'Submitting...' : 'Submit Enquiry'}
             </button>
 
             {status === 'success' && (
-              <p className="mt-4 rounded-lg border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+              <p role="status" aria-live="polite" className="mt-4 rounded-lg border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
                 Thanks, your enquiry has been sent. We will contact you shortly.
               </p>
             )}
 
             {status === 'error' && (
-              <p className="mt-4 rounded-lg border border-red-300/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              <p role="alert" className="mt-4 rounded-lg border border-red-300/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
                 Submission failed. Please try again or call us directly.
               </p>
             )}

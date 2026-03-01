@@ -428,7 +428,8 @@ const Home: React.FC = () => {
                            <img
                              key={i}
                              src={src}
-                             alt="Client"
+                             alt=""
+                             aria-hidden="true"
                              width={32}
                              height={32}
                              loading="lazy"
@@ -568,9 +569,10 @@ const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              {team.map((member, idx) => (
-               <motion.div
+               <motion.button
+               type="button"
                key={idx}
-               className="group cursor-pointer"
+               className="group cursor-pointer bg-transparent border-0 p-0 text-left"
                onClick={() => navigate(`/meet-the-team#${member.id}`)}
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
@@ -632,7 +634,7 @@ const Home: React.FC = () => {
                  <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
                  <p className="text-slate-700 text-sm font-medium mb-1.5">{t(member.role)}</p>
                </div>
-             </motion.div>          
+             </motion.button>          
             ))}
           </div>
         </div>
