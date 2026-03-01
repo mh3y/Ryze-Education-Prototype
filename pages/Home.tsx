@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 
-const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_960,dpr_auto/ryze/images/image-v1';
+const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_800,dpr_auto/ryze/images/image-v1';
 
 declare global {
   interface Window {
@@ -705,4 +705,5 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
 
