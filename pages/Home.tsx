@@ -1,10 +1,10 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
 import { motion as motionOriginal, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
 import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
 // @ts-ignore
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 import PrimaryCTA from '../components/PrimaryCTA';
@@ -105,6 +105,7 @@ const Card = ({
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const { scrollY } = useScroll();
   const reduceMotion = useReducedMotion();
@@ -115,6 +116,28 @@ const Home: React.FC = () => {
 
   // Business Logic for Availability
   const [isAvailable, setIsAvailable] = useState(false);
+
+  const campaignParams = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const offer = (params.get('offer') || '').toLowerCase();
+    const utmCampaign = (params.get('utm_campaign') || '').toLowerCase();
+    const isHscOffer =
+      offer.includes('hsc') ||
+      utmCampaign.includes('hsc') ||
+      utmCampaign.includes('advanced') ||
+      utmCampaign.includes('ext1') ||
+      utmCampaign.includes('ext2');
+
+    return {
+      offer,
+      utmCampaign,
+      isHscOffer,
+    };
+  }, [location.search]);
+
+  const heroSubheading = campaignParams.isHscOffer
+    ? 'HSC Maths Advanced and Extension tutoring built for high marks, clean exam technique, and real confidence.'
+    : t('Think Sharper. Perform Better.');
 
   useEffect(() => {
     if (!import.meta.env.DEV) return;
@@ -236,6 +259,33 @@ const Home: React.FC = () => {
     "You are not a number"
   ];
 
+  const programs = [
+    {
+      id: 'program-hsc',
+      title: 'HSC Maths',
+      blurb: 'Advanced, Extension 1, and Extension 2 pathways with exam-focused teaching.',
+      ctaLabel: 'Explore HSC Program',
+      href: '/hsc-maths-tutoring',
+      isPrimary: true,
+    },
+    {
+      id: 'program-selective',
+      title: 'Selective and OC',
+      blurb: 'Structured preparation for OC and selective exam maths and problem solving.',
+      ctaLabel: 'View Selective Pathway',
+      href: '#program-selective-details',
+      isPrimary: false,
+    },
+    {
+      id: 'program-junior',
+      title: 'Junior Foundations',
+      blurb: 'Strong numeracy and algebra foundations for Years 3-10 before senior years.',
+      ctaLabel: 'See Junior Program',
+      href: '#program-junior-details',
+      isPrimary: false,
+    },
+  ];
+
   const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
     responsiveCloudinaryImage(sourceUrl, {
@@ -343,9 +393,15 @@ const Home: React.FC = () => {
                     {t("Learning with")} <span className="text-white">{t("clarity.")}</span>
                   </h1>
 
-                  <p className="text-xl lg:text-2xl font-sans font-medium text-white leading-tight tracking-wide">
-                  {t("Think Sharper. Perform Better.")}
+                  <p className="text-lg lg:text-2xl font-sans font-medium text-white leading-tight tracking-wide">
+                    {heroSubheading}
                   </p>
+
+                  {campaignParams.isHscOffer && (
+                    <p className="inline-flex items-center gap-2 rounded-full border border-ryze/40 bg-ryze/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ryze-100">
+                      Message match active: HSC Maths Advanced and Extension
+                    </p>
+                  )}
               </div>
 
               <p className="text-lg text-white max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
@@ -433,6 +489,57 @@ const Home: React.FC = () => {
           </div>
         </div>
         </section>
+
+    <section id="programs" className="bg-white py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Programs</h2>
+          <p className="mt-3 text-slate-600">
+            Start in the program that matches your exact goal. HSC Maths is our primary performance pathway.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {programs.map((program) => {
+            const shouldHighlight = program.isPrimary && campaignParams.isHscOffer;
+            const cardClass = shouldHighlight
+              ? 'border-ryze bg-ryze-50 shadow-[0_12px_40px_-24px_rgba(255,176,0,0.9)]'
+              : 'border-slate-200 bg-white';
+
+            return (
+              <article key={program.id} id={program.id} className={`rounded-2xl border p-6 ${cardClass}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-ryze">
+                  {program.isPrimary ? 'Primary Focus' : 'Program'}
+                </p>
+                <h3 className="mt-3 text-2xl font-bold text-slate-900">{program.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{program.blurb}</p>
+                <a
+                  href={program.href}
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-900 transition-colors hover:text-ryze"
+                >
+                  {program.ctaLabel} <ArrowRight size={16} aria-hidden="true" />
+                </a>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <article id="program-selective-details" className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <h3 className="text-lg font-bold text-slate-900">Selective and OC Pathway</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Structured progression in reasoning, speed, and exam confidence for high-stakes selective outcomes.
+            </p>
+          </article>
+          <article id="program-junior-details" className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <h3 className="text-lg font-bold text-slate-900">Junior Foundations Pathway</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Build core numeracy, algebra, and problem-solving habits early to accelerate senior performance later.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
 
     <Suspense fallback={<div className="w-full h-[50vh] bg-slate-50" />}>
       <Testimonials />
