@@ -490,7 +490,7 @@ const Home: React.FC = () => {
         </div>
         </section>
 
-    <section id="programs" className="bg-white py-16 md:py-20">
+    <section id="programs" className="ryze-section bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Programs</h2>
@@ -507,7 +507,7 @@ const Home: React.FC = () => {
               : 'border-slate-200 bg-white';
 
             return (
-              <article key={program.id} id={program.id} className={`rounded-2xl border p-6 ${cardClass}`}>
+              <article key={program.id} id={program.id} className={`ryze-card rounded-2xl border p-6 ${cardClass}`}>
                 <p className="text-xs font-semibold uppercase tracking-wide text-ryze">
                   {program.isPrimary ? 'Primary Focus' : 'Program'}
                 </p>
@@ -525,13 +525,13 @@ const Home: React.FC = () => {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <article id="program-selective-details" className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <article id="program-selective-details" className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <h3 className="text-lg font-bold text-slate-900">Selective and OC Pathway</h3>
             <p className="mt-2 text-sm text-slate-600">
               Structured progression in reasoning, speed, and exam confidence for high-stakes selective outcomes.
             </p>
           </article>
-          <article id="program-junior-details" className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <article id="program-junior-details" className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <h3 className="text-lg font-bold text-slate-900">Junior Foundations Pathway</h3>
             <p className="mt-2 text-sm text-slate-600">
               Build core numeracy, algebra, and problem-solving habits early to accelerate senior performance later.

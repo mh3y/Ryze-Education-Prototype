@@ -23,6 +23,11 @@
   --ryze-container-max-width: 80rem;
   --ryze-container-inline-padding: 1rem;
   --ryze-sticky-cta-height: 0px;
+  --ryze-radius-card: 1rem;
+  --ryze-radius-panel: 1.5rem;
+  --ryze-shadow-soft: 0 10px 30px -24px rgba(2, 6, 23, 0.65);
+  --ryze-shadow-panel: 0 20px 40px -28px rgba(15, 23, 42, 0.45);
+  --ryze-section-space: clamp(4rem, 8vw, 6rem);
 
   --ryze-motion-feature-marquee-duration: 26s;
   --ryze-motion-logo-marquee-duration: 36s;
@@ -34,6 +39,15 @@
 
 body.ryze-sticky-cta-active .ryze-main-with-sticky {
   padding-bottom: calc(var(--ryze-sticky-cta-height) + env(safe-area-inset-bottom));
+}
+
+.ryze-section {
+  padding-block: var(--ryze-section-space);
+}
+
+.ryze-card {
+  border-radius: var(--ryze-radius-card);
+  box-shadow: var(--ryze-shadow-soft);
 }
 
 @media (min-width: 640px) {

@@ -226,7 +226,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-white py-16 text-slate-900">
+      <section className="ryze-section bg-white text-slate-900">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h2 className="text-3xl font-bold sm:text-4xl">Proof That Students and Parents Trust</h2>
@@ -234,17 +234,17 @@ const Landing: React.FC = () => {
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-6">
               <Users className="text-ryze" size={24} aria-hidden="true" />
               <p className="mt-3 text-3xl font-extrabold">500+</p>
               <p className="mt-1 text-sm text-slate-600">Students supported across Sydney</p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-6">
               <Star className="text-ryze" size={24} aria-hidden="true" />
               <p className="mt-3 text-3xl font-extrabold">4.9/5</p>
               <p className="mt-1 text-sm text-slate-600">Average parent and student rating</p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-6">
               <BadgeCheck className="text-ryze" size={24} aria-hidden="true" />
               <p className="mt-3 text-3xl font-extrabold">13+ years</p>
               <p className="mt-1 text-sm text-slate-600">Teaching and HSC mentoring experience</p>
@@ -264,12 +264,12 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16 text-slate-900">
+      <section className="ryze-section bg-slate-50 text-slate-900">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold sm:text-4xl">How It Works</h2>
           <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             {howItWorksSteps.map((step) => (
-              <article key={step.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <article key={step.title} className="ryze-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <CalendarCheck2 className="text-ryze" size={22} aria-hidden="true" />
                 <h3 className="mt-3 text-xl font-bold">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.description}</p>
@@ -279,12 +279,12 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-white py-16 text-slate-900">
+      <section className="ryze-section bg-white text-slate-900">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold sm:text-4xl">Student Results and Parent Feedback</h2>
           <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             {featuredTestimonials.map((item) => (
-              <article key={item.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+              <article key={item.id} className="ryze-card rounded-2xl border border-slate-200 bg-slate-50 p-6">
                 <p className="text-sm font-semibold uppercase tracking-wide text-ryze">{item.achievement}</p>
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">"{item.message}"</p>
                 <p className="mt-4 text-sm font-bold text-slate-900">{item.reviewerName}</p>
@@ -295,7 +295,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      <section id="book" className="bg-slate-950 py-16 text-white">
+      <section id="book" className="ryze-section bg-slate-950 text-white">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div>
             <h2 className="text-3xl font-bold sm:text-4xl">Book Your Free Consultation</h2>

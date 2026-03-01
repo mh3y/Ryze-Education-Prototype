@@ -180,7 +180,7 @@ const Testimonials: React.FC = () => {
     <section className="overflow-hidden bg-[#f9f5ed] py-32 font-sans text-slate-800 sm:py-40">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div className="mb-20 text-center">
-          <h2 className="font-serif text-7xl font-bold tracking-tight text-slate-900 md:text-8xl">
+          <h2 className="font-sans text-7xl font-bold tracking-tight text-slate-900 md:text-8xl">
             5.0 <span className="text-[#ffb000]">{'\u2605\u2605\u2605\u2605\u2605'}</span>
           </h2>
           <p className="mt-5 text-xl text-slate-700">Based on 250+ happy students and satisfied parents.</p>
