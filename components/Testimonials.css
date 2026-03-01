@@ -15,6 +15,20 @@
     animation: scroll-x-reverse 30s linear infinite;
 }
 
+.paused {
+    animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-scroll-x,
+    .animate-scroll-x-reverse,
+    .testimonial-scroll-x,
+    .testimonial-scroll-x-reverse {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
 @keyframes scroll-x {
     from {
         transform: translateX(0);

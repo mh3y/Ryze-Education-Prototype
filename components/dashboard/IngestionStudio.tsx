@@ -307,7 +307,15 @@ export const IngestionStudio: React.FC = () => {
                      <div>
                         <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest">Source Document</h4>
                         <div className="rounded-2xl overflow-hidden border border-white/5 bg-black">
-                           <img src={previewUrl || ''} alt="Source" className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity" />
+                           <img
+                             src={previewUrl || ''}
+                             alt="Source"
+                             width={1200}
+                             height={1600}
+                             loading="lazy"
+                             decoding="async"
+                             className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity"
+                           />
                         </div>
                      </div>
 

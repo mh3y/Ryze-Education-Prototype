@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { language, toggleLanguage, t } = useLanguage();
+  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
 
   // Centralized list for pages that require white navbar text when transparent
   const darkThemeRoutes = ['/ryze-ai', '/login', '/contact', '/learning-style'];
@@ -136,8 +137,10 @@ const Navbar: React.FC = () => {
           
           <div className="flex-shrink-0 cursor-pointer group z-50" onClick={() => { setIsOpen(false); navigate('/'); }}>
             <img 
-              src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
+              src={brandLogoUrl}
               alt="Ryze Education" 
+              width={250}
+              height={64}
               className={`h-10 md:h-16 w-auto transition-all duration-500 ${useWhiteText ? 'brightness-0 invert' : 'group-hover:scale-105'}`}
             />
           </div>

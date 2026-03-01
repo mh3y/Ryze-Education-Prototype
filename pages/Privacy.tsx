@@ -12,7 +12,7 @@ const Privacy: React.FC = () => {
       <div className="bg-white pt-24 pb-24 px-4 border-b border-slate-100">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-sans font-bold mb-6 text-slate-900 tracking-tight">Privacy Policy</h1>
-          <p className="text-slate-500 font-medium">Last Updated: November 2025</p>
+          <p className="text-slate-600 font-medium">Last Updated: November 2025</p>
         </div>
       </div>
 
@@ -167,7 +167,7 @@ const Privacy: React.FC = () => {
               <li><strong className="text-slate-900">Opt-out of future collective use:</strong> Request that we exclude your Student's data from being used (in anonymised form) to improve Ryze AI and collective systems.</li>
             </ul>
             <p className="text-slate-600 leading-relaxed mb-4">
-              <strong className="text-slate-900">How to exercise these rights:</strong> Contact us at <a href="mailto:ryzeeducation@outlook.com" className="text-[#FFB000] font-bold hover:underline">ryzeeducation@outlook.com</a> with your request. Include the Student's name and sufficient detail for us to locate your information. We will respond within 30 days. If we refuse your request, we will explain why.
+              <strong className="text-slate-900">How to exercise these rights:</strong> Contact us at <a href="mailto:ryzeeducation@outlook.com" className="text-amber-700 font-bold hover:underline">ryzeeducation@outlook.com</a> with your request. Include the Student's name and sufficient detail for us to locate your information. We will respond within 30 days. If we refuse your request, we will explain why.
             </p>
             <p className="text-slate-600 leading-relaxed mb-4">
               <strong className="text-slate-900">No cost:</strong> We will not charge you to exercise these rights (unless your request is manifestly unfounded or excessive, in which case we may charge a reasonable fee).
@@ -207,7 +207,7 @@ const Privacy: React.FC = () => {
             </p>
             <div className="mb-4">
               <p className="text-slate-600 leading-relaxed mb-2">
-                <strong className="text-slate-900">Contact us first:</strong> Email us at <a href="mailto:ryzeeducation@outlook.com" className="text-[#FFB000] font-bold hover:underline">ryzeeducation@outlook.com</a> with details of your concern. We will investigate and respond within 30 days.
+                <strong className="text-slate-900">Contact us first:</strong> Email us at <a href="mailto:ryzeeducation@outlook.com" className="text-amber-700 font-bold hover:underline">ryzeeducation@outlook.com</a> with details of your concern. We will investigate and respond within 30 days.
               </p>
             </div>
             <div className="mb-4">
@@ -215,7 +215,7 @@ const Privacy: React.FC = () => {
                 <strong className="text-slate-900">Escalate to the Privacy Commissioner:</strong> If you are not satisfied with our response, you may lodge a complaint with the <strong>Office of the Australian Information Commissioner (OAIC)</strong>:
               </p>
               <ul className="list-disc pl-6 space-y-1 text-slate-600">
-                <li>Website: <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-[#FFB000] hover:underline">www.oaic.gov.au</a></li>
+                <li>Website: <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-amber-700 hover:underline">www.oaic.gov.au</a></li>
                 <li>Phone: 1300 363 424</li>
                 <li>Email: enquiries@oaic.gov.au</li>
               </ul>
@@ -235,7 +235,7 @@ const Privacy: React.FC = () => {
             <div className="bg-slate-50 p-6 rounded-2xl inline-block pr-12">
               <p className="font-bold text-slate-900 text-lg mb-1">Ryze Education</p>
               <p className="text-slate-600">Sydney, NSW Australia</p>
-              <p className="text-slate-600 mt-2">Email: <a href="mailto:ryzeeducation@outlook.com" className="text-[#FFB000] font-bold hover:underline">ryzeeducation@outlook.com</a></p>
+              <p className="text-slate-600 mt-2">Email: <a href="mailto:ryzeeducation@outlook.com" className="text-amber-700 font-bold hover:underline">ryzeeducation@outlook.com</a></p>
               <p className="text-slate-600">Phone: +61 413 885 839</p>
             </div>
           </section>

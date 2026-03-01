@@ -8,6 +8,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 const PortalHome: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
 
   const roles = [
     {
@@ -67,8 +68,10 @@ const PortalHome: React.FC = () => {
           className="text-center mb-10 md:mb-20 mt-12 md:mt-0"
         >
           <img 
-             src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
+             src={brandLogoUrl}
              alt="Ryze" 
+             width={250}
+             height={64}
              className="h-12 md:h-16 w-auto mx-auto mb-6 md:mb-8"
           />
           <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tight">{t("Select Your Portal")}</h1>

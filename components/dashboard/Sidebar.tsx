@@ -37,6 +37,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 export const Sidebar: React.FC<SidebarProps> = ({ 
   isOpen, activeTab, userRole, onTabChange, onRoleChange, onLogout, onCloseMobile
 }) => {
+  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_240,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
   const visibleItems = SIDEBAR_ITEMS.filter(item => item.roles.includes(userRole));
 
   return (
@@ -61,8 +62,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img 
-               src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105292/yellow_logo_png_bvs11z.png" 
+               src={brandLogoUrl}
                alt="Ryze" 
+               width={125}
+               height={32}
                className="h-8 w-auto" 
             />
             {isOpen && <span className="font-bold text-xl tracking-tight text-white">Ryze<span className="text-[#FFB000]">OS</span></span>}

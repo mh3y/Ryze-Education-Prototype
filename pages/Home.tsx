@@ -187,7 +187,7 @@ const Home: React.FC = () => {
       role: "Master's in Teaching | BSc(Math)/BCompSc",
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -196,7 +196,7 @@ const Home: React.FC = () => {
       role: "PhD - AI & Machine Learning candidate",
       atar: "99.50",
       scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -205,7 +205,7 @@ const Home: React.FC = () => {
       role: "UNSW Academic Teaching Staff | BMaths/BCompSc",
       atar: "99.55",
       scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_600/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
       fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
   ];    
@@ -216,7 +216,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section 
         className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/image-v1')" }}
+        style={{ backgroundImage: "url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_1280,dpr_auto/ryze/images/image-v1')" }}
       >
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -267,10 +267,10 @@ const Home: React.FC = () => {
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full border border-slate-100 shadow-sm">
                     <div className="flex -space-x-3">
                          {[
-                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes5",
-                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes6",
-                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes7",
-                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tes8"
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes5",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes6",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes7",
+                           "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes8"
                          ].map((src, i) => (
                            <img 
                               key={i} 
@@ -293,32 +293,32 @@ const Home: React.FC = () => {
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/personalised" 
+                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised" 
                     title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
                     priority={true} 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/class4" title={t("Small Group Focus")} tag="Method" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4" title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/tutor2" title={t("NSW Accredited Teachers")} tag="Experienced" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2" title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/image-v4" 
+                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4" 
                     title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/onlinev4" title={t("Hybrid Learning")} tag="Flexibility" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4" title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Distinguished Teachers */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/gordon" title={t("Distinguished Mentors")} tag="Experts" />
+                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon" title={t("Distinguished Mentors")} tag="Experts" />
                </ScrollingColumn>
             </div>
           </div>
@@ -582,8 +582,10 @@ const Home: React.FC = () => {
                         >
                             <div className="flex items-center gap-4">
                                 <img 
-                                    src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg" 
+                                    src="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_120,h_120,dpr_auto/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg" 
                                     alt="Michael Yang"
+                                    width={56}
+                                    height={56}
                                     className="w-14 h-14 rounded-full object-cover border-2 border-orange-100"
                                 />
                                 <div>

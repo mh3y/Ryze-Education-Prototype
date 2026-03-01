@@ -11,7 +11,7 @@ const About: React.FC = () => {
     {
       name: "Mr Mike Nojiri",
       role: "Co-Founder & Head of Education",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
         "Master of Teaching | UNSW",
@@ -26,7 +26,7 @@ const About: React.FC = () => {
     {
       name: "Mr William Gong",
       role: "Co-Founder & Head of Technology",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       creds: [
         "PhD - AI & Machine Learning Candidate | UNSW",
@@ -38,7 +38,7 @@ const About: React.FC = () => {
     {
       name: "Mr Michael Yang",
       role: "Founder & CEO",
-      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
+      image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg",
       fallbackImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       hscMarks: {
         "Mathematics Extension 1": "98",
@@ -281,6 +281,10 @@ const About: React.FC = () => {
                         src={member.image} 
                         onError={(e) => {e.currentTarget.src = member.fallbackImage}}
                         alt={member.name} 
+                        width={720}
+                        height={960}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
