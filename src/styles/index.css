@@ -14,12 +14,38 @@
   --color-ryze-900: #332300;
   --color-slate-850: #151F32;
   --color-slate-950: #020617;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-ds-sm: var(--radius-sm);
+  --radius-ds: var(--radius);
+  --radius-ds-lg: var(--radius-lg);
   --font-sans: 'Poppins', sans-serif;
   --font-serif: 'Poppins', sans-serif;
   --font-display: 'Poppins', sans-serif;
 }
 
 :root {
+  --bg: #F7F9FC;
+  --surface: #EEF3FA;
+  --text: #0F172A;
+  --muted: #475569;
+  --primary: #10213F;
+  --primary-foreground: #F8FAFC;
+  --accent: #FFB000;
+  --accent-foreground: #1E293B;
+  --border: #D7DFEC;
+  --ring: #8FA2C4;
+  --radius: 1rem;
+  --radius-sm: 0.75rem;
+  --radius-lg: 1.5rem;
   --ryze-container-max-width: 80rem;
   --ryze-container-inline-padding: 1rem;
   --ryze-sticky-cta-height: 0px;
@@ -35,6 +61,11 @@
   --ryze-motion-testimonial-duration-reverse: 72s;
   --ryze-motion-vertical-scroll-fast: 30s;
   --ryze-motion-vertical-scroll-slow: 38s;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 body.ryze-sticky-cta-active .ryze-main-with-sticky {
