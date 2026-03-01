@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react';
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
-import { motion as motionOriginal, useAnimationControls, useScroll, useTransform } from 'framer-motion';
+import { motion as motionOriginal, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 const motion = motionOriginal as any;
 import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, ArrowRight, CheckCircle2, Phone, MessageCircle, Sparkles, Clock } from 'lucide-react';
 // @ts-ignore
@@ -16,30 +16,26 @@ declare global {
   }
 }
 
-// Optimized Scrolling Column
-const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.PropsWithChildren<{ direction?: "up" | "down", speed?: number }>) => {
-  const controls = useAnimationControls();
-  
-  useEffect(() => {
-    controls.start({
-      y: direction === "up" ? "-50%" : "0%",
-      transition: { duration: speed, ease: "linear", repeat: Infinity, repeatType: "loop", from: direction === "up" ? "0%" : "-50%" }
-    });
-  }, [controls, direction, speed]);
-
-  return (
-    <div className="h-[800px] overflow-hidden relative transform-gpu">
-      <motion.div 
-        animate={controls} 
-        className="flex flex-col gap-6" 
-        style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
-      >
-        {children}
-        {children} 
-      </motion.div>
+const ScrollingColumn = ({
+  children,
+  direction = "up",
+  durationVar = 'var(--ryze-motion-vertical-scroll-slow)',
+  reducedMotion = false
+}: React.PropsWithChildren<{
+  direction?: "up" | "down";
+  durationVar?: string;
+  reducedMotion?: boolean;
+}>) => (
+  <div className="ryze-vertical-marquee transform-gpu">
+    <div
+      className={`ryze-vertical-track ${direction === "down" ? 'is-reverse' : ''}`}
+      style={{ '--ryze-column-duration': durationVar, backfaceVisibility: 'hidden' } as React.CSSProperties}
+    >
+      {children}
+      {!reducedMotion && children}
     </div>
-  );
-};
+  </div>
+);
 
 // Optimized Card with smooth scaling and LCP support
 type CardImageSource = {
@@ -98,6 +94,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { scrollY } = useScroll();
+  const reduceMotion = useReducedMotion();
   
   // Parallax transforms - optimized with transform-gpu
   const headerY = useTransform(scrollY, [0, 500], [0, 200]);
@@ -367,8 +364,12 @@ const Home: React.FC = () => {
             </motion.div>
 
             {/* Right Scrolling Content - Optimized with will-change */}
-            <div className="grid grid-cols-2 gap-5 h-[800px] overflow-hidden relative [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
-               <ScrollingColumn direction="up" speed={50}>
+            <div className="relative grid h-[clamp(420px,72vh,800px)] grid-cols-2 gap-4 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] md:gap-5">
+               <ScrollingColumn
+                 direction="up"
+                 durationVar="var(--ryze-motion-vertical-scroll-slow)"
+                 reducedMotion={reduceMotion}
+               >
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
                     image={marketingCardImages.ocSelectiveExam} 
@@ -384,7 +385,11 @@ const Home: React.FC = () => {
                   {/* Personalised Support */}
                   <Card image={marketingCardImages.nswAccreditedTeachers} title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
-               <ScrollingColumn direction="down" speed={60}>
+               <ScrollingColumn
+                 direction="down"
+                 durationVar="var(--ryze-motion-vertical-scroll-fast)"
+                 reducedMotion={reduceMotion}
+               >
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
                     image={marketingCardImages.hscExcellence} 

@@ -18,3 +18,166 @@
   --font-serif: 'Playfair Display', serif;
   --font-display: 'Poppins', sans-serif;
 }
+
+:root {
+  --ryze-container-max-width: 80rem;
+  --ryze-container-inline-padding: 1rem;
+
+  --ryze-motion-feature-marquee-duration: 26s;
+  --ryze-motion-logo-marquee-duration: 36s;
+  --ryze-motion-testimonial-duration: 64s;
+  --ryze-motion-testimonial-duration-reverse: 72s;
+  --ryze-motion-vertical-scroll-fast: 30s;
+  --ryze-motion-vertical-scroll-slow: 38s;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --ryze-container-inline-padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ryze-motion-feature-marquee-duration: 34s;
+    --ryze-motion-logo-marquee-duration: 46s;
+    --ryze-motion-testimonial-duration: 74s;
+    --ryze-motion-testimonial-duration-reverse: 82s;
+    --ryze-motion-vertical-scroll-fast: 42s;
+    --ryze-motion-vertical-scroll-slow: 50s;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --ryze-container-inline-padding: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --ryze-motion-feature-marquee-duration: 42s;
+    --ryze-motion-logo-marquee-duration: 58s;
+    --ryze-motion-testimonial-duration: 88s;
+    --ryze-motion-testimonial-duration-reverse: 98s;
+    --ryze-motion-vertical-scroll-fast: 56s;
+    --ryze-motion-vertical-scroll-slow: 64s;
+  }
+}
+
+.site-container {
+  margin-inline: auto;
+  max-width: var(--ryze-container-max-width);
+  width: min(100%, var(--ryze-container-max-width));
+  padding-inline: var(--ryze-container-inline-padding);
+}
+
+.feature-marquee {
+  overflow: hidden;
+  position: relative;
+}
+
+.feature-marquee-track {
+  align-items: stretch;
+  animation: ryze-marquee var(--ryze-motion-feature-marquee-duration) linear infinite;
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  transform: translate3d(0, 0, 0);
+  width: max-content;
+  will-change: transform;
+}
+
+.feature-marquee:is(:hover, :focus-within) .feature-marquee-track {
+  animation-play-state: paused;
+}
+
+.ryze-vertical-marquee {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ryze-vertical-track {
+  animation: ryze-marquee-vertical var(--ryze-column-duration, var(--ryze-motion-vertical-scroll-slow)) linear infinite;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.ryze-vertical-track.is-reverse {
+  animation-name: ryze-marquee-vertical-reverse;
+}
+
+.ryze-vertical-marquee:is(:hover, :focus-within) .ryze-vertical-track {
+  animation-play-state: paused;
+}
+
+@keyframes ryze-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes ryze-marquee-vertical {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes ryze-marquee-vertical-reverse {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .feature-marquee {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .feature-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .feature-marquee-track > * {
+    scroll-snap-align: start;
+  }
+
+  .ryze-vertical-marquee {
+    overflow: visible;
+  }
+
+  .ryze-vertical-track,
+  .ryze-vertical-track.is-reverse {
+    animation: none !important;
+    transform: none !important;
+  }
+}

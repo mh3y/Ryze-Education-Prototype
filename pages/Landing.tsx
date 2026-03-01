@@ -157,8 +157,6 @@ const Landing: React.FC = () => {
       }
     ];
 
-    const [duration, setDuration] = useState(30);
-
     useEffect(() => {
         const getImageUrl = (width: number) => {
             const baseUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload';
@@ -179,17 +177,8 @@ const Landing: React.FC = () => {
         const handleResize = () => {
             const screenWidth = window.innerWidth;
             
-            // 1. Set the background image URL
+            // Keep background image in a responsive Cloudinary bucket.
             setBgImage(getImageUrl(screenWidth));
-    
-            // 2. Set the carousel duration
-            if (screenWidth < 768) {
-                setDuration(20);
-            } else if (screenWidth >= 768 && screenWidth < 1280) {
-                setDuration(30);
-            } else {
-                setDuration(40);
-            }
         };
     
         // Set the initial values when the component mounts
@@ -489,34 +478,22 @@ const Landing: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="w-full overflow-hidden mt-24 relative [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-            <motion.div
-                className="flex gap-6"
-                animate={{
-                    x: ['0%', '-50%']
-                }}
-                transition={{
-                  ease: 'linear',
-                  duration: duration,
-                  repeat: Infinity,
-                  repeatType: 'loop'
-                }}
-            >
-
-                {/* Duplicate the items for a seamless infinite scroll effect */}
-                {[...features, ...features].map((feature, idx) => (
+        <div className="feature-marquee mt-24 w-full [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]" tabIndex={0} aria-label="Ryze learning features">
+            <div className="feature-marquee-track">
+                {(reduce ? features : [...features, ...features]).map((feature, idx) => (
                     <div 
-                      key={idx} 
-                      className="flex-shrink-0 w-[300px] sm:w-80 bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
+                      key={`${feature.title}-${idx}`} 
+                      className="flex-shrink-0 w-[clamp(280px,56vw,420px)] bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
+                      aria-hidden={!reduce && idx >= features.length}
                     >
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 bg-[#FFB000] border border-[#FF8A00]/30 mx-auto">
+                        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-[#FF8A00]/30 bg-[#FFB000]">
                             <feature.icon size={28} className="text-white" />
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                        <p className="text-gray-300 text-base leading-relaxed">{feature.desc}</p>
+                        <h3 className="mb-3 text-xl font-bold text-white">{feature.title}</h3>
+                        <p className="text-base leading-relaxed text-gray-300">{feature.desc}</p>
                     </div>
                 ))}
-            </motion.div>
+            </div>
         </div>
       )
     );
