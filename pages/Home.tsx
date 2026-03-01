@@ -104,6 +104,11 @@ const Home: React.FC = () => {
   // Business Logic for Availability
   const [isAvailable, setIsAvailable] = useState(false);
 
+  useEffect(() => {
+    // Defer non-critical hover effects CSS off initial render-blocking path.
+    void import('../src/styles/custom-hovers.css');
+  }, []);
+
   const handlePhoneClick = () => {
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
