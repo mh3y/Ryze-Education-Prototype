@@ -1,6 +1,6 @@
 import React from 'react';
 import DesignCard from './DesignCard';
-import { cn } from '../../src/utils/cn';
+import { cn } from '@/utils/cn';
 
 type ValueCardProps = {
   title: string;
@@ -13,7 +13,7 @@ const ValueCard: React.FC<ValueCardProps> = ({ title, description, icon, classNa
   return (
     <DesignCard className={cn('h-full p-6', className)}>
       {icon && (
-        <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
+        <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)]/10 text-[var(--primary)] ring-1 ring-[var(--primary)]/10">
           {icon}
         </div>
       )}
