@@ -3,7 +3,6 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { FaQuestionCircle, FaPlus, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp } from 'lucide-react';
 import { FaMinus } from 'react-icons/fa6';
-import { initTrackingDeferred } from '../src/analytics';
 
 declare global {
     interface Window {
@@ -199,10 +198,6 @@ const Landing: React.FC = () => {
       updateViewport();
       mediaQuery.addEventListener('change', updateViewport);
       return () => mediaQuery.removeEventListener('change', updateViewport);
-    }, []);
-
-    useEffect(() => {
-      initTrackingDeferred();
     }, []);
 
     useEffect(() => {

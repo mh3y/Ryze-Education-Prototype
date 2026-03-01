@@ -12,6 +12,7 @@ import FeatureGate from './components/FeatureGate';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
 import { ROUTES } from './src/constants/routes';
+import { initTrackingDeferred } from './src/analytics';
 
 // Lazy load portal and heavy pages to keep the marketing bundle lean.
 const PortalHome = lazy(() => import('./pages/PortalHome'));
@@ -212,6 +213,8 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   useEffect(() => {
+    initTrackingDeferred();
+
     if (import.meta.env.PROD) {
       console.info(`[FeatureGate] Dashboard routes enabled: ${ENABLE_DASHBOARD}`);
     }
