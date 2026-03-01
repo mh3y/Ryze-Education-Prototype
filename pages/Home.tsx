@@ -107,6 +107,19 @@ const Home: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(false);
 
   useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    let disposePerfDebug: undefined | (() => void);
+    void import('../src/utils/perfDebug').then(({ initPerfDebug }) => {
+      disposePerfDebug = initPerfDebug('home');
+    });
+
+    return () => {
+      if (disposePerfDebug) disposePerfDebug();
+    };
+  }, []);
+
+  useEffect(() => {
     // Defer non-critical hover effects CSS off initial render-blocking path.
     void import('../src/styles/custom-hovers.css');
   }, []);
