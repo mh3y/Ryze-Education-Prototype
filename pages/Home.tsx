@@ -8,7 +8,18 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 
-const HOME_HERO_BG_IMAGE_URL = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_800,dpr_auto/ryze/images/image-v1';
+const HOME_HERO_IMAGE_BASE =
+  'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+const HOME_HERO_IMAGE_ID = 'ryze/images/image-v1';
+const HOME_HERO_IMAGE_SRC = `${HOME_HERO_IMAGE_BASE},w_768/${HOME_HERO_IMAGE_ID}`;
+const HOME_HERO_IMAGE_SRC_SET = [
+  `${HOME_HERO_IMAGE_BASE},w_360/${HOME_HERO_IMAGE_ID} 360w`,
+  `${HOME_HERO_IMAGE_BASE},w_480/${HOME_HERO_IMAGE_ID} 480w`,
+  `${HOME_HERO_IMAGE_BASE},w_640/${HOME_HERO_IMAGE_ID} 640w`,
+  `${HOME_HERO_IMAGE_BASE},w_768/${HOME_HERO_IMAGE_ID} 768w`,
+  `${HOME_HERO_IMAGE_BASE},w_1024/${HOME_HERO_IMAGE_ID} 1024w`,
+  `${HOME_HERO_IMAGE_BASE},w_1280/${HOME_HERO_IMAGE_ID} 1280w`,
+].join(', ');
 
 declare global {
   interface Window {
@@ -289,10 +300,19 @@ const Home: React.FC = () => {
     <div className="w-full font-sans overflow-hidden bg-slate-50">
       
       {/* Hero Section */}
-      <section 
-        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900 bg-cover bg-center rounded-b-[3rem] lg:rounded-b-[5rem]"
-        style={{ backgroundImage: `url('${HOME_HERO_BG_IMAGE_URL}')` }}
-      >
+      <section className="relative overflow-hidden rounded-b-[3rem] bg-slate-900 pb-20 pt-32 lg:rounded-b-[5rem] lg:pb-32 lg:pt-48">
+        <picture className="absolute inset-0">
+          <img
+            src={HOME_HERO_IMAGE_SRC}
+            srcSet={HOME_HERO_IMAGE_SRC_SET}
+            sizes="(max-width: 768px) 100vw, 100vw"
+            alt="HSC Maths tutoring in Sydney - Ryze Education"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </picture>
         {/* Correctly placed overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         {/* Content container */}
@@ -347,12 +367,15 @@ const Home: React.FC = () => {
                            "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes7",
                            "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/tes8"
                          ].map((src, i) => (
-                           <img 
-                              key={i} 
-                              src={src} 
-                              alt="Client" 
-                              loading="eager"
-                              className="w-8 h-8 rounded-full border-2 border-white object-cover" 
+                           <img
+                             key={i}
+                             src={src}
+                             alt="Client"
+                             width={32}
+                             height={32}
+                             loading="lazy"
+                             decoding="async"
+                             className="w-8 h-8 rounded-full border-2 border-white object-cover"
                            />
                          ))}
                     </div>
@@ -710,5 +733,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
 

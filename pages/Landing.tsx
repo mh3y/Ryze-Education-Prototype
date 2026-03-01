@@ -521,15 +521,17 @@ const Landing: React.FC = () => {
       }
     ];
     
-    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto';
-    const heroImageId = 'image-v1_vv46di';
+    const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+    const heroImageId = 'ryze/images/image-v1';
     const heroImageSrc = `${heroImageBase},w_768/${heroImageId}`;
     const heroImageSrcSet = [
+      `${heroImageBase},w_360/${heroImageId} 360w`,
       `${heroImageBase},w_480/${heroImageId} 480w`,
       `${heroImageBase},w_640/${heroImageId} 640w`,
       `${heroImageBase},w_768/${heroImageId} 768w`,
       `${heroImageBase},w_960/${heroImageId} 960w`,
       `${heroImageBase},w_1200/${heroImageId} 1200w`,
+      `${heroImageBase},w_1280/${heroImageId} 1280w`,
     ].join(', ');
     const consultationImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,dpr_auto';
     const consultationImageId = 'v1769561936/online_xnzlfr';
@@ -551,9 +553,7 @@ const Landing: React.FC = () => {
             <img
               src={heroImageSrc}
               srcSet={heroImageSrcSet}
-              sizes="(max-width: 767px) 100vw, 1200px"
-              width={1200}
-              height={800}
+              sizes="(max-width: 768px) 100vw, 1200px"
               alt="HSC Maths tutoring - Ryze Education"
               fetchPriority="high"
               loading="eager"
