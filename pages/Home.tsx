@@ -6,6 +6,7 @@ import { Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, A
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 
 declare global {
   interface Window {
@@ -39,7 +40,27 @@ const ScrollingColumn = ({ children, direction = "up", speed = 20 }: React.Props
 };
 
 // Optimized Card with smooth scaling and LCP support
-const Card = ({ image, title, tag, priority = false }: { image: string, title: string, tag: string, priority?: boolean }) => (
+type CardImageSource = {
+  src: string;
+  srcSet: string;
+  sizes: string;
+  width: number;
+  height: number;
+};
+
+const Card = ({
+  image,
+  title,
+  tag,
+  priority = false,
+  fetchPriority = 'auto',
+}: {
+  image: CardImageSource;
+  title: string;
+  tag: string;
+  priority?: boolean;
+  fetchPriority?: 'high' | 'low' | 'auto';
+}) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
     transition={{ duration: 0.3 }}
@@ -47,9 +68,14 @@ const Card = ({ image, title, tag, priority = false }: { image: string, title: s
     style={{ willChange: 'transform' }}
   >
     <img 
-      src={image} 
+      src={image.src}
+      srcSet={image.srcSet}
+      sizes={image.sizes}
+      width={image.width}
+      height={image.height}
       alt={title} 
       loading={priority ? "eager" : "lazy"}
+      fetchPriority={fetchPriority}
       decoding="async"
       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
     />
@@ -180,6 +206,25 @@ const Home: React.FC = () => {
     "You are not a number"
   ];
 
+  const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
+  const buildMarketingCardImage = (sourceUrl: string) =>
+    responsiveCloudinaryImage(sourceUrl, {
+      widths: [320, 480, 640],
+      aspectRatio: [3, 4],
+      sizes: marketingCardSizes,
+      crop: 'fill',
+      gravity: 'auto',
+    });
+
+  const marketingCardImages = {
+    ocSelectiveExam: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised'),
+    smallGroupFocus: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4'),
+    nswAccreditedTeachers: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2'),
+    hscExcellence: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4'),
+    hybridLearning: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4'),
+    distinguishedMentors: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon'),
+  };
+
   const team = [
     {
       id: "mike-nojiri",
@@ -293,32 +338,33 @@ const Home: React.FC = () => {
                <ScrollingColumn direction="up" speed={50}>
                   {/* OC & Selective Exam Preparation - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised" 
+                    image={marketingCardImages.ocSelectiveExam} 
                     title={t("OC & Selective Exam Preparation")} 
                     tag="Primary" 
-                    priority={true} 
+                    priority={true}
+                    fetchPriority="high" 
                   />
                   
                   {/* Small Group Focus */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4" title={t("Small Group Focus")} tag="Method" />
+                  <Card image={marketingCardImages.smallGroupFocus} title={t("Small Group Focus")} tag="Method" />
                   
                   {/* Personalised Support */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2" title={t("NSW Accredited Teachers")} tag="Experienced" />
+                  <Card image={marketingCardImages.nswAccreditedTeachers} title={t("NSW Accredited Teachers")} tag="Experienced" />
                </ScrollingColumn>
                <ScrollingColumn direction="down" speed={60}>
                   {/* HSC Excellence - Prioritize loading first image */}
                   <Card 
-                    image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4" 
+                    image={marketingCardImages.hscExcellence} 
                     title={t("HSC Excellence")} 
                     tag="Secondary" 
                     priority={true} 
                   />
                   
                   {/* Hybrid Learning */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4" title={t("Hybrid Learning")} tag="Flexibility" />
+                  <Card image={marketingCardImages.hybridLearning} title={t("Hybrid Learning")} tag="Flexibility" />
                   
                   {/* Distinguished Teachers */}
-                  <Card image="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon" title={t("Distinguished Mentors")} tag="Experts" />
+                  <Card image={marketingCardImages.distinguishedMentors} title={t("Distinguished Mentors")} tag="Experts" />
                </ScrollingColumn>
             </div>
           </div>
@@ -618,3 +664,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
