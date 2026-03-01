@@ -65,6 +65,10 @@
   --ryze-motion-vertical-scroll-slow: 38s;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
