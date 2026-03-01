@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '../../src/utils/cn';
 
 type SectionVariant = 'default' | 'tint' | 'gradient' | 'dark';
 
@@ -9,10 +10,10 @@ type SectionProps = React.HTMLAttributes<HTMLElement> & {
 };
 
 const variantClasses: Record<SectionVariant, string> = {
-  default: 'bg-bg text-text',
-  tint: 'bg-surface text-text',
-  gradient: 'bg-gradient-to-b from-primary/10 via-bg to-bg text-text',
-  dark: 'bg-primary text-primary-foreground',
+  default: 'bg-[var(--bg)] text-[var(--text)]',
+  tint: 'bg-[var(--surface)] text-[var(--text)]',
+  gradient: 'bg-[linear-gradient(180deg,var(--surface)_0%,var(--bg)_55%,var(--bg)_100%)] text-[var(--text)]',
+  dark: 'bg-[var(--primary)] text-[var(--primary-foreground)] [color-scheme:dark] selection:bg-[var(--accent)] selection:text-[var(--accent-foreground)]',
 };
 
 const Section: React.FC<SectionProps> = ({
@@ -27,7 +28,7 @@ const Section: React.FC<SectionProps> = ({
   const spacingClass = compact ? 'py-12 md:py-16' : 'py-16 md:py-24';
 
   return (
-    <Tag className={`relative ${spacingClass} ${variantClasses[variant]} ${className}`.trim()} {...props}>
+    <Tag className={cn('relative', spacingClass, variantClasses[variant], className)} {...props}>
       {children}
     </Tag>
   );
