@@ -216,7 +216,7 @@ const Home: React.FC = () => {
   const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
     responsiveCloudinaryImage(sourceUrl, {
-      widths: [320, 480, 640],
+      widths: [320, 360, 420, 480],
       aspectRatio: [3, 4],
       sizes: marketingCardSizes,
       crop: 'fill',
@@ -232,6 +232,16 @@ const Home: React.FC = () => {
     distinguishedMentors: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon'),
   };
 
+  const teamCardSizes = '(max-width: 768px) 88vw, (max-width: 1280px) 33vw, 410px';
+  const buildTeamCardImage = (sourceUrl: string) =>
+    responsiveCloudinaryImage(sourceUrl, {
+      widths: [320, 410, 512, 640],
+      aspectRatio: [4, 5],
+      sizes: teamCardSizes,
+      crop: 'fill',
+      gravity: 'auto',
+    });
+
   const team = [
     {
       id: "mike-nojiri",
@@ -240,6 +250,7 @@ const Home: React.FC = () => {
       atar: "99.25",
       scores: ["98 Maths Ext 2", "|", "99 Maths Ext 1", "99 Maths Advanced (Accelerated)"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg"),
       fallback: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -249,6 +260,7 @@ const Home: React.FC = () => {
       atar: "99.50",
       scores: ["99 Maths Ext 2", "|", "97 Maths Ext 1", "|", "97 Physics", "94 Chemistry"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg"),
       fallback: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -258,9 +270,10 @@ const Home: React.FC = () => {
       atar: "99.55",
       scores: ["98 Maths Ext 2", "|", "98 Maths Ext 1", "|", "97 Physics", "96 Chemistry"],
       image: "https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg",
+      imageOptimized: buildTeamCardImage("https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg"),
       fallback: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
-  ];    
+  ];
 
   return (
     <div className="w-full font-sans overflow-hidden bg-slate-50">
@@ -445,8 +458,16 @@ const Home: React.FC = () => {
                  )}
 
                  <img
-                   src={member.image}
-                   onError={(e) => { e.currentTarget.src = member.fallback }}
+                   src={member.imageOptimized.src}
+                   srcSet={member.imageOptimized.srcSet}
+                   sizes={member.imageOptimized.sizes}
+                   width={member.imageOptimized.width}
+                   height={member.imageOptimized.height}
+                   onError={(e) => {
+                     e.currentTarget.removeAttribute('srcset');
+                     e.currentTarget.removeAttribute('sizes');
+                     e.currentTarget.src = member.fallback;
+                   }}
                    alt={member.name}
                    loading="lazy"
                    decoding="async"
@@ -671,5 +692,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
 
