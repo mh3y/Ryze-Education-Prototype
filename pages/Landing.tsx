@@ -11,7 +11,9 @@ import {
   Star,
   Users,
 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import PrimaryCTA from '../components/PrimaryCTA';
+import TrustStrip, { TrustStripItem } from '../components/TrustStrip';
 import { trackEvent } from '../src/analytics';
 import { testimonials } from '../data/testimonials';
 
@@ -28,12 +30,12 @@ const heroImageSrcSet = [
   `${heroImageBase},w_1280/${heroImageId} 1280w`,
 ].join(', ');
 
-const trustItems = [
-  'Sydney-based specialist maths tutors',
-  'Small groups and 1:1 support available',
-  'Aligned to NESA and HSC outcomes',
-  'Weekly feedback for students and parents',
-  'Advanced, Ext 1, and Ext 2 pathways',
+const trustItems: TrustStripItem[] = [
+  { icon: ShieldCheck, label: 'Sydney-based specialist maths tutors' },
+  { icon: Users, label: 'Small groups and 1:1 support available' },
+  { icon: BadgeCheck, label: 'Aligned to NESA and HSC outcomes' },
+  { icon: CalendarCheck2, label: 'Weekly feedback for students and parents' },
+  { icon: BookOpenCheck, label: 'Advanced, Ext 1, and Ext 2 pathways' },
 ];
 
 const howItWorksSteps = [
@@ -73,6 +75,7 @@ const defaultForm: FormState = {
 };
 
 const Landing: React.FC = () => {
+  const location = useLocation();
   const [formData, setFormData] = useState<FormState>(defaultForm);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
@@ -81,6 +84,24 @@ const Landing: React.FC = () => {
     if (hsc.length === 3) return hsc;
     return testimonials.slice(0, 3);
   }, []);
+
+  const landingVariant = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const offer = (params.get('offer') || '').toLowerCase();
+    const utmCampaign = (params.get('utm_campaign') || '').toLowerCase();
+    const isExt2Focus = offer.includes('ext2') || utmCampaign.includes('ext2');
+    const isHscFocus = offer.includes('hsc') || utmCampaign.includes('hsc') || isExt2Focus;
+
+    return {
+      isExt2Focus,
+      isHscFocus,
+      subheading: isExt2Focus
+        ? 'Extension 2-focused strategy, proof depth, and exam execution for top-band performance.'
+        : isHscFocus
+          ? 'HSC Advanced and Extension strategy built for cleaner exam work and stronger marks.'
+          : 'Structured support for Advanced, Extension 1, and Extension 2 students who want stronger marks, cleaner exam technique, and confident performance in trials and the HSC.',
+    };
+  }, [location.search]);
 
   useEffect(() => {
     document.title = 'HSC Maths Tutoring Sydney | Advanced, Ext 1, Ext 2 | Ryze Education';
@@ -183,16 +204,19 @@ const Landing: React.FC = () => {
             <h1 className="text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
               HSC Maths Tutoring That Turns Potential Into Results
             </h1>
-            <p className="text-base leading-relaxed text-slate-200 sm:text-lg">
-              Structured support for Advanced, Extension 1, and Extension 2 students who want stronger marks,
-              cleaner exam technique, and confident performance in trials and the HSC.
-            </p>
+            <p className="text-base leading-relaxed text-slate-200 sm:text-lg">{landingVariant.subheading}</p>
 
             <ul className="grid gap-2 text-sm text-slate-100 sm:grid-cols-3">
               <li className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-ryze" />Small groups</li>
               <li className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-ryze" />Exam-focused</li>
               <li className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-ryze" />Weekly feedback</li>
             </ul>
+
+            {landingVariant.isHscFocus && (
+              <p className="inline-flex items-center gap-2 rounded-full border border-ryze/40 bg-ryze/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ryze-100">
+                Offer matched: HSC Maths campaign
+              </p>
+            )}
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <PrimaryCTA
@@ -218,13 +242,7 @@ const Landing: React.FC = () => {
       </section>
 
       <section className="border-b border-slate-200 bg-slate-50 py-8 text-slate-900">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-3 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-5 lg:px-8">
-          {trustItems.map((item) => (
-            <div key={item} className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium shadow-sm">
-              {item}
-            </div>
-          ))}
-        </div>
+        <TrustStrip items={trustItems} />
       </section>
 
       <section className="ryze-section bg-white text-slate-900">
@@ -256,7 +274,14 @@ const Landing: React.FC = () => {
             <h3 className="text-lg font-bold">Who This Is For</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {studentSegments.map((segment) => (
-                <span key={segment} className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+                <span
+                  key={segment}
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                    landingVariant.isExt2Focus && segment.includes('Extension 2')
+                      ? 'border-ryze bg-ryze-50 text-ryze-700'
+                      : 'border-slate-300 bg-white text-slate-700'
+                  }`}
+                >
                   {segment}
                 </span>
               ))}
