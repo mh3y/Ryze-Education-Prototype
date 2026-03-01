@@ -89,3 +89,8 @@ Use `src/utils/cloudinary.ts` `cldUrl()` for consistent delivery defaults:
 - `f_auto`
 - `q_auto`
 - `dpr_auto`
+
+## Performance budget guardrails
+
+- Do not add new blocking third-party scripts in `<head>`.
+- Keep the hero visual as an `<img>` element (not CSS background images) and ensure the hero preload URL matches the hero `src` exactly.

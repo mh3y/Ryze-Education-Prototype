@@ -16,6 +16,7 @@ import PrimaryCTA from '../components/PrimaryCTA';
 import TrustStrip, { TrustStripItem } from '../components/TrustStrip';
 import { trackEvent } from '../src/analytics';
 import { testimonials } from '../data/testimonials';
+import { applySeo } from '../src/utils/seo';
 
 const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
 const heroImageId = 'ryze/images/image-v1';
@@ -104,16 +105,23 @@ const Landing: React.FC = () => {
   }, [location.search]);
 
   useEffect(() => {
-    document.title = 'HSC Maths Tutoring Sydney | Advanced, Ext 1, Ext 2 | Ryze Education';
-
-    let descriptionTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!descriptionTag) {
-      descriptionTag = document.createElement('meta');
-      descriptionTag.name = 'description';
-      document.head.appendChild(descriptionTag);
-    }
-    descriptionTag.content =
-      'High-performance HSC Maths tutoring in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.';
+    applySeo({
+      title: 'HSC Maths Tutoring Sydney | Advanced, Ext 1, Ext 2 | Ryze Education',
+      description:
+        'High-performance HSC Maths tutoring in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.',
+      path: '/hsc-maths-tutoring',
+      ogTitle: 'HSC Maths Tutoring Sydney | Ryze Education',
+      ogDescription:
+        'Targeted HSC Maths programs for Advanced, Extension 1, and Extension 2 with weekly feedback and exam-focused mentoring.',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name: 'Ryze Education',
+        areaServed: 'Sydney',
+        url: `${window.location.origin}/hsc-maths-tutoring`,
+        telephone: '+61 413 885 839',
+      },
+    });
   }, []);
 
   useEffect(() => {

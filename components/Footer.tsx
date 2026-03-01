@@ -4,6 +4,7 @@ import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ROUTES } from '../src/constants/routes';
+import { trackEvent } from '../src/analytics';
 
 declare global {
   interface Window {
@@ -36,6 +37,7 @@ const Footer: React.FC = () => {
   const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
 
   const handlePhoneClick = () => {
+    trackEvent('phone_click', { page: 'global_footer', placement: 'footer' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
         send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',

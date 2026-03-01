@@ -9,6 +9,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 import PrimaryCTA from '../components/PrimaryCTA';
 import { ROUTES } from '../src/constants/routes';
+import { applySeo } from '../src/utils/seo';
+import { trackEvent } from '../src/analytics';
 
 const HOME_HERO_IMAGE_BASE =
   'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
@@ -153,11 +155,33 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    applySeo({
+      title: 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert',
+      description:
+        'Premium small-group tutoring in Sydney for HSC Maths, Extension 1, and Extension 2. Expert mentoring with measurable progress.',
+      path: ROUTES.HOME,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'EducationOrganization',
+        name: 'Ryze Education',
+        url: `${window.location.origin}${ROUTES.HOME}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Sydney',
+          addressRegion: 'NSW',
+          addressCountry: 'AU',
+        },
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     // Defer non-critical hover effects CSS off initial render-blocking path.
     void import('../src/styles/custom-hovers.css');
   }, []);
 
   const handlePhoneClick = () => {
+    trackEvent('phone_click', { page: 'home', placement: 'home_bottom_cta' });
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
         'send_to': 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
