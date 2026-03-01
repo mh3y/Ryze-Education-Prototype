@@ -1,7 +1,22 @@
-type ClassValue = string | false | null | undefined;
+type ClassValue = string | false | null | undefined | ClassValue[];
 
-export const cn = (...classes: ClassValue[]): string => {
-  return classes.filter(Boolean).join(' ');
+const flattenClassValues = (classes: ClassValue[]): string[] => {
+  const flattened: string[] = [];
+
+  for (const value of classes) {
+    if (!value) continue;
+
+    if (Array.isArray(value)) {
+      flattened.push(...flattenClassValues(value));
+      continue;
+    }
+
+    flattened.push(value);
+  }
+
+  return flattened;
 };
 
-export default cn;
+export const cn = (...classes: ClassValue[]): string => {
+  return flattenClassValues(classes).join(' ');
+};
