@@ -17,6 +17,7 @@ const Navbar: React.FC = () => {
   const { language, t } = useLanguage();
   const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
   const bookConsultationLabel = 'Book Consultation';
+  const enrolNowLabel = 'Enrol Now';
   const darkTopBlendRoutes = ['/', '/ryze-ai', '/contact', '/learning-style'];
 
   // Scroll locking for mobile menu
@@ -60,14 +61,14 @@ const Navbar: React.FC = () => {
   // --- DYNAMIC STYLING ---
 
   // Double transition: blend at top, become solid after scroll or when menu opens.
-  const navClasses = `fixed top-3 left-0 w-full z-50 px-3 sm:px-4 transition-all duration-300 border-b ${
+  const navClasses = `fixed top-0 left-0 w-full z-50 px-3 sm:px-4 pt-[max(env(safe-area-inset-top),0.35rem)] transition-all duration-300 border-b ${
     isScrolled || isOpen
-      ? 'bg-white/95 backdrop-blur-md border-[#E4E8EE] py-2.5 rounded-2xl shadow-[0_8px_24px_-18px_rgba(15,23,42,0.35)]'
+      ? 'bg-[#F4F7FB]/92 backdrop-blur-md border-[#DCE3ED] py-2 rounded-2xl shadow-[0_8px_24px_-18px_rgba(15,23,42,0.28)]'
       : 'bg-transparent border-transparent py-3 rounded-2xl'
   }`;
   const isSolidNav = isScrolled || isOpen;
   const useLightTopText = !isSolidNav && darkTopBlendRoutes.includes(pathname);
-  const logoClasses = `h-10 md:h-16 w-auto transition duration-200 group-hover:scale-105 ${
+  const logoClasses = `mt-1 h-10 md:h-16 w-auto transition duration-200 group-hover:scale-105 ${
     useLightTopText ? 'brightness-0 invert drop-shadow-[0_1px_0_rgba(0,0,0,0.2)]' : 'drop-shadow-[0_1px_0_rgba(0,0,0,0.12)] contrast-110'
   }`;
   const zapBadgeClass = `flex items-center justify-center w-5 h-5 rounded-full ${
@@ -109,6 +110,11 @@ const Navbar: React.FC = () => {
         ? 'text-white hover:bg-white/10'
         : 'hover:bg-black/5'
   }`;
+  const mobileInlineCtaClasses = `inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold tracking-[0.02em] transition-all duration-200 ${
+    isSolidNav
+      ? 'bg-transparent text-[#B87400] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10'
+      : 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16'
+  }`;
 
   // --- ANIMATION VARIANTS ---
   const accordionVariants: Variants = {
@@ -124,7 +130,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-6">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between relative">
           <div className="flex-shrink-0 cursor-pointer group z-50" onClick={() => { setIsOpen(false); navigate('/'); }}>
             <img
               src={brandLogoUrl}
@@ -202,7 +208,19 @@ const Navbar: React.FC = () => {
             </button>
           </div>
 
-          <div className="md:hidden flex items-center gap-4 z-50">
+          <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 z-50">
+            {isScrolled && !isOpen && (
+              <button
+                onClick={() => {
+                  trackPrimaryCtaClick('nav', 'nav_mobile_scroll_inline');
+                  navigate('/contact');
+                }}
+                className={mobileInlineCtaClasses}
+                aria-label="Enrol now"
+              >
+                <span>{enrolNowLabel}</span>
+              </button>
+            )}
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
