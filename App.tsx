@@ -14,7 +14,6 @@ import HscMathsTutoring from './pages/HscMathsTutoring';
 import MathsTutoring from './pages/MathsTutoring';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
-import StickyMobileCTA from './components/StickyMobileCTA';
 
 // Lazy load portal and heavy pages to keep the marketing bundle lean.
 const PortalHome = lazy(() => import('./pages/PortalHome'));
@@ -108,8 +107,6 @@ const AppContent: React.FC = () => {
   const isHscLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_TUTORING;
   const isMathsLanding = location.pathname.toLowerCase() === ROUTES.MATHS_TUTORING;
   const isLanding = isHscLanding || isMathsLanding;
-  const isHome = location.pathname === ROUTES.HOME;
-  const showStickyPrimaryCta = isHome || isHscLanding;
 
   // Routes that share the "Portal" aesthetic (Starfield background)
   // We include Dashboard here to keep the background persistent when logging in
@@ -212,12 +209,6 @@ const AppContent: React.FC = () => {
           </Routes>
         </AnimatePresence>
       </main>
-      {showStickyPrimaryCta && (
-        <StickyMobileCTA
-          page={isHome ? 'home' : 'hsc_landing'}
-          href={ROUTES.CONTACT}
-        />
-      )}
       {!isDashboard && !shouldShowStarfield && !isLanding && <Footer />}
       {/* <CookieConsent /> */}
     </div>
