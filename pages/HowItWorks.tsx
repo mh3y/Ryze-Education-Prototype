@@ -3,8 +3,8 @@ import React from 'react';
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, X, Hand, BarChart3, Search, FileText, BookOpen, TrendingUp, MessageCircle, Target, Users, Laptop, User, Home, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { FadeInSection, InteractiveLift, StaggerGroup } from '../src/components/animation';
 
 const HowItWorks: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const HowItWorks: React.FC = () => {
       </section>
 
       {/* The Real Problem */}
-      <section className="py-24 max-w-6xl mx-auto px-4">
+      <FadeInSection as="section" className="py-24 max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
             <h2 className="text-4xl font-sans font-bold text-slate-900 mb-4">{t("The Real Problem")}</h2>
             <div className="w-20 h-1.5 bg-ryze rounded-full mx-auto"></div>
@@ -68,59 +68,44 @@ const HowItWorks: React.FC = () => {
                </p>
            </div>
         </div>
-      </section>
+      </FadeInSection>
 
       {/* Teaching Philosophy */}
       <section className="py-24 bg-slate-50 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-           <div className="text-center mb-20">
+           <FadeInSection as="div" className="text-center mb-20">
               <h2 className="text-4xl font-sans font-bold text-slate-900 mb-6">{t("Our Teaching Philosophy")}</h2>
               <p className="text-slate-600 max-w-3xl mx-auto text-lg" dangerouslySetInnerHTML={{ __html: t("Ryze Tutoring is built on evidence-based principles developed by <strong>certified NSW teachers.</strong> We don\'t create generic lesson plans. Every course is hand-crafted.") }}>
               </p>
-           </div>
+           </FadeInSection>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+           <StaggerGroup as="div" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" lift>
              {principles.map((p, i) => (
-               // @ts-ignore
-               <motion.div 
-                 key={i} 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: i * 0.1 }}
-                 className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 relative group"
-                >
+               <div key={i} className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 relative group">
                   <div className="w-12 h-1 bg-ryze mb-6 rounded-full group-hover:w-full transition-all duration-500"></div>
                   <h3 className="text-xl font-bold text-slate-900 mb-4">{t(p.title)}</h3>
                   <p className="text-slate-700 leading-relaxed text-sm">{t(p.desc)}</p>
-               </motion.div>
+               </div>
              ))}
-           </div>
+           </StaggerGroup>
         </div>
       </section>
 
       {/* Student Journey Timeline */}
       <section className="py-32 bg-white overflow-hidden">
         <div className="max-w-5xl mx-auto px-4">
-           <div className="text-center mb-24">
+           <FadeInSection as="div" className="text-center mb-24">
              <h2 className="text-4xl font-sans font-bold text-slate-900 mb-4">{t("Your Child's Learning Journey")}</h2>
              <p className="text-slate-700 text-lg">{t("A structured approach to build skills systematically.")}</p>
-           </div>
+           </FadeInSection>
 
            <div className="relative">
               {/* Vertical Line */}
               <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-slate-200 md:-translate-x-1/2"></div>
 
-              <div className="space-y-12">
+              <StaggerGroup as="div" className="space-y-12" lift>
                 {journeySteps.map((step, i) => (
-                  // @ts-ignore
-                  <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className={`flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
-                  >
+                  <div key={i} className={`flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                      <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-16 mb-4 md:mb-0">
                         <div className={`bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow ${i % 2 === 0 ? 'text-left' : 'md:text-right text-left'}`}>
                            <h3 className="text-lg font-bold text-slate-900 mb-2">{t(step.title)}</h3>
@@ -136,15 +121,15 @@ const HowItWorks: React.FC = () => {
                      </div>
 
                      <div className="w-full md:w-1/2"></div>
-                  </motion.div>
+                  </div>
                 ))}
-              </div>
+              </StaggerGroup>
            </div>
         </div>
       </section>
 
       {/* Comparison Table */}
-      <section className="py-24 bg-slate-100 text-white">
+      <FadeInSection as="section" className="py-24 bg-slate-100 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <h2 className="text-4xl font-sans font-bold text-[#ffb000] mb-16 text-center">{t("What Sets Ryze Apart")}</h2>
             
@@ -197,11 +182,11 @@ const HowItWorks: React.FC = () => {
 
             </div>
         </div>
-      </section>
+      </FadeInSection>
 
 
       {/* Why This Matters Section */}
-      <section className="py-24 px-4 bg-white border-t border-slate-100">
+      <FadeInSection as="section" className="py-24 px-4 bg-white border-t border-slate-100">
         <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-sans font-bold text-slate-900 mb-12 text-center">{t("Why This Matters")}</h2>
             
@@ -228,16 +213,18 @@ const HowItWorks: React.FC = () => {
              <div className="bg-ryze/5 border border-ryze/20 p-12 rounded-[3rem] inline-block max-w-4xl w-full">
                 <h4 className="text-2xl font-bold text-slate-900 mb-4">{t("Ready to Get Started?")}</h4>
                 <p className="text-slate-600 mb-8 text-lg max-w-2xl mx-auto">{t("Every student begins with a free consultation and assessment. We'll discuss which format works best for your situation.")}</p>
-                <button 
-                    onClick={() => navigate('/contact')}
-                    className="px-10 py-4 bg-ryze text-white font-bold rounded-full shadow-lg hover:bg-ryze-600 transition-all transform hover:-translate-y-1"
-                >
-                    {t("Book Free Consultation")}
-                </button>
+                <InteractiveLift as="div" className="inline-block">
+                  <button 
+                      onClick={() => navigate('/contact')}
+                      className="px-10 py-4 bg-ryze text-white font-bold rounded-full shadow-lg hover:bg-ryze-600 transition-all"
+                  >
+                      {t("Book Free Consultation")}
+                  </button>
+                </InteractiveLift>
              </div>
           </div>
         </div>
-      </section>
+      </FadeInSection>
     </div>
   );
 };
