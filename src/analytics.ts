@@ -1,3 +1,8 @@
+const GTM_ID = 'GTM-N3VVTQ3W';
+const GA_ID = 'G-7XJFCSB41D';
+const GOOGLE_ADS_ID = 'AW-17763964178';
+const META_PIXEL_ID = '1218919857096197';
+
 export const initAnalytics = () => {
   if (typeof window === 'undefined') return;
   const w = window as any;
@@ -18,8 +23,7 @@ export const initAnalytics = () => {
     fbq.version = '2.0';
     w.fbq = fbq;
     w._fbq = fbq;
-    w.fbq('init', '1218919857096197');
-    w.fbq('track', 'PageView');
+    w.fbq('init', META_PIXEL_ID);
   }
 };
 
@@ -62,16 +66,27 @@ export function initTrackingDeferred() {
     if (w.__gaConfigured) return;
     w.__gaConfigured = true;
     w.gtag('js', new Date());
-    w.gtag('config', 'G-7XJFCSB41D');
-    w.gtag('config', 'AW-17763964178');
+    w.gtag('config', GA_ID, { send_page_view: false });
+    w.gtag('config', GOOGLE_ADS_ID);
   };
 
   const load = () => {
+    if (!document.getElementById('gtm-js')) {
+      w.dataLayer = w.dataLayer || [];
+      w.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+
+      const gtmScript = document.createElement('script');
+      gtmScript.id = 'gtm-js';
+      gtmScript.async = true;
+      gtmScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+      document.head.appendChild(gtmScript);
+    }
+
     if (!document.getElementById('gtag-js')) {
       const gtagScript = document.createElement('script');
       gtagScript.id = 'gtag-js';
       gtagScript.async = true;
-      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-17763964178';
+      gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`;
       gtagScript.onload = configureGaOnce;
       document.head.appendChild(gtagScript);
     } else {
