@@ -76,28 +76,28 @@ const Footer: React.FC = () => {
   const headingColor = isRyzeAi ? 'text-white' : 'text-slate-900';
   const textColor = isRyzeAi ? 'text-slate-400' : 'text-slate-700';
   const linkHoverColor = isRyzeAi ? 'hover:text-[#FFB000]' : 'hover:text-ryze';
-  const cardBg = isRyzeAi ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-100';
+  const cardBg = isRyzeAi ? 'bg-white/5 border-white/10' : 'bg-white border-slate-100';
   const socialBg = isRyzeAi ? 'bg-white/10 text-slate-300 hover:bg-[#FFB000]' : 'bg-slate-50 text-slate-600 hover:bg-ryze';
 
   return (
-    <footer className={`${footerBg} pt-20 pb-10 border-t transition-colors duration-300`}>
+    <footer className={`${footerBg} pt-14 pb-8 border-t transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-10">
           {/* Brand Column */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-4">
             <Link to={ROUTES.HOME} className="block">
               <img
                 src={brandLogoUrl}
                 alt="Ryze Education"
                 width={250}
                 height={64}
-                className="h-16 w-auto mb-4"
+                className="h-14 w-auto mb-2"
               />
             </Link>
             <p className={`${textColor} text-sm leading-relaxed max-w-xs font-medium`}>
               {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
             </p>
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-3 pt-1">
               {socialLinks.map(({ Icon, href, label }, i) => (
                 <a
                   key={i}
@@ -106,9 +106,9 @@ const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   aria-label={label}
                   title={label}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
                 >
-                  <Icon size={18} />
+                  <Icon size={16} />
                 </a>
               ))}
             </div>
@@ -116,8 +116,8 @@ const Footer: React.FC = () => {
 
           {/* Links Columns */}
           <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Company')}</h4>
-            <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
+            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Company')}</h4>
+            <ul className={`space-y-3 text-sm font-medium ${textColor}`}>
               <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
               <li><Link to={ROUTES.HOW_IT_WORKS} className={`${linkHoverColor} transition-colors`}>{t('How It Works')}</Link></li>
               <li><Link to={ROUTES.RYZE_AI} className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t('Ryze AI')} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
@@ -125,8 +125,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
-            <ul className={`space-y-4 text-sm font-medium ${textColor}`}>
+            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
+            <ul className={`space-y-3 text-sm font-medium ${textColor}`}>
               <li><Link to={ROUTES.HOME} className={`${linkHoverColor} transition-colors`}>{t('Home')}</Link></li>
               <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
               <li><Link to={ROUTES.MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('Maths Tutoring')}</Link></li>
@@ -136,25 +136,25 @@ const Footer: React.FC = () => {
 
           {/* Contact Column */}
           <div className="lg:col-span-4">
-            <h4 className={`font-bold mb-6 text-sm uppercase tracking-wider ${headingColor}`}>{t('Contact')}</h4>
-            <div className={`p-6 rounded-2xl border space-y-4 ${cardBg}`}>
+            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Contact')}</h4>
+            <div className={`p-5 rounded-2xl border space-y-3 ${cardBg}`}>
               <div className="flex items-start gap-3">
-                <MapPin size={18} className="text-[#FFB000] shrink-0 mt-1" />
+                <MapPin size={16} className="text-[#FFB000] shrink-0 mt-0.5" />
                 <span className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'}`}>Sydney, NSW Australia</span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone size={18} className="text-[#FFB000] shrink-0" />
+                <Phone size={16} className="text-[#FFB000] shrink-0" />
                 <a href="tel:+61413885839" onClick={handlePhoneClick} className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>+61 413 885 839</a>
               </div>
               <div className="flex items-center gap-3">
-                <Mail size={18} className="text-[#FFB000] shrink-0" />
+                <Mail size={16} className="text-[#FFB000] shrink-0" />
                 <a href="mailto:ryzeeducationgroup@gmail.com" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>ryzeeducationgroup@gmail.com</a>
               </div>
             </div>
           </div>
         </div>
 
-        <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
+        <div className={`border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-3 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
           <p className={`text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-600'}`}>
             © {new Date().getFullYear()} Ryze Education. All rights reserved.
           </p>

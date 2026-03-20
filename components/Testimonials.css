@@ -47,7 +47,7 @@
 .testimonial-track {
   align-items: stretch;
   display: flex;
-  gap: clamp(1rem, 2vw, 2rem);
+  gap: clamp(0.8rem, 1.8vw, 2rem);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -88,9 +88,9 @@
   border-radius: 1.5rem;
   box-shadow: 0 14px 36px -26px rgba(15, 23, 42, 0.45);
   display: flex;
-  flex: 0 0 clamp(300px, 56vw, 460px);
+  flex: 0 0 clamp(248px, 74vw, 460px);
   flex-direction: column;
-  min-height: clamp(300px, 42vw, 380px);
+  min-height: clamp(248px, 38vw, 380px);
   position: relative;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   isolation: isolate;
@@ -267,13 +267,65 @@
 }
 
 @media (max-width: 767px) {
+  .testimonial-marquee-wrapper::before,
+  .testimonial-marquee-wrapper::after {
+    width: 1.25rem;
+  }
+
   .testimonial-card {
-    min-height: 320px;
+    border-radius: 1.25rem;
+    flex-basis: min(78vw, 290px);
+    min-height: 236px;
+    padding: 1rem;
+  }
+
+  .testimonial-card::before {
+    height: 32px;
+    top: 1rem;
+  }
+
+  .testimonial-top-row {
+    gap: 0.6rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .testimonial-track-label,
+  .testimonial-category-pill,
+  .testimonial-verified-label {
+    font-size: 0.58rem;
+  }
+
+  .testimonial-category-pill {
+    padding: 0.28rem 0.5rem;
+  }
+
+  .testimonial-title {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-result {
+    font-size: 0.84rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .testimonial-quote {
+    font-size: 0.84rem;
+    line-height: 1.5;
+    margin-bottom: 0.9rem;
+    -webkit-line-clamp: 5;
+  }
+
+  .testimonial-avatar {
+    font-size: 0.68rem;
+    height: 2rem;
+    width: 2rem;
   }
 
   .testimonial-meta {
     align-items: flex-start;
     flex-direction: column;
+    gap: 0.55rem;
+    padding-top: 0.8rem;
   }
 }
 

@@ -177,23 +177,23 @@ const Testimonials: React.FC = () => {
   const bottomLoopItems = prefersReducedMotion ? bottomPanelTestimonials : [...bottomPanelTestimonials, ...bottomPanelTestimonials];
 
   return (
-    <section className="overflow-hidden bg-[#f9f5ed] py-32 font-sans text-slate-800 sm:py-40">
+    <section className="overflow-hidden bg-[#f9f5ed] py-20 font-sans text-slate-800 sm:py-32 lg:py-40">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-20 text-center">
-          <h2 className="font-sans text-7xl font-bold tracking-tight text-slate-900 md:text-8xl">
+        <div className="mb-14 text-center sm:mb-20">
+          <h2 className="font-sans text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl md:text-8xl">
             5.0 <span className="text-[#ffb000]">{'\u2605\u2605\u2605\u2605\u2605'}</span>
           </h2>
-          <p className="mt-5 text-xl text-slate-700">Based on 250+ happy students and satisfied parents.</p>
+          <p className="mt-4 text-base text-slate-700 sm:mt-5 sm:text-xl">Based on 250+ happy students and satisfied parents.</p>
         </div>
 
-        <div className="mb-32">
-          <p className="text-halo mb-12 text-center text-xl font-bold tracking-widest text-black">
+        <div className="mb-16 sm:mb-24 lg:mb-32">
+          <p className="text-halo mb-8 text-center text-sm font-bold tracking-[0.22em] text-black sm:mb-12 sm:text-xl">
             TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS
           </p>
           <div className="group relative w-full overflow-hidden">
             <div className="school-logos-marquee">
               {loopLogos.map((school, index) => (
-                <div key={`${school.alt}-${index}`} className="mx-8 flex h-[80px] w-[200px] flex-shrink-0 items-center justify-center">
+                <div key={`${school.alt}-${index}`} className="mx-4 flex h-[58px] w-[132px] flex-shrink-0 items-center justify-center sm:mx-6 sm:h-[72px] sm:w-[180px] md:mx-8 md:h-[80px] md:w-[200px]">
                   <img
                     src={optimizeCloudinaryImage(school.src, 220, 80)}
                     alt={school.alt}
@@ -210,7 +210,7 @@ const Testimonials: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         <div className="testimonial-marquee-wrapper" tabIndex={0} aria-label="Senior student testimonials">
           <ul
             className="testimonial-track testimonial-track--forward"

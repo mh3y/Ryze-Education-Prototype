@@ -101,17 +101,15 @@ const LearningStyle: React.FC = () => {
       exit="exit"
       variants={pageVariants}
     >
-    <div className="font-sans">
-      <div className="fixed inset-0 bg-white -z-10" />
-      {/* Content Layer */}
-        <div className="pt-40 pb-24 px-4 relative overflow-hidden">
+    <div className="font-sans bg-white">
+        <div className="relative isolate overflow-hidden px-4 pb-24 pt-40">
         <div
-          className="absolute inset-0 bg-cover bg-center -z-10"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,dpr_auto/ryze/images/online')` }}
         />
-        <div className="absolute inset-0 bg-black/60 -z-10" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-slate-50 to-transparent opacity-50 rounded-full blur-3xl -z-10"></div>
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-slate-50 to-transparent opacity-50 rounded-full blur-3xl"></div>
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-white tracking-tight">Choose Your Learning Style</h1>
             <p className="text-xl text-white max-w-3xl mx-auto font-light leading-relaxed">
             Find the perfect learning environment for your goals. We offer both collaborative group sessions and personalised one-on-one mentorship.
@@ -121,21 +119,21 @@ const LearningStyle: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-20">
           <div className="flex flex-col lg:flex-row gap-10 justify-center items-stretch">
-            <div className="w-full lg:w-1/2 bg-[#2a2021] text-white p-8 rounded-3xl border border-amber-800/50 shadow-2xl shadow-amber-900/20 flex flex-col relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-amber-900/40 via-transparent to-transparent"></div>
+            <div className="w-full lg:w-1/2 bg-[#2a2021] text-white p-8 rounded-3xl border border-[#FFB000]/45 shadow-2xl shadow-[#FFB000]/15 flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#FFB000]/30 via-transparent to-transparent"></div>
               <div className="relative z-10 flex-grow flex flex-col">
                 <div className="flex justify-between items-start mb-6">
-                  <div className="bg-amber-500 text-white text-s font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">Best Value</div>
+                  <div className="bg-[#FFB000] text-white text-s font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">Best Value</div>
                 </div>
                 <div className="text-center my-6">
-                  <div className="inline-block p-5 bg-amber-800/30 rounded-2xl mb-6 border border-amber-700/50">
-                    <FaUsers className="text-4xl text-amber-300" />
+                  <div className="inline-block p-5 bg-[#FFB000]/18 rounded-2xl mb-6 border border-[#FFB000]/35">
+                    <FaUsers className="text-4xl text-[#FFB000]" />
                   </div>
                   <h2 className="text-4xl font-bold text-white mb-2">Group Tutoring</h2>
-                  <p className="text-lg text-amber-200/80">Collaborative learning with peers</p>
+                  <p className="text-lg text-[#FFF0CC]">Collaborative learning with peers</p>
                 </div>
                 <div className="flex justify-center items-center gap-4 my-4">
-                  <span className="flex items-center gap-2 bg-amber-900/60 text-amber-200 px-4 py-2 rounded-full text-sm font-medium"><FaLaptop /> Online</span>
+                  <span className="flex items-center gap-2 rounded-full border border-[#FFB000]/20 bg-[#FFB000]/18 px-4 py-2 text-sm font-medium text-[#FFF0CC]"><FaLaptop /> Online</span>
                 </div>
                 <div className="space-y-5 mb-10 flex-grow mt-8">
                   <NewFeatureItem title="Cost-effective learning" subtitle="Share costs while maintaining quality" darkTheme={false} />
@@ -143,7 +141,7 @@ const LearningStyle: React.FC = () => {
                   <NewFeatureItem title="Social learning environment" subtitle="Build confidence through group interaction" darkTheme={false} />
                   <NewFeatureItem title="Small group sizes" subtitle="Maximum 6 students for optimal attention" darkTheme={false} />
                 </div>
-                <button onClick={() => handleToggle('group')} className="w-full py-4 rounded-xl font-bold text-lg text-slate-900 bg-amber-500 hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-amber-900/30">Find Out More</button>
+                <button onClick={() => handleToggle('group')} className="w-full py-4 rounded-xl bg-[#FFB000] font-bold text-lg text-slate-900 shadow-lg shadow-[#FFB000]/30 transition-all duration-300 hover:bg-[#FFC133]">Find Out More</button>
               </div>
             </div>
 
@@ -157,7 +155,7 @@ const LearningStyle: React.FC = () => {
                   <motion.div
                     animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 1.5, repeat: Infinity, repeatType: 'loop' }}
-                    className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-400 rounded-full px-4 py-1.5 shadow-lg shadow-orange-500/20"
+                    className="flex items-center gap-2 rounded-full bg-[#FFB000] px-4 py-1.5 shadow-lg shadow-[#FFB000]/20"
                   >
                     <Zap className="w-4 h-4 text-white" />
                     <span className="text-white text-xs font-bold uppercase tracking-wider">Limited Availability</span>
@@ -196,19 +194,19 @@ const LearningStyle: React.FC = () => {
 
           <DiscountsSection />
         </div>
-      </div>
-      <section>
-        <FAQSection />
+        <section className="bg-slate-50 px-4 pb-20">
+          <FAQSection />
         </section>
+      </div>
     </motion.div>
   );
 };
 
 const NewFeatureItem = ({ title, subtitle, darkTheme = true }: { title: string, subtitle: string, darkTheme: boolean }) => (
     <div className="flex items-start gap-3">
-        <CheckCircle className={`w-5 h-5 shrink-0 mt-1 ${darkTheme ? 'text-green-400' : 'text-amber-400'}`} />
+        <CheckCircle className={`w-5 h-5 shrink-0 mt-1 ${darkTheme ? 'text-green-400' : 'text-[#FFB000]'}`} />
         <div>
-            <h4 className={`font-bold ${darkTheme ? 'text-white' : 'text-amber-200/80'}`}>{title}</h4>
+            <h4 className={`font-bold ${darkTheme ? 'text-white' : 'text-[#FFF0CC]'}`}>{title}</h4>
             <p className={`text-sm font-light ${darkTheme ? 'text-slate-400' : 'text-slate-400'}`}>{subtitle}</p>
         </div>
     </div>
@@ -250,8 +248,8 @@ const PrivateTutoringDetails = () => (
     <div className="bg-[#1a1a2e] rounded-2xl p-8 my-12">
         <div className="flex flex-col sm:flex-row items-center gap-8">
             <div>
-                <span className="inline-block bg-gray-800 border border-amber-400 rounded-lg px-6 py-2">
-                    <span className="text-amber-400 font-bold tracking-widest text-sm">PREMIUM</span>
+                <span className="inline-block bg-gray-800 border border-[#FFB000] rounded-lg px-6 py-2">
+                    <span className="text-[#FFB000] font-bold tracking-widest text-sm">PREMIUM</span>
                 </span>
             </div>
             <div className="border-l-2 border-slate-700 pl-8">
@@ -304,21 +302,21 @@ const GroupTutoringDetails = () => (
       <h2 className="text-4xl font-bold text-slate-900 text-center mb-12 tracking-tight">How Our Group Tutoring Works</h2>
       <div className="grid md:grid-cols-2 gap-10">
           <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>What Makes Us Special</h3>
-              <SpecialFeatureCard icon={<FaComments className="text-amber-500 w-7 h-7" />} title="Collaborative Learning Environment" text="Learn with peers, share ideas, and gain multiple perspectives on concepts." color="#F59E0B" />
-              <SpecialFeatureCard icon={<FaDollarSign className="text-amber-500 w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and personalised attention." color="#F59E0B" />
-              <SpecialFeatureCard icon={<FaBrain className="text-amber-500 w-7 h-7" />} title="Motivation & Accountability" text="Stay motivated with study partners and build lasting friendships." color="#F59E0B" />
+              <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-[#FFB000] text-3xl mr-3">•</span>What Makes Us Special</h3>
+              <SpecialFeatureCard icon={<FaComments className="text-[#FFB000] w-7 h-7" />} title="Collaborative Learning Environment" text="Learn with peers, share ideas, and gain multiple perspectives on concepts." color="#FFB000" />
+              <SpecialFeatureCard icon={<FaDollarSign className="text-[#FFB000] w-7 h-7" />} title="Excellent Value for Money" text="Share costs while getting quality and personalised attention." color="#FFB000" />
+              <SpecialFeatureCard icon={<FaBrain className="text-[#FFB000] w-7 h-7" />} title="Motivation & Accountability" text="Stay motivated with study partners and build lasting friendships." color="#FFB000" />
           </div>
           <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-amber-500 text-3xl mr-3">•</span>Our Group Structure</h3>
-              <StructureCard icon={<Users className="text-amber-500 w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for personalised attention", "Everyone gets to participate actively"]} color="#F59E0B" />
-              <StructureCard icon={<Clock className="text-amber-500 w-7 h-7" />} title="Extended Sessions" subtitle="120-minute focused learning blocks" features={["More time for deep understanding", "Theory instruction combined with practice questions"]} color="#F59E0B" />
+              <h3 className="text-2xl font-bold text-slate-800 flex items-center"><span className="text-[#FFB000] text-3xl mr-3">•</span>Our Group Structure</h3>
+              <StructureCard icon={<Users className="text-[#FFB000] w-7 h-7" />} title="Small Group Sizes" subtitle="Maximum 4-6 students per group" features={["Optimal size for personalised attention", "Everyone gets to participate actively"]} color="#FFB000" />
+              <StructureCard icon={<Clock className="text-[#FFB000] w-7 h-7" />} title="Extended Sessions" subtitle="120-minute focused learning blocks" features={["More time for deep understanding", "Theory instruction combined with practice questions"]} color="#FFB000" />
           </div>
       </div>
       <div className="text-center mt-16">
         <h3 className="text-2xl font-bold text-slate-800 mb-4">Ready to Join a Learning Community?</h3>
         <Link to="/contact">
-          <button className="bg-amber-500 text-slate-900 font-bold py-4 px-8 rounded-xl hover:bg-amber-600 transition-all">Book Group Tutoring</button>
+          <button className="bg-[#FFB000] text-slate-900 font-bold py-4 px-8 rounded-xl transition-all hover:bg-[#FFC133]">Book Group Tutoring</button>
         </Link>
       </div>
     </div>
@@ -338,7 +336,7 @@ const DiscountsSection = () => (
           </div>
           <ul className="space-y-4">
             <EarlyEnrolmentItem percentage="7.5%" dateString="before Jan 31, 2025" />
-            <EarlyEnrolmentItem percentage="5%" dateString="before Feb 31, 2026" />
+            <EarlyEnrolmentItem percentage="5%" dateString="before Feb 28, 2026" />
           </ul>
         </div>
         <div className="bg-white/70 p-8 rounded-3xl border border-slate-200 shadow-xl">
@@ -402,7 +400,7 @@ const FAQSection = () => {
                             onClick={() => toggleFAQ(i)}
                         >
                             <h3 className="font-bold text-slate-900 flex items-start gap-3 text-lg">
-                                <HelpCircle size={24} className="text-amber-500 shrink-0 mt-0.5" />
+                                <HelpCircle size={24} className="text-[#FFB000] shrink-0 mt-0.5" />
                                 {faq.q}
                             </h3>
                             <motion.div

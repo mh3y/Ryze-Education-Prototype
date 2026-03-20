@@ -110,7 +110,7 @@ const MeetTheTeam: React.FC = () => {
                     {member.scores && member.scores.length > 0 && (
                       <div className="mb-6">
                         <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
-                          <h4 className="text-xl font-bold text-amber-700 mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                          <h4 className="text-xl font-bold text-[#FFB000] mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
                           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                             {member.scores.map((score, i) => (
                               <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
@@ -128,11 +128,11 @@ const MeetTheTeam: React.FC = () => {
                           <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
                             <div 
                               style={{ willChange: 'transform' }}
-                              className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                              className="bg-black/50 backdrop-blur-xl border border-[#FFB000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-[#FFB000]/40"
                             >
                               <div className="p-3 md:p-4 text-center text-white">
                                   <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
-                                      <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
+                                      <Star className="text-[#FFB000] w-5 h-5" fill="currentColor" />
                                       <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
                                   </div>
                                   <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
@@ -154,7 +154,7 @@ const MeetTheTeam: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                         <div className="absolute bottom-0 left-0 p-8 text-white w-full">
                            <h3 className="text-4xl font-bold font-sans mb-2 tracking-tight">{t(member.name)}</h3>
-                           <p className="text-amber-700 font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
+                           <p className="text-[#FFB000] font-bold uppercase tracking-widest text-sm">{t(member.role)}</p>
                         </div>
                       </div>
                     </div>
@@ -163,12 +163,12 @@ const MeetTheTeam: React.FC = () => {
                   <div className="w-full lg:w-7/12 space-y-10">
                     {member.id === 'michael-yang' ? (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                        <h4 className="text-amber-700 font-bold mb-6 uppercase tracking-widest text-2xl">Words from the Founder</h4>
+                        <h4 className="text-[#FFB000] font-bold mb-6 uppercase tracking-widest text-2xl">Words from the Founder</h4>
                         <p className="text-lg text-slate-600 leading-relaxed font-light whitespace-pre-line">{member.wordsFromFounder}</p>
                       </div>
                     ) : (
                       <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                       <h4 className="text-amber-700 font-bold mb-6 uppercase tracking-widest text-lg">{t("Credentials")}</h4>
+                       <h4 className="text-[#FFB000] font-bold mb-6 uppercase tracking-widest text-lg">{t("Credentials")}</h4>
                        <ul className="flex flex-wrap gap-3">
                          {member.creds.map((cred, i) => (
                            <li key={i} className="inline-flex items-center px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-medium">

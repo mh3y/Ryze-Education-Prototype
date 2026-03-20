@@ -64,7 +64,7 @@ const Card = ({
   priority?: boolean;
   fetchPriority?: 'high' | 'low' | 'auto';
 }) => (
-  <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-slate-100 shadow-lg transform-gpu">
+  <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-[1.5rem] border border-slate-100 shadow-lg transform-gpu sm:rounded-3xl">
     <img
       src={image.src}
       srcSet={image.srcSet}
@@ -78,11 +78,11 @@ const Card = ({
       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90"></div>
-    <div className="absolute left-4 top-4">
-      <span className="rounded-full border border-white/80 bg-[#FFB000] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white backdrop-blur-md">{tag}</span>
+    <div className="absolute left-3 top-3 sm:left-4 sm:top-4">
+      <span className="rounded-full border border-white/80 bg-[#FFB000] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wide text-white backdrop-blur-md sm:px-3 sm:text-xs">{tag}</span>
     </div>
-    <div className="absolute bottom-0 left-0 translate-y-2 p-6 transition-transform duration-300 group-hover:translate-y-0">
-      <h3 className="mb-2 text-xl font-bold leading-tight text-white">{title}</h3>
+    <div className="absolute bottom-0 left-0 translate-y-2 p-4 transition-transform duration-300 group-hover:translate-y-0 sm:p-6">
+      <h3 className="mb-2 text-base font-bold leading-tight text-white sm:text-xl">{title}</h3>
       <div className="h-1 w-12 rounded-full bg-ryze opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
     </div>
   </div>
@@ -144,7 +144,7 @@ const Home: React.FC = () => {
     if (shouldLoadDeferred || typeof window === 'undefined') return;
 
     let idleId: number | null = null;
-    let timeoutId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const triggerLoad = () => setShouldLoadDeferred(true);
 
     const observer =
@@ -166,7 +166,7 @@ const Home: React.FC = () => {
     if ('requestIdleCallback' in window) {
       idleId = (window as any).requestIdleCallback(triggerLoad, { timeout: 2500 });
     } else {
-      timeoutId = window.setTimeout(triggerLoad, 1800);
+      timeoutId = setTimeout(triggerLoad, 1800);
     }
 
     return () => {
@@ -175,7 +175,7 @@ const Home: React.FC = () => {
         (window as any).cancelIdleCallback(idleId);
       }
       if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
       }
     };
   }, [shouldLoadDeferred]);
@@ -184,7 +184,7 @@ const Home: React.FC = () => {
     ? 'HSC Maths Advanced and Extension tutoring built for high marks, clean exam technique, and real confidence.'
     : t('Think Sharper. Perform Better.');
 
-  const marketingCardSizes = '(max-width: 640px) 88vw, (max-width: 1024px) 42vw, 312px';
+  const marketingCardSizes = '(max-width: 640px) 42vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
     responsiveCloudinaryImage(sourceUrl, {
       widths: [320, 360, 420, 480],
@@ -205,7 +205,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-full overflow-hidden bg-slate-50 font-sans">
-      <section className="relative overflow-hidden rounded-b-[3rem] bg-slate-900 pb-20 pt-32 lg:rounded-b-[5rem] lg:pb-32 lg:pt-48">
+      <section className="relative overflow-hidden bg-slate-900 pb-16 pt-28 md:rounded-b-[3rem] md:pb-20 md:pt-32 lg:rounded-b-[5rem] lg:pb-32 lg:pt-48">
         <picture className="absolute inset-0">
           <img src={HOME_HERO_IMAGE_SRC} srcSet={HOME_HERO_IMAGE_SRC_SET} sizes="100vw" alt="HSC Maths tutoring in Sydney - Ryze Education" fetchPriority="high" loading="eager" decoding="async" className="h-full w-full object-cover" />
         </picture>
@@ -218,27 +218,33 @@ const Home: React.FC = () => {
                   <Sparkles size={14} className="text-ryze" />
                   <span>{t('FOUNDED BY ACCREDITED TEACHERS AND ACADEMIC SCHOLARS')}</span>
                 </div>
-                <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight text-white lg:text-8xl">
+                <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-8xl">
                   {t('Teaching with')} <span className="bg-gradient-to-r from-ryze to-orange-500 bg-clip-text text-transparent">{t('purpose.')}</span> <br />
                   {t('Learning with')} <span className="text-white">{t('clarity.')}</span>
                 </h1>
-                <p className="text-lg font-medium leading-tight tracking-wide text-white lg:text-2xl">{heroSubheading}</p>
+                <p className="text-base font-medium leading-tight tracking-wide text-white sm:text-lg lg:text-2xl">{heroSubheading}</p>
                 {campaignParams.isHscOffer && <p className="inline-flex items-center gap-2 rounded-full border border-ryze/40 bg-ryze/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ryze-100">Message match active: HSC Maths Advanced and Extension</p>}
               </div>
-              <p className="mx-auto max-w-lg text-lg leading-relaxed text-white lg:mx-0">{t('Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.')}</p>
+              <p className="mx-auto max-w-lg text-base leading-relaxed text-white sm:text-lg lg:mx-0">{t('Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.')}</p>
               <div className="flex flex-col items-center gap-6 pt-4 sm:flex-row lg:justify-start">
                 <PrimaryCTA variant="link" href={ROUTES.CONTACT} size="md" label="Enrol Now" page="home" placement="home_hero" className="relative z-0 w-full justify-center whitespace-nowrap !border-[3px] !border-white/80 !bg-white/10 !py-0 !text-lg !font-bold !text-white hover:!bg-white/16 sm:h-16 sm:min-w-[220px] sm:w-auto" />
-                <div className="flex h-16 items-center gap-6 rounded-full border border-slate-100 bg-white/80 px-6 shadow-sm backdrop-blur-sm">
-                  <div className="flex -space-x-3">
+                <div className="flex min-h-[3.75rem] items-center gap-3 rounded-full border border-slate-200 bg-white/92 px-4 py-2 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.45)] backdrop-blur-sm sm:min-h-16 sm:gap-4 sm:px-5">
+                  <div className="flex shrink-0 -space-x-2.5 sm:-space-x-3">
                     {['tes5', 'tes6', 'tes7', 'tes8'].map((name, i) => (
-                      <img key={i} src={`https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/${name}`} alt="" aria-hidden="true" width={32} height={32} loading="lazy" decoding="async" className="h-8 w-8 rounded-full border-2 border-white object-cover" />
+                      <img key={i} src={`https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/${name}`} alt="" aria-hidden="true" width={32} height={32} loading="lazy" decoding="async" className="h-8 w-8 rounded-full border-2 border-white object-cover shadow-sm sm:h-9 sm:w-9" />
                     ))}
                   </div>
-                  <div className="ml-3 text-sm font-bold text-slate-700"><span className="text-ryze">100%</span> {t('Client Satisfaction')}</div>
+                  <div className="min-w-0 border-l border-slate-300 pl-3 sm:pl-4">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-ryze sm:text-base">100%</span>
+                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-slate-400 sm:text-base">RATED</span>
+                    </div>
+                    <span className="mt-0.5 block text-[0.8rem] font-bold leading-tight text-slate-700 sm:text-[0.85rem]">{t('Client Satisfaction')}</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="relative grid h-[clamp(420px,72vh,800px)] grid-cols-2 gap-4 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] md:gap-5">
+            <div className="relative grid h-[260px] grid-cols-2 gap-3 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] sm:h-[320px] md:h-[clamp(420px,72vh,800px)] md:gap-5">
               <ScrollingColumn direction="up" durationVar="var(--ryze-motion-vertical-scroll-slow)" reducedMotion={reduceMotion}>
                 <Card image={marketingCardImages.ocSelectiveExam} title={t('OC & Selective Exam Preparation')} tag="Primary" priority fetchPriority="high" />
                 <Card image={marketingCardImages.smallGroupFocus} title={t('Small Group Focus')} tag="Method" />
