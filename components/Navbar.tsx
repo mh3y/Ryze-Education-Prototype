@@ -15,9 +15,10 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Book Consultation';
+  const bookConsultationLabel = 'Contact Us';
   const enrolNowLabel = 'Enrol Now';
-  const darkTopBlendRoutes = ['/', '/ryze-ai', '/contact', '/learning-style'];
+  const darkTopBlendRoutes = ['/', '/ryze-ai', '/contact'];
+  const lightTopLinkRoutes = ['/', '/ryze-ai', '/contact', '/learning-style'];
 
   // Scroll locking for mobile menu
   useEffect(() => {
@@ -66,9 +67,10 @@ const Navbar: React.FC = () => {
       : 'bg-transparent border-transparent py-3 rounded-2xl'
   }`;
   const isSolidNav = isScrolled || isOpen;
-  const useLightTopText = !isSolidNav && darkTopBlendRoutes.includes(pathname);
+  const useLightTopText = !isSolidNav && lightTopLinkRoutes.includes(pathname);
+  const useLightTopLogo = !isSolidNav && darkTopBlendRoutes.includes(pathname);
   const logoClasses = `mt-1 h-10 md:h-16 w-auto transition duration-200 group-hover:scale-105 ${
-    useLightTopText ? 'brightness-0 invert drop-shadow-[0_1px_0_rgba(0,0,0,0.2)]' : 'drop-shadow-[0_1px_0_rgba(0,0,0,0.12)] contrast-110'
+    useLightTopLogo ? 'brightness-0 invert drop-shadow-[0_1px_0_rgba(0,0,0,0.2)]' : 'drop-shadow-[0_1px_0_rgba(0,0,0,0.12)] contrast-110'
   }`;
   const zapBadgeClass = `flex items-center justify-center w-5 h-5 rounded-full ${
     isSolidNav
@@ -80,22 +82,24 @@ const Navbar: React.FC = () => {
 
   const linkClasses = (isActive: boolean) => {
     if (isActive) {
-      return 'text-[#B87400]';
+      return 'text-[#FFB000]';
     }
-    return useLightTopText ? 'text-white hover:text-[#FFD580]' : 'text-[#1B2430] hover:text-[#B87400]';
+    return useLightTopText ? 'text-white hover:text-[#FFB000]' : 'text-[#1B2430] hover:text-[#FFB000]';
   };
 
   const aboutButtonClasses = () => {
     const isActive = ['/the-ryze-truth', '/how-ryze-works'].includes(pathname);
-    if (isActive) return 'text-[#B87400]';
-    return useLightTopText ? 'text-white hover:text-[#FFD580]' : 'text-[#1B2430] hover:text-[#B87400]';
+    if (isActive) return 'text-[#FFB000]';
+    return useLightTopText ? 'text-white hover:text-[#FFB000]' : 'text-[#1B2430] hover:text-[#FFB000]';
   };
 
   const navDividerClasses = `h-6 w-px mx-3 ${isSolidNav ? 'bg-[#D7DDE4]' : useLightTopText ? 'bg-white/30' : 'bg-[#C5CED8]'}`;
 
   const ctaStateClasses = isSolidNav
-    ? 'bg-transparent text-[#B87400] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10 hover:shadow-[0_12px_26px_-16px_rgba(15,23,42,0.38)] focus-visible:ring-offset-white'
-    : 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16 hover:shadow-[0_14px_30px_-16px_rgba(15,23,42,0.52)] focus-visible:ring-offset-transparent';
+    ? 'bg-transparent text-[#FFB000] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10 hover:shadow-[0_12px_26px_-16px_rgba(15,23,42,0.38)] focus-visible:ring-offset-white'
+    : useLightTopText
+      ? 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16 hover:shadow-[0_14px_30px_-16px_rgba(15,23,42,0.52)] focus-visible:ring-offset-transparent'
+      : 'bg-white text-[#FFB000] border-[3px] border-[#FFB000]/75 backdrop-blur-[10px] shadow-[0_10px_26px_-18px_rgba(15,23,42,0.32)] hover:bg-[#FFF8E5] hover:shadow-[0_14px_30px_-18px_rgba(15,23,42,0.36)] focus-visible:ring-offset-white';
 
   const ctaBaseClasses = `group h-10 px-5 rounded-xl text-sm font-semibold tracking-[0.02em] inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-200 hover:-translate-y-px active:translate-y-0 active:shadow-[0_6px_16px_-12px_rgba(15,23,42,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,176,0,0.5)] focus-visible:ring-offset-2 ${ctaStateClasses}`;
 
@@ -111,7 +115,7 @@ const Navbar: React.FC = () => {
   }`;
   const mobileInlineCtaClasses = `inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold tracking-[0.02em] transition-all duration-200 ${
     isSolidNav
-      ? 'bg-transparent text-[#B87400] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10'
+      ? 'bg-transparent text-[#FFB000] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10'
       : 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16'
   }`;
 
@@ -180,8 +184,6 @@ const Navbar: React.FC = () => {
 
             <NavLink to="/learning-style" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Learning Style')}</NavLink>
 
-            <NavLink to="/contact" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Contact')}</NavLink>
-            
             <div className={navDividerClasses} aria-hidden="true"></div>
 
             <button
@@ -204,7 +206,7 @@ const Navbar: React.FC = () => {
                   navigate('/contact');
                 }}
                 className={mobileInlineCtaClasses}
-                aria-label="Enrol now"
+                aria-label={enrolNowLabel}
               >
                 <span>{enrolNowLabel}</span>
               </button>

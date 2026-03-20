@@ -173,7 +173,7 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
   animation: ryze-marquee-vertical var(--ryze-column-duration, var(--ryze-motion-vertical-scroll-slow)) linear infinite;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
   transform: translate3d(0, 0, 0);
   will-change: transform;
 }

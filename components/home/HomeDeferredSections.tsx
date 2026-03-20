@@ -293,9 +293,7 @@ const HomeDeferredSections: React.FC = () => {
         <Testimonials />
       </Suspense>
 
-      <section className="relative overflow-hidden bg-slate-50 py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,176,0,0.05),transparent_40%)]"></div>
-
+      <section className="relative overflow-hidden bg-white py-32">
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 flex flex-col items-end justify-between gap-6 md:flex-row">
             <div className="max-w-2xl">
@@ -345,11 +343,11 @@ const HomeDeferredSections: React.FC = () => {
                     <div className="absolute left-2 top-2 z-20 md:left-4 md:top-4">
                       <div
                         style={{ willChange: 'transform' }}
-                        className="transform rounded-xl border border-[#ffb000]/75 bg-black/50 shadow-2xl transition-transform duration-300 ease-in-out md:rounded-2xl md:hover:scale-110 md:hover:shadow-amber-400/50 backdrop-blur-xl"
+                        className="transform rounded-xl border border-[#FFB000]/75 bg-black/50 shadow-2xl transition-transform duration-300 ease-in-out backdrop-blur-xl md:rounded-2xl md:hover:scale-110 md:hover:shadow-[#FFB000]/40"
                       >
                         <div className="p-3 text-center text-white md:p-4">
                           <div className="mb-1 flex items-center justify-center gap-1 md:gap-2">
-                            <Star className="h-5 w-5 text-amber-300" fill="currentColor" />
+                            <Star className="h-5 w-5 text-[#FFB000]" fill="currentColor" />
                             <p className="text-xl font-bold uppercase tracking-wider md:text-2xl">ATAR</p>
                           </div>
                           <p className="font-mono text-xl font-bold tracking-tight md:text-2xl">{member.atar}</p>
@@ -391,13 +389,6 @@ const HomeDeferredSections: React.FC = () => {
       </section>
 
       <section className="relative overflow-hidden bg-white px-4 py-24 md:py-32 transform-gpu">
-        <div className="absolute left-0 top-0 h-full w-full overflow-hidden pointer-events-none">
-          <div className="absolute left-[-10%] top-[10%] h-[500px] w-[500px] rounded-full bg-blue-50/50 blur-[100px] transform-gpu" style={{ willChange: 'transform' }}></div>
-          <div className="absolute bottom-[10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-amber-50/50 blur-[100px] transform-gpu" style={{ willChange: 'transform' }}></div>
-        </div>
-
-        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:40px_40px] opacity-30 pointer-events-none"></div>
-
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="mx-auto mb-20 max-w-3xl text-center">
             <h2 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl">{t('What makes Ryze different?')}</h2>
@@ -430,7 +421,7 @@ const HomeDeferredSections: React.FC = () => {
       </section>
 
       <section className="relative overflow-hidden bg-white py-24">
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-full bg-gradient-to-br from-slate-50 to-transparent opacity-50"></div>
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-full bg-white"></div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
@@ -454,7 +445,7 @@ const HomeDeferredSections: React.FC = () => {
                 size="lg"
                 page="home"
                 placement="home_philosophy"
-                className="inline-flex !border-[3px] !border-[#FFB000]/70 !bg-transparent !text-[#B87400] !shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)] !backdrop-blur-[4px] hover:!bg-[#FFB000]/10"
+                className="inline-flex !border-[3px] !border-[#FFB000]/70 !bg-transparent !text-[#FFB000] !shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)] !backdrop-blur-[4px] hover:!bg-[#FFB000]/10"
               />
             </div>
 
@@ -480,22 +471,24 @@ const HomeDeferredSections: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative bg-slate-50 px-4 py-24">
+      <section className="relative bg-white px-0 py-20 sm:px-4 sm:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#FFB000] to-orange-500 shadow-2xl shadow-orange-500/20">
-            <div className="absolute right-0 top-0 h-[600px] w-[600px] translate-x-1/3 -translate-y-1/2 rounded-full bg-white opacity-10 blur-[100px] transform-gpu" style={{ willChange: 'transform' }}></div>
-            <div className="absolute bottom-0 left-0 h-[400px] w-[400px] -translate-x-1/3 translate-y-1/3 rounded-full bg-orange-600 opacity-20 blur-[80px] transform-gpu" style={{ willChange: 'transform' }}></div>
+          <div className="relative overflow-hidden bg-gradient-to-br from-[#FFB000] via-[#FF9D12] to-[#FF7A00] shadow-2xl shadow-[0_24px_60px_-30px_rgba(255,138,0,0.42)] sm:rounded-[3rem]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,237,196,0.18),transparent_32%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,122,0,0.22),transparent_34%)]"></div>
+            <div className="absolute right-0 top-0 h-[600px] w-[600px] translate-x-1/3 -translate-y-1/2 rounded-full bg-white opacity-[0.08] blur-[100px] transform-gpu" style={{ willChange: 'transform' }}></div>
+            <div className="absolute bottom-0 left-0 h-[420px] w-[420px] -translate-x-1/3 translate-y-1/3 rounded-full bg-[#FF8A00] opacity-[0.14] blur-[90px] transform-gpu" style={{ willChange: 'transform' }}></div>
 
-            <div className="relative z-10 grid grid-cols-1 items-center gap-12 p-10 md:p-16 lg:grid-cols-2 lg:gap-20 lg:p-20">
+            <div className="relative z-10 grid grid-cols-1 items-center gap-10 px-5 py-10 sm:p-10 md:p-16 lg:grid-cols-2 lg:gap-20 lg:p-20">
               <div className="space-y-8 text-center lg:text-left">
-                <h2 className="text-4xl font-bold leading-[1.1] tracking-tight text-white md:text-6xl">
+                <h2 className="text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
                   {t('Ready to realise')} <br /> {t('your potential?')}
                 </h2>
-                <p className="mx-auto max-w-lg text-lg font-medium leading-relaxed text-white/90 md:text-xl lg:mx-0">
+                <p className="mx-auto max-w-lg text-lg font-medium leading-relaxed text-white md:text-xl lg:mx-0">
                   {t('Join the students achieving their best with Ryze. Expert tutors, personalised attention, and proven results.')}
                 </p>
 
-                <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+                <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 lg:justify-start">
                   <PrimaryCTA
                     variant="link"
                     href={ROUTES.CONTACT}
@@ -503,14 +496,15 @@ const HomeDeferredSections: React.FC = () => {
                     page="home"
                     placement="home_bottom_cta"
                     label="Book a Free Consultation"
-                    className="w-full sm:w-[228px] !h-[72px] !justify-between !rounded-[36px] !px-6 !py-0 !bg-white/12 !text-[1rem] !font-bold !text-white !border-[3px] !border-white/70 !backdrop-blur-[8px] !shadow-[0_12px_30px_-18px_rgba(15,23,42,0.55)] !transition-all !duration-300 !ease-out hover:-translate-y-[2px] hover:!bg-white/20 hover:!shadow-[0_18px_36px_-18px_rgba(15,23,42,0.65)] active:translate-y-0 active:!shadow-[0_10px_22px_-16px_rgba(15,23,42,0.5)] focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-white/60 focus-visible:!ring-offset-2 focus-visible:!ring-offset-transparent"
+                    icon="calendar_alert"
+                    className="w-full sm:w-[clamp(220px,24vw,244px)] !h-[clamp(64px,7vw,72px)] !justify-between !rounded-[999px] !px-5 sm:!px-6 lg:!px-7 !py-0 !bg-transparent !text-[0.95rem] md:!text-[1rem] !font-bold !leading-tight !text-white !border-[2.5px] md:!border-[3px] !border-white !backdrop-blur-0 !shadow-[0_14px_30px_-18px_rgba(147,63,0,0.32)] !transition-all !duration-300 !ease-out hover:-translate-y-[2px] hover:!bg-white/10 hover:!shadow-[0_18px_36px_-18px_rgba(147,63,0,0.42)] active:translate-y-0 active:!shadow-[0_10px_22px_-16px_rgba(147,63,0,0.28)] focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-white/60 focus-visible:!ring-offset-2 focus-visible:!ring-offset-[#FF980A]"
                   />
                   <a
                     href="tel:+61413885839"
                     onClick={handlePhoneClick}
-                    className="inline-flex h-[72px] w-full items-center justify-center gap-2 rounded-[36px] border-[3px] border-white/70 bg-white/12 px-6 py-0 text-[1rem] font-bold leading-snug text-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.55)] backdrop-blur-[8px] transition-all duration-300 ease-out hover:-translate-y-[2px] hover:bg-white/20 hover:shadow-[0_18px_36px_-18px_rgba(15,23,42,0.65)] active:translate-y-0 active:shadow-[0_10px_22px_-16px_rgba(15,23,42,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:w-[228px]"
+                    className="inline-flex h-[clamp(64px,7vw,72px)] w-full items-center justify-center gap-3 rounded-[999px] border-[2.5px] border-white bg-transparent px-5 py-0 text-[0.95rem] font-bold leading-tight text-white shadow-[0_14px_30px_-18px_rgba(147,63,0,0.32)] backdrop-blur-0 transition-all duration-300 ease-out hover:-translate-y-[2px] hover:bg-white/10 hover:shadow-[0_18px_36px_-18px_rgba(147,63,0,0.42)] active:translate-y-0 active:shadow-[0_10px_22px_-16px_rgba(147,63,0,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FF980A] sm:w-[clamp(220px,24vw,244px)] sm:px-6 md:border-[3px] md:text-[1rem] lg:px-7"
                   >
-                    <Phone size={17} strokeWidth={2.1} />
+                    <Phone className="h-[clamp(1.2rem,2vw,1.75rem)] w-[clamp(1.2rem,2vw,1.75rem)] shrink-0" strokeWidth={2.3} />
                     <span>{t('Give us a call now!')}</span>
                   </a>
                 </div>
@@ -521,10 +515,10 @@ const HomeDeferredSections: React.FC = () => {
                   initial={{ x: 20, opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   viewport={{ once: true }}
-                  className="transform w-full max-w-sm rotate-2 rounded-2xl bg-white/90 p-6 shadow-lg backdrop-blur-md lg:translate-x-8"
+                  className="transform w-full max-w-sm rounded-[1.7rem] bg-white p-6 shadow-[0_24px_50px_-28px_rgba(112,47,0,0.4)]"
                 >
                   <div className="mb-4 flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8F0] text-[#FF9A00] shadow-sm">
                       <MessageCircle size={20} />
                     </div>
                     <div>
@@ -534,11 +528,11 @@ const HomeDeferredSections: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="mb-3 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
-                    &quot;Hi, I&apos;m interested in Year 10 Maths for my son. Do you have spots?&quot;
+                  <div className="mb-3 rounded-[1.35rem] bg-[#F4F7FB] p-3 text-sm text-slate-600">
+                    &quot;Hi, I&apos;m interested in Year 10 Maths for my son. Do you have any availabilities?&quot;
                   </div>
                   <div
-                    className="cursor-pointer text-right text-xs font-bold text-orange-600 hover:underline"
+                    className="cursor-pointer text-right text-xs font-bold text-[#FF7A00] hover:underline"
                     onClick={() => navigate('/contact')}
                   >
                     {t('Send Message ->')}
@@ -550,7 +544,7 @@ const HomeDeferredSections: React.FC = () => {
                   whileInView={{ x: 0, opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="relative z-10 w-full max-w-sm transform rounded-2xl bg-white p-6 shadow-xl lg:-translate-x-4 lg:-rotate-2"
+                  className="relative z-10 w-full max-w-sm transform rounded-[1.7rem] bg-white p-6 shadow-[0_24px_50px_-28px_rgba(112,47,0,0.4)]"
                 >
                   <div className="flex items-center gap-4">
                     <img
@@ -558,7 +552,7 @@ const HomeDeferredSections: React.FC = () => {
                       alt="Michael Yang"
                       width={56}
                       height={56}
-                      className="h-14 w-14 rounded-full border-2 border-orange-100 object-cover"
+                      className="h-14 w-14 rounded-full border-2 border-[#FFF0CC] object-cover"
                     />
                     <div>
                       <div className="text-lg font-bold text-slate-900">Michael Yang</div>
