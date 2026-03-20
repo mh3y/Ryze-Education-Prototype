@@ -227,19 +227,19 @@ const Home: React.FC = () => {
               </div>
               <p className="mx-auto max-w-lg text-base leading-relaxed text-white sm:text-lg lg:mx-0">{t('Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.')}</p>
               <div className="flex flex-col items-center gap-6 pt-4 sm:flex-row lg:justify-start">
-                <PrimaryCTA variant="link" href={ROUTES.CONTACT} size="md" label="Enrol Now" page="home" placement="home_hero" className="relative z-0 w-full justify-center whitespace-nowrap !border-[3px] !border-white/80 !bg-white/10 !py-0 !text-lg !font-bold !text-white hover:!bg-white/16 sm:h-16 sm:min-w-[220px] sm:w-auto" />
-                <div className="flex min-h-[3.75rem] items-center gap-3 rounded-full border border-slate-200 bg-white/92 px-4 py-2 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.45)] backdrop-blur-sm sm:min-h-16 sm:gap-4 sm:px-5">
+                <PrimaryCTA variant="link" href={ROUTES.CONTACT} size="md" label="Enrol Now" page="home" placement="home_hero" className="relative z-0 w-full justify-center whitespace-nowrap !border !border-white/75 !bg-gradient-to-r !from-[#FFB000] !to-[#FF7A00] !py-0 !text-lg !font-bold !text-white hover:!from-[#FFC133] hover:!to-[#FF8C1A] sm:h-16 sm:min-w-[220px] sm:w-auto" />
+                <div className="flex min-h-[3.75rem] items-center gap-3 rounded-full border border-white/70 bg-white/18 px-4 py-2 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.45)] backdrop-blur-md sm:min-h-16 sm:gap-4 sm:px-5">
                   <div className="flex shrink-0 -space-x-2.5 sm:-space-x-3">
                     {['tes5', 'tes6', 'tes7', 'tes8'].map((name, i) => (
                       <img key={i} src={`https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/${name}`} alt="" aria-hidden="true" width={32} height={32} loading="lazy" decoding="async" className="h-8 w-8 rounded-full border-2 border-white object-cover shadow-sm sm:h-9 sm:w-9" />
                     ))}
                   </div>
-                  <div className="min-w-0 border-l border-slate-300 pl-3 sm:pl-4">
+                  <div className="min-w-0 border-l border-white/45 pl-3 sm:pl-4">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-ryze sm:text-base">100%</span>
-                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-slate-400 sm:text-base">RATED</span>
+                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-white/75 sm:text-base">RATED</span>
                     </div>
-                    <span className="mt-0.5 block text-[0.8rem] font-bold leading-tight text-slate-700 sm:text-[0.85rem]">{t('Client Satisfaction')}</span>
+                    <span className="mt-0.5 block text-[0.8rem] font-bold leading-tight text-white sm:text-[0.85rem]">{t('Client Satisfaction')}</span>
                   </div>
                 </div>
               </div>
