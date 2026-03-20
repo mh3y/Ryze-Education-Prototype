@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
@@ -116,17 +115,6 @@ const Navbar: React.FC = () => {
       : 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16'
   }`;
 
-  // --- ANIMATION VARIANTS ---
-  const accordionVariants: Variants = {
-    open: { opacity: 1, height: 'auto', transition: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] } },
-    collapsed: { opacity: 0, height: 0, transition: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] } },
-  };
-
-  const menuVariants: Variants = {
-    closed: { x: '100%', opacity: 0, transition: { type: 'tween', duration: 0.3 } },
-    open: { x: 0, opacity: 1, transition: { type: 'tween', duration: 0.3 } },
-  };
-
   return (
     <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-6">
@@ -232,15 +220,8 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            className="fixed inset-0 top-0 z-40 bg-white h-screen overflow-y-auto"
-          >
+      {isOpen && (
+        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto bg-white transition-transform duration-300 ease-out">
             <div className="pt-24 pb-12 px-6 flex flex-col min-h-screen">
               <div className="flex-grow space-y-6">
                 <div className="border-b border-ryze-line pb-4">
@@ -251,12 +232,8 @@ const Navbar: React.FC = () => {
                     {t('About')}
                     <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-ryze-brand' : 'text-ryze-ink2/40'}`} />
                   </button>
-                  <AnimatePresence>
-                    {mobileAboutOpen && (
-                      <motion.div
-                        initial="collapsed" animate="open" exit="collapsed" variants={accordionVariants}
-                        className="overflow-hidden"
-                      >
+                  {mobileAboutOpen && (
+                      <div className="overflow-hidden">
                         <div className="pl-4 pt-2 space-y-3">
                           {aboutSubLinks.map((link) => (
                             <NavLink
@@ -269,9 +246,8 @@ const Navbar: React.FC = () => {
                             </NavLink>
                           ))}
                         </div>
-                      </motion.div>
+                      </div>
                     )}
-                  </AnimatePresence>
                 </div>
 
                 <NavLink
@@ -322,9 +298,8 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </nav>
   );
 };
