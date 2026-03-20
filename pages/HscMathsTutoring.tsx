@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import PrimaryCTA from '../components/PrimaryCTA';
-import TrustStrip, { TrustStripItem } from '../components/TrustStrip';
 import { Container, DesignCard, Section, StatCard, TestimonialCard, ValueCard } from '../components/design';
 import { trackEvent } from '../src/analytics';
 import { testimonials } from '../data/testimonials';
@@ -31,14 +30,6 @@ const heroImageSrcSet = [
   `${heroImageBase},w_1200/${heroImageId} 1200w`,
   `${heroImageBase},w_1280/${heroImageId} 1280w`,
 ].join(', ');
-
-const trustItems: TrustStripItem[] = [
-  { icon: ShieldCheck, label: 'Sydney-based specialist maths tutors' },
-  { icon: Users, label: 'Small groups and 1:1 support available' },
-  { icon: BadgeCheck, label: 'Aligned to NESA and HSC outcomes' },
-  { icon: CalendarCheck2, label: 'Weekly feedback for students and parents' },
-  { icon: BookOpenCheck, label: 'Advanced, Ext 1, and Ext 2 pathways' },
-];
 
 const howItWorksSteps = [
   {
@@ -67,6 +58,7 @@ type FormState = {
   email: string;
   phone: string;
   studentLevel: string;
+  honey: string;
 };
 
 const defaultForm: FormState = {
@@ -74,12 +66,33 @@ const defaultForm: FormState = {
   email: '',
   phone: '',
   studentLevel: 'Year 12 - Advanced',
+  honey: '',
+};
+
+const validateEmail = (email: string) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.toLowerCase());
+
+const validatePhone = (phone: string) => /^\+?[\d]{8,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
+
+const postMetaConversion = async (payload: Record<string, string>) => {
+  try {
+    await fetch('/api/meta-conversion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    });
+  } catch (error) {
+    console.error('Meta CAPI submission error:', error);
+  }
 };
 
 const HscMathsTutoring: React.FC = () => {
   const location = useLocation();
   const [formData, setFormData] = useState<FormState>(defaultForm);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const featuredTestimonials = useMemo(() => {
     const hsc = testimonials.filter((item) => item.category === 'HSC').slice(0, 3);
@@ -98,10 +111,10 @@ const HscMathsTutoring: React.FC = () => {
       isExt2Focus,
       isHscFocus,
       subheading: isExt2Focus
-        ? 'Extension 2-focused strategy, proof depth, and exam execution for top-band performance.'
+        ? 'Extension 2 mentoring for sharper proofs, better structure, and top-band exam execution.'
         : isHscFocus
-          ? 'HSC Advanced and Extension strategy built for cleaner exam work and stronger marks.'
-          : 'Structured support for Advanced, Extension 1, and Extension 2 students who want stronger marks, cleaner exam technique, and confident performance in trials and the HSC.',
+          ? 'Advanced and Extension tutoring built for stronger marks, cleaner working, and calmer exam performance.'
+          : 'Small-group and 1:1 HSC Maths support for students who want stronger marks, clearer working, and more confidence in trials and the HSC.',
     };
   }, [location.search]);
 
@@ -140,6 +153,18 @@ const HscMathsTutoring: React.FC = () => {
 
   const handlePhoneClick = () => {
     trackEvent('phone_click', { page: 'hsc_landing', placement: 'book' });
+    const gtag = (window as typeof window & { gtag?: (...args: any[]) => void }).gtag;
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
+      });
+    }
+
+    void postMetaConversion({
+      eventName: 'Lead',
+      userAgent: navigator.userAgent,
+      sourceUrl: window.location.href,
+    });
   };
 
   const handleWhatsappClick = () => {
@@ -150,13 +175,35 @@ const HscMathsTutoring: React.FC = () => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
     if (status !== 'idle') setStatus('idle');
+    if (errorMessage) setErrorMessage('');
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setErrorMessage('');
+
+    if (formData.honey) {
+      setStatus('success');
+      setFormData(defaultForm);
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      setStatus('error');
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePhone(formData.phone)) {
+      setStatus('error');
+      setErrorMessage('Please enter a valid phone number.');
+      return;
+    }
+
     setStatus('sending');
 
     try {
+      const submission = { ...formData };
       const response = await fetch('https://formsubmit.co/ryzeeducationhq@gmail.com', {
         method: 'POST',
         headers: {
@@ -164,58 +211,70 @@ const HscMathsTutoring: React.FC = () => {
           Accept: 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: `Student level: ${formData.studentLevel}`,
-          _subject: `HSC Landing Enquiry - ${formData.name}`,
+          name: submission.name,
+          email: submission.email,
+          phone: submission.phone,
+          message: `Student level: ${submission.studentLevel}`,
+          _subject: `HSC Landing Enquiry - ${submission.name}`,
           _template: 'table',
           _captcha: 'false',
+          _honey: '',
         }),
       });
 
       if (!response.ok) {
         setStatus('error');
+        setErrorMessage('Submission failed. Please try again or call us directly.');
         trackEvent('contact_form_submit', { page: 'hsc_landing', status: 'error' });
         return;
       }
 
       setStatus('success');
+      setErrorMessage('');
       setFormData(defaultForm);
       trackEvent('contact_form_submit', { page: 'hsc_landing', status: 'success' });
+      void postMetaConversion({
+        eventName: 'Contact',
+        name: submission.name,
+        email: submission.email,
+        phone: submission.phone,
+        userAgent: navigator.userAgent,
+        sourceUrl: window.location.href,
+      });
     } catch {
       setStatus('error');
+      setErrorMessage('Submission failed. Please try again or call us directly.');
       trackEvent('contact_form_submit', { page: 'hsc_landing', status: 'error' });
     }
   };
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <Section variant="gradient" className="pt-16 md:pt-20">
+      <Section variant="gradient" className="pt-10 md:pt-16">
         <Container>
-          <div className="grid items-start gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="space-y-6">
+          <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
+            <div className="space-y-5">
               <p className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
                 <ShieldCheck size={14} aria-hidden="true" />
                 HSC Maths Advanced and Extension Specialists
               </p>
-              <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-                HSC Maths Tutoring That Turns Potential Into Results
+              <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                HSC Maths Tutoring for Stronger Marks in Advanced, Ext 1, and Ext 2
               </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">{landingVariant.subheading}</p>
+              <p className="max-w-xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">{landingVariant.subheading}</p>
 
               <ul className="grid gap-2 text-sm sm:grid-cols-3">
                 <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Small groups
+                  Small groups or 1:1
                 </li>
                 <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Exam-focused
+                  Advanced to Ext 2
                 </li>
                 <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Weekly feedback
+                  Weekly parent updates
                 </li>
               </ul>
 
@@ -244,21 +303,23 @@ const HscMathsTutoring: React.FC = () => {
                   Call +61 413 885 839
                 </a>
               </div>
+              <p className="text-sm text-[var(--muted)]">Free consultation. No lock-in. We usually reply within one business day.</p>
             </div>
 
             <DesignCard className="overflow-hidden bg-[var(--surface)]">
               <img
                 src={heroImageSrc}
                 srcSet={heroImageSrcSet}
-                sizes="(max-width: 1024px) 100vw, 560px"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 100vw, 560px"
                 alt="HSC Maths tutoring in Sydney"
-                fetchPriority="high"
                 loading="eager"
                 decoding="async"
-                className="h-56 w-full object-cover md:h-64 lg:h-full"
+                width="1280"
+                height="960"
+                className="h-48 w-full object-cover sm:h-56 md:h-64 lg:h-full"
               />
               <div className="p-5">
-                <h2 className="text-xl font-bold text-[var(--primary)]">Proof That Students and Parents Trust</h2>
+                <h2 className="text-xl font-bold text-[var(--primary)]">Results Families Can Trust</h2>
                 <p className="mt-2 text-sm text-[var(--muted)]">
                   Built for families who need measurable academic growth, not generic tutoring.
                 </p>
@@ -342,6 +403,7 @@ const HscMathsTutoring: React.FC = () => {
               <p className="mt-3 max-w-lg text-[var(--muted)]">
                 Tell us your current level and goals. We will recommend the right stream and next steps.
               </p>
+              <p className="mt-3 text-sm font-medium text-[var(--muted)]">No obligation. Clear recommendation. Response within one business day.</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {studentSegments.map((segment) => (
                   <span
@@ -391,45 +453,64 @@ const HscMathsTutoring: React.FC = () => {
 
             <DesignCard className="p-6 md:p-8">
               <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="honey"
+                  value={formData.honey}
+                  onChange={handleChange}
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
                 <div className="grid grid-cols-1 gap-4">
                   <label htmlFor="hsc-name" className="text-sm font-medium">
                     Name
                     <input
                       id="hsc-name"
                       type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]"
-                  />
-                </label>
+                      name="name"
+                      required
+                      maxLength={100}
+                      autoComplete="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      disabled={status === 'sending'}
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                    />
+                  </label>
 
                   <label htmlFor="hsc-email" className="text-sm font-medium">
                     Email
                     <input
                       id="hsc-email"
                       type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]"
-                  />
-                </label>
+                      name="email"
+                      required
+                      autoComplete="email"
+                      inputMode="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      disabled={status === 'sending'}
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                    />
+                  </label>
 
                   <label htmlFor="hsc-phone" className="text-sm font-medium">
                     Phone
                     <input
                       id="hsc-phone"
                       type="tel"
-                    name="phone"
-                    required
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]"
-                  />
-                </label>
+                      name="phone"
+                      required
+                      maxLength={20}
+                      autoComplete="tel"
+                      inputMode="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      disabled={status === 'sending'}
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                    />
+                  </label>
 
                   <label htmlFor="hsc-student-level" className="text-sm font-medium">
                     Student Level
@@ -438,7 +519,8 @@ const HscMathsTutoring: React.FC = () => {
                       name="studentLevel"
                       value={formData.studentLevel}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]"
+                      disabled={status === 'sending'}
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       <option>Year 11 - Advanced</option>
                       <option>Year 11 - Extension 1</option>
@@ -466,7 +548,7 @@ const HscMathsTutoring: React.FC = () => {
 
                 {status === 'error' && (
                   <p role="alert" className="mt-4 rounded-[var(--radius-sm)] border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                    Submission failed. Please try again or call us directly.
+                    {errorMessage || 'Submission failed. Please try again or call us directly.'}
                   </p>
                 )}
               </form>

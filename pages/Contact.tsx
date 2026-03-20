@@ -1,34 +1,14 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { FadeInSection, InteractiveLift } from '../src/components/animation';
 
 declare global {
   interface Window {
     gtag: (...args: any[]) => void;
   }
 }
-
-const pageVariants = {
-    initial: {
-        opacity: 0,
-    },
-    animate: {
-        opacity: 1,
-        transition: {
-            duration: 0.5,
-            ease: 'easeInOut'
-        }
-    },
-    exit: {
-        opacity: 0,
-        transition: {
-            duration: 0.5,
-            ease: 'easeInOut'
-        }
-    }
-};
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
@@ -166,12 +146,6 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <motion.div
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={pageVariants}
-    >
         <div className="font-sans">
           <div className="relative pt-20">
             {/* Background Image and Overlay Layer */}
@@ -196,7 +170,7 @@ const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto -mt-32">
                   
                   {/* Card 1: Speak Now */}
-                  <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
+                  <InteractiveLift as="article" className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full group">
                       <div className="w-20 h-20 bg-ryze rounded-full flex items-center justify-center text-white mb-8 shadow-lg shadow-ryze/30 group-hover:scale-110 transition-transform">
                         <Phone size={32} />
                       </div>
@@ -209,10 +183,10 @@ const Contact: React.FC = () => {
                       <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
                         Give us a call! <Phone size={20} fill="currentColor" />
                       </a>
-                  </div>
+                  </InteractiveLift>
 
                   {/* Card 2: Message Us */}
-                  <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
+                  <InteractiveLift as="article" className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full group">
                       <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 mb-8 group-hover:bg-slate-200 transition-colors">
                         <Send size={32} />
                       </div>
@@ -231,13 +205,13 @@ const Contact: React.FC = () => {
                       >
                         {t("Send Message")} <ArrowRight size={20} />
                       </button>
-                  </div>
+                  </InteractiveLift>
 
                 </div>
               </div>
 
               {/* Contact Form Section */}
-              <section id="contact-form-section" className="py-24">
+              <FadeInSection as="section" id="contact-form-section" className="py-24">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <h3 className="text-3xl font-bold text-white mb-4">{t("Send us a Message")}</h3>
@@ -350,27 +324,28 @@ const Contact: React.FC = () => {
                             ></textarea>
                           </div>
 
-                          <button
-                            type="submit"
-                            disabled={status === 'sending'}
-                            className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 hover:-translate-y-1 active:scale-95 active:bg-ryze-700 focus:outline-none focus:ring-4 focus:ring-ryze/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
-                          >
-                            {status === 'sending' ? (
-                              <>
-                                <Loader2 size={24} className="animate-spin" /> {t("Sending...")}
-                              </>
-                            ) : (
-                              <>{t("Submit Enquiry")}</>
-                            )}
-                          </button>
+                          <InteractiveLift as="div" className="w-full">
+                            <button
+                              type="submit"
+                              disabled={status === 'sending'}
+                              className="w-full bg-ryze text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-ryze-600 active:scale-95 active:bg-ryze-700 focus:outline-none focus:ring-4 focus:ring-ryze/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
+                            >
+                              {status === 'sending' ? (
+                                <>
+                                  <Loader2 size={24} className="animate-spin" /> {t("Sending...")}
+                                </>
+                              ) : (
+                                <>{t("Submit Enquiry")}</>
+                              )}
+                            </button>
+                          </InteractiveLift>
                       </form>
                     )}
                  </div>
-              </section>
+              </FadeInSection>
             </div>
           </div>
         </div>
-    </motion.div>
   );
 };
 

@@ -1,5 +1,25 @@
 import crypto from 'crypto';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+type MetaConversionRequestBody = {
+  eventName?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  userAgent?: string;
+  sourceUrl?: string;
+  test_event_code?: string;
+};
+
+type MetaConversionRequest = {
+  method?: string;
+  body?: MetaConversionRequestBody;
+};
+
+type MetaConversionResponse = {
+  status: (code: number) => {
+    json: (body: Record<string, unknown>) => unknown;
+  };
+};
 
 // Hash function for PII
 const hashValue = (value: string): string => {
@@ -10,8 +30,8 @@ const hashValue = (value: string): string => {
 };
 
 export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
+  req: MetaConversionRequest,
+  res: MetaConversionResponse
 ) {
   // Only allow POST requests
   if (req.method !== 'POST') {
@@ -19,7 +39,7 @@ export default async function handler(
   }
 
   try {
-    const { eventName, name, email, phone, userAgent, sourceUrl, test_event_code } = req.body;
+    const { eventName, name, email, phone, userAgent, sourceUrl, test_event_code } = req.body ?? {};
 
     // Validate required fields
     if (!eventName || !sourceUrl) {

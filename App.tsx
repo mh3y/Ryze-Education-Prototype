@@ -1,19 +1,22 @@
 
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import { Starfield } from './components/Starfield';
 // import CookieConsent from './components/CookieConsent';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
 import FeatureGate from './components/FeatureGate';
-import Home from './pages/Home';
 import HscMathsTutoring from './pages/HscMathsTutoring';
-import MathsTutoring from './pages/MathsTutoring';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
+import { usePageTracking } from './src/analytics/router';
+
+const Home = lazy(() => import('./pages/Home'));
+const Navbar = lazy(() => import('./components/Navbar'));
+const Footer = lazy(() => import('./components/Footer'));
+const Starfield = lazy(() =>
+  import('./components/Starfield').then((module) => ({ default: module.Starfield })),
+);
+const MathsTutoring = lazy(() => import('./pages/MathsTutoring'));
 
 // Lazy load portal and heavy pages to keep the marketing bundle lean.
 const PortalHome = lazy(() => import('./pages/PortalHome'));
@@ -87,19 +90,17 @@ const PageLoader = () => (
   </div>
 );
 
-// Performance-optimized Page Wrapper for smooth transitions
+// Lightweight wrapper keeps route layout stable without pulling motion code into the landing shell.
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 15 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -15 }}
-    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-    style={{ willChange: 'opacity, transform' }}
-    className="flex-grow flex flex-col w-full relative z-10"
-  >
+  <div className="flex-grow flex flex-col w-full relative z-10">
     {children}
-  </motion.div>
+  </div>
 );
+
+const RouteTracking = () => {
+  usePageTracking();
+  return null;
+};
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -126,90 +127,98 @@ const AppContent: React.FC = () => {
     <div className={`flex flex-col min-h-screen font-sans relative transition-colors duration-300 overflow-x-hidden ${bgClass}`}>
       {/* Persistent Background for Portal & Dashboard Pages to prevent 'Star Reset' */}
       {shouldShowStarfield && (
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[#050510]"></div>
-          <Starfield />
-        </div>
+        <Suspense fallback={null}>
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute inset-0 bg-[#050510]"></div>
+            <Starfield />
+          </div>
+        </Suspense>
       )}
 
-      {!isDashboard && !shouldShowStarfield && !isLanding && <Navbar />}
+      {!isDashboard && !shouldShowStarfield && !isLanding && (
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
+      )}
 
       <main className="ryze-main-with-sticky flex-grow flex flex-col relative z-10 w-full">
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
-            <Route path={ROUTES.HSC_MATHS_TUTORING} element={<HscMathsTutoring />} />
-            <Route path={ROUTES.MATHS_TUTORING} element={<MathsTutoring />} />
-            <Route path="/landing" element={<Navigate to={ROUTES.MATHS_TUTORING} replace />} />
-            <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
-            <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
-            <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
-            <Route path={ROUTES.HOW_IT_WORKS} element={<PageWrapper><HowItWorks /></PageWrapper>} />
-            <Route path={ROUTES.RYZE_AI} element={<PageWrapper><RyzeAI /></PageWrapper>} />
-            <Route path={ROUTES.CONTACT} element={<PageWrapper><Contact /></PageWrapper>} />
-            <Route path="/learning-style" element={<PageWrapper><LearningStyle /></PageWrapper>} />
+        <Routes location={location}>
+          <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path={ROUTES.HSC_MATHS_TUTORING} element={<HscMathsTutoring />} />
+          <Route path={ROUTES.MATHS_TUTORING} element={<MathsTutoring />} />
+          <Route path="/landing" element={<Navigate to={ROUTES.MATHS_TUTORING} replace />} />
+          <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
+          <Route path="/meet-the-team" element={<PageWrapper><MeetTheTeam /></PageWrapper>} />
+          <Route path="/about" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />
+          <Route path={ROUTES.HOW_IT_WORKS} element={<PageWrapper><HowItWorks /></PageWrapper>} />
+          <Route path={ROUTES.RYZE_AI} element={<PageWrapper><RyzeAI /></PageWrapper>} />
+          <Route path={ROUTES.CONTACT} element={<PageWrapper><Contact /></PageWrapper>} />
+          <Route path="/learning-style" element={<PageWrapper><LearningStyle /></PageWrapper>} />
 
-            {/* Portal Routes - Feature gated in production */}
-            <Route
-              path="/login"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <PageWrapper><PortalHome /></PageWrapper>
-                </FeatureGate>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <PageWrapper><AdminLogin /></PageWrapper>
-                </FeatureGate>
-              }
-            />
-            <Route
-              path="/portal"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <PageWrapper><StudentPortal /></PageWrapper>
-                </FeatureGate>
-              }
-            />
-            <Route
-              path="/parent-portal"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <PageWrapper><ParentPortal /></PageWrapper>
-                </FeatureGate>
-              }
-            />
-            <Route
-              path="/tutor-portal"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <PageWrapper><TutorLogin /></PageWrapper>
-                </FeatureGate>
-              }
-            />
+          {/* Portal Routes - Feature gated in production */}
+          <Route
+            path="/login"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><PortalHome /></PageWrapper>
+              </FeatureGate>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><AdminLogin /></PageWrapper>
+              </FeatureGate>
+            }
+          />
+          <Route
+            path="/portal"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><StudentPortal /></PageWrapper>
+              </FeatureGate>
+            }
+          />
+          <Route
+            path="/parent-portal"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><ParentPortal /></PageWrapper>
+              </FeatureGate>
+            }
+          />
+          <Route
+            path="/tutor-portal"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><TutorLogin /></PageWrapper>
+              </FeatureGate>
+            }
+          />
 
-            {/* Protected Dashboard Route (deep links included) */}
-            <Route
-              path="/dashboard/*"
-              element={
-                <FeatureGate enabled={ENABLE_DASHBOARD}>
-                  <ProtectedRoute>
-                    <PageWrapper><Dashboard /></PageWrapper>
-                  </ProtectedRoute>
-                </FeatureGate>
-              }
-            />
+          {/* Protected Dashboard Route (deep links included) */}
+          <Route
+            path="/dashboard/*"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <ProtectedRoute>
+                  <PageWrapper><Dashboard /></PageWrapper>
+                </ProtectedRoute>
+              </FeatureGate>
+            }
+          />
 
-            <Route path={ROUTES.TERMS} element={<PageWrapper><Terms /></PageWrapper>} />
-            <Route path={ROUTES.PRIVACY} element={<PageWrapper><Privacy /></PageWrapper>} />
-            <Route path={ROUTES.SITEMAP} element={<PageWrapper><Sitemap /></PageWrapper>} />
-          </Routes>
-        </AnimatePresence>
+          <Route path={ROUTES.TERMS} element={<PageWrapper><Terms /></PageWrapper>} />
+          <Route path={ROUTES.PRIVACY} element={<PageWrapper><Privacy /></PageWrapper>} />
+          <Route path={ROUTES.SITEMAP} element={<PageWrapper><Sitemap /></PageWrapper>} />
+        </Routes>
       </main>
-      {!isDashboard && !shouldShowStarfield && !isLanding && <Footer />}
+      {!isDashboard && !shouldShowStarfield && !isLanding && (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      )}
       {/* <CookieConsent /> */}
     </div>
   );
@@ -227,6 +236,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <LanguageProvider>
+        <RouteTracking />
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <AppContent />

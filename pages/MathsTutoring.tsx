@@ -573,61 +573,19 @@ const MathsTutoring: React.FC = () => {
 
             {/* Hero Content */}
             <div className="relative z-10 container mx-auto px-6 text-center pt-20 pb-16">
-                <motion.h1
-                    initial={isMobileViewport ? false : {
-                      opacity: 0,
-                      scale: reduce ? 1 : 0.98,
-                      clipPath: reduce ? "inset(0% 0% 0% 0%)" : "inset(0% 0% 100% 0%)"
-                    }}
-                    animate={isMobileViewport ? { opacity: 1 } : {
-                      opacity: 1,
-                      scale: 1,
-                      clipPath: "inset(0% 0% 0% 0%)"
-                    }}
-                    transition={isMobileViewport ? { duration: 0 } : { duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white"
-                >
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white">
                     <span className="block">YOUR PATH TO SUCCESS</span>
                     <span className="relative block">
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFE29A] via-[#FFB000] to-[#FF8A00]">
                             STARTS HERE
                         </span>
-                        {!isMobileViewport && (
-                          <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute inset-0 overflow-hidden rounded"
-                          >
-                              <motion.span
-                                  initial={{ x: "-100%" }}
-                                  animate={{ x: "100%" }}
-                                  transition={{
-                                      duration: 2.5,
-                                      ease: "linear",
-                                      repeat: Infinity,
-                                      delay: 1,
-                                      repeatDelay: 5
-                                  }}
-                                  className="block h-full w-full -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
-                              />
-                          </span>
-                        )}
                     </span>
-                </motion.h1>
-                <motion.p
-                    initial={isMobileViewport ? false : { y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={isMobileViewport ? { duration: 0 } : { delay: 0.3, duration: 0.6, ease: "easeOut" }}
-                    className="text-base md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto"
-                >
+                </h1>
+                <p className="text-base md:text-xl text-gray-300 mt-8 max-w-2xl mx-auto">
                     Selective entry. Top bands. Extension 2 excellence. It all starts with the right mentor.
                     {/* Founded by accredited teachers and PhD scholars, we specialise in MATHEMATICS from primary through to HSC Extension 2 */}
-                </motion.p>
-                <motion.div
-                    initial={isMobileViewport ? false : { y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={isMobileViewport ? { duration: 0 } : { duration: 0.8, delay: 0.4, ease: "easeInOut" }}
-                    className="mt-12 flex flex-col items-center gap-4"
-                >
+                </p>
+                <div className="mt-12 flex flex-col items-center gap-4">
                     <button 
                       onClick={scrollToResults}
                       className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FFB000] transition-colors shadow-lg shadow-[#FFB000]/20"
@@ -635,7 +593,7 @@ const MathsTutoring: React.FC = () => {
                         Start your journey now
                     </button>
                     <p className="text-gray-400 mt-5">Join 500+ other satisfied students</p>
-                </motion.div>
+                </div>
                 <FeatureCarousel />
               </div>
             </section>
