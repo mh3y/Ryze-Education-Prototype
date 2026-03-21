@@ -260,6 +260,7 @@ const ReviewCard = memo(function ReviewCard({
 });
 
 const Testimonials: React.FC = () => {
+  const { t } = useLanguage();
   const railRef = useRef<HTMLDivElement>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const metricsFrameRef = useRef<number | null>(null);

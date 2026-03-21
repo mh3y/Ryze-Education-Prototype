@@ -7,7 +7,7 @@ const Testimonials = React.lazy(() => import('../components/Testimonials'));
 
 declare global {
     interface Window {
-      gtag: (...args: any[]) => void;
+      gtag?: (...args: any[]) => void;
       fbq?: (...args: any[]) => void;
     }
   }

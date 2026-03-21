@@ -8,7 +8,7 @@ import { trackEvent } from '../src/analytics';
 
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    gtag?: (...args: any[]) => void;
   }
 }
 

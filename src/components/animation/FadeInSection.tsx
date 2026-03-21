@@ -4,7 +4,7 @@ import { cn } from '../../utils/cn';
 
 type FadeInSectionProps = React.PropsWithChildren<
   React.HTMLAttributes<HTMLElement> & {
-    as?: 'section' | 'div' | 'article';
+    as?: 'section' | 'div' | 'article' | 'aside';
     delay?: number;
     duration?: number;
     lift?: boolean;
