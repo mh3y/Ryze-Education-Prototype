@@ -33,7 +33,7 @@ const About: React.FC = () => {
         "BDataSci - First Class Honours | UNSW",
         "North Sydney Boys High School Alumni"
       ],
-      bio: "William co-founded Ryze to demonstrate the effectiveness of small-group learning. As Head of Technology, he oversees Ryze AI and curriculum development, ensuring rigorous standards. Ranking among UNSW's highest performers, his PhD research in AI directly informs Ryze's evidence-driven design."
+      bio: "William co-founded Ryze to demonstrate the effectiveness of structured, attentive teaching. As Head of Technology, he oversees Ryze AI and curriculum development, ensuring rigorous standards. Ranking among UNSW's highest performers, his PhD research in AI directly informs Ryze's evidence-driven design."
     },
     {
       name: "Mr Michael Yang",
@@ -47,24 +47,24 @@ const About: React.FC = () => {
         "English Advanced": "93",
         "Physics": "93"
       },
-      wordsFromFounder: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction.",
-      bio: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction."
+      wordsFromFounder: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model centred on meaningful interaction, careful diagnosis, and teaching that can adapt to the student. Ryze now offers both small-group classes and private tutoring, each built around the same academic standard and expectation of care.",
+      bio: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model centred on meaningful interaction, careful diagnosis, and teaching that can adapt to the student. Ryze now offers both small-group classes and private tutoring, each built around the same academic standard and expectation of care."
     }
   ];
 
   return (
-    <div className="pt-20 font-sans">
+    <div className="bg-[var(--bg)] pt-20 font-sans text-[var(--text)]">
       {/* Header */}
-      <div className="bg-white pt-16 pb-20 px-4 border-b border-slate-100">
+      <div className="border-b border-[var(--border)] bg-[var(--bg)] pt-16 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 text-slate-900">The Ryze Truth</h1>
+          <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 text-[var(--primary)]">The Ryze Truth</h1>
         </div>
       </div>
 
       {/* The Story Section */}
       <section className="py-20 px-4 max-w-3xl mx-auto">
         <div className="prose prose-lg prose-slate mx-auto">
-          <h2 className="text-3xl font-display font-bold text-slate-900 mb-8">I Know This Because I've Lived It</h2>
+          <h2 className="text-3xl font-display font-bold text-[var(--primary)] mb-8">I Know This Because I've Lived It</h2>
           
           <p className="text-slate-600 leading-relaxed mb-6">
             I still remember the feeling.
@@ -91,10 +91,10 @@ const About: React.FC = () => {
             Knowing they believed this was helping me. And feeling like I was the problem.
           </p>
 
-          <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-ryze my-10">
-            <h3 className="text-xl font-bold italic text-slate-900 mb-2">Why am I falling behind when everyone else seems fine?</h3>
-            <h3 className="text-xl font-bold italic text-slate-900 mb-2">Why can't I just get this?</h3>
-            <h3 className="text-xl font-bold italic text-slate-900">What's wrong with me?</h3>
+          <div className="my-10 rounded-[1.75rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(243,231,201,0.48)] p-8">
+            <h3 className="mb-2 text-xl font-display font-bold italic text-[var(--primary)]">Why am I falling behind when everyone else seems fine?</h3>
+            <h3 className="mb-2 text-xl font-display font-bold italic text-[var(--primary)]">Why can't I just get this?</h3>
+            <h3 className="text-xl font-display font-bold italic text-[var(--accent)]">What's wrong with me?</h3>
           </div>
 
           <p className="text-slate-600 leading-relaxed mb-6">
@@ -114,13 +114,13 @@ const About: React.FC = () => {
       </section>
 
       {/* The 4 Problems */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-[rgba(243,231,201,0.22)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 mb-16 text-center">What I Learned About Why Tutoring Fails</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-[var(--primary)] mb-16 text-center">What I Learned About Why Tutoring Fails</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Problem 1 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+            <div className="flex flex-col rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
                <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 mb-6">
                  <Microscope size={28} />
                </div>
@@ -129,7 +129,7 @@ const About: React.FC = () => {
             </div>
 
             {/* Problem 2 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+            <div className="flex flex-col rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
                <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-500 mb-6">
                  <BedDouble size={28} />
                </div>
@@ -138,7 +138,7 @@ const About: React.FC = () => {
             </div>
 
             {/* Problem 3 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+            <div className="flex flex-col rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
                <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 mb-6">
                  <BellOff size={28} />
                </div>
@@ -147,8 +147,8 @@ const About: React.FC = () => {
             </div>
 
             {/* Problem 4 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
-               <div className="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center text-ryze mb-6">
+            <div className="flex flex-col rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
+               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(243,231,201,0.7)] text-[var(--accent)]">
                  <Zap size={28} />
                </div>
                <h3 className="text-2xl font-bold text-slate-900 mb-4">Problem 4 - Mismatched Pacing</h3>
@@ -169,19 +169,19 @@ const About: React.FC = () => {
            
            <ul className="space-y-6 list-none pl-0">
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
                <div><span className="font-bold text-slate-900">Real Diagnosis:</span> I can assess each student individually. I can trace their confusion back to its source—whether that's last week's lesson or a concept from three years ago.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
                <div><span className="font-bold text-slate-900">Active Learning:</span> Every student works through problems during the session. I watch them work. I see where they hesitate, where their logic breaks down.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
                <div><span className="font-bold text-slate-900">Questions Get Answered:</span> With six students, asking questions feels normal. Students ask when they're confused.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
                <div><span className="font-bold text-slate-900">Flexible Pacing:</span> I can adjust the speed for each student. If someone needs fifteen minutes on a concept, they get it.</div>
              </li>
            </ul>
@@ -189,7 +189,7 @@ const About: React.FC = () => {
       </section>
 
       {/* What Results Look Like */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-[rgba(243,231,201,0.22)]">
         <div className="max-w-3xl mx-auto px-4">
            <h2 className="text-3xl font-display font-bold text-slate-900 mb-8 text-center">What Results Look Like</h2>
            <p className="text-slate-600 leading-relaxed mb-6">
@@ -237,12 +237,12 @@ const About: React.FC = () => {
       </section>
 
       {/* The Real Question */}
-      <section className="py-16 bg-ryze-50 border-t border-ryze/20">
+      <section className="border-t border-[rgba(184,132,30,0.16)] bg-[rgba(243,231,201,0.42)] py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-display font-bold text-ryze-600 mb-6">The Real Question</h2>
+          <h2 className="mb-6 text-3xl font-display font-bold text-[var(--accent)]">The Real Question</h2>
           
            <p className="text-slate-800 text-lg mb-6">
-             The question isn't whether small groups are better than large groups in some abstract sense.
+             The question isn&apos;t which format sounds better in the abstract.
              <br/>The question is: <span className="font-bold">has what you're currently doing worked?</span>
            </p>
            <p className="text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
@@ -255,7 +255,7 @@ const About: React.FC = () => {
 
            <button 
              onClick={() => navigate('/contact')}
-             className="px-8 py-4 bg-ryze text-white font-bold rounded-xl shadow-lg hover:bg-ryze-600 transition-all transform hover:-translate-y-1 inline-flex items-center gap-2"
+             className="inline-flex items-center gap-2 rounded-full border border-[rgba(184,132,30,0.32)] bg-[var(--accent)] px-8 py-4 font-bold text-[var(--accent-foreground)] shadow-[0_20px_42px_-26px_rgba(17,21,29,0.35)] transition-all hover:-translate-y-1 hover:bg-[#c89e2b]"
            >
              Book a Trial Lesson <ArrowRight size={20} />
            </button>
@@ -263,10 +263,10 @@ const About: React.FC = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[var(--bg)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold text-slate-900">Meet Our Team</h2>
+            <h2 className="text-4xl font-display font-bold text-[var(--primary)]">Meet Our Team</h2>
             <p className="text-slate-600 mt-4 max-w-2xl mx-auto leading-relaxed">
               Meet the tutors who make learning click. Our experienced educators are committed to helping every student thrive.
             </p>
@@ -290,32 +290,32 @@ const About: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                       <div className="absolute bottom-0 left-0 p-6 text-white">
                          <h3 className="text-2xl font-bold font-display">{member.name}</h3>
-                         <p className="text-ryze-200 font-medium">{member.role}</p>
+                         <p className="font-medium text-[var(--ryze-200)]">{member.role}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="w-full md:w-2/3 space-y-6">
                     <h3 className="text-3xl font-bold text-slate-900">{member.name}</h3>
-                    <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                    <div className="rounded-xl border border-[var(--border)] bg-[rgba(248,243,234,0.8)] p-6">
                        <h4 className="font-bold text-slate-800 mb-4">HSC Marks</h4>
                        <ul className="space-y-2">
                          {member.hscMarks && Object.entries(member.hscMarks).map(([subject, score]) => (
                            <li key={subject} className="flex justify-between items-center text-slate-700 font-medium">
                              <span>{subject}</span>
-                             <span className="font-mono font-bold text-ryze">{score}</span>
+                             <span className="font-sans font-bold text-[var(--accent)]">{score}</span>
                            </li>
                          ))}
                        </ul>
                     </div>
                     {member.wordsFromFounder && (
-                      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                      <div className="rounded-xl border border-[var(--border)] bg-[rgba(248,243,234,0.8)] p-6">
                         <h4 className="font-bold text-slate-800 mb-4">Words from our Founder</h4>
                         <p className="text-slate-600 leading-relaxed">{member.wordsFromFounder}</p>
                       </div>
                     )}
                     {member.quote && (
-                       <blockquote className="border-l-4 border-ryze pl-6 italic text-slate-600 text-lg">
+                       <blockquote className="border-l-4 border-[var(--accent)] pl-6 italic text-slate-600 text-lg">
                          "{member.quote}"
                        </blockquote>
                     )}

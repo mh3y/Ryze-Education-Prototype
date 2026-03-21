@@ -1,13 +1,15 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
-const HomeDeferredSections = React.lazy(() => import('../components/home/HomeDeferredSections'));
-import { Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 // @ts-ignore
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import PrimaryCTA from '../components/PrimaryCTA';
+import usePrefersReducedMotion from '../src/hooks/usePrefersReducedMotion';
 import { ROUTES } from '../src/constants/routes';
 import { applySeo } from '../src/utils/seo';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
+
+const HomeDeferredSections = React.lazy(() => import('../components/home/HomeDeferredSections'));
 
 const HOME_HERO_IMAGE_BASE =
   'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
@@ -22,27 +24,6 @@ const HOME_HERO_IMAGE_SRC_SET = [
   `${HOME_HERO_IMAGE_BASE},w_1280/${HOME_HERO_IMAGE_ID} 1280w`,
 ].join(', ');
 
-const ScrollingColumn = ({
-  children,
-  direction = 'up',
-  durationVar = 'var(--ryze-motion-vertical-scroll-slow)',
-  reducedMotion = false,
-}: React.PropsWithChildren<{
-  direction?: 'up' | 'down';
-  durationVar?: string;
-  reducedMotion?: boolean;
-}>) => (
-  <div className="ryze-vertical-marquee transform-gpu">
-    <div
-      className={`ryze-vertical-track ${direction === 'down' ? 'is-reverse' : ''}`}
-      style={{ '--ryze-column-duration': durationVar, backfaceVisibility: 'hidden' } as React.CSSProperties}
-    >
-      {children}
-      {!reducedMotion && children}
-    </div>
-  </div>
-);
-
 type CardImageSource = {
   src: string;
   srcSet: string;
@@ -51,20 +32,24 @@ type CardImageSource = {
   height: number;
 };
 
-const Card = ({
+const HeroProofTile = ({
   image,
   title,
   tag,
+  className = '',
+  titleClassName = '',
   priority = false,
   fetchPriority = 'auto',
 }: {
   image: CardImageSource;
   title: string;
   tag: string;
+  className?: string;
+  titleClassName?: string;
   priority?: boolean;
   fetchPriority?: 'high' | 'low' | 'auto';
 }) => (
-  <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-[1.5rem] border border-slate-100 shadow-lg transform-gpu sm:rounded-3xl">
+  <div className={`group relative overflow-hidden rounded-[1.4rem] border border-white/8 bg-[rgba(255,255,255,0.03)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${className}`}>
     <img
       src={image.src}
       srcSet={image.srcSet}
@@ -75,29 +60,53 @@ const Card = ({
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={fetchPriority}
       decoding="async"
-      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
     />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90"></div>
-    <div className="absolute left-3 top-3 sm:left-4 sm:top-4">
-      <span className="rounded-full border border-white/80 bg-[#FFB000] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wide text-white backdrop-blur-md sm:px-3 sm:text-xs">{tag}</span>
+    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.04)_0%,rgba(17,21,29,0.16)_38%,rgba(17,21,29,0.86)_100%)]"></div>
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.1),transparent_34%)] opacity-50"></div>
+    <div className="absolute left-3 top-3">
+      <span className="rounded-full border border-[rgba(184,132,30,0.45)] bg-[rgba(17,21,29,0.46)] px-2.5 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-[var(--ryze-100)] backdrop-blur-md sm:text-[0.64rem]">
+        {tag}
+      </span>
     </div>
-    <div className="absolute bottom-0 left-0 translate-y-2 p-4 transition-transform duration-300 group-hover:translate-y-0 sm:p-6">
-      <h3 className="mb-2 text-base font-bold leading-tight text-white sm:text-xl">{title}</h3>
-      <div className="h-1 w-12 rounded-full bg-ryze opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-4.5">
+      <h3 className={`max-w-[10ch] text-[1.18rem] font-semibold leading-[0.96] text-white sm:text-[1.34rem] ${titleClassName}`}>{title}</h3>
     </div>
   </div>
 );
 
+const ScrollingColumn = ({
+  children,
+  direction,
+  durationVar,
+  reducedMotion,
+}: {
+  children: React.ReactNode;
+  direction: 'up' | 'down';
+  durationVar: string;
+  reducedMotion: boolean;
+}) => {
+  const content = <>{children}</>;
+
+  return (
+    <div className="ryze-vertical-marquee h-full overflow-hidden">
+      <div
+        className={`ryze-vertical-track ${direction === 'down' ? 'is-reverse' : ''}`}
+        style={{ ['--ryze-column-duration' as string]: durationVar }}
+      >
+        {content}
+        {!reducedMotion && content}
+      </div>
+    </div>
+  );
+};
+
 const Home: React.FC = () => {
   const location = useLocation();
   const { t } = useLanguage();
+  const reduceMotion = usePrefersReducedMotion();
   const deferredTriggerRef = useRef<HTMLDivElement | null>(null);
   const [shouldLoadDeferred, setShouldLoadDeferred] = useState(false);
-  const reduceMotion = useMemo(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    [],
-  );
-
   const campaignParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const offer = (params.get('offer') || '').toLowerCase();
@@ -124,14 +133,20 @@ const Home: React.FC = () => {
   useEffect(() => {
     applySeo({
       title: 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert',
-      description: 'Premium small-group tutoring in Sydney for HSC Maths, Extension 1, and Extension 2. Expert mentoring with measurable progress.',
+      description:
+        'Maths tutoring in Sydney for HSC Maths, Extension 1, and Extension 2, delivered through private tutoring and small-group classes with expert teaching and clear progress.',
       path: ROUTES.HOME,
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'EducationOrganization',
         name: 'Ryze Education',
         url: `${window.location.origin}${ROUTES.HOME}`,
-        address: { '@type': 'PostalAddress', addressLocality: 'Sydney', addressRegion: 'NSW', addressCountry: 'AU' },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Sydney',
+          addressRegion: 'NSW',
+          addressCountry: 'AU',
+        },
       },
     });
   }, []);
@@ -174,15 +189,9 @@ const Home: React.FC = () => {
       if (idleId !== null && 'cancelIdleCallback' in window) {
         (window as any).cancelIdleCallback(idleId);
       }
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
+      if (timeoutId !== null) clearTimeout(timeoutId);
     };
   }, [shouldLoadDeferred]);
-
-  const heroSubheading = campaignParams.isHscOffer
-    ? 'HSC Maths Advanced and Extension tutoring built for high marks, clean exam technique, and real confidence.'
-    : t('Think Sharper. Perform Better.');
 
   const marketingCardSizes = '(max-width: 640px) 42vw, (max-width: 1024px) 42vw, 312px';
   const buildMarketingCardImage = (sourceUrl: string) =>
@@ -195,66 +204,147 @@ const Home: React.FC = () => {
     });
 
   const marketingCardImages = {
-    ocSelectiveExam: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised'),
-    smallGroupFocus: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4'),
-    nswAccreditedTeachers: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2'),
-    hscExcellence: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4'),
-    hybridLearning: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4'),
-    distinguishedMentors: buildMarketingCardImage('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon'),
+    ocSelectiveExam: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised',
+    ),
+    smallGroupFocus: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4',
+    ),
+    nswAccreditedTeachers: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2',
+    ),
+    hscExcellence: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4',
+    ),
+    hybridLearning: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4',
+    ),
+    distinguishedMentors: buildMarketingCardImage(
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon',
+    ),
   };
 
   return (
-    <div className="w-full overflow-hidden bg-slate-50 font-sans">
-      <section className="relative overflow-hidden bg-slate-900 pb-16 pt-28 md:rounded-b-[3rem] md:pb-20 md:pt-32 lg:rounded-b-[5rem] lg:pb-32 lg:pt-48">
+    <div className="w-full overflow-hidden bg-[var(--bg)] font-sans">
+      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden bg-[var(--primary)] pb-8 pt-20 md:pb-10 md:pt-24 lg:pb-10 lg:pt-24">
         <picture className="absolute inset-0">
-          <img src={HOME_HERO_IMAGE_SRC} srcSet={HOME_HERO_IMAGE_SRC_SET} sizes="100vw" alt="HSC Maths tutoring in Sydney - Ryze Education" fetchPriority="high" loading="eager" decoding="async" className="h-full w-full object-cover" />
+          <img
+            src={HOME_HERO_IMAGE_SRC}
+            srcSet={HOME_HERO_IMAGE_SRC_SET}
+            sizes="100vw"
+            alt="HSC Maths tutoring in Sydney - Ryze Education"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="h-full w-full object-cover object-[68%_center]"
+          />
         </picture>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-            <div className="space-y-8 text-center lg:text-left">
-              <div className="space-y-4">
-                <div className="mx-auto mb-2 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold tracking-wide text-white shadow-sm lg:mx-0">
-                  <Sparkles size={14} className="text-ryze" />
-                  <span>{t('FOUNDED BY ACCREDITED TEACHERS AND ACADEMIC SCHOLARS')}</span>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(17,21,29,0.92)_0%,rgba(17,21,29,0.84)_42%,rgba(17,21,29,0.62)_68%,rgba(17,21,29,0.74)_100%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.1),transparent_20%)]"></div>
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-7rem)] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="grid w-full grid-cols-1 items-center gap-9 lg:grid-cols-[minmax(0,1fr)_minmax(395px,0.82fr)] lg:gap-12">
+            <div className="max-w-[45rem] text-center lg:text-left">
+              <div className="max-w-[40rem] space-y-4">
+                <div className="eyebrow mx-auto !border-[1.5px] !border-[var(--color-ryze-500)] !bg-transparent !px-5 !py-3 !text-[var(--color-ryze-500)] !font-bold lg:mx-0">
+                  <Sparkles size={14} className="text-[var(--color-ryze)]" />
+                  <span>{t('Founded by NSW Teachers & Scholars')}</span>
                 </div>
-                <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-8xl">
-                  {t('Teaching with')} <span className="bg-gradient-to-r from-ryze to-orange-500 bg-clip-text text-transparent">{t('purpose.')}</span> <br />
-                  {t('Learning with')} <span className="text-white">{t('clarity.')}</span>
+                <p className="text-[1rem] font-semibold uppercase tracking-[0.2em] text-white/74">Ryze Education</p>
+                <h1 className="max-w-[11.5ch] text-[clamp(3.45rem,7.8vw,6.35rem)] font-semibold leading-[0.9] text-white">
+                  {t('Specialist Maths Tuition')} <br />
+                  <span className="mt-2 block whitespace-nowrap text-[0.76em] lowercase leading-[0.98] text-[var(--ryze-200)]">
+                    {t('for students aiming higher')}
+                  </span>
                 </h1>
-                <p className="text-base font-medium leading-tight tracking-wide text-white sm:text-lg lg:text-2xl">{heroSubheading}</p>
-                {campaignParams.isHscOffer && <p className="inline-flex items-center gap-2 rounded-full border border-ryze/40 bg-ryze/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ryze-100">Message match active: HSC Maths Advanced and Extension</p>}
               </div>
-              <p className="mx-auto max-w-lg text-base leading-relaxed text-white sm:text-lg lg:mx-0">{t('Get the individual attention you deserve in our private and focused small group classes. Experienced tutors, personalised programs, and real results.')}</p>
-              <div className="flex flex-col items-center gap-6 pt-4 sm:flex-row lg:justify-start">
-                <PrimaryCTA variant="link" href={ROUTES.CONTACT} size="md" label="Enrol Now" page="home" placement="home_hero" className="relative z-0 w-full justify-center whitespace-nowrap !border !border-white/75 !bg-gradient-to-r !from-[#FFB000] !to-[#FF7A00] !py-0 !text-lg !font-bold !text-white hover:!from-[#FFC133] hover:!to-[#FF8C1A] sm:h-16 sm:min-w-[220px] sm:w-auto" />
-                <div className="flex min-h-[3.75rem] items-center gap-3 rounded-full border border-white/70 bg-white/18 px-4 py-2 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.45)] backdrop-blur-md sm:min-h-16 sm:gap-4 sm:px-5">
-                  <div className="flex shrink-0 -space-x-2.5 sm:-space-x-3">
-                    {['tes5', 'tes6', 'tes7', 'tes8'].map((name, i) => (
-                      <img key={i} src={`https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,w_64,h_64,dpr_auto/ryze/images/${name}`} alt="" aria-hidden="true" width={32} height={32} loading="lazy" decoding="async" className="h-8 w-8 rounded-full border-2 border-white object-cover shadow-sm sm:h-9 sm:w-9" />
-                    ))}
-                  </div>
-                  <div className="min-w-0 border-l border-white/45 pl-3 sm:pl-4">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-ryze sm:text-base">100%</span>
-                      <span className="text-[0.9rem] font-extrabold leading-none tracking-tight text-white/75 sm:text-base">RATED</span>
-                    </div>
-                    <span className="mt-0.5 block text-[0.8rem] font-bold leading-tight text-white sm:text-[0.85rem]">{t('Client Satisfaction')}</span>
-                  </div>
+
+              <div className="mt-10 grid max-w-[44rem] gap-4 border-t border-white/10 pt-6 text-left text-white/78 sm:grid-cols-3 lg:mt-12 lg:pt-7">
+                <div className="border-l border-white/18 pl-4">
+                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Learning Format</p>
+                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Private tutoring and small-group classes</p>
                 </div>
+                <div className="border-l border-white/18 pl-4">
+                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Teaching Standard</p>
+                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Accredited teachers and exceptional mentors</p>
+                </div>
+                <div className="border-l border-white/18 pl-4">
+                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Parent Confidence</p>
+                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Structured progress, calm accountability, direct communication</p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:mt-10 lg:justify-start">
+                <PrimaryCTA
+                  variant="link"
+                  href={ROUTES.CONTACT}
+                  size="lg"
+                  label="Book a Consultation"
+                  page="home"
+                  placement="home_hero"
+                  className="w-full justify-center whitespace-nowrap !border-[var(--color-ryze-500)] !bg-[var(--color-ryze-500)] !text-white !font-bold hover:!bg-[var(--color-ryze-400)] hover:!border-[var(--color-ryze-400)] hover:!text-white sm:min-w-[244px] sm:w-auto"
+                />
+                <a href="#programs" className="inline-flex items-center gap-2 text-[1rem] font-semibold uppercase tracking-[0.06em] text-white/82 transition-colors hover:text-white">
+                  Explore programs
+                  <ArrowRight size={16} />
+                </a>
               </div>
             </div>
-            <div className="relative grid h-[260px] grid-cols-2 gap-3 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] sm:h-[320px] md:h-[clamp(420px,72vh,800px)] md:gap-5">
-              <ScrollingColumn direction="up" durationVar="var(--ryze-motion-vertical-scroll-slow)" reducedMotion={reduceMotion}>
-                <Card image={marketingCardImages.ocSelectiveExam} title={t('OC & Selective Exam Preparation')} tag="Primary" priority fetchPriority="high" />
-                <Card image={marketingCardImages.smallGroupFocus} title={t('Small Group Focus')} tag="Method" />
-                <Card image={marketingCardImages.nswAccreditedTeachers} title={t('NSW Accredited Teachers')} tag="Experienced" />
-              </ScrollingColumn>
-              <ScrollingColumn direction="down" durationVar="var(--ryze-motion-vertical-scroll-fast)" reducedMotion={reduceMotion}>
-                <Card image={marketingCardImages.hscExcellence} title={t('HSC Excellence')} tag="Secondary" priority />
-                <Card image={marketingCardImages.hybridLearning} title={t('Hybrid Learning')} tag="Flexibility" />
-                <Card image={marketingCardImages.distinguishedMentors} title={t('Distinguished Mentors')} tag="Experts" />
-              </ScrollingColumn>
+
+            <div className="relative mx-auto w-full max-w-[32rem] lg:ml-auto lg:w-[27rem] lg:max-w-none lg:justify-self-end">
+              <div className="pointer-events-none absolute inset-x-[16%] top-[8%] h-24 rounded-full bg-[rgba(184,132,30,0.15)] blur-3xl"></div>
+              <div className="relative rounded-[1.85rem] border border-white/10 bg-[linear-gradient(180deg,rgba(28,32,40,0.82)_0%,rgba(17,21,29,0.72)_100%)] p-3.5 shadow-[0_38px_90px_-54px_rgba(0,0,0,0.82)] backdrop-blur-2xl sm:p-4.5 lg:p-5">
+                <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent)]"></div>
+                <div className="grid h-[292px] grid-cols-2 gap-3 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] sm:h-[364px] sm:gap-3 lg:h-[45svh] lg:min-h-[408px] lg:max-h-[480px]">
+                  <ScrollingColumn direction="up" durationVar="var(--ryze-motion-vertical-scroll-slow)" reducedMotion={reduceMotion}>
+                    <HeroProofTile
+                      image={marketingCardImages.nswAccreditedTeachers}
+                      title={t('Accredited Teachers')}
+                      tag="Faculty"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                    />
+                    <HeroProofTile
+                      image={marketingCardImages.ocSelectiveExam}
+                      title={t('OC & Selective')}
+                      tag="Primary"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      priority
+                      fetchPriority="high"
+                    />
+                    <HeroProofTile
+                      image={marketingCardImages.smallGroupFocus}
+                      title={t('Small Group Focus')}
+                      tag="Method"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                    />
+                  </ScrollingColumn>
+                  <ScrollingColumn direction="down" durationVar="var(--ryze-motion-vertical-scroll-fast)" reducedMotion={reduceMotion}>
+                    <HeroProofTile
+                      image={marketingCardImages.distinguishedMentors}
+                      title={t('Mentor Support')}
+                      tag="Experts"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                    />
+                    <HeroProofTile
+                      image={marketingCardImages.hscExcellence}
+                      title={t('HSC Excellence')}
+                      tag="Senior"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      priority
+                    />
+                    <HeroProofTile
+                      image={marketingCardImages.hybridLearning}
+                      title={t('Hybrid Learning')}
+                      tag="Flexibility"
+                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                    />
+                  </ScrollingColumn>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -262,7 +352,7 @@ const Home: React.FC = () => {
 
       <div ref={deferredTriggerRef} className="h-px w-full" aria-hidden="true" />
       {shouldLoadDeferred && (
-        <Suspense fallback={<div className="h-[120vh] w-full bg-slate-50" />}>
+        <Suspense fallback={<div className="h-[120vh] w-full bg-[var(--bg)]" />}>
           <HomeDeferredSections />
         </Suspense>
       )}

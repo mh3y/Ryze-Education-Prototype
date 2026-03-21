@@ -15,9 +15,9 @@ const TrustStrip: React.FC<TrustStripProps> = ({ items }) => (
     {items.map((item) => (
       <div
         key={item.label}
-        className="ryze-card inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-800"
+        className="ryze-card inline-flex items-center gap-2 rounded-xl border border-[rgba(23,29,40,0.1)] bg-[rgba(248,243,234,0.82)] px-4 py-3 text-sm font-medium text-[var(--text)] backdrop-blur-sm"
       >
-        <item.icon size={16} className="text-ryze" aria-hidden="true" />
+        <item.icon size={16} className="text-[var(--accent)]" aria-hidden="true" />
         <span>{item.label}</span>
       </div>
     ))}

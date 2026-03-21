@@ -1,283 +1,382 @@
-
 import React from 'react';
 // @ts-ignore
 import { useNavigate } from 'react-router-dom';
-import { Microscope, BedDouble, BellOff, Zap, ArrowRight, XCircle, CheckCircle2, Quote } from 'lucide-react';
+import {
+  Microscope,
+  BedDouble,
+  BellOff,
+  Zap,
+  ArrowRight,
+  XCircle,
+  Quote,
+} from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const TheRyzeTruth: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
+  const problems = [
+    {
+      icon: Microscope,
+      iconClass: 'text-red-500',
+      title: 'Problem 1 - Misdiagnosis',
+      text:
+        "Most tutoring treats symptoms, not causes. A student struggles with quadratic equations, so they get drilled on quadratics. But often the real issue is three years back - incomplete understanding of fractions or basic algebra. Without diagnosing the foundational gap, you're building on sand.",
+    },
+    {
+      icon: BedDouble,
+      iconClass: 'text-purple-500',
+      title: 'Problem 2 - Passive Learning',
+      text:
+        "Sitting and watching someone solve problems doesn't create understanding. Real learning requires active struggle - attempting problems, making mistakes, getting immediate feedback, and trying again. Large classes default to passive learning because managing active learning for twenty different students simultaneously is nearly impossible.",
+    },
+    {
+      icon: BellOff,
+      iconClass: 'text-slate-500',
+      title: 'Problem 3 - The Silence Problem',
+      text:
+        "Students don't ask questions in large groups. Not because they're shy, but because the social cost is high and the benefit is uncertain. Will the tutor actually help, or will they give a rushed explanation before moving on? In my old tutoring centre, I asked maybe three questions across six months.",
+    },
+    {
+      icon: Zap,
+      iconClass: 'text-[var(--accent)]',
+      title: 'Problem 4 - Mismatched Pacing',
+      text:
+        'Every student needs a different pace. In large classes, tutors teach to the middle. Advanced students waste time. Struggling students get left behind. Almost no one gets what they actually need.',
+    },
+  ];
+
+  const attentionPoints = [
+    {
+      title: 'Real Diagnosis',
+      text: 'I can assess each student individually. I can trace their confusion back to its source.',
+    },
+    {
+      title: 'Active Learning',
+      text: 'I watch them work. I see where they hesitate. Then I intervene at exactly the right moment.',
+    },
+    {
+      title: 'Questions Answered',
+      text: 'Asking questions feels normal. I can give thorough answers without others sitting idle.',
+    },
+    {
+      title: 'Flexible Pacing',
+      text: 'I can adjust the speed for each student. If someone needs more time, they get it.',
+    },
+  ];
+
+  const results = [
+    {
+      title: 'Confidence',
+      borderClass: 'border-green-500',
+      text:
+        'Students who came to us convinced they "weren\'t math people" start consistently scoring B\'s and A\'s - not because we worked magic, but because we filled their gaps.',
+    },
+    {
+      title: 'Engagement',
+      borderClass: 'border-blue-500',
+      text:
+        'Advanced students who felt bored get extension material. They start enjoying the subject again. Their teachers notice the difference.',
+    },
+    {
+      title: 'Participation',
+      borderClass: 'border-[var(--accent)]',
+      text:
+        'Students who went months without asking a single question now ask ten, fifteen, twenty questions in their first session. They finally feel safe to learn.',
+    },
+  ];
+
   return (
-    <div className="pt-20 font-sans bg-white">
-      {/* Header */}
-      <div className="bg-white pt-24 pb-24 px-4 border-b border-slate-100">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-sans font-bold mb-6 text-slate-900 tracking-tight">{t("The Ryze Truth")}</h1>
-          <p className="text-xl text-slate-500 font-light">{t("The story behind why most tutoring fails, and how we fixed it.")}</p>
+    <div className="bg-[var(--bg)] pt-20 font-sans text-[var(--text)]">
+      <div className="ryze-page-hero border-b border-[var(--border)] px-4 pb-24 pt-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="ryze-page-title mb-6 text-5xl font-display font-bold tracking-tight md:text-7xl">
+            {t('The Ryze Truth')}
+          </h1>
+          <p className="ryze-page-lead text-xl font-light">
+            {t('The story behind why most tutoring fails, and how we fixed it.')}
+          </p>
         </div>
       </div>
 
-      {/* The Intro / Story Section */}
-      <section className="py-24 px-4 max-w-2xl mx-auto">
-        <div className="prose prose-lg prose-slate mx-auto font-light text-slate-600">
+      <section className="mx-auto max-w-2xl px-4 py-24">
+        <div className="mx-auto space-y-8 text-lg font-light leading-relaxed text-[var(--muted)]">
           <p className="mb-8">
-            {t("Parents rarely come to us at the beginning.")}
-            <br/>{t("They come when they’re tired — and when their child is tired too.")}
-          </p>
-          <p className="mb-8">
-            {t("Before they reach Ryze, most families have already cycled through a handful of tutoring centres.")}
-            <br/>{t("They’ve paid the fees, done the weekly sessions, followed every recommendation.")}
-            <br/>{t("Months go by. The routines become familiar.")}
-          </p>
-          <p className="mb-8 font-medium text-slate-900 text-xl">
-            {t("But the understanding never really changes.")}
+            {t('Parents rarely come to us at the beginning.')}
+            <br />
+            {t("They come when they're tired - and when their child is tired too.")}
           </p>
           <p className="mb-8">
-            {t("Meanwhile their child feels themselves slipping — comparing their progress to everyone else’s, wondering why they’re still stuck, wondering what’s wrong with them.")}
+            {t('Before they reach Ryze, most families have already cycled through a handful of tutoring centres.')}
+            <br />
+            {t("They've paid the fees, done the weekly sessions, followed every recommendation.")}
+            <br />
+            {t('Months go by. The routines become familiar.')}
           </p>
-          <div className="border-l-4 border-ryze pl-6 py-2 my-10">
-            <p className="text-slate-900 italic text-lg" dangerouslySetInnerHTML={{ __html: t("And that’s the tragedy: not that the tutoring didn’t work, but that the child starts to believe <strong>they</strong> didn’t work.") }}>
+          <p className="mb-8 text-xl font-medium text-[var(--primary)]">
+            {t('But the understanding never really changes.')}
+          </p>
+          <p className="mb-8">
+            {t("Meanwhile their child feels themselves slipping - comparing their progress to everyone else's, wondering why they're still stuck, wondering what's wrong with them.")}
+          </p>
+          <div className="my-10 border-l-4 border-[var(--accent)] py-2 pl-6">
+            <p
+              className="text-lg italic text-[var(--primary)]"
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  "And that's the tragedy: not that the tutoring didn't work, but that the child starts to believe <strong>they</strong> didn't work.",
+                ),
+              }}
+            />
+          </div>
+          <p className="mb-8">
+            {t('The truth is simpler and far less cruel.')}
+            <br />
+            {t("They were placed in environments that weren't built to notice them - classrooms too crowded to see their confusion, too rigid to adapt to their pace, too busy to hear their questions.")}
+          </p>
+          <p className="text-lg font-bold text-[var(--primary)]">
+            {t('Nothing was wrong with them.')}
+            <br />
+            {t('Something was wrong with the setup around them.')}
+          </p>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[rgba(243,231,201,0.22)] py-24">
+        <div className="absolute right-0 top-0 -z-10 h-[600px] w-[600px] rounded-full bg-[rgba(243,231,201,0.58)] blur-[100px] opacity-70" />
+        <div className="mx-auto max-w-3xl px-4">
+          <h2 className="mb-12 text-center text-4xl font-display font-bold text-[var(--primary)]">
+            {t("I Know This Because I've Lived It")}
+          </h2>
+          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed text-[var(--muted)]">
+            <p className="mb-6">
+              {t('I still remember the feeling.')}
+              <br />
+              {t('Packing my bag after school, that weight settling in my chest. Not the weight of textbooks - the weight of knowing where I was headed next.')}
+            </p>
+            <p className="mb-6 font-medium">{t('The bus ride to tutoring. Twenty minutes of dread.')}</p>
+            <p className="mb-6">
+              {t("I'd walk into that centre and become invisible. Just another student in a room of twenty others, all of us sitting in rows, staring at a whiteboard while a tutor droned through problems like they were reading a script they'd memorised years ago.")}
+            </p>
+            <p className="mb-6 font-bold italic text-slate-900">{t('15 hours. Every week.')}</p>
+            <p className="mb-6">{t("I wasn't learning. I was enduring.")}</p>
+            <p className="mb-6">
+              {t("The tutor didn't know my name. Didn't notice when I zoned out. Didn't see the confusion on my face when they skipped steps I didn't understand. I was a seat filled, a number on their attendance sheet, revenue on their spreadsheet.")}
+            </p>
+
+            <div className="my-12 rounded-[2rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(248,243,234,0.92)] p-10 text-center shadow-[0_24px_60px_-42px_rgba(17,21,29,0.34)]">
+              <Quote className="mx-auto mb-6 h-10 w-10 text-[var(--accent)] opacity-60" />
+              <p className="mb-4 text-xl font-bold text-slate-900">
+                {t('Why am I falling behind when everyone else seems fine?')}
+              </p>
+              <p className="mb-4 text-xl font-bold text-slate-900">
+                {t("Why can't I just get this?")}
+              </p>
+              <p className="text-2xl font-bold text-[var(--accent)]">{t("What's wrong with me?")}</p>
+            </div>
+
+            <p className="mb-6">
+              {t('I started to believe I was not smart enough. That I was not "a math person." That maybe I just did not have what it took.')}
+            </p>
+            <p className="mb-6">
+              {t("The truth - the one I couldn't see then - was simpler:")}
+              <br />
+              <strong className="font-bold text-slate-900">
+                {t('Nothing was wrong with me. Something was wrong with the environment.')}
+              </strong>
+            </p>
+            <p
+              className="mb-6"
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  "I wasn't stupid. I wasn't lazy. I just needed someone to actually see me, to notice where I was stuck, to teach in a way that made sense to <i>me</i> - not to some imaginary average student in the middle of the class.",
+                ),
+              }}
+            />
+            <p className="text-lg font-medium text-slate-900">
+              {t('That experience left me with a question: Why does so much tutoring fail to actually help?')}
             </p>
           </div>
-          <p className="mb-8">
-            {t("The truth is simpler and far less cruel.")}
-            <br/>{t("They were placed in environments that weren’t built to notice them — classrooms too crowded to see their confusion, too rigid to adapt to their pace, too busy to hear their questions.")}
-          </p>
-          <p className="text-slate-900 font-bold text-lg">
-            {t("Nothing was wrong with them.")}
-            <br/>{t("Something was wrong with the setup around them.")}
-          </p>
         </div>
       </section>
 
-      {/* I Know This Because I've Lived It */}
-      <section className="py-24 bg-slate-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white rounded-full blur-[100px] opacity-40 -z-10"></div>
-        <div className="max-w-3xl mx-auto px-4">
-            <h2 className="text-4xl font-sans font-bold text-slate-900 mb-12 text-center">{t("I Know This Because I've Lived It")}</h2>
-            <div className="prose prose-lg prose-slate mx-auto text-slate-600 font-light">
-                <p className="mb-6">
-                    {t("I still remember the feeling.")}
-                    <br/>{t("Packing my bag after school, that weight settling in my chest. Not the weight of textbooks — the weight of knowing where I was headed next.")}
-                </p>
-                <p className="mb-6 font-medium">
-                    {t("The bus ride to tutoring. Twenty minutes of dread.")}
-                </p>
-                <p className="mb-6">
-                    {t("I’d walk into that centre and become invisible. Just another student in a room of twenty others, all of us sitting in rows, staring at a whiteboard while a tutor droned through problems like they were reading a script they’d memorised years ago.")}
-                </p>
-                <p className="text-slate-900 font-bold italic mb-6">{t("15 hours. Every week.")}</p>
-                <p className="mb-6">
-                    {t("I wasn’t learning. I was enduring.")}
-                </p>
-                <p className="mb-6">
-                    {t("The tutor didn’t know my name. Didn’t notice when I zoned out. Didn’t see the confusion on my face when they skipped steps I didn’t understand. I was a seat filled, a number on their attendance sheet, revenue on their spreadsheet.")}
-                </p>
-                
-                <div className="bg-white p-10 rounded-[2rem] shadow-xl shadow-slate-200/50 my-12 text-center border border-slate-100">
-                    <Quote className="text-ryze w-10 h-10 mx-auto mb-6 opacity-50" />
-                    <p className="font-bold text-slate-900 text-xl mb-4">{t("Why am I falling behind when everyone else seems fine?")}</p>
-                    <p className="font-bold text-slate-900 text-xl mb-4">{t("Why can’t I just get this?")}</p>
-                    <p className="font-bold text-slate-900 text-2xl text-ryze">{t("What’s wrong with me?")}</p>
+      <section className="bg-[var(--bg)] py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-20 text-center">
+            <h2 className="mb-4 text-4xl font-display font-bold text-[var(--primary)] md:text-5xl">
+              {t('Why Tutoring Fails')}
+            </h2>
+            <p className="text-slate-500">{t('The systemic issues we identified and solved.')}</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            {problems.map((problem) => {
+              const Icon = problem.icon;
+              return (
+                <div
+                  key={problem.title}
+                  className="ryze-page-card group rounded-[2.5rem] p-10 transition-all duration-300 hover:shadow-lg"
+                >
+                  <div
+                    className={`mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm transition-transform group-hover:scale-110 ${problem.iconClass}`}
+                  >
+                    <Icon size={32} />
+                  </div>
+                  <h3 className="mb-4 text-2xl font-bold text-slate-900">{t(problem.title)}</h3>
+                  <p className="leading-relaxed text-slate-600">{t(problem.text)}</p>
                 </div>
-
-                <p className="mb-6">
-                    {t("I started to believe I wasn’t smart enough. That I wasn’t “a math person.” That maybe I just didn’t have what it took.")}
-                </p>
-                <p className="mb-6">
-                    {t("The truth—the one I couldn’t see then—was simpler:")}
-                    <br/><strong className="text-slate-900 font-bold">{t("Nothing was wrong with me. Something was wrong with the environment.")}</strong>
-                </p>
-                <p className="mb-6" dangerouslySetInnerHTML={{ __html: t("I wasn’t stupid. I wasn’t lazy. I just needed someone to actually see me, to notice where I was stuck, to teach in a way that made sense to <i>me</i>—not to some imaginary average student in the middle of the class.") }}>
-                </p>
-                <p className="text-lg font-medium text-slate-900">
-                    {t("That experience left me with a question: Why does so much tutoring fail to actually help?")}
-                </p>
-            </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* The 4 Problems Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-             <h2 className="text-4xl md:text-5xl font-sans font-bold text-slate-900 mb-4">{t("Why Tutoring Fails")}</h2>
-             <p className="text-slate-500">{t("The systemic issues we identified and solved.")}</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Problem 1 */}
-            <div className="bg-slate-50 p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:border-red-100 hover:shadow-lg transition-all duration-300 group">
-               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-red-500 mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                 <Microscope size={32} />
-               </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Problem 1 - Misdiagnosis")}</h3>
-               <p className="text-slate-600 leading-relaxed">{t("Most tutoring treats symptoms, not causes. A student struggles with quadratic equations, so they get drilled on quadratics. But often the real issue is three years back—incomplete understanding of fractions or basic algebra. Without diagnosing the foundational gap, you're building on sand.")}</p>
-            </div>
+      <section className="bg-slate-900 px-4 py-24 text-white">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-12 text-center text-4xl font-display font-bold">
+            {t('Why Attention Actually Works')}
+          </h2>
+          <div className="prose prose-invert mx-auto prose-lg">
+            <p
+              className="mb-12 text-center text-xl leading-relaxed text-slate-300"
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  `I'm not claiming one format is magic. Bad teaching is bad teaching regardless of class size. What matters is attention: <span className="text-white font-bold">adaptive, individualised teaching that responds to the student in front of you.</span>`,
+                ),
+              }}
+            />
 
-            {/* Problem 2 */}
-            <div className="bg-slate-50 p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:border-purple-100 hover:shadow-lg transition-all duration-300 group">
-               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-purple-500 mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                 <BedDouble size={32} />
-               </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Problem 2 - Passive Learning")}</h3>
-               <p className="text-slate-600 leading-relaxed">{t("Sitting and watching someone solve problems doesn't create understanding. Real learning requires active struggle—attempting problems, making mistakes, getting immediate feedback, and trying again. Large classes default to passive learning because managing active learning for twenty different students simultaneously is nearly impossible.")}</p>
-            </div>
-
-            {/* Problem 3 */}
-            <div className="bg-slate-50 p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:border-slate-300 hover:shadow-lg transition-all duration-300 group">
-               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-500 mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                 <BellOff size={32} />
-               </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Problem 3 - The Silence Problem")}</h3>
-               <p className="text-slate-600 leading-relaxed">{t("Students don't ask questions in large groups. Not because they're shy, but because the social cost is high and the benefit is uncertain. Will the tutor actually help, or will they give a rushed explanation before moving on? In my old tutoring centre, I asked maybe three questions across six months.")}</p>
-            </div>
-
-            {/* Problem 4 */}
-            <div className="bg-slate-50 p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:border-ryze hover:shadow-lg transition-all duration-300 group">
-               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-ryze mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                 <Zap size={32} />
-               </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">{t("Problem 4 - Mismatched Pacing")}</h3>
-               <p className="text-slate-600 leading-relaxed">{t("Every student needs a different pace. In large classes, tutors teach to the middle. Advanced students waste time. Struggling students get left behind. Almost no one gets what they actually need.")}</p>
+            <div className="not-prose grid grid-cols-1 gap-8 md:grid-cols-2">
+              {attentionPoints.map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/10 p-8">
+                  <h4 className="mb-3 text-xl font-bold text-[var(--ryze-200)]">{t(item.title)}</h4>
+                  <p className="leading-relaxed text-slate-300">{t(item.text)}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why Small Groups Work */}
-      <section className="py-24 px-4 bg-slate-900 text-white">
-         <div className="max-w-4xl mx-auto">
-           <h2 className="text-4xl font-sans font-bold mb-12 text-center">{t("Why Small Groups Actually Work")}</h2>
-           <div className="prose prose-lg prose-invert mx-auto">
-             <p className="leading-relaxed mb-12 text-center text-xl text-slate-300" dangerouslySetInnerHTML={{ __html: t("I’m not claiming small groups are magic. Bad teaching is bad teaching regardless of class size. But small groups enable something that large classes cannot: <span className=\"text-white font-bold\">adaptive, individualised teaching.</span>") }}>
-             </p>
-             
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 not-prose">
-                {[
-                  { title: "Real Diagnosis", text: "I can assess each student individually. I can trace their confusion back to its source." },
-                  { title: "Active Learning", text: "I watch them work. I see where they hesitate. Then I intervene at exactly the right moment." },
-                  { title: "Questions Answered", text: "Asking questions feels normal. I can give thorough answers without others sitting idle." },
-                  { title: "Flexible Pacing", text: "I can adjust the speed for each student. If someone needs more time, they get it." }
-                ].map((item, i) => (
-                  <div key={i} className="bg-white/10 p-8 rounded-2xl border border-white/10">
-                     <h4 className="text-ryze font-bold text-xl mb-3">{t(item.title)}</h4>
-                     <p className="text-slate-300 leading-relaxed">{t(item.text)}</p>
-                  </div>
-                ))}
-             </div>
-           </div>
-         </div>
-      </section>
-
-      {/* What This Actually Costs */}
-      <section className="py-24 bg-white">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-              <h2 className="text-4xl font-sans font-bold text-slate-900 mb-8">{t("The Cost of Quality")}</h2>
-              <div className="prose prose-lg prose-slate mx-auto font-light text-slate-600 leading-relaxed">
-                  <p className="mb-6">
-                    {t("I need to be direct about pricing: small group tutoring costs more than large classes.")}
-                  </p>
-                  <p className="mb-6">
-                    {t("Here’s why: If I’m teaching six students instead of twenty, I need to charge more per student to make the business viable. That’s basic math.")}
-                  </p>
-                  <p className="mb-6">
-                    {t("We charge what we do because that’s what it costs to pay qualified tutors properly, maintain quality facilities, and limit class sizes to six students maximum.")}
-                  </p>
-                  <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 mt-8">
-                    <p className="font-medium text-slate-900">
-                        {t("This isn’t for everyone. If cost is your primary constraint, large group tutoring might be better. But if you’re looking for something that actually works — then the higher price reflects the actual value: individualised attention that produces results.")}
-                    </p>
-                  </div>
-              </div>
-          </div>
-      </section>
-
-      {/* What Results Look Like */}
-      <section className="py-24 bg-slate-50 relative">
-        <div className="max-w-5xl mx-auto px-4">
-           <h2 className="text-4xl font-sans font-bold text-slate-900 mb-16 text-center">{t("What Results Look Like")}</h2>
-           
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-               <div className="bg-white p-8 rounded-3xl shadow-sm border-t-4 border-green-500">
-                   <h3 className="font-bold text-lg mb-4 text-slate-900">{t("Confidence")}</h3>
-                   <p className="text-slate-600 text-sm leading-relaxed">{t("Students who came to us convinced they “weren’t math people” start consistently scoring B’s and A’s—not because we worked magic, but because we filled their gaps.")}</p>
-               </div>
-               <div className="bg-white p-8 rounded-3xl shadow-sm border-t-4 border-blue-500">
-                   <h3 className="font-bold text-lg mb-4 text-slate-900">{t("Engagement")}</h3>
-                   <p className="text-slate-600 text-sm leading-relaxed">{t("Advanced students who felt bored get extension material. They start enjoying the subject again. Their teachers notice the difference.")}</p>
-               </div>
-               <div className="bg-white p-8 rounded-3xl shadow-sm border-t-4 border-ryze">
-                   <h3 className="font-bold text-lg mb-4 text-slate-900">{t("Participation")}</h3>
-                   <p className="text-slate-600 text-sm leading-relaxed">{t("Students who went months without asking a single question now ask ten, fifteen, twenty questions in their first session. They finally feel safe to learn.")}</p>
-               </div>
-           </div>
-
-           <p className="text-center text-slate-500 mt-12 italic">
-             {t("These aren’t miracles. They’re what happens when students get appropriate attention and teaching targeted to their actual needs.")}
-           </p>
-        </div>
-      </section>
-
-      {/* What We're Not / What We Are */}
-      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="bg-red-50 p-12 rounded-[3rem]">
-              <h2 className="text-3xl font-bold text-red-500 mb-8">{t("What We're Not")}</h2>
-              <ul className="space-y-6 text-slate-700 font-medium">
-                <li className="flex gap-4 items-center"><XCircle className="text-red-400 shrink-0" size={24} /> {t("We’re not a magic solution. We can’t fix everything.")}</li>
-                <li className="flex gap-4 items-center"><XCircle className="text-red-400 shrink-0" size={24} /> {t("We’re not the cheapest option. We can’t be.")}</li>
-                <li className="flex gap-4 items-center"><XCircle className="text-red-400 shrink-0" size={24} /> {t("We’re not promising straight A’s or admission.")}</li>
-              </ul>
-            </div>
-            <div className="bg-green-50 p-12 rounded-[3rem]">
-              <h2 className="text-3xl font-bold text-green-600 mb-8">{t("What We Are")}</h2>
-              <div className="space-y-6 text-slate-700 leading-relaxed">
-                  <p>{t("We’re a tutoring centre that deliberately limits class sizes to six students because that’s the threshold where individualised teaching becomes possible.")}</p>
-                  <p>{t("We diagnose where students actually struggle, not where the curriculum says they should be.")}</p>
-                  <p>{t("We charge accordingly because quality teaching at small ratios costs more to deliver.")}</p>
-              </div>
-            </div>
-         </div>
-      </section>
-
-      {/* Conclusion Quote */}
-      <section className="py-20 bg-[#FFF8E7] text-center px-4 border-y border-ryze/20">
-          <div className="max-w-3xl mx-auto">
-              <p className="text-xl md:text-2xl font-bold text-slate-900 leading-relaxed font-sans">
-                  "{t("At Ryze, you’re not a number. You’re not a headcount.")}<br/>
-                  {t("You matter. Your questions matter.")}<br/>
-                  {t("Your progress matters.")}"
+      <section className="bg-[var(--bg)] py-24">
+        <div className="mx-auto max-w-3xl px-4 text-center">
+          <h2 className="mb-8 text-4xl font-display font-bold text-[var(--primary)]">{t('The Cost of Quality')}</h2>
+          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed text-[var(--muted)]">
+            <p className="mb-6">
+              {t('I need to be direct about pricing: serious tutoring costs more when it is structured properly, whether that is delivered in a small group or through private support.')}
+            </p>
+            <p className="mb-6">
+              {t("Here's why: If I'm teaching six students instead of twenty, I need to charge more per student to make the business viable. That's basic math.")}
+            </p>
+            <p className="mb-6">
+              {t("We charge what we do because that's what it costs to pay qualified tutors properly, maintain quality facilities, and limit class sizes to six students maximum.")}
+            </p>
+            <div className="mt-8 rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-8 shadow-[0_18px_42px_-32px_rgba(17,21,29,0.2)]">
+              <p className="font-medium text-[var(--primary)]">
+                {t("This isn't for everyone. If cost is your primary constraint, large group tutoring might be better. But if you're looking for something that actually works - then the higher price reflects the actual value: individualised attention that produces results.")}
               </p>
+            </div>
           </div>
+        </div>
       </section>
 
-      {/* The Real Question CTA */}
-      <section className="py-24 bg-white text-center">
-        <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-4xl font-sans font-bold text-ryze mb-8">{t("The Real Question")}</h2>
-          
-           <p className="text-slate-900 text-xl mb-8 font-medium">
-             {t("The question isn’t whether small groups are better than large groups in some abstract sense.")}
-             <br/>{t("The question is:")} <span className="font-bold underline decoration-ryze decoration-4 underline-offset-4" dangerouslySetInnerHTML={{ __html: t("has what you’re currently doing worked?") }}></span>
-           </p>
-           <p className="text-slate-600 mb-12 leading-relaxed">
-             {t("If your child has been attending tutoring for months and nothing has changed, then something about that environment isn’t working for them.")}
-             {t("Maybe they need individual diagnosis. Maybe they need space to ask questions. Maybe they need a different pace.")}
-           </p>
-           
-           <button 
-             onClick={() => navigate('/contact')}
-             className="px-12 py-5 bg-ryze text-white font-bold rounded-full shadow-xl hover:bg-ryze-600 transition-all transform hover:-translate-y-1 inline-flex items-center gap-3 text-lg"
-           >
-             {t("Book a Trial Lesson")} <ArrowRight size={24} />
-           </button>
-           
-           <p className="font-bold text-slate-400 text-sm mt-8 uppercase tracking-wide">
-             {t("If it works, continue. If it doesn’t, at least you’ll know.")}
-           </p>
+      <section className="relative bg-[rgba(243,231,201,0.22)] py-24">
+        <div className="mx-auto max-w-5xl px-4">
+          <h2 className="mb-16 text-center text-4xl font-display font-bold text-[var(--primary)]">
+            {t('What Results Look Like')}
+          </h2>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {results.map((result) => (
+              <div key={result.title} className={`rounded-3xl border-t-4 bg-white p-8 shadow-sm ${result.borderClass}`}>
+                <h3 className="mb-4 text-lg font-bold text-[var(--primary)]">{t(result.title)}</h3>
+                <p className="text-[0.98rem] leading-relaxed text-[var(--muted)]">{t(result.text)}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-12 text-center italic text-[var(--muted)]">
+            {t("These aren't miracles. They're what happens when students get appropriate attention and teaching targeted to their actual needs.")}
+          </p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl bg-[var(--bg)] px-4 py-24 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+          <div className="rounded-[3rem] bg-red-50 p-12">
+            <h2 className="mb-8 text-3xl font-bold text-red-500">{t("What We're Not")}</h2>
+            <ul className="space-y-6 font-medium text-slate-700">
+              <li className="flex items-center gap-4">
+                <XCircle className="shrink-0 text-red-400" size={24} />
+                {t("We're not a magic solution. We can't fix everything.")}
+              </li>
+              <li className="flex items-center gap-4">
+                <XCircle className="shrink-0 text-red-400" size={24} />
+                {t("We're not the cheapest option. We can't be.")}
+              </li>
+              <li className="flex items-center gap-4">
+                <XCircle className="shrink-0 text-red-400" size={24} />
+                {t("We're not promising straight A's or admission.")}
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-[3rem] bg-green-50 p-12">
+            <h2 className="mb-8 text-3xl font-bold text-green-600">{t('What We Are')}</h2>
+            <div className="space-y-6 leading-relaxed text-slate-700">
+              <p>
+                {t("We're a tutoring centre that deliberately limits class sizes to six students because that's the threshold where individualised teaching becomes possible.")}
+              </p>
+              <p>{t('We diagnose where students actually struggle, not where the curriculum says they should be.')}</p>
+              <p>{t('We charge accordingly because quality teaching at small ratios costs more to deliver.')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-[rgba(184,132,30,0.18)] bg-[rgba(243,231,201,0.42)] px-4 py-20 text-center">
+        <div className="mx-auto max-w-3xl">
+          <p className="font-display text-xl font-bold leading-relaxed text-[var(--primary)] md:text-2xl">
+            "{t("At Ryze, you're not a number. You're not a headcount.")}
+            <br />
+            {t('You matter. Your questions matter.')}
+            <br />
+            {t('Your progress matters.')}"
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-[var(--bg)] py-24 text-center">
+        <div className="mx-auto max-w-3xl px-4">
+          <h2 className="mb-8 text-4xl font-display font-bold text-[var(--accent)]">
+            {t('The Real Question')}
+          </h2>
+
+          <p className="mb-8 text-xl font-medium text-slate-900">
+            {t("The question isn't which format sounds better in the abstract.")}
+            <br />
+            {t('The question is:')}{' '}
+            <span
+              className="font-bold underline decoration-[var(--accent)] decoration-4 underline-offset-4"
+              dangerouslySetInnerHTML={{ __html: t("has what you're currently doing worked?") }}
+            />
+          </p>
+          <p className="mb-12 leading-relaxed text-slate-600">
+            {t("If your child has been attending tutoring for months and nothing has changed, then something about that environment isn't working for them.")}
+            {' '}
+            {t('Maybe they need individual diagnosis. Maybe they need space to ask questions. Maybe they need a different pace.')}
+          </p>
+
+          <button
+            onClick={() => navigate('/contact')}
+            className="inline-flex items-center gap-3 rounded-full border border-[rgba(184,132,30,0.32)] bg-[var(--accent)] px-12 py-5 text-lg font-bold text-[var(--accent-foreground)] shadow-xl transition-all hover:-translate-y-1 hover:bg-[#c89e2b]"
+          >
+            {t('Book a Trial Lesson')} <ArrowRight size={24} />
+          </button>
+
+          <p className="mt-8 text-[0.92rem] font-bold uppercase tracking-[0.12em] text-slate-400">
+            {t("If it works, continue. If it doesn't, at least you'll know.")}
+          </p>
         </div>
       </section>
     </div>

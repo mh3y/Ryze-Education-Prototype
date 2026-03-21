@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Phone } from 'lucide-react';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
-export const PRIMARY_CTA_LABEL = 'Book a Free Consultation';
+export const PRIMARY_CTA_LABEL = 'Book a Consultation';
 
 type PrimaryCtaSize = 'sm' | 'md' | 'lg';
 type PrimaryCtaVariant = 'button' | 'link';
@@ -22,13 +22,13 @@ type PrimaryCTAProps = {
 };
 
 const sizeClasses: Record<PrimaryCtaSize, string> = {
-  sm: 'px-4 py-2 text-sm',
-  md: 'px-6 py-3 text-base',
-  lg: 'px-8 py-4 text-lg',
+  sm: 'min-h-[2.75rem] px-4 py-2 text-[0.95rem]',
+  md: 'min-h-[3.25rem] px-6 py-3 text-[1rem]',
+  lg: 'min-h-[3.75rem] px-7 py-4 text-[1.04rem]',
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-full bg-ryze text-white font-semibold shadow-lg shadow-ryze/20 transition-all hover:bg-ryze-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+  'inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(184,132,30,0.28)] bg-[var(--accent)] text-white font-semibold tracking-[-0.01em] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.34)] transition-all duration-300 hover:-translate-y-px hover:bg-[#d19a24] hover:text-white hover:shadow-[0_22px_48px_-28px_rgba(17,21,29,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
 
 const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWith('//');
 

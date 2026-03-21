@@ -62,55 +62,67 @@
     }
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://res.cloudinary.com">
-    <link
-      rel="preload"
-      as="image"
-      href="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_768/ryze/images/image-v1"
-      media="(min-width: 768px)"
-      imagesrcset="
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_360/ryze/images/image-v1 360w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_480/ryze/images/image-v1 480w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_640/ryze/images/image-v1 640w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_768/ryze/images/image-v1 768w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_960/ryze/images/image-v1 960w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_1200/ryze/images/image-v1 1200w,
-        https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_1280/ryze/images/image-v1 1280w
-      "
-      imagesizes="(max-width: 1024px) 100vw, 560px"
-      fetchpriority="high">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <script>
+      (function () {
+        var path = window.location.pathname.replace(/\/+$/, '') || '/';
+        if (path !== '/' && path !== '/hsc-maths-tutoring') return;
+
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_768/ryze/images/image-v1';
+        link.setAttribute('imagesrcset',
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_360/ryze/images/image-v1 360w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_480/ryze/images/image-v1 480w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_640/ryze/images/image-v1 640w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_768/ryze/images/image-v1 768w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_960/ryze/images/image-v1 960w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_1200/ryze/images/image-v1 1200w,' +
+          'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto,w_1280/ryze/images/image-v1 1280w'
+        );
+        link.setAttribute('imagesizes', '100vw');
+        link.fetchPriority = 'high';
+        document.head.appendChild(link);
+      })();
+    </script>
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'">
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap"
+      />
     </noscript>
 
-    <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest?v=2">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#FFB000">
+    <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest?v=2" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#b8841e" />
 
     <style>
-      :root { --font-primary: 'Poppins', sans-serif; }
+      :root {
+        --font-primary: 'Manrope', sans-serif;
+        --font-display: 'Cormorant Garamond', serif;
+      }
 
       html {
-        color-scheme: dark;
+        color-scheme: light;
         scroll-behavior: smooth;
-        background-color: #050510;
+        background-color: #f4efe7;
         overflow-x: hidden;
         overflow-y: auto;
-        scrollbar-color: #334155 #050510;
+        scrollbar-color: #8e7556 #f4efe7;
         scrollbar-width: thin;
         height: 100%;
         overscroll-behavior-y: none;
@@ -118,11 +130,11 @@
       }
 
       body {
-        font-family: 'Poppins', sans-serif !important;
+        font-family: 'Manrope', sans-serif !important;
         font-weight: 400;
         margin: 0;
         padding: 0;
-        background-color: #050510;
+        background-color: #f4efe7;
         min-height: 100vh;
         width: 100%;
         touch-action: manipulation;
@@ -130,34 +142,45 @@
 
       #root {
         min-height: 100vh;
-        background-color: #050510;
+        background-color: #f4efe7;
         display: flex;
         flex-direction: column;
       }
 
-      h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif !important; }
+      h1, h2, h3, h4 {
+        font-family: 'Cormorant Garamond', serif !important;
+        font-weight: 600;
+        letter-spacing: -0.04em;
+      }
+
+      h5, h6 {
+        font-family: 'Manrope', sans-serif !important;
+      }
+
+      .font-sans {
+        font-family: 'Manrope', sans-serif !important;
+      }
+
+      .font-display {
+        font-family: 'Cormorant Garamond', serif !important;
+        letter-spacing: -0.04em;
+      }
 
       .font-mono {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
       }
 
       ::-webkit-scrollbar { width: 10px; height: 10px; }
-      ::-webkit-scrollbar-track { background: #050510; }
-      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; border: 2px solid #050510; }
-      ::-webkit-scrollbar-thumb:hover { background: #FFB000; }
-      ::-webkit-scrollbar-corner { background: #050510; }
+      ::-webkit-scrollbar-track { background: #f4efe7; }
+      ::-webkit-scrollbar-thumb { background: #8e7556; border-radius: 5px; border: 2px solid #f4efe7; }
+      ::-webkit-scrollbar-thumb:hover { background: #b8841e; }
+      ::-webkit-scrollbar-corner { background: #f4efe7; }
     </style>
   </head>
-  <body class="bg-[#050510] text-slate-800 antialiased font-sans overflow-x-hidden">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N3VVTQ3W"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1218919857096197&ev=PageView&noscript=1"
-    /></noscript>
+  <body class="bg-[#f4efe7] text-slate-800 antialiased font-sans overflow-x-hidden">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N3VVTQ3W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1218919857096197&ev=PageView&noscript=1" /></noscript>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
-

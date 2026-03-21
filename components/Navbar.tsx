@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronRight, Zap, ChevronDown, ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Menu, X, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
@@ -8,213 +8,149 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { language, t } = useLanguage();
-  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Contact Us';
-  const enrolNowLabel = 'Enrol Now';
-  const darkTopBlendRoutes = ['/', '/ryze-ai', '/contact'];
-  const lightTopLinkRoutes = ['/', '/ryze-ai', '/contact', '/learning-style'];
-
-  // Scroll locking for mobile menu
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
-  // Close mobile menu on resize to desktop
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768 && isOpen) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
-
-  // Detect scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 16);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+  const brandLogoUrl =
+    'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: '/how-ryze-works', desc: 'Our process explained.' },
   ];
 
-  // --- DYNAMIC STYLING ---
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
-  // Double transition: blend at top, become solid after scroll or when menu opens.
-  const navClasses = `fixed top-0 left-0 w-full z-50 px-3 sm:px-4 pt-[max(env(safe-area-inset-top),0.35rem)] transition-all duration-300 border-b ${
-    isScrolled || isOpen
-      ? 'bg-[#F4F7FB]/92 backdrop-blur-md border-[#DCE3ED] py-2 rounded-2xl shadow-[0_8px_24px_-18px_rgba(15,23,42,0.28)]'
-      : 'bg-transparent border-transparent py-3 rounded-2xl'
-  }`;
-  const isSolidNav = isScrolled || isOpen;
-  const useLightTopText = !isSolidNav && lightTopLinkRoutes.includes(pathname);
-  const useLightTopLogo = !isSolidNav && darkTopBlendRoutes.includes(pathname);
-  const logoClasses = `mt-1 h-10 md:h-16 w-auto transition duration-200 group-hover:scale-105 ${
-    useLightTopLogo ? 'brightness-0 invert drop-shadow-[0_1px_0_rgba(0,0,0,0.2)]' : 'drop-shadow-[0_1px_0_rgba(0,0,0,0.12)] contrast-110'
-  }`;
-  const zapBadgeClass = `flex items-center justify-center w-5 h-5 rounded-full ${
-    isSolidNav
-      ? 'bg-ryze-brand/10 text-ryze-brand'
-      : useLightTopText
-        ? 'bg-white/15 text-ryze-brand border border-white/30'
-        : 'bg-ryze-brand/15 text-ryze-brand border border-[#FFB000]/25'
-  }`;
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) setIsOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
 
-  const linkClasses = (isActive: boolean) => {
-    if (isActive) {
-      return 'text-[#FFB000]';
-    }
-    return useLightTopText ? 'text-white hover:text-[#FFB000]' : 'text-[#1B2430] hover:text-[#FFB000]';
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isHeroRoute = ['/', '/ryze-ai', '/contact'].includes(pathname);
+  const isSolid = isScrolled || isOpen || !isHeroRoute;
+  const textClass = isSolid ? 'text-[var(--text)]' : 'text-white';
+  const shellClass = isSolid
+    ? 'border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.84)] shadow-[0_24px_60px_-38px_rgba(17,21,29,0.42)] backdrop-blur-xl'
+    : 'border-white/12 bg-transparent';
+  const linkClass = (isActive: boolean) =>
+    `${isActive ? 'text-[var(--accent)]' : textClass} text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300 hover:text-[var(--accent)]`;
+
+  const handleContactNavigate = (placement: string) => {
+    trackPrimaryCtaClick('nav', placement);
+    navigate('/contact');
   };
-
-  const aboutButtonClasses = () => {
-    const isActive = ['/the-ryze-truth', '/how-ryze-works'].includes(pathname);
-    if (isActive) return 'text-[#FFB000]';
-    return useLightTopText ? 'text-white hover:text-[#FFB000]' : 'text-[#1B2430] hover:text-[#FFB000]';
-  };
-
-  const navDividerClasses = `h-6 w-px mx-3 ${isSolidNav ? 'bg-[#D7DDE4]' : useLightTopText ? 'bg-white/30' : 'bg-[#C5CED8]'}`;
-
-  const ctaStateClasses = isSolidNav
-    ? 'bg-transparent text-[#FFB000] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10 hover:shadow-[0_12px_26px_-16px_rgba(15,23,42,0.38)] focus-visible:ring-offset-white'
-    : useLightTopText
-      ? 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16 hover:shadow-[0_14px_30px_-16px_rgba(15,23,42,0.52)] focus-visible:ring-offset-transparent'
-      : 'bg-white text-[#FFB000] border-[3px] border-[#FFB000]/75 backdrop-blur-[10px] shadow-[0_10px_26px_-18px_rgba(15,23,42,0.32)] hover:bg-[#FFF8E5] hover:shadow-[0_14px_30px_-18px_rgba(15,23,42,0.36)] focus-visible:ring-offset-white';
-
-  const ctaBaseClasses = `group h-10 px-5 rounded-xl text-sm font-semibold tracking-[0.02em] inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-200 hover:-translate-y-px active:translate-y-0 active:shadow-[0_6px_16px_-12px_rgba(15,23,42,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,176,0,0.5)] focus-visible:ring-offset-2 ${ctaStateClasses}`;
-
-  const desktopCtaButtonClasses = `${ctaBaseClasses} shrink-0`;
-  const mobileCtaButtonClasses = `${ctaBaseClasses} w-full`;
-
-  const mobileMenuToggleClasses = `p-2 rounded-full transition-colors text-ryze-ink2 ${
-    isSolidNav
-      ? 'hover:bg-ryze-surface2'
-      : useLightTopText
-        ? 'text-white hover:bg-white/10'
-        : 'hover:bg-black/5'
-  }`;
-  const mobileInlineCtaClasses = `inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold tracking-[0.02em] transition-all duration-200 ${
-    isSolidNav
-      ? 'bg-transparent text-[#FFB000] border-[3px] border-[#FFB000]/70 backdrop-blur-[6px] shadow-[0_8px_22px_-16px_rgba(15,23,42,0.35)] hover:bg-[#FFB000]/10'
-      : 'bg-white/10 text-white border-[3px] border-white/75 backdrop-blur-[8px] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.45)] hover:bg-white/16'
-  }`;
 
   return (
-    <nav className={navClasses}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-6">
-        <div className="flex items-center justify-between relative">
-          <div className="flex-shrink-0 cursor-pointer group z-50" onClick={() => { setIsOpen(false); navigate('/'); }}>
+    <nav className="fixed top-0 left-0 z-50 w-full px-3 pt-[max(env(safe-area-inset-top),0.5rem)] sm:px-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
+        <div className={`relative flex items-center justify-between rounded-full border px-4 sm:px-5 lg:px-6 ${shellClass}`}>
+          <button
+            type="button"
+            className="group z-50 flex-shrink-0 cursor-pointer"
+            onClick={() => {
+              setIsOpen(false);
+              navigate('/');
+            }}
+          >
             <img
               src={brandLogoUrl}
               alt="Ryze Education"
               width={250}
               height={64}
-              className={logoClasses}
+              className={`mt-1 h-10 w-auto transition duration-200 group-hover:scale-[1.02] md:h-16 ${!isSolid ? 'brightness-0 invert' : ''}`}
             />
-          </div>
+          </button>
 
-          <div className="hidden md:flex items-center gap-5 lg:gap-9">
-            <div
-              className="relative group"
-              onMouseEnter={() => setAboutDropdownOpen(true)}
-              onMouseLeave={() => setAboutDropdownOpen(false)}
-            >
-              <button
-                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-300 whitespace-nowrap ${aboutButtonClasses()}`}
-              >
-                {t('About')} <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
+          <div className="hidden items-center gap-5 md:flex lg:gap-9">
+            <div className="relative" onMouseEnter={() => setAboutDropdownOpen(true)} onMouseLeave={() => setAboutDropdownOpen(false)}>
+              <button className={`${textClass} flex items-center gap-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300 hover:text-[var(--accent)]`}>
+                {t('About')}
+                <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-
-              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 pt-4 transition-[opacity,transform] duration-200 origin-top ${aboutDropdownOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
-                <div className="bg-white rounded-xl2 shadow-card border border-ryze-line p-2 overflow-hidden">
+              <div className={`absolute top-full left-1/2 w-64 -translate-x-1/2 pt-4 transition-[opacity,transform] duration-200 ${aboutDropdownOpen ? 'visible scale-100 opacity-100' : 'invisible scale-95 opacity-0'}`}>
+                <div className="overflow-hidden rounded-[1.5rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.96)] p-2 shadow-[0_24px_60px_-36px_rgba(17,21,29,0.45)] backdrop-blur-xl">
                   {aboutSubLinks.map((link) => (
                     <NavLink
                       key={link.name}
                       to={link.path}
                       className={({ isActive }: any) =>
-                        `block px-4 py-3 rounded-xl transition-colors duration-200 group/item ${
-                          isActive ? 'bg-ryze-brandSoft' : 'hover:bg-ryze-surface2'
-                        }`
+                        `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'}`
                       }
                     >
-                      <span className="block text-sm font-bold text-ryze-ink2 group-hover/item:text-ryze-brand">
-                        {t(link.name)}
-                      </span>
-                      {language === 'en' && (
-                        <span className="block text-xs text-ryze-ink2/70 font-normal mt-0.5">
-                          {t(link.desc)}
-                        </span>
-                      )}
+                      <span className="block text-[0.95rem] font-bold text-[var(--text)]">{t(link.name)}</span>
+                      {language === 'en' && <span className="mt-0.5 block text-[0.82rem] text-[var(--muted)]">{t(link.desc)}</span>}
                     </NavLink>
                   ))}
                 </div>
               </div>
             </div>
 
-            <NavLink to="/meet-the-team" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Meet Our Team')}</NavLink>
-
-            <NavLink to="/ryze-ai" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>
+            <NavLink to="/meet-the-team" className={({ isActive }: any) => linkClass(isActive)}>
+              {t('Meet Our Team')}
+            </NavLink>
+            <NavLink to="/ryze-ai" className={({ isActive }: any) => linkClass(isActive)}>
               <span className="flex items-center gap-1.5 whitespace-nowrap">
                 {t('Ryze AI')}
-                <span className={zapBadgeClass}>
+                <span
+                  className={`flex h-5 w-5 items-center justify-center rounded-full ${
+                    isSolid
+                      ? 'bg-[rgba(184,132,30,0.12)] text-[var(--accent)]'
+                      : 'border border-white/20 bg-white/10 text-[var(--ryze-200)]'
+                  }`}
+                >
                   <Zap size={10} fill="currentColor" />
                 </span>
               </span>
             </NavLink>
-
-            <NavLink to="/learning-style" className={({ isActive }: any) => `relative text-sm font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap ${linkClasses(isActive)}`}>{t('Learning Style')}</NavLink>
-
-            <div className={navDividerClasses} aria-hidden="true"></div>
-
+            <NavLink to="/learning-style" className={({ isActive }: any) => linkClass(isActive)}>
+              {t('Learning Style')}
+            </NavLink>
+            <div className={`mx-3 h-6 w-px ${isSolid ? 'bg-[rgba(23,29,40,0.12)]' : 'bg-white/20'}`} />
             <button
-              onClick={() => {
-                trackPrimaryCtaClick('nav', 'nav_desktop');
-                navigate('/contact');
-              }}
-              className={desktopCtaButtonClasses}
+              onClick={() => handleContactNavigate('nav_desktop')}
+              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-[0.95rem] font-semibold tracking-[-0.01em] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] transition-all duration-300 hover:-translate-y-px ${
+                isSolid
+                  ? 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]'
+                  : 'border border-white/20 bg-white/10 text-white hover:bg-white hover:text-[var(--primary)]'
+              }`}
             >
-              <span>{bookConsultationLabel}</span>
-              <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-px" />
+              <span>Book a Consultation</span>
+              <ArrowRight size={15} />
             </button>
           </div>
 
-          <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 z-50">
+          <div className="absolute top-1/2 right-0 z-50 flex -translate-y-1/2 items-center gap-2 md:hidden">
             {isScrolled && !isOpen && (
               <button
-                onClick={() => {
-                  trackPrimaryCtaClick('nav', 'nav_mobile_scroll_inline');
-                  navigate('/contact');
-                }}
-                className={mobileInlineCtaClasses}
-                aria-label={enrolNowLabel}
+                onClick={() => handleContactNavigate('nav_mobile_scroll_inline')}
+                className={`inline-flex h-10 items-center justify-center rounded-full px-4 text-[0.92rem] font-semibold shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] ${
+                  isSolid ? 'bg-[var(--primary)] text-[var(--primary-foreground)]' : 'border border-white/20 bg-white/10 text-white'
+                }`}
+                aria-label="Enrol Now"
               >
-                <span>{enrolNowLabel}</span>
+                <span>Enrol Now</span>
               </button>
             )}
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
-              className={mobileMenuToggleClasses}
+              className={`${textClass} rounded-full p-2 transition-colors duration-300 hover:bg-black/5`}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -223,88 +159,67 @@ const Navbar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto bg-white transition-transform duration-300 ease-out">
-            <div className="pt-24 pb-12 px-6 flex flex-col min-h-screen">
-              <div className="flex-grow space-y-6">
-                <div className="border-b border-ryze-line pb-4">
-                  <button
-                    onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
-                    className="w-full flex items-center justify-between text-xl font-bold text-ryze-ink2 py-2"
-                  >
-                    {t('About')}
-                    <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-ryze-brand' : 'text-ryze-ink2/40'}`} />
-                  </button>
-                  {mobileAboutOpen && (
-                      <div className="overflow-hidden">
-                        <div className="pl-4 pt-2 space-y-3">
-                          {aboutSubLinks.map((link) => (
-                            <NavLink
-                              key={link.name}
-                              to={link.path}
-                              onClick={() => setIsOpen(false)}
-                              className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-ryze-brand' : 'text-ryze-ink2/70'}`}
-                            >
-                              {t(link.name)}
-                            </NavLink>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                </div>
-
-                <NavLink
-                  to="/meet-the-team"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-xl font-bold text-ryze-ink2 border-b border-ryze-line pb-4"
-                >
-                  {t('Meet Our Team')}
-                </NavLink>
-
-                <NavLink
-                  to="/ryze-ai"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between text-xl font-bold text-ryze-ink2 border-b border-ryze-line pb-4 group"
-                >
-                  <span className="flex items-center gap-2">{t('Ryze AI')} <Zap size={18} className="text-ryze-brand" fill="currentColor" /></span>
-                  <ChevronRight size={20} className="text-ryze-ink2/40 group-hover:text-ryze-brand" />
-                </NavLink>
-
-                <NavLink
-                  to="/learning-style"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-xl font-bold text-ryze-ink2 border-b border-ryze-line pb-4"
-                >
-                  {t('Learning Style')}
-                </NavLink>
-
-                <NavLink
-                  to="/contact"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-xl font-bold text-ryze-ink2 border-b border-ryze-line pb-4"
-                >
-                  {t('Contact')}
-                </NavLink>
-              </div>
-
-              <div className="mt-8">
+        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto bg-[var(--bg)] transition-transform duration-300 ease-out">
+          <div className="flex min-h-screen flex-col px-6 pt-24 pb-12">
+            <div className="flex-grow space-y-6">
+              <div className="border-b border-[rgba(23,29,40,0.12)] pb-4">
                 <button
-                  onClick={() => {
-                    trackPrimaryCtaClick('nav', 'nav_mobile');
-                    navigate('/contact');
-                    setIsOpen(false);
-                  }}
-                  className={mobileCtaButtonClasses}
+                  onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
+                  className="flex w-full items-center justify-between py-2 text-xl font-semibold text-[var(--text)]"
                 >
-                  <span>{bookConsultationLabel}</span>
-                  <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-px" />
+                  {t('About')}
+                  <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-[var(--accent)]' : 'text-[var(--muted)]'}`} />
                 </button>
+                {mobileAboutOpen && (
+                  <div className="overflow-hidden">
+                    <div className="space-y-3 pl-4 pt-2">
+                      {aboutSubLinks.map((link) => (
+                        <NavLink
+                          key={link.name}
+                          to={link.path}
+                          onClick={() => setIsOpen(false)}
+                          className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}
+                        >
+                          {t(link.name)}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+
+              <NavLink to="/meet-the-team" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+                {t('Meet Our Team')}
+              </NavLink>
+              <NavLink to="/ryze-ai" onClick={() => setIsOpen(false)} className="group flex items-center justify-between border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+                <span className="flex items-center gap-2">{t('Ryze AI')} <Zap size={18} className="text-[var(--accent)]" fill="currentColor" /></span>
+                <ChevronRight size={20} className="text-[var(--muted)] group-hover:text-[var(--accent)]" />
+              </NavLink>
+              <NavLink to="/learning-style" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+                {t('Learning Style')}
+              </NavLink>
+              <NavLink to="/contact" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+                {t('Contact')}
+              </NavLink>
+            </div>
+
+            <div className="mt-8">
+              <button
+                onClick={() => {
+                  handleContactNavigate('nav_mobile');
+                  setIsOpen(false);
+                }}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--primary)] px-5 py-4 text-[0.95rem] font-semibold text-[var(--primary-foreground)] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] transition-all duration-300 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
+              >
+                <span>Book a Consultation</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </nav>
   );
 };
 
 export default Navbar;
-

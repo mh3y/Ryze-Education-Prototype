@@ -1,15 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Quote, Star } from 'lucide-react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { testimonials } from '../data/testimonials';
-import { schoolLogos } from '../data/schoolLogos';
 import { Testimonial } from '../types';
-import './Testimonials.css';
-
-type TestimonialCardProps = {
-  testimonial: Testimonial;
-  isDuplicate?: boolean;
-};
 
 type StoryMetadata = {
   categoryPill: string;
@@ -17,6 +10,18 @@ type StoryMetadata = {
   trackLabel: string;
   verifiedLabel: string;
 };
+
+type TestimonialColumn =
+  | { id: string; variant: 'featured'; items: [Testimonial] }
+  | { id: string; variant: 'stack'; items: Testimonial[] };
+
+const cleanText = (value: string) =>
+  value
+    .replace(/Ã¢â‚¬â€|â€”/g, '-')
+    .replace(/Ã¢â‚¬â„¢|â€™/g, "'")
+    .replace(/Ã¢â‚¬Å“|Ã¢â‚¬Â|â€œ|â€/g, '"')
+    .replace(/Ã‚Â·|Â·/g, '/')
+    .replace(/Ã‚|Â/g, '');
 
 const getInitials = (name: string) =>
   name
@@ -26,6 +31,13 @@ const getInitials = (name: string) =>
     .map((part) => part[0]?.toUpperCase() || '')
     .join('');
 
+const avatarAccentMap = [
+  'bg-[#d7b878] text-[#1b2330]',
+  'bg-[#b7c7d9] text-[#1b2330]',
+  'bg-[#c8d1b0] text-[#1b2330]',
+  'bg-[#d9c3b7] text-[#1b2330]',
+];
+
 const parseYear = (grade: string) => {
   const match = grade.match(/(\d+)/);
   return match ? Number(match[1]) : null;
@@ -33,212 +45,474 @@ const parseYear = (grade: string) => {
 
 const getStoryMetadata = (testimonial: Testimonial, reviewerTypeText: string): StoryMetadata => {
   const category = (testimonial.category || '').toLowerCase();
-  const grade = (testimonial.studentGrade || '').toLowerCase();
-  const achievementAndMessage = `${testimonial.achievement} ${testimonial.message}`.toLowerCase();
   const year = parseYear(testimonial.studentGrade);
+  const achievementAndMessage = `${testimonial.achievement} ${testimonial.message}`.toLowerCase();
   const isHsc = category.includes('hsc') || testimonial.studentGrade === 'Year 12';
   const isSelective = category.includes('selective') || category.includes('oc');
-  const isPrimary = category.includes('primary') || category.includes('naplan') || (year !== null && year <= 6);
+  const isPrimary =
+    category.includes('primary') || category.includes('naplan') || (year !== null && year <= 6);
 
-  let categoryPill = 'ACADEMIC SUCCESS';
-  if (isHsc) categoryPill = 'HSC SUCCESS';
-  else if (isSelective) categoryPill = 'SELECTIVE SUCCESS';
-  else if (isPrimary) categoryPill = 'PRIMARY SUCCESS';
+  let categoryPill = 'Academic Success';
+  if (isHsc) categoryPill = 'HSC Success';
+  else if (isSelective) categoryPill = category.includes('oc') ? 'OC Success' : 'Selective Success';
+  else if (isPrimary) categoryPill = 'Foundations';
 
   let programTitle = 'Student & Parent Story';
   if (isHsc) {
     if (achievementAndMessage.includes('extension 2') || achievementAndMessage.includes('4u')) {
-      programTitle = 'Mathematics Extension 2';
+      programTitle = 'Extension 2 Maths';
     } else if (
       achievementAndMessage.includes('advanced') ||
       achievementAndMessage.includes('2u') ||
       achievementAndMessage.includes('ext 1') ||
       achievementAndMessage.includes('3u')
     ) {
-      programTitle = 'HSC Advanced Mathematics';
+      programTitle = 'HSC Advanced Maths';
     } else {
-      programTitle = 'HSC Mathematics';
+      programTitle = 'HSC Maths';
     }
   } else if (isSelective) {
-    programTitle = 'Selective School Prep';
+    programTitle = category.includes('oc') ? 'OC Preparation' : 'Selective Preparation';
   } else if (isPrimary) {
-    programTitle = 'Primary Foundations';
+    programTitle = 'Primary Maths Foundations';
+  } else if (category.includes('competition')) {
+    programTitle = 'Competition Maths';
   }
 
   const reviewer = reviewerTypeText.toLowerCase();
   const isParent = reviewer.includes('parent');
-  const isStudent = reviewer.includes('student');
-
-  let trackLabel = 'STORY';
-  if (isParent) trackLabel = 'PARENT STORY';
-  else if (isStudent) trackLabel = 'STUDENT STORY';
-
-  let verifiedLabel = 'VERIFIED REVIEW';
-  if (isParent) verifiedLabel = 'VERIFIED PARENT';
-  else if (isStudent) verifiedLabel = 'VERIFIED STUDENT';
+  const trackLabel = isParent ? 'Parent Story' : 'Student Story';
+  const verifiedLabel = isParent ? 'Verified Parent' : 'Verified Student';
 
   return {
     categoryPill,
     programTitle,
     trackLabel,
-    verifiedLabel
+    verifiedLabel,
   };
 };
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, isDuplicate = false }) => {
+const categoryPriority: Record<string, number> = {
+  HSC: 0,
+  Competitions: 1,
+  NAPLAN: 2,
+  Selective: 3,
+  OC: 4,
+  Primary: 5,
+};
+
+const preferredOrderWithinHsc = [
+  'hsc-2',
+  'hsc-1',
+  'hsc-3',
+  'hsc-9',
+  'hsc-7',
+  'hsc-11',
+  'hsc-4',
+  'hsc-10',
+  'hsc-6',
+  'hsc-5',
+  'hsc-8',
+];
+
+const getReviewBucket = (testimonial: Testimonial) => {
+  const year = parseYear(testimonial.studentGrade) ?? 0;
+  const isHsc = testimonial.category.toLowerCase().includes('hsc') || year >= 11;
+
+  if (isHsc) return 0;
+  if (year >= 7 && year <= 10) return 1;
+  return 2;
+};
+
+const orderTestimonials = (items: Testimonial[]) =>
+  items.slice().sort((a, b) => {
+    const bucketDiff = getReviewBucket(a) - getReviewBucket(b);
+    if (bucketDiff !== 0) return bucketDiff;
+
+    const yearA = parseYear(a.studentGrade) ?? 0;
+    const yearB = parseYear(b.studentGrade) ?? 0;
+    if (yearA !== yearB) return yearB - yearA;
+
+    if (getReviewBucket(a) === 0) {
+      const hscRankA = preferredOrderWithinHsc.indexOf(a.id);
+      const hscRankB = preferredOrderWithinHsc.indexOf(b.id);
+      if (hscRankA !== -1 || hscRankB !== -1) {
+        if (hscRankA === -1) return 1;
+        if (hscRankB === -1) return -1;
+        if (hscRankA !== hscRankB) return hscRankA - hscRankB;
+      }
+    }
+
+    const categoryDiff =
+      (categoryPriority[a.category] ?? 99) - (categoryPriority[b.category] ?? 99);
+    if (categoryDiff !== 0) return categoryDiff;
+
+    return a.id.localeCompare(b.id);
+  });
+
+const buildColumns = (items: Testimonial[]): TestimonialColumn[] => {
+  if (!items.length) return [];
+
+  const [lead, ...rest] = items;
+  const columns: TestimonialColumn[] = [{ id: `${lead.id}-featured`, variant: 'featured', items: [lead] }];
+
+  for (let index = 0; index < rest.length; index += 2) {
+    columns.push({
+      id: `stack-${index}`,
+      variant: 'stack',
+      items: rest.slice(index, index + 2),
+    });
+  }
+
+  return columns;
+};
+
+const accentMap: Record<string, string> = {
+  orange: 'border-[rgba(184,132,30,0.24)] bg-[rgba(184,132,30,0.08)] text-[var(--accent)]',
+  green: 'border-[rgba(90,120,95,0.22)] bg-[rgba(90,120,95,0.08)] text-[#55735b]',
+  blue: 'border-[rgba(88,117,173,0.22)] bg-[rgba(88,117,173,0.08)] text-[#4f6797]',
+  purple: 'border-[rgba(128,96,163,0.22)] bg-[rgba(128,96,163,0.08)] text-[#72578f]',
+  yellow: 'border-[rgba(184,132,30,0.24)] bg-[rgba(184,132,30,0.08)] text-[var(--accent)]',
+};
+
+const ReviewCard = memo(function ReviewCard({
+  testimonial,
+  featured = false,
+}: {
+  testimonial: Testimonial;
+  featured?: boolean;
+}) {
   const { t } = useLanguage();
-  const reviewerName = t(testimonial.reviewerName);
-  const reviewerType = t(testimonial.reviewerType);
-  const reviewerGrade = t(testimonial.studentGrade);
-  const storyMeta = getStoryMetadata(testimonial, reviewerType);
+  const reviewerName = cleanText(t(testimonial.reviewerName));
+  const reviewerType = cleanText(t(testimonial.reviewerType));
+  const reviewerGrade = cleanText(t(testimonial.studentGrade));
+  const achievement = cleanText(t(testimonial.achievement));
+  const message = cleanText(t(testimonial.message));
+  const meta = getStoryMetadata(testimonial, reviewerType);
+  const accentClass = accentMap[testimonial.accent] || accentMap.orange;
 
   return (
-    <li
-      className="testimonial-card p-6 md:p-7"
-      aria-hidden={isDuplicate || undefined}
+    <article
+      className={`flex h-full flex-col rounded-[1.6rem] border bg-[rgba(255,255,255,0.92)] shadow-[0_22px_52px_-40px_rgba(17,21,29,0.18)] ${
+        featured
+          ? 'border-[rgba(184,132,30,0.18)] p-5 sm:p-6'
+          : 'border-[rgba(23,29,40,0.08)] p-4.5 sm:p-5'
+      }`}
     >
-      <div className="testimonial-top-row">
-        <div className="testimonial-stars" aria-label="5 out of 5 stars">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} size={13} className="text-[#ffb000] fill-[#ffb000]" />
-          ))}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+            {meta.trackLabel}
+          </p>
+          <div className="mt-2.5 inline-flex items-center gap-1 text-[var(--accent)]">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Star key={index} size={12} className="fill-current" />
+            ))}
+          </div>
         </div>
-        <div className="testimonial-label-group">
-          <span className="testimonial-track-label">{storyMeta.trackLabel}</span>
-          <span className="testimonial-category-pill">{storyMeta.categoryPill}</span>
+        <span className={`rounded-full border px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] ${accentClass}`}>
+          {meta.categoryPill}
+        </span>
+      </div>
+
+      <div className="mt-5 flex items-start gap-3.5">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-[var(--primary-foreground)]">
+          <Quote size={16} />
+        </div>
+        <div>
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
+            {meta.verifiedLabel}
+          </p>
+          <h3
+            className={`mt-3 font-display font-bold leading-[0.95] text-[var(--primary)] ${
+              featured ? 'max-w-[11ch] text-[2.25rem] sm:text-[2.45rem]' : 'max-w-[13ch] text-[1.6rem] sm:text-[1.72rem]'
+            }`}
+          >
+            {achievement}
+          </h3>
+          <p className={`mt-2.5 font-medium text-[var(--primary)] ${featured ? 'text-[1rem]' : 'text-[0.92rem]'}`}>
+            {meta.programTitle}
+          </p>
         </div>
       </div>
 
-      <h3 className="testimonial-title">{storyMeta.programTitle}</h3>
-      <p className="testimonial-result">
-        <span aria-hidden="true" className="testimonial-result-icon">🏆</span> {t(testimonial.achievement)}
-      </p>
-
-      <blockquote className="testimonial-quote text-slate-700">
-        "{t(testimonial.message)}"
+      <blockquote
+        className={`mt-5 text-[var(--muted)] ${featured ? 'max-w-[34ch] text-[0.98rem] leading-relaxed' : 'line-clamp-5 text-[0.92rem] leading-relaxed'}`}
+      >
+        &ldquo;{message}&rdquo;
       </blockquote>
 
-      <div className="testimonial-meta">
-        <div className="testimonial-identity">
-          <span className="testimonial-avatar" aria-hidden="true">
+      <div className="mt-auto pt-5">
+        <div className="flex items-center gap-3 border-t border-[rgba(23,29,40,0.08)] pt-3.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--primary)] text-[0.68rem] font-bold uppercase tracking-[0.08em] text-[var(--primary-foreground)]">
             {getInitials(reviewerName)}
           </span>
           <div>
-            <p className="font-semibold text-slate-900">{reviewerName}</p>
-            <p className="text-sm text-slate-600">
-              {reviewerType} - {reviewerGrade}
+            <p className="text-[0.92rem] font-semibold text-[var(--primary)]">{reviewerName}</p>
+            <p className="text-[0.84rem] text-[var(--muted)]">
+              {reviewerType} / {reviewerGrade}
             </p>
           </div>
         </div>
-        <span className="testimonial-verified-label">{storyMeta.verifiedLabel}</span>
       </div>
-    </li>
+    </article>
   );
-};
+});
 
 const Testimonials: React.FC = () => {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const railRef = useRef<HTMLDivElement>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const metricsFrameRef = useRef<number | null>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startX: number;
+    scrollLeft: number;
+  } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [railState, setRailState] = useState({
+    canScroll: false,
+    isAtStart: true,
+    isAtEnd: true,
+  });
+
+  const orderedTestimonials = useMemo(() => orderTestimonials(testimonials), []);
+  const columns = useMemo(() => buildColumns(orderedTestimonials), [orderedTestimonials]);
+  const trustFaces = useMemo(
+    () =>
+      orderedTestimonials.slice(0, 4).map((testimonial, index) => ({
+        id: testimonial.id,
+        initials: getInitials(cleanText(t(testimonial.reviewerName))),
+        accent: avatarAccentMap[index % avatarAccentMap.length],
+      })),
+    [orderedTestimonials, t],
+  );
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const rail = railRef.current;
+    if (!rail) return;
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
-    updatePreference();
+    const updateMetrics = () => {
+      const maxScroll = rail.scrollWidth - rail.clientWidth;
+      const nextState = {
+        canScroll: maxScroll > 8,
+        isAtStart: rail.scrollLeft <= 8,
+        isAtEnd: maxScroll <= 8 || rail.scrollLeft >= maxScroll - 8,
+      };
 
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', updatePreference);
-      return () => mediaQuery.removeEventListener('change', updatePreference);
-    }
+      setRailState((currentState) =>
+        currentState.canScroll === nextState.canScroll &&
+        currentState.isAtStart === nextState.isAtStart &&
+        currentState.isAtEnd === nextState.isAtEnd
+          ? currentState
+          : nextState,
+      );
+    };
 
-    mediaQuery.addListener(updatePreference);
-    return () => mediaQuery.removeListener(updatePreference);
-  }, []);
+    const scheduleMetricsUpdate = () => {
+      if (metricsFrameRef.current !== null) return;
+      metricsFrameRef.current = window.requestAnimationFrame(() => {
+        metricsFrameRef.current = null;
+        updateMetrics();
+      });
+    };
 
-  const optimizeCloudinaryImage = (url: string, width: number, height: number) => {
-    if (!url.includes('res.cloudinary.com')) return url;
-    return url.replace(
-      /\/image\/upload\/(?:[^/]+\/)?/,
-      `/image/upload/f_auto,q_auto:good,c_limit,w_${width},h_${height},dpr_auto/`
-    );
+    updateMetrics();
+    rail.addEventListener('scroll', scheduleMetricsUpdate, { passive: true });
+
+    resizeObserverRef.current = new ResizeObserver(scheduleMetricsUpdate);
+    resizeObserverRef.current.observe(rail);
+    if (rail.firstElementChild) resizeObserverRef.current.observe(rail.firstElementChild);
+
+    return () => {
+      rail.removeEventListener('scroll', scheduleMetricsUpdate);
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
+      if (metricsFrameRef.current !== null) {
+        window.cancelAnimationFrame(metricsFrameRef.current);
+        metricsFrameRef.current = null;
+      }
+    };
+  }, [columns.length]);
+
+  const scrollRailBy = (direction: -1 | 1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    rail.scrollBy({
+      left: direction * Math.max(rail.clientWidth * 0.72, 320),
+      behavior: 'smooth',
+    });
   };
 
-  const loopLogos = useMemo(() => [...schoolLogos, ...schoolLogos], []);
-  const topPanelTestimonials = useMemo(
-    () => testimonials.filter((testimonial) => testimonial.category === 'HSC' || testimonial.studentGrade === 'Year 12'),
-    []
-  );
-  const bottomPanelTestimonials = useMemo(
-    () => testimonials.filter((testimonial) => testimonial.category !== 'HSC' && testimonial.studentGrade !== 'Year 12'),
-    []
-  );
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!railRef.current) return;
 
-  const topLoopItems = prefersReducedMotion ? topPanelTestimonials : [...topPanelTestimonials, ...topPanelTestimonials];
-  const bottomLoopItems = prefersReducedMotion ? bottomPanelTestimonials : [...bottomPanelTestimonials, ...bottomPanelTestimonials];
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      scrollLeft: railRef.current.scrollLeft,
+    };
+
+    setIsDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rail = railRef.current;
+    const dragState = dragStateRef.current;
+    if (!rail || !dragState || dragState.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - dragState.startX;
+    rail.scrollLeft = dragState.scrollLeft - deltaX;
+  };
+
+  const endDrag = (event?: React.PointerEvent<HTMLDivElement>) => {
+    if (event && event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    dragStateRef.current = null;
+    setIsDragging(false);
+  };
 
   return (
-    <section className="overflow-hidden bg-[#f9f5ed] py-20 font-sans text-slate-800 sm:py-32 lg:py-40">
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-14 text-center sm:mb-20">
-          <h2 className="font-sans text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl md:text-8xl">
-            5.0 <span className="text-[#ffb000]">{'\u2605\u2605\u2605\u2605\u2605'}</span>
+    <section className="overflow-hidden bg-[var(--bg)] py-16 text-slate-800 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="eyebrow">Testimonials</div>
+          <h2 className="mt-4 text-4xl font-display font-bold leading-[0.96] text-[var(--primary)] sm:text-5xl">
+            Results that speak volumes.
           </h2>
-          <p className="mt-4 text-base text-slate-700 sm:mt-5 sm:text-xl">Based on 250+ happy students and satisfied parents.</p>
+          <p className="mt-2 text-[1.8rem] font-display text-[rgba(23,29,40,0.52)] sm:text-[2.2rem]">
+            Read success stories.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Student and parent stories from across HSC, selective, OC, primary, and foundational maths support.
+          </p>
         </div>
 
-        <div className="mb-16 sm:mb-24 lg:mb-32">
-          <p className="text-halo mb-8 text-center text-sm font-bold tracking-[0.22em] text-black sm:mb-12 sm:text-xl">
-            TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS
-          </p>
-          <div className="group relative w-full overflow-hidden">
-            <div className="school-logos-marquee">
-              {loopLogos.map((school, index) => (
-                <div key={`${school.alt}-${index}`} className="mx-4 flex h-[58px] w-[132px] flex-shrink-0 items-center justify-center sm:mx-6 sm:h-[72px] sm:w-[180px] md:mx-8 md:h-[80px] md:w-[200px]">
-                  <img
-                    src={optimizeCloudinaryImage(school.src, 220, 80)}
-                    alt={school.alt}
-                    width={220}
-                    height={80}
-                    loading="lazy"
-                    decoding="async"
-                    className="max-h-[50px] max-w-full object-contain"
-                  />
-                </div>
+        <div className="mt-8 flex flex-col gap-3 rounded-[1.45rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.58)] px-4 py-4 shadow-[0_18px_40px_-34px_rgba(17,21,29,0.18)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <div className="flex items-center gap-3">
+            <span className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
+              Verified Stories
+            </span>
+            <span className="h-1 w-1 rounded-full bg-[rgba(23,29,40,0.18)]" />
+            <span className="text-[0.92rem] font-medium text-[var(--muted)]">
+              {orderedTestimonials.length} student and parent reviews
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-4 rounded-full border border-white/80 bg-[linear-gradient(180deg,rgba(132,132,132,0.28),rgba(104,104,104,0.38))] px-4 py-2.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_34px_-24px_rgba(17,21,29,0.28)]">
+            <div className="flex items-center">
+              {trustFaces.map((face, index) => (
+                <span
+                  key={face.id}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-[0.68rem] font-bold uppercase tracking-[0.08em] ${face.accent} ${index === 0 ? '' : '-ml-2.5'}`}
+                >
+                  {face.initials}
+                </span>
               ))}
             </div>
+            <span className="h-8 w-px bg-white/30" />
+            <span className="leading-tight">
+              <span className="block text-[0.92rem] font-extrabold uppercase tracking-[0.08em] text-[#ffb000]">
+                100% Rated
+              </span>
+              <span className="block text-[1rem] font-semibold text-white">Client Satisfaction</span>
+            </span>
           </div>
         </div>
-      </div>
 
-      <div className="space-y-4 sm:space-y-6 md:space-y-8">
-        <div className="testimonial-marquee-wrapper" tabIndex={0} aria-label="Senior student testimonials">
-          <ul
-            className="testimonial-track testimonial-track--forward"
-            aria-label="Senior student testimonials"
-          >
-            {topLoopItems.map((testimonial, index) => (
-              <TestimonialCard
-                testimonial={testimonial}
-                key={`${testimonial.id}-top-${index}`}
-                isDuplicate={!prefersReducedMotion && index >= topPanelTestimonials.length}
-              />
-            ))}
-          </ul>
-        </div>
+        <div className="mt-8">
+          <div className="relative rounded-[1.7rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.34)] p-4 shadow-[0_20px_46px_-40px_rgba(17,21,29,0.18)] sm:p-5">
+            {railState.canScroll && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Scroll testimonials left"
+                  onClick={() => scrollRailBy(-1)}
+                  disabled={railState.isAtStart}
+                  className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                >
+                  <ArrowLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Scroll testimonials right"
+                  onClick={() => scrollRailBy(1)}
+                  disabled={railState.isAtEnd}
+                  className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                >
+                  <ArrowRight size={16} />
+                </button>
+              </>
+            )}
 
-        <div className="testimonial-marquee-wrapper" tabIndex={0} aria-label="Junior student testimonials">
-          <ul
-            className="testimonial-track testimonial-track--reverse"
-            aria-label="Junior student testimonials"
-          >
-            {bottomLoopItems.map((testimonial, index) => (
-              <TestimonialCard
-                testimonial={testimonial}
-                key={`${testimonial.id}-bottom-${index}`}
-                isDuplicate={!prefersReducedMotion && index >= bottomPanelTestimonials.length}
-              />
-            ))}
-          </ul>
+            <div
+              ref={railRef}
+              tabIndex={0}
+              aria-label="Scroll through student and parent testimonials"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              className={`ryze-review-rail snap-x snap-proximity overflow-x-auto pb-4 [touch-action:pan-y] ${
+                isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+              }`}
+            >
+              <div className="flex min-w-max items-stretch gap-4 pr-4">
+                {columns.map((column, columnIndex) =>
+                  column.variant === 'featured' ? (
+                    <div
+                      key={column.id}
+                      className="ryze-review-column ryze-review-column-featured w-[min(27rem,86vw)] shrink-0 snap-start"
+                    >
+                      <ReviewCard testimonial={column.items[0]} featured />
+                    </div>
+                  ) : (
+                    <div
+                      key={column.id}
+                      className="ryze-review-column grid w-[min(18.5rem,80vw)] shrink-0 snap-start gap-4"
+                    >
+                      {column.items.map((testimonial) => (
+                        <ReviewCard key={testimonial.id} testimonial={testimonial} />
+                      ))}
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+
+            {railState.canScroll && (
+              <div className="mt-4 flex items-center justify-center gap-3 lg:hidden">
+                <button
+                  type="button"
+                  aria-label="Scroll testimonials left"
+                  onClick={() => scrollRailBy(-1)}
+                  disabled={railState.isAtStart}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  <ArrowLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Scroll testimonials right"
+                  onClick={() => scrollRailBy(1)}
+                  disabled={railState.isAtEnd}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2 text-[0.92rem] text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              {railState.canScroll
+                ? 'Use the arrows, drag with the mouse, or swipe sideways to review every testimonial.'
+                : 'All available review cards are currently visible.'}
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -246,4 +520,3 @@ const Testimonials: React.FC = () => {
 };
 
 export default Testimonials;
-

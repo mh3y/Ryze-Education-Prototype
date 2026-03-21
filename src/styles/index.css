@@ -1,20 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ryze: #FFB000;
-  --color-ryze-50: #FFF8E5;
-  --color-ryze-100: #FFF0CC;
-  --color-ryze-200: #FFE099;
-  --color-ryze-300: #FFD166;
-  --color-ryze-400: #FFC133;
-  --color-ryze-500: #FFB000;
-  --color-ryze-600: #CC8D00;
-  --color-ryze-700: #996A00;
-  --color-ryze-800: #664700;
-  --color-ryze-900: #332300;
-  --color-slate-850: #151F32;
-  --color-slate-950: #020617;
-  /* Components should use semantic tokens; palette tokens are for semantic definitions and legacy compatibility only. */
+  --color-ryze: #ffb000;
+  --color-ryze-50: #fbf6ec;
+  --color-ryze-100: #f3e7c9;
+  --color-ryze-200: #e9d49e;
+  --color-ryze-300: #daba65;
+  --color-ryze-400: #c89e2b;
+  --color-ryze-500: #b8841e;
+  --color-ryze-600: #966a17;
+  --color-ryze-700: #734f13;
+  --color-ryze-800: #51380f;
+  --color-ryze-900: #2f2208;
+  --color-slate-850: #1c2431;
+  --color-slate-950: #11151d;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-text: var(--text);
@@ -26,51 +25,54 @@
   --color-border: var(--border);
   --color-ring: var(--ring);
   --color-ryze-brand: var(--accent);
-  --color-ryze-brandHover: #FFC133;
-  --color-ryze-brandSoft: #FFF0CC;
+  --color-ryze-brandHover: #c89e2b;
+  --color-ryze-brandSoft: #f3e7c9;
   --color-ryze-surface2: var(--surface);
   --color-ryze-ink: var(--text);
-  --color-ryze-ink2: #1E293B;
+  --color-ryze-ink2: #1c2431;
   --color-ryze-line: var(--border);
-  --color-ryze-navy: #0F1B2D;
+  --color-ryze-navy: #0f1b2d;
   --radius-xl2: 1.25rem;
-  --shadow-card: 0 10px 30px -24px rgba(2, 6, 23, 0.65);
-  --shadow-cardHover: 0 14px 36px -24px rgba(2, 6, 23, 0.72);
-  --shadow-focus: 0 0 0 3px rgba(143, 162, 196, 0.45);
+  --shadow-card: 0 24px 60px -42px rgba(17, 21, 29, 0.38);
+  --shadow-cardHover: 0 30px 70px -44px rgba(17, 21, 29, 0.44);
+  --shadow-focus: 0 0 0 3px rgba(184, 132, 30, 0.2);
   --text-body: 1rem;
   --leading-body: 1.5rem;
   --radius-ds-sm: var(--radius-sm);
   --radius-ds: var(--radius);
   --radius-ds-lg: var(--radius-lg);
-  --font-sans: 'Poppins', sans-serif;
-  --font-serif: 'Poppins', sans-serif;
-  --font-display: 'Poppins', sans-serif;
+  --font-sans: 'Manrope', sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-display: 'Cormorant Garamond', serif;
 }
 
 :root {
   color-scheme: light;
-  --bg: #F7F9FC;
-  --surface: #EEF3FA;
-  --text: #0F172A;
-  --muted: #475569;
-  --primary: #10213F;
-  --primary-foreground: #F8FAFC;
-  --accent: #FFB000;
-  --accent-foreground: #1E293B;
-  --border: #D7DFEC;
-  --ring: #8FA2C4;
-  --radius: 1rem;
-  --radius-sm: 0.75rem;
-  --radius-lg: 1.5rem;
+  --bg: #f4efe7;
+  --surface: #e9dfd0;
+  --text: #171c24;
+  --muted: #5b5752;
+  --primary: #171d28;
+  --primary-foreground: #f8f3ea;
+  --accent: #b8841e;
+  --accent-foreground: #171d28;
+  --border: rgba(23, 29, 40, 0.12);
+  --ring: rgba(184, 132, 30, 0.3);
+  --radius: 1.25rem;
+  --radius-sm: 0.875rem;
+  --radius-lg: 1.75rem;
   --ryze-container-max-width: 80rem;
   --ryze-container-inline-padding: 1rem;
   --ryze-sticky-cta-height: 0px;
-  --ryze-radius-card: 1rem;
-  --ryze-radius-panel: 1.5rem;
-  --ryze-shadow-soft: 0 10px 30px -24px rgba(2, 6, 23, 0.65);
-  --ryze-shadow-panel: 0 20px 40px -28px rgba(15, 23, 42, 0.45);
+  --ryze-radius-card: 1.25rem;
+  --ryze-radius-panel: 2rem;
+  --ryze-shadow-soft: 0 24px 60px -42px rgba(17, 21, 29, 0.38);
+  --ryze-shadow-panel: 0 34px 80px -54px rgba(17, 21, 29, 0.44);
   --ryze-section-space: clamp(4rem, 8vw, 6rem);
-
+  --ryze-copy-xs: 0.82rem;
+  --ryze-copy-sm: 0.95rem;
+  --ryze-copy-body: 1rem;
+  --ryze-copy-lg: 1.08rem;
   --ryze-motion-feature-marquee-duration: 26s;
   --ryze-motion-logo-marquee-duration: 36s;
   --ryze-motion-testimonial-duration: 64s;
@@ -83,11 +85,34 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (min-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
   line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+
+p,
+a,
+button,
+li {
+  font-family: var(--font-sans);
 }
 
 body.ryze-sticky-cta-active .ryze-main-with-sticky {
@@ -101,6 +126,72 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 .ryze-card {
   border-radius: var(--ryze-radius-card);
   box-shadow: var(--ryze-shadow-soft);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(184, 132, 30, 0.2);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  background: rgba(248, 243, 234, 0.7);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ryze-page {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.ryze-page-hero {
+  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(circle at top, rgba(243, 231, 201, 0.38), transparent 34%),
+    var(--bg);
+}
+
+.ryze-page-title {
+  color: var(--primary);
+  font-family: var(--font-display);
+  letter-spacing: -0.04em;
+}
+
+.ryze-page-lead {
+  color: var(--muted);
+}
+
+.ryze-page-card {
+  border: 1px solid var(--border);
+  background: rgba(248, 243, 234, 0.88);
+  box-shadow: var(--ryze-shadow-soft);
+}
+
+.ryze-page-card-dark {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(23, 29, 40, 0.88);
+  box-shadow: var(--ryze-shadow-panel);
+}
+
+.ryze-shell-grid {
+  position: relative;
+}
+
+.ryze-shell-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(248, 243, 234, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(248, 243, 234, 0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 80%);
 }
 
 @media (min-width: 640px) {
@@ -161,6 +252,43 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 
 .feature-marquee:is(:hover, :focus-within) .feature-marquee-track {
   animation-play-state: paused;
+}
+
+.ryze-review-rail {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-color: rgba(184, 132, 30, 0.58) rgba(23, 29, 40, 0.08);
+  scrollbar-width: thin;
+}
+
+.ryze-review-rail::-webkit-scrollbar {
+  height: 12px;
+}
+
+.ryze-review-rail::-webkit-scrollbar-track {
+  background: rgba(23, 29, 40, 0.08);
+  border-radius: 999px;
+}
+
+.ryze-review-rail::-webkit-scrollbar-thumb {
+  background: rgba(184, 132, 30, 0.58);
+  border: 2px solid rgba(248, 243, 234, 0.6);
+  border-radius: 999px;
+}
+
+.ryze-review-rail::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 132, 30, 0.74);
+}
+
+.ryze-review-column {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 420px 300px;
+}
+
+.ryze-review-column-featured {
+  contain-intrinsic-size: 500px 420px;
 }
 
 .ryze-vertical-marquee {
@@ -253,4 +381,3 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
     transform: none !important;
   }
 }
-

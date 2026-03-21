@@ -1,38 +1,33 @@
 
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-// import CookieConsent from './components/CookieConsent';
 import { LanguageProvider } from './contexts/LanguageContext';
-import ProtectedRoute from './components/ProtectedRoute'; // Import Protection Middleware
+import ProtectedRoute from './components/ProtectedRoute';
 import FeatureGate from './components/FeatureGate';
-import HscMathsTutoring from './pages/HscMathsTutoring';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
 import { usePageTracking } from './src/analytics/router';
 
 const Home = lazy(() => import('./pages/Home'));
+const HscMathsTutoring = lazy(() => import('./pages/HscMathsTutoring'));
 const Navbar = lazy(() => import('./components/Navbar'));
 const Footer = lazy(() => import('./components/Footer'));
 const Starfield = lazy(() =>
   import('./components/Starfield').then((module) => ({ default: module.Starfield })),
 );
 const MathsTutoring = lazy(() => import('./pages/MathsTutoring'));
-
-// Lazy load portal and heavy pages to keep the marketing bundle lean.
 const PortalHome = lazy(() => import('./pages/PortalHome'));
 const StudentPortal = lazy(() => import('./pages/StudentPortal'));
 const ParentPortal = lazy(() => import('./pages/ParentPortal'));
 const TutorLogin = lazy(() => import('./pages/TutorLogin'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
-
-// Lazy load heavy pages to enable code splitting
 const TheRyzeTruth = lazy(() => import('./pages/TheRyzeTruth'));
 const MeetTheTeam = lazy(() => import('./pages/MeetOurTeam'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const RyzeAI = lazy(() => import('./pages/RyzeAI'));
 const Contact = lazy(() => import('./pages/Contact'));
 const LearningStyle = lazy(() => import('./pages/LearningStyle'));
-const Dashboard = lazy(() => import('./pages/Dashboard')); // New SaaS Dashboard
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
@@ -51,30 +46,24 @@ const ScrollToTop = () => {
 
     const id = hash.replace('#', '');
     let attempts = 0;
-    const maxAttempts = 50; // Try for ~5 seconds to allow lazy chunks to load
+    const maxAttempts = 50;
 
     const attemptScroll = () => {
       attempts++;
       const element = document.getElementById(id);
-
       if (element) {
-        // Found the element, scroll to it
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return true;
       }
 
-      if (attempts >= maxAttempts) return true; // Stop trying
-      return false; // Keep trying
+      if (attempts >= maxAttempts) return true;
+      return false;
     };
 
-    // Attempt immediately
     if (attemptScroll()) return;
 
-    // Poll for existence
     const interval = setInterval(() => {
-      if (attemptScroll()) {
-        clearInterval(interval);
-      }
+      if (attemptScroll()) clearInterval(interval);
     }, 100);
 
     return () => clearInterval(interval);
@@ -83,18 +72,14 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Minimal loader
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-[60vh] bg-transparent">
-    <div className="w-8 h-8 border-4 border-slate-200 border-t-[#FFB000] rounded-full animate-spin"></div>
+  <div className="flex min-h-[60vh] items-center justify-center bg-transparent">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-[#b8841e]"></div>
   </div>
 );
 
-// Lightweight wrapper keeps route layout stable without pulling motion code into the landing shell.
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="flex-grow flex flex-col w-full relative z-10">
-    {children}
-  </div>
+  <div className="relative z-10 flex w-full flex-grow flex-col">{children}</div>
 );
 
 const RouteTracking = () => {
@@ -109,8 +94,6 @@ const AppContent: React.FC = () => {
   const isMathsLanding = location.pathname.toLowerCase() === ROUTES.MATHS_TUTORING;
   const isLanding = isHscLanding || isMathsLanding;
 
-  // Routes that share the "Portal" aesthetic (Starfield background)
-  // We include Dashboard here to keep the background persistent when logging in
   const shouldShowStarfield =
     location.pathname === '/login' ||
     location.pathname === '/admin' ||
@@ -119,16 +102,14 @@ const AppContent: React.FC = () => {
     location.pathname === '/tutor-portal' ||
     isDashboard;
 
-  // Determine background class based on route type
-  // Marketing pages get slate-50, App/Portal pages get dark background
-  const bgClass = shouldShowStarfield || location.pathname === '/ryze-ai' || isLanding ? 'bg-[#0D0D0D]' : 'bg-slate-50';
+  const bgClass =
+    shouldShowStarfield || location.pathname === '/ryze-ai' || isLanding ? 'bg-[#0D0D0D]' : 'bg-[var(--bg)]';
 
   return (
-    <div className={`flex flex-col min-h-screen font-sans relative transition-colors duration-300 overflow-x-hidden ${bgClass}`}>
-      {/* Persistent Background for Portal & Dashboard Pages to prevent 'Star Reset' */}
+    <div className={`relative flex min-h-screen flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>
       {shouldShowStarfield && (
         <Suspense fallback={null}>
-          <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="pointer-events-none fixed inset-0 z-0">
             <div className="absolute inset-0 bg-[#050510]"></div>
             <Starfield />
           </div>
@@ -141,7 +122,7 @@ const AppContent: React.FC = () => {
         </Suspense>
       )}
 
-      <main className="ryze-main-with-sticky flex-grow flex flex-col relative z-10 w-full">
+      <main className="ryze-main-with-sticky relative z-10 flex w-full flex-grow flex-col">
         <Routes location={location}>
           <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
           <Route path={ROUTES.HSC_MATHS_TUTORING} element={<HscMathsTutoring />} />
@@ -154,8 +135,6 @@ const AppContent: React.FC = () => {
           <Route path={ROUTES.RYZE_AI} element={<PageWrapper><RyzeAI /></PageWrapper>} />
           <Route path={ROUTES.CONTACT} element={<PageWrapper><Contact /></PageWrapper>} />
           <Route path="/learning-style" element={<PageWrapper><LearningStyle /></PageWrapper>} />
-
-          {/* Portal Routes - Feature gated in production */}
           <Route
             path="/login"
             element={
@@ -196,8 +175,6 @@ const AppContent: React.FC = () => {
               </FeatureGate>
             }
           />
-
-          {/* Protected Dashboard Route (deep links included) */}
           <Route
             path="/dashboard/*"
             element={
@@ -208,18 +185,17 @@ const AppContent: React.FC = () => {
               </FeatureGate>
             }
           />
-
           <Route path={ROUTES.TERMS} element={<PageWrapper><Terms /></PageWrapper>} />
           <Route path={ROUTES.PRIVACY} element={<PageWrapper><Privacy /></PageWrapper>} />
           <Route path={ROUTES.SITEMAP} element={<PageWrapper><Sitemap /></PageWrapper>} />
         </Routes>
       </main>
+
       {!isDashboard && !shouldShowStarfield && !isLanding && (
         <Suspense fallback={null}>
           <Footer />
         </Suspense>
       )}
-      {/* <CookieConsent /> */}
     </div>
   );
 };
@@ -247,4 +223,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-

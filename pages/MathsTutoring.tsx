@@ -1,8 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { FaQuestionCircle, FaPlus, FaLinkedin, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
-import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle, Users, Star, Trophy, Activity, GraduationCap, PenTool, Smile, Laptop, Award, TrendingUp } from 'lucide-react';
-import { FaMinus } from 'react-icons/fa6';
+import { AlertCircle, ArrowRight, Award, CheckCircle2, Facebook, GraduationCap, HelpCircle, Instagram, Laptop, Linkedin, Loader2, MessageCircle, Minus, PenTool, Phone, Plus, Send, Smile, Star, Trophy, TrendingUp, Users, Activity } from 'lucide-react';
+
+const Footer = React.lazy(() => import('../components/Footer'));
+const Testimonials = React.lazy(() => import('../components/Testimonials'));
 
 declare global {
     interface Window {
@@ -113,11 +114,11 @@ const MathsTutoring: React.FC = () => {
       };
 
     const SalesBanner = () => (
-        <div className="sticky top-0 z-50 bg-gradient-to-r from-[#FFB000] to-[#FF8A00] text-white text-center p-3 shadow-lg animate-in fade-in slide-in-from-top-2 duration-500">
+        <div className="sticky top-0 z-50 border-b border-[rgba(184,132,30,0.24)] bg-[rgba(23,29,40,0.92)] text-white text-center p-3 shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-500">
             <div className="container mx-auto px-4">
                 <p className="font-semibold text-sm sm:text-base">
                     Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. 
-                    <a href="tel:+61413885839" onClick={handlePhoneClick} className="underline hover:text-yellow-200 font-bold ml-2 inline-flex items-center gap-1.5">
+                    <a href="tel:+61413885839" onClick={handlePhoneClick} className="underline hover:text-[var(--ryze-200)] font-bold ml-2 inline-flex items-center gap-1.5">
                         Call us to find out more!
                         <Phone size={16} />
                     </a>
@@ -209,7 +210,7 @@ const MathsTutoring: React.FC = () => {
         descriptionTag.name = 'description';
         document.head.appendChild(descriptionTag);
       }
-      descriptionTag.content = 'Premium small-group maths tutoring in Sydney. Expert-led programs from primary foundations through advanced secondary mathematics.';
+      descriptionTag.content = 'Specialist maths tuition in Sydney, delivered through private tutoring and small-group classes from primary foundations through to senior mathematics.';
 
       let canonicalTag = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
       if (!canonicalTag) {
@@ -271,26 +272,66 @@ const MathsTutoring: React.FC = () => {
       };
     }, []);
   
-    const [openFaq, setOpenFaq] = useState<number | null>(null);    
+    const [openFaq, setOpenFaq] = useState<number | null>(null);
+    const [shouldLoadDeferred, setShouldLoadDeferred] = useState(false);
+    const deferredTriggerRef = React.useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      if (shouldLoadDeferred || typeof window === 'undefined') return;
+
+      let idleId: number | null = null;
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+      const triggerLoad = () => setShouldLoadDeferred(true);
+
+      const observer =
+        'IntersectionObserver' in window
+          ? new IntersectionObserver(
+              (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                  triggerLoad();
+                }
+              },
+              { rootMargin: '700px 0px' },
+            )
+          : null;
+
+      if (deferredTriggerRef.current && observer) {
+        observer.observe(deferredTriggerRef.current);
+      }
+
+      if ('requestIdleCallback' in window) {
+        idleId = (window as any).requestIdleCallback(triggerLoad, { timeout: 2200 });
+      } else {
+        timeoutId = setTimeout(triggerLoad, 1600);
+      }
+
+      return () => {
+        observer?.disconnect();
+        if (idleId !== null && 'cancelIdleCallback' in window) {
+          (window as any).cancelIdleCallback(idleId);
+        }
+        if (timeoutId !== null) clearTimeout(timeoutId);
+      };
+    }, [shouldLoadDeferred]);
 
     const socialLinks = [
       {
-        Icon: FaFacebook,
+        Icon: Facebook,
         href: 'https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr',
         label: 'Visit Ryze Education on Facebook'
       },
       {
-        Icon: FaInstagram,
+        Icon: Instagram,
         href: 'https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#',
         label: 'Visit Ryze Education on Instagram'
       },
       {
-        Icon: FaLinkedin,
+        Icon: Linkedin,
         href: 'https://www.linkedin.com/company/ryze-education',
         label: 'Visit Ryze Education on LinkedIn'
       },
       {
-        Icon: FaWhatsapp,
+        Icon: MessageCircle,
         href: 'https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0',
         label: 'Chat with Ryze Education on WhatsApp'
       }
@@ -436,7 +477,7 @@ const MathsTutoring: React.FC = () => {
         { 
             icon: GraduationCap, 
             title: "Expert Mentors", 
-            desc: "Benefit from the genuine care and expertise of our high-achieving mentors.",
+            desc: "Benefit from the genuine care and academic judgement of mentors who know how to teach with clarity.",
         },
         { 
             icon: PenTool, 
@@ -462,12 +503,12 @@ const MathsTutoring: React.FC = () => {
           {features.slice(0, 3).map((feature, idx) => (
             <div
               key={idx}
-              className="bg-black/20 p-6 rounded-3xl border border-white/10 backdrop-blur-lg text-left"
+              className="rounded-3xl border border-white/10 bg-black/20 p-6 text-left backdrop-blur-lg"
             >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-[#FFB000] border border-[#FF8A00]/30">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-[rgba(184,132,30,0.3)] bg-[var(--color-ryze-500)]">
                 <feature.icon size={24} className="text-white" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+              <h3 className="mb-2 text-lg font-display font-bold text-white">{feature.title}</h3>
               <p className="text-gray-300 text-sm leading-relaxed">{feature.desc}</p>
             </div>
           ))}
@@ -481,10 +522,10 @@ const MathsTutoring: React.FC = () => {
                       className="flex-shrink-0 w-[clamp(280px,56vw,420px)] bg-black/20 p-8 rounded-3xl border border-white/10 backdrop-blur-lg"
                       aria-hidden={!reduce && idx >= features.length}
                     >
-                        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-[#FF8A00]/30 bg-[#FFB000]">
+                        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-[rgba(184,132,30,0.3)] bg-[var(--color-ryze-500)]">
                             <feature.icon size={28} className="text-white" />
                         </div>
-                        <h3 className="mb-3 text-xl font-bold text-white">{feature.title}</h3>
+                        <h3 className="mb-3 text-xl font-display font-bold text-white">{feature.title}</h3>
                         <p className="text-base leading-relaxed text-gray-300">{feature.desc}</p>
                     </div>
                 ))}
@@ -495,22 +536,22 @@ const MathsTutoring: React.FC = () => {
 
     const statsData = [
       {
-        icon: <GraduationCap size={40} className="text-[#FFB000]" />,
+        icon: <GraduationCap size={40} className="text-[var(--color-ryze-500)]" />,
         value: "500+",
         description: "students served & counting"
       },
       {
-        icon: <Award size={40} className="text-[#FFB000]" />,
+        icon: <Award size={40} className="text-[var(--color-ryze-500)]" />,
         value: "13 years",
         description: "of teaching experience and mentoring students"
       },
       {
-        icon: <Star size={40} className="text-[#FFB000]" />,
+        icon: <Star size={40} className="text-[var(--color-ryze-500)]" />,
         value: "4.9/5",
         description: "overall experience at Ryze"
       },
       {
-        icon: <TrendingUp size={40} className="text-[#FFB000]" />,
+        icon: <TrendingUp size={40} className="text-[var(--color-ryze-500)]" />,
         value: "100%",
         description: "of students' grades improved significantly"
       }
@@ -536,9 +577,6 @@ const MathsTutoring: React.FC = () => {
       `${consultationImageBase},w_540/${consultationImageId} 540w`,
       `${consultationImageBase},w_720/${consultationImageId} 720w`,
     ].join(', ');
-    const testimonialAvatarBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_face,dpr_auto';
-    const testimonialAvatarId = 'v1769866078/images_qbe5xh';
-    const testimonialAvatarSrc = `${testimonialAvatarBase},w_128,h_128/${testimonialAvatarId}`;
 
     return (
         <div className="bg-[#0D0D0D] text-white font-sans overflow-x-hidden">
@@ -560,11 +598,11 @@ const MathsTutoring: React.FC = () => {
 
             {/* Simplified Header */}
             <header className="relative z-20 container mx-auto px-6 py-6 flex justify-between items-center">
-                <div className="text-3xl font-bold text-white">RYZE EDUCATION</div>
+                <div className="text-3xl font-display font-bold text-white">RYZE EDUCATION</div>
                 <div>
                     <button 
                       onClick={scrollToResults}
-                      className="border border-[#FFB000] bg-[#FFB000]/85 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[#FFB000] hover:text-white transition-colors font-semibold text-sm md:text-base"
+                      className="border border-[var(--color-ryze-500)] bg-[var(--color-ryze-500)] text-white px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-[var(--color-ryze-400)] hover:text-white transition-colors font-semibold text-sm md:text-base"
                     >
                         Book your free consultation
                     </button>
@@ -576,7 +614,7 @@ const MathsTutoring: React.FC = () => {
                 <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white">
                     <span className="block">YOUR PATH TO SUCCESS</span>
                     <span className="relative block">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFE29A] via-[#FFB000] to-[#FF8A00]">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#f3e7c9] via-[#c89e2b] to-[#b8841e]">
                             STARTS HERE
                         </span>
                     </span>
@@ -588,7 +626,7 @@ const MathsTutoring: React.FC = () => {
                 <div className="mt-12 flex flex-col items-center gap-4">
                     <button 
                       onClick={scrollToResults}
-                      className="bg-[#FFB000]/85 text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[#FFB000] transition-colors shadow-lg shadow-[#FFB000]/20"
+                      className="bg-[var(--color-ryze-500)] text-white font-bold px-10 py-4 w-full sm:w-auto rounded-lg text-lg hover:bg-[var(--color-ryze-400)] transition-colors shadow-lg shadow-[rgba(184,132,30,0.2)]"
                     >
                         Start your journey now
                     </button>
@@ -618,13 +656,14 @@ const MathsTutoring: React.FC = () => {
             </section>
 
             {/* Team Preview */}
-            <section className="py-12 bg-slate-50 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[#f9f9f7]"></div>
+            <section className="relative overflow-hidden bg-[rgba(243,231,201,0.16)] py-16 md:py-24">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(243,231,201,0.55),transparent_62%)]"></div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                       <div className="flex flex-col md:flex-row justify-center items-center mb-16 gap-6">
                          <div className="max-w-2xl text-center">
-                            <h2 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 mb-4">Meet Your Mentors</h2>
-                            <p className="text-lg text-slate-700">
+                            <div className="eyebrow justify-center">Faculty</div>
+                            <h2 className="mt-5 text-4xl lg:text-5xl font-display font-bold text-[var(--primary)] mb-4">Meet the educators behind the standard</h2>
+                            <p className="text-[1.02rem] leading-relaxed text-[var(--muted)]">
                               Our experienced educators are committed to helping every student thrive. Not just tutors, but qualified teachers and high-achievers.
                             </p>
                          </div>
@@ -642,29 +681,29 @@ const MathsTutoring: React.FC = () => {
                          >
                           {member.scores && member.scores.length > 0 && (
                             <div className="mb-6">
-                              <div className="bg-white backdrop-blur-md rounded-xl p-3 border border-slate-100">
-                                <h4 className="text-xl font-bold text-amber-700 mb-2 text-center uppercase tracking-wider">HSC Marks</h4>
+                              <div className="rounded-[1.35rem] border border-[var(--border)] bg-[rgba(248,243,234,0.92)] p-4 backdrop-blur-md shadow-[0_18px_40px_-30px_rgba(17,21,29,0.28)]">
+                                <h4 className="mb-2 text-center text-[0.9rem] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">HSC Marks</h4>
                                 <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                                   {member.scores.map((score, i) => (
-                                    <span key={i} className="text-sm font-semibold text-black/75">{score}</span>
+                                    <span key={i} className="text-[0.95rem] font-semibold text-[var(--primary)]/80">{score}</span>
                                   ))}
                                 </div>
                               </div>
                             </div>
                           )}
-                           <div className="relative rounded-[2rem] overflow-hidden mb-6 shadow-md aspect-[3/4] bg-slate-200">
+                           <div className="relative mb-6 aspect-[3/4] overflow-hidden rounded-[2.2rem] border border-white/60 bg-[rgba(255,255,255,0.4)] shadow-[0_28px_64px_-44px_rgba(17,21,29,0.44)]">
                              {member.atar && (
                                <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
                                  <div
                                    style={{ willChange: 'transform' }}
-                                   className="bg-black/50 backdrop-blur-xl border border-[#ffb000]/75 shadow-2xl rounded-xl md:rounded-2xl transform transition-transform duration-300 ease-in-out md:hover:scale-110 md:hover:shadow-amber-400/50"
+                                   className="transform rounded-[1.15rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(248,243,234,0.92)] shadow-[0_18px_40px_-26px_rgba(17,21,29,0.34)] backdrop-blur-xl transition-transform duration-300 ease-in-out md:rounded-[1.35rem] md:hover:scale-[1.04]"
                                  >
-                                   <div className="p-3 md:p-4 text-center text-white">
-                                     <div className="flex items-center justify-center gap-1 md:gap-2 mb-1">
-                                       <Star className="text-amber-300 w-5 h-5" fill="currentColor" />
-                                       <p className="text-xl md:text-2xl font-bold uppercase tracking-wider">ATAR</p>
+                                   <div className="px-3.5 py-2.5 text-left text-[var(--primary)] md:px-4.5 md:py-3.5">
+                                     <div className="mb-1.5 flex items-center gap-1.5 md:gap-2">
+                                       <Star className="h-3.5 w-3.5 text-[var(--accent)] md:h-4 md:w-4" fill="currentColor" />
+                                       <p className="text-[0.76rem] font-bold uppercase tracking-[0.18em] text-[var(--accent)] md:text-[0.8rem]">ATAR</p>
                                      </div>
-                                     <p className="text-xl md:text-2xl font-bold font-mono tracking-tight">{member.atar}</p>
+                                     <p className="font-sans text-[1.45rem] font-extrabold tracking-[-0.04em] text-[var(--primary)] md:text-[1.7rem]">{member.atar}</p>
                                    </div>
                                  </div>
                                </div>
@@ -681,13 +720,13 @@ const MathsTutoring: React.FC = () => {
                                sizes="(max-width: 767px) 90vw, (max-width: 1200px) 33vw, 350px"
                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                              />
-                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-75 transition-opacity duration-500 group-hover:opacity-100"></div>
                              <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                              </div>
                            </div>
                            <div className="pl-2">
-                             <h3 className="text-2xl font-sans font-bold text-slate-900 mb-1 group-hover:text-ryze transition-colors">{member.name}</h3>
-                             <p className="text-slate-700 text-sm font-medium mb-1.5">{member.role}</p>
+                             <h3 className="mb-1 text-2xl font-display font-bold text-[var(--primary)] transition-colors group-hover:text-[var(--accent)]">{member.name}</h3>
+                             <p className="mb-1.5 text-[0.98rem] font-medium text-[var(--muted)]">{member.role}</p>
                            </div>
                          </motion.div>          
                         ))}
@@ -695,50 +734,14 @@ const MathsTutoring: React.FC = () => {
                     </div>
             </section>
 
+            <div ref={deferredTriggerRef} className="h-px w-full" aria-hidden="true" />
+
             {/* Testimonials Section */}
-            <section className="py-20 bg-[#f9f9f7] md:py-32">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-20">
-                        <h2 className="text-3xl text-black md:text-5xl font-bold">Our students love us </h2>
-                        <p className="text-lg text-gray-700 mt-4">Join over 500+ other students excelling in their academics with Ryze</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div className="bg-white p-10 rounded-3xl border-2 border-[#FFB000]">
-                             <p className="text-xl italic text-gray-700">"I honestly couldn't have done it without the sessions at Ryze. Mike has a way of explaining the most abstract concepts in Extension 2 so they actually feel simple. Highly recommend Ryze to anyone looking for not just tutoring but also a mentor and friend."</p>
-                            <div className="mt-8 flex items-center gap-4">
-                                <img
-                                  src={testimonialAvatarSrc}
-                                  srcSet={`${testimonialAvatarBase},w_96,h_96/${testimonialAvatarId} 96w, ${testimonialAvatarBase},w_128,h_128/${testimonialAvatarId} 128w, ${testimonialAvatarBase},w_160,h_160/${testimonialAvatarId} 160w`}
-                                  sizes="64px"
-                                  width={64}
-                                  height={64}
-                                  loading="lazy"
-                                  decoding="async"
-                                  className="w-16 h-16 rounded-full object-cover border-2 border-green-40 blur(2px)"
-                                  alt="Student testimonial avatar"
-                                />
-                                <div>
-                                    <p className="font-bold text-xl text-slate-700">Jason Y.</p>
-                                    <p className="font-bold text-lg text-amber-700">99.85 ATAR | 98 Ext 2 </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-col items-center">
-                        <div className="grid grid-cols-4 gap-4 max-w-sm">
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes5_cropped_gdj3jx.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601232/tes4_cropped_bflbaz.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601239/tes1_cropped_slcxdg.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581187/tes7_ujk1je.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769581193/tes6_dcowey.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601234/tes3_cropped_qh0olo.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/w_133,h_133,c_fill,f_auto,q_auto/v1769601233/tes8_cropped_a3j3tv.png" width={80} height={80} loading="lazy" className="w-20 h-20 rounded-full object-cover border-2 border-[#FFB000] opacity-70 hover:opacity-100" alt="student"/>
-                            <div className="w-20 h-20 rounded-full bg-[#FFB000]/15 flex items-center justify-center text-amber-700 font-bold text-lg">+500</div>
-                        </div>
-                            <p className="text-center mt-6 text-gray-700">Join the Ryze community in becoming higher achievers</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {shouldLoadDeferred && (
+              <React.Suspense fallback={<div className="h-[60vh] w-full bg-[var(--bg)]" />}>
+                <Testimonials />
+              </React.Suspense>
+            )}
 
             {/* Unlock Potential Section - NEW
             <section className="py-20 md:py-32 bg-[#f9f9f7]">
@@ -763,18 +766,19 @@ const MathsTutoring: React.FC = () => {
             </section> */}
 
             {/* Discover Section */}
-            <section className="pt-10 pb-20 md:pt-16 md:pb-28 bg-[#f9f9f7]">
-                <div className="container mx-auto px-6">
+            <section className="bg-[var(--bg)] pb-24 pt-10 md:pb-32 md:pt-16">
+                <div className="mx-auto max-w-7xl px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-5xl text-black font-bold">Our approach is simple</h2>
-                        <p className="text-lg text-gray-700 mt-4">We take three steps to ensure we understand your child's needs and create a clear path forward</p>
+                        <div className="eyebrow justify-center">How It Works</div>
+                        <h2 className="mt-5 text-3xl font-display font-bold text-[var(--primary)] md:text-5xl">A clear start for families</h2>
+                        <p className="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-relaxed text-[var(--muted)]">We take three steps to understand your child&apos;s needs, identify where support is required, and recommend the most suitable next step.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         {/* Left Column: Phone Mockup */}
                         <div className="flex justify-center">
-                            <div className="bg-white/5 border border-white/10 rounded-[40px] p-4 shadow-2xl">
-                                <div className="bg-gray-900 rounded-[30px] overflow-hidden">
+                            <div className="rounded-[2.4rem] border border-[var(--border)] bg-[rgba(248,243,234,0.92)] p-4 shadow-[0_28px_64px_-44px_rgba(17,21,29,0.44)]">
+                                <div className="overflow-hidden rounded-[2rem] bg-[var(--primary)]">
                                     <img
                                       src={consultationImageSrc}
                                       srcSet={consultationImageSrcSet}
@@ -792,59 +796,41 @@ const MathsTutoring: React.FC = () => {
 
                         {/* Right Column: Steps */}
                         <div className="relative flex flex-col gap-16">
-                            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700/50"></div>
+                            <div className="absolute bottom-0 left-4 top-0 w-px bg-[rgba(184,132,30,0.28)]"></div>
                             
                             {/* Step 1 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
+                                    <div className="h-8 w-8 rounded-full border-2 border-[var(--color-ryze-500)] bg-[rgba(243,231,201,0.92)]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 1</h3>
-                                <h4 className="text-2xl font-bold text-black mb-3">Schedule a free consultation</h4>
-                                <p className="text-gray-700">We start with a conversation to understand where your child currently stands, what challenges they're facing, and what you hope to achieve with us. We'll discuss your child's academic goals, learning preferences, and any specific concerns you have. This is also an opportunity for you to learn about our teaching approach and ask any questions.</p>
+                                <h3 className="mb-2 text-[0.88rem] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">Step 1</h3>
+                                <h4 className="mb-3 text-2xl font-display font-bold text-[var(--primary)]">Schedule a free consultation</h4>
+                                <p className="text-[1rem] leading-relaxed text-[var(--muted)]">We begin with a conversation to understand current performance, challenges, goals, and which format is likely to suit your child best.</p>
                             </div>
 
                             {/* Step 2 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
+                                    <div className="h-8 w-8 rounded-full border-2 border-[var(--color-ryze-500)] bg-[rgba(243,231,201,0.92)]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 2</h3>
-                                <h4 className="text-2xl font-bold text-black mb-3">Diagnosis & Feedback </h4>
-                                <p className="text-gray-700">The first lesson serves as a detailed assesment. We'll be working to identify specific knowledge gaps, learning patterns or areas that need attention and then provide clear feedback on what we've observed and what needs focus.</p>
+                                <h3 className="mb-2 text-[0.88rem] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">Step 2</h3>
+                                <h4 className="mb-3 text-2xl font-display font-bold text-[var(--primary)]">Diagnosis and feedback</h4>
+                                <p className="text-[1rem] leading-relaxed text-[var(--muted)]">The first lesson acts as a real diagnostic. We identify gaps, misconceptions, and patterns in how your child approaches mathematics, then explain what needs attention.</p>
                             </div>
 
                             {/* Step 3 */}
                             <div className="pl-12 relative">
                                 <div className="absolute left-0 top-1.5 flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-[#FFB000]/50 border-2 border-[#FFB000]"></div>
+                                    <div className="h-8 w-8 rounded-full border-2 border-[var(--color-ryze-500)] bg-[rgba(243,231,201,0.92)]"></div>
                                 </div>
-                                <h3 className="text-base font-bold text-amber-700 mb-2">STEP 3</h3>
-                                <h4 className="text-2xl font-bold text-black mb-3">Personalised Learning Plan </h4>
-                                <p className="text-gray-700">Based on the assessment, we develop a tailored plan that addresses your child's specific needs. This outlines our focus areas, the approach we'll take and the goals we're working toward together.</p>
+                                <h3 className="mb-2 text-[0.88rem] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">Step 3</h3>
+                                <h4 className="mb-3 text-2xl font-display font-bold text-[var(--primary)]">Personalised learning plan</h4>
+                                <p className="text-[1rem] leading-relaxed text-[var(--muted)]">We recommend a clear starting pathway, outline what we will focus on, and set expectations for the first stage of progress.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-            {/* CTA Section */}
-            {/* <section className="py-20 md:py-24 bg-[#f9f9f7]">
-                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <p className="text-lg text-[#FFB000] font-bold">NO STRINGS ATTACHED</p>
-                        <h2 className="text-3xl md:text-5xl text-black font-bold mt-4">Book your consultation <br/> absolutely <span className="relative inline-block">free</span></h2>
-                        <p className="text-lg text-gray-700 mt-6 max-w-md">Claim your first FREE tutoring session now! Simply click the button below and witness the magic of personalised learning.</p>
-                        <button className="bg-[#FFB000] text-white font-bold px-10 py-4 rounded-lg text-lg hover:bg-[#FFB000] transition-colors mt-8 shadow-lg shadow-[#FFB000]/20">
-                            I\'M READY, SIGN ME UP!
-                        </button>
-                    </div>
-                    <div className="relative h-[400px] bg-black rounded-3xl flex items-center justify-center">
-                        <img src="https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561940/personalised_ctuogs.png" className="w-full h-full object-cover rounded-3xl opacity-80" alt="Online Consultation"/>
-                        <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 text-sm rounded-full font-semibold animate-pulse">LIVE</div>
-                    </div>
-                </div>
-            </section> */}
 
             <motion.div id="real-results-section"
                 initial="initial"
@@ -857,7 +843,7 @@ const MathsTutoring: React.FC = () => {
                 }}
             >
                 <div className="font-sans">
-                  <div className="relative pt-20">
+                  <div className="relative isolate overflow-hidden pt-20">
                     {/* Background Image and Overlay Layer */}
                     <img
                       src={bgImage}
@@ -870,15 +856,15 @@ const MathsTutoring: React.FC = () => {
                       alt=""
                       aria-hidden="true"
                     />
-                    <div className="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm" />
+                    <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(17,21,29,0.72),rgba(17,21,29,0.82))]" />
 
                     {/* Content Layer */}
                     <div className="relative z-20">
                       <div className="pb-28 pt-24 px-4">
                         <div className="max-w-4xl mx-auto text-center">
-                          <h1 className="text-5xl md:text-7xl font-sans font-bold text-white mb-6 tracking-tight">Ready to see real results?</h1>
-                          <p className="text-xl font-light text-slate-200">
-                            Join the 500+ students who've transformed their grades with Ryze Education.
+                          <h1 className="mb-6 text-5xl font-display font-bold tracking-tight text-white md:text-7xl">Ready to see meaningful progress?</h1>
+                          <p className="text-xl font-light text-[rgba(248,243,234,0.8)]">
+                            Talk with us about year level, goals, and whether private tutoring or a small-group class is the right fit.
                           </p>
                         </div>
                       </div>
@@ -887,29 +873,29 @@ const MathsTutoring: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto -mt-32">
                           
                           {/* Card 1: Speak Now */}
-                          <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
-                              <div className="w-20 h-20 bg-ryze/80 rounded-full flex items-center justify-center text-white mb-8 shadow-lg shadow-ryze/30 group-hover:bg-[#FFB000] group-hover:scale-110 transition-transform">
+                          <div className="flex h-full flex-col items-center rounded-[2.5rem] border border-white/14 bg-[rgba(17,21,29,0.72)] p-12 text-center shadow-xl backdrop-blur-md transition-transform duration-300 group hover:-translate-y-2">
+                              <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-ryze)] text-[var(--accent-foreground)] shadow-lg shadow-[rgba(255,176,0,0.16)] transition-transform group-hover:scale-110">
                                 <Phone size={32} />
                               </div>
-                              <h2 className="text-3xl font-bold text-white mb-4">Prefer to Speak now?</h2>
+                              <h2 className="mb-4 text-3xl font-display font-bold text-white">Prefer to speak now?</h2>
                               
-                              <p className="text-slate-300 mb-12 text-lg font-normal leading-relaxed">
+                              <p className="mb-12 text-lg font-normal leading-relaxed text-slate-300">
                                 Sometimes it's just easier to talk. Call us directly and we'll help you out.
                               </p>
 
-                              <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto w-full py-5 bg-white/0 text-white font-bold rounded-2xl hover:bg-ryze/75 hover:text-white transition-all flex items-center border border-white justify-center gap-3 shadow-lg">
+                              <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,176,0,0.38)] bg-[rgba(255,176,0,0.12)] py-5 font-bold text-[#fff5db] shadow-lg transition-all hover:bg-[var(--color-ryze)] hover:text-[var(--accent-foreground)]">
                                 Give us a call <Phone size={20} fill="currentColor" />
                               </a>
                           </div>
 
                           {/* Card 2: Message Us */}
-                          <div className="bg-slate-900/60 backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/20 h-full hover:-translate-y-2 transition-transform duration-300 group">
-                              <div className="w-20 h-20 bg-ryze/80 rounded-full flex items-center justify-center text-white mb-8 group-hover:bg-[#FFB000] transition-colors">
+                          <div className="flex h-full flex-col items-center rounded-[2.5rem] border border-white/14 bg-[rgba(17,21,29,0.72)] p-12 text-center shadow-xl backdrop-blur-md transition-transform duration-300 group hover:-translate-y-2">
+                              <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[rgba(243,231,201,0.92)] text-[var(--accent)] transition-colors group-hover:bg-white">
                                 <Send size={32} />
                               </div>
-                              <h2 className="text-3xl font-bold text-white mb-4">Message Us</h2>
+                              <h2 className="mb-4 text-3xl font-display font-bold text-white">Message us</h2>
                               
-                              <p className="text-slate-300 mb-12 text-lg font-normal leading-relaxed">
+                              <p className="mb-12 text-lg font-normal leading-relaxed text-slate-300">
                                 Send us your question or request a call back at a time that suits you.
                               </p>
 
@@ -918,7 +904,7 @@ const MathsTutoring: React.FC = () => {
                                   const formElement = document.getElementById('contact-form-section');
                                   formElement?.scrollIntoView({ behavior: 'smooth' });
                                 }}
-                                className="mt-auto w-full py-5 bg-transparent border-2 border-slate-300 text-slate-300 font-bold rounded-2xl hover:bg-slate-700 hover:text-white transition-all flex items-center justify-center gap-3"
+                                className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/6 py-5 font-bold text-[rgba(248,243,234,0.84)] transition-all hover:border-[rgba(255,176,0,0.34)] hover:bg-white/10 hover:text-white"
                               >
                                 Send Message <ArrowRight size={20} />
                               </button>
@@ -931,28 +917,28 @@ const MathsTutoring: React.FC = () => {
             <section id="contact-form-section" className="py-20 md:py-24">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h3 className="text-4xl font-bold text-white mb-4">Send us a Message</h3>
-                        <p className="text-slate-300">We typically respond within 24 hours.</p>
+                        <h3 className="mb-4 text-4xl font-display font-bold text-white">Send us a Message</h3>
+                        <p className="text-[rgba(248,243,234,0.74)]">We typically respond within 24 hours.</p>
                     </div>
                     
                     {status === 'success' ? (
-                      <div className="bg-[#FFB000]/50 backdrop-blur-md border border-[#FFB000] rounded-[2rem] p-10 text-center animate-in fade-in zoom-in duration-300">
+                      <div className="animate-in fade-in zoom-in duration-300 rounded-[2rem] border border-green-400 bg-green-900/50 p-10 text-center backdrop-blur-md">
                          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle2 size={40} />
                          </div>
-                         <h4 className="text-2xl font-bold text-white mb-4">Message Sent!</h4>
-                         <p className="text-[#FFB000] mb-8 max-w-md mx-auto">
+                         <h4 className="mb-4 text-2xl font-display font-bold text-white">Message Sent!</h4>
+                         <p className="mb-8 max-w-md mx-auto text-green-200">
                             Thanks for reaching out to Ryze. We've received your enquiry and will be in touch with you shortly.
                          </p>
                          <button 
                             onClick={() => setStatus('idle')}
-                            className="px-8 py-3 bg-slate-800 border border-slate-600 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors"
+                            className="rounded-xl border border-slate-600 bg-slate-800 px-8 py-3 font-sans text-base font-semibold text-white transition-colors hover:bg-slate-700"
                          >
                             Send Another Message
                          </button>
                       </div>
                     ) : (
-                      <form onSubmit={handleSubmit} className="space-y-6 relative">
+                      <form onSubmit={handleSubmit} className="relative space-y-6 font-sans">
                           {status === 'error' && (
                             <div className="bg-red-900/50 text-red-300 p-4 rounded-xl flex items-center gap-3 border border-red-500 mb-6 animate-in fade-in slide-in-from-top-2">
                                <AlertCircle size={20} className="shrink-0" />
@@ -975,7 +961,7 @@ const MathsTutoring: React.FC = () => {
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                              <label htmlFor="name" className="block text-sm font-bold text-slate-200 uppercase tracking-wider">Name</label>
+                              <label htmlFor="name" className="block font-sans text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Name</label>
                               <input
                                 type="text"
                                 id="name"
@@ -985,12 +971,12 @@ const MathsTutoring: React.FC = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full rounded-2xl border border-white/22 bg-black/18 px-6 py-4 font-sans text-[1.02rem] font-medium text-white outline-none transition-all placeholder:font-sans placeholder:text-[rgba(248,243,234,0.56)] focus:border-[var(--color-ryze)] focus:bg-black/30 focus:ring-2 focus:ring-[rgba(255,176,0,0.16)] disabled:cursor-not-allowed disabled:opacity-70"
                                 placeholder="Your Full Name"
                               />
                             </div>
                             <div className="space-y-2">
-                              <label htmlFor="email" className="block text-sm font-bold text-slate-200 uppercase tracking-wider">Email</label>
+                              <label htmlFor="email" className="block font-sans text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Email</label>
                               <input
                                 type="email"
                                 id="email"
@@ -999,14 +985,14 @@ const MathsTutoring: React.FC = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 disabled={status === 'sending'}
-                                className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full rounded-2xl border border-white/22 bg-black/18 px-6 py-4 font-sans text-[1.02rem] font-medium text-white outline-none transition-all placeholder:font-sans placeholder:text-[rgba(248,243,234,0.56)] focus:border-[var(--color-ryze)] focus:bg-black/30 focus:ring-2 focus:ring-[rgba(255,176,0,0.16)] disabled:cursor-not-allowed disabled:opacity-70"
                                 placeholder="email@address.com"
                               />
                             </div>
                           </div>
                           
                           <div className="space-y-2">
-                            <label htmlFor="phone" className="block text-sm font-bold text-slate-200 uppercase tracking-wider">Phone</label>
+                            <label htmlFor="phone" className="block font-sans text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Phone</label>
                             <input
                               type="tel"
                               id="phone"
@@ -1015,15 +1001,15 @@ const MathsTutoring: React.FC = () => {
                               value={formData.phone}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full rounded-2xl border border-white/22 bg-black/18 px-6 py-4 font-sans text-[1.02rem] font-medium text-white outline-none transition-all placeholder:font-sans placeholder:text-[rgba(248,243,234,0.56)] focus:border-[var(--color-ryze)] focus:bg-black/30 focus:ring-2 focus:ring-[rgba(255,176,0,0.16)] disabled:cursor-not-allowed disabled:opacity-70"
                               placeholder="Mobile Number"
                             />
                           </div>
                           
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <label htmlFor="message" className="block text-sm font-bold text-slate-200 uppercase tracking-wider">Message</label>
-                                <span className={`text-xs font-medium ${formData.message.length >= 2000 ? 'text-red-500' : 'text-slate-300'}`}>
+                                <label htmlFor="message" className="block font-sans text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Message</label>
+                                <span className={`font-sans text-xs font-medium ${formData.message.length >= 2000 ? 'text-red-500' : 'text-slate-300'}`}>
                                     {formData.message.length}/2000
                                 </span>
                             </div>
@@ -1036,7 +1022,7 @@ const MathsTutoring: React.FC = () => {
                               value={formData.message}
                               onChange={handleChange}
                               disabled={status === 'sending'}
-                              className="w-full px-6 py-4 rounded-2xl bg-black/20 border-2 border-white/50 text-white focus:border-[#FFB000] focus:bg-black/30 outline-none transition-all font-medium resize-none disabled:opacity-70 disabled:cursor-not-allowed"
+                              className="w-full resize-none rounded-2xl border border-white/22 bg-black/18 px-6 py-4 font-sans text-[1.02rem] font-medium text-white outline-none transition-all placeholder:font-sans placeholder:text-[rgba(248,243,234,0.56)] focus:border-[var(--color-ryze)] focus:bg-black/30 focus:ring-2 focus:ring-[rgba(255,176,0,0.16)] disabled:cursor-not-allowed disabled:opacity-70"
                               placeholder="How can we help you?"
                             ></textarea>
                           </div>
@@ -1044,7 +1030,7 @@ const MathsTutoring: React.FC = () => {
                           <button
                             type="submit"
                             disabled={status === 'sending'}
-                            className="w-full bg-[#FFB000] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-[#FF8A00]/90 hover:-translate-y-1 active:scale-95 active:bg-[#FFB000] focus:outline-none focus:ring-4 focus:ring-[#FFB000]/20 transition-all text-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:active:scale-100"
+                            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[var(--color-ryze-500)] bg-[var(--color-ryze-500)] py-5 font-sans text-lg font-semibold text-white shadow-xl transition-all hover:-translate-y-1 hover:border-[var(--color-ryze-400)] hover:bg-[var(--color-ryze-400)] focus:outline-none focus:ring-4 focus:ring-[rgba(184,132,30,0.2)] disabled:cursor-not-allowed disabled:opacity-70 disabled:transform-none"
                           >
                             {status === 'sending' ? (
                               <>
@@ -1064,87 +1050,66 @@ const MathsTutoring: React.FC = () => {
       </motion.div>
 
             {/* FAQ Section */}
-            <section className="py-20 md:py-32 bg-[#f9f9f7]">
-                <div className="container mx-auto px-6">
-                    <div className="grid md:grid-cols-3 gap-16">
-                        <div className="md:col-span-1">
-                            <FaQuestionCircle size={40} className="text-[#FFB000] mb-6" />
-                            <h2 className="text-3xl md:text-5xl text-black font-bold mb-4">Still not convinced?</h2>
-                            <p className="text-gray-700 text-lg">
-                                Have more questions? Feel free to reach out to us. 
-                                <a href="#real-results-section" onClick={(event) => { event.preventDefault(); scrollToResults(); }} className="text-[#FFB000] font-semibold hover:underline cursor-pointer"> Contact us</a>.
-                            </p>
-                        </div>
-                        <div className="md:col-span-2">
-                            {faqData.map((faq, index) => (
-                                <div key={index} className="border-b border-gray-800/50">
-                                    <div 
-                                        className="flex justify-between items-center p-6 cursor-pointer"
-                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                    >
-                                        <p className="text-lg text-black font-semibold">{faq.question}</p>
-                                        {openFaq === index ? <FaMinus className="text-[#FFB000]" /> : <FaPlus className="text-[#FFB000]" />}
-                                    </div>
-                                    <AnimatePresence>
-                                        {openFaq === index && (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <p className="text-gray-700 pb-6 px-6 whitespace-pre-line">
-                                                    {faq.answer}
-                                                </p>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
+            <section className="bg-[rgba(243,231,201,0.18)] py-20 md:py-28">
+                <div className="mx-auto max-w-6xl px-6">
+                    <div className="mb-12 max-w-3xl">
+                        <div className="eyebrow">FAQs</div>
+                        <h2 className="mt-5 text-4xl font-display font-bold text-[var(--primary)] md:text-5xl">Questions families often ask</h2>
+                        <p className="mt-5 text-[1.02rem] leading-relaxed text-[var(--muted)]">
+                            If you need more detail, we are happy to talk through year level, goals, format, and fit.
+                            <button
+                              type="button"
+                              onClick={scrollToResults}
+                              className="ml-2 font-semibold text-[var(--accent)] transition-colors hover:text-[var(--color-ryze-400)]"
+                            >
+                              Contact us
+                            </button>.
+                        </p>
+                    </div>
+                    <div className="space-y-4">
+                        {faqData.map((faq, index) => (
+                            <div key={index} className="overflow-hidden rounded-[1.8rem] border border-[var(--border)] bg-[rgba(248,243,234,0.92)] shadow-[0_18px_42px_-34px_rgba(17,21,29,0.18)]">
+                                <button
+                                  type="button"
+                                  className="flex w-full items-start justify-between gap-6 px-7 py-6 text-left"
+                                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                >
+                                  <div className="flex items-start gap-4">
+                                    <HelpCircle size={22} className="mt-1 shrink-0 text-[var(--accent)]" />
+                                    <p className="text-[1.08rem] font-semibold leading-snug text-[var(--primary)]">{faq.question}</p>
+                                  </div>
+                                  {openFaq === index ? <Minus className="mt-1 shrink-0 text-[var(--accent)]" /> : <Plus className="mt-1 shrink-0 text-[var(--accent)]" />}
+                                </button>
+                                <AnimatePresence initial={false}>
+                                    {openFaq === index && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.28, ease: 'easeInOut' }}
+                                            className="overflow-hidden"
+                                        >
+                                            <div className="border-t border-[var(--border)] px-7 pb-7 pt-5">
+                                                <div className="space-y-4 pl-9 text-[1rem] leading-relaxed text-[var(--muted)]">
+                                                    {faq.answer.split('\n\n').map((paragraph, pIndex) => (
+                                                        <p key={pIndex}>{paragraph.trim()}</p>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="bg-black/30 text-[#FFB000] pt-6 pb-6">
-                <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        {/* Column 1: Brand */}
-                        <div className="md:col-span-1">
-                            <h3 className="text-2xl font-bold mb-4">RYZE EDUCATION</h3>
-                            <p className="text-gray-400 leading-relaxed">
-                              Education that sees you.<br />
-                              Diagnosing gaps, building understanding, and creating confidence in every student.
-                            </p>
-                        </div>
-
-                        {/* Column 2: Connect With Us */}
-                        <div>
-                            <h4 className="text-lg font-semibold mb-4 tracking-wide">Connect With Us</h4>
-                            <p className="text-gray-400 mb-4">Follow us on our social media channels.</p>
-                            <div className="flex space-x-4">
-                                {socialLinks.map(({ Icon, href, label }, i) => (
-                                  <a 
-                                    key={i} 
-                                    href={href} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    aria-label={label}
-                                    title={label}
-                                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-[#FFB000] hover:text-white transition-all duration-300"
-                                  >
-                                    <Icon size={20} />
-                                  </a>
-                                ))}
-                              </div>
-                        </div>
-                    </div>
-                    <div className="mt-6 pt-6 border-t border-gray-800 text-center text-gray-500">
-                        <p>&copy; {new Date().getFullYear()} Ryze Education. All Rights Reserved.</p>
-                    </div>
-                </div>
-            </footer>
+            {shouldLoadDeferred && (
+              <React.Suspense fallback={null}>
+                <Footer />
+              </React.Suspense>
+            )}
         </div>
     );
 };
