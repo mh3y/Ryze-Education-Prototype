@@ -117,7 +117,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
       fetchPriority="high"
       loading="eager"
       decoding="async"
-      className="absolute inset-0 w-full h-full object-cover object-center"
+      className="absolute inset-0 h-full w-full object-cover object-center sm:object-[52%_center] lg:object-[56%_center]"
     />
     {/* Background Overlay */}
     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>

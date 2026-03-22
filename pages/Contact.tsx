@@ -21,7 +21,10 @@ const Contact: React.FC = () => {
             {/* Background Image and Overlay Layer */}
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1280/ryze/images/home-background-overlayv2')` }}
+              style={{
+                backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1280/ryze/images/home-background-overlayv2')`,
+                backgroundPosition: 'center center',
+              }}
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.72),rgba(17,21,29,0.82))]" />
 

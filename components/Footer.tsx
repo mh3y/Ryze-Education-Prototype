@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 // @ts-ignore
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -64,8 +64,8 @@ const Footer: React.FC = () => {
   return (
     <div className="flex flex-col">
       {/* 1. SEPARATED PRE-FOOTER CTA (SUBTLE) */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className={`relative isolate flex flex-col items-center justify-between gap-6 overflow-hidden rounded-[1.5rem] border p-8 sm:p-10 lg:flex-row ${ctaCardClass}`}>
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className={`relative isolate flex flex-col items-center justify-between gap-4 overflow-hidden rounded-[1.5rem] border px-6 py-7 sm:px-8 sm:py-8 lg:flex-row ${ctaCardClass}`}>
            <div className="max-w-2xl text-center lg:text-left">
               <h2 className={`mb-2 ryze-heading-3 ${isRyzeAi ? 'ryze-text-inverse' : 'ryze-text-primary'}`}>
                 {t('Accelerate ahead of the curve')}
@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
               </p>
            </div>
            
-           <div className="shrink-0 w-full sm:w-auto mt-2 lg:mt-0">
+           <div className="mt-1 w-full shrink-0 sm:w-auto lg:mt-0">
              <PrimaryCTA
                 page="global_footer"
                 placement="footer"
@@ -87,19 +87,19 @@ const Footer: React.FC = () => {
       </div>
 
       {/* 2. FORMAL MINIMALIST FOOTER */}
-      <footer className={`relative z-20 border-t border-[rgba(255,255,255,0.06)] pt-16 pb-8 transition-colors duration-300 ${footerContainerClass}`}>
+      <footer className={`relative z-20 border-t border-[rgba(255,255,255,0.06)] pt-10 pb-6 transition-colors duration-300 sm:pt-12 ${footerContainerClass}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 mb-16">
+          <div className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-6">
             
             {/* Left Column: Brand & Manifesto (Span 4) */}
-            <div className="space-y-6 lg:col-span-4 lg:pr-8">
+            <div className="space-y-4 lg:col-span-4 lg:pr-6">
               <Link to={ROUTES.HOME} className="block w-fit">
-                <img src={brandLogoUrl} alt="Ryze Education" width={180} height={46} className="h-10 w-auto" />
+                <img src={brandLogoUrl} alt="Ryze Education" width={180} height={46} className="h-9 w-auto" />
               </Link>
-              <p className="text-sm leading-relaxed max-w-sm">
+              <p className="max-w-sm text-sm leading-6">
                 {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
               </p>
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-3 pt-1">
                 {footerSocialLinks.map(({ Icon, href, label }, i) => (
                   <a
                     key={i}
@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     aria-label={label}
                     title={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-transparent text-[rgba(255,255,255,0.8)] transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] hover:-translate-y-0.5"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-transparent text-[rgba(255,255,255,0.8)] transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] hover:-translate-y-0.5"
                   >
                     <Icon size={16} />
                   </a>
@@ -118,8 +118,8 @@ const Footer: React.FC = () => {
 
             {/* Middle Columns: Math Navigation (Span 2) */}
             <div className="lg:col-span-2 lg:col-start-6">
-              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Programs')}</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className={`mb-3 text-[1.05rem] font-bold uppercase tracking-[0.1em] ${headingClass}`}>{t('Programs')}</h4>
+              <ul className="space-y-2.5 text-sm">
                 <li><Link to={ROUTES.HOME} className={`transition-colors flex ${linkHoverClass}`}>{t('Home')}</Link></li>
                 <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`transition-colors flex ${linkHoverClass}`}>{t('HSC Mathematics')}</Link></li>
                 <li><Link to={ROUTES.MATHS_TUTORING} className={`transition-colors flex ${linkHoverClass}`}>{t('High School Maths')}</Link></li>
@@ -128,8 +128,8 @@ const Footer: React.FC = () => {
             
             {/* Middle Columns: Platform Nav (Span 2) */}
             <div className="lg:col-span-2">
-              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Platform')}</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className={`mb-3 text-[1.05rem] font-bold uppercase tracking-[0.1em] ${headingClass}`}>{t('Platform')}</h4>
+              <ul className="space-y-2.5 text-sm">
                 <li><Link to={ROUTES.HOW_IT_WORKS} className={`transition-colors flex ${linkHoverClass}`}>{t('How It Works')}</Link></li>
                 <li>
                   <Link to={ROUTES.RYZE_AI} className={`flex items-center gap-2 transition-colors ${linkHoverClass}`}>
@@ -142,8 +142,8 @@ const Footer: React.FC = () => {
 
             {/* Right Column: Contact Details (Span 3) */}
             <div className="lg:col-span-3">
-              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Contact')}</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className={`mb-3 text-[1.05rem] font-bold uppercase tracking-[0.1em] ${headingClass}`}>{t('Contact')}</h4>
+              <ul className="space-y-2.5 text-sm">
                 <li>
                   <a href="mailto:ryzeeducationgroup@gmail.com" className={`flex transition-colors ${linkHoverClass}`}>
                     <span className="opacity-70 w-[70px] shrink-0 font-medium">Email</span> 
@@ -166,11 +166,11 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-[rgba(255,255,255,0.06)] pt-6 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[rgba(255,255,255,0.06)] pt-5 md:flex-row">
             <p className="text-[0.8rem] opacity-70">
               {'\u00A9'} {new Date().getFullYear()} Ryze Education. All rights reserved.
             </p>
-            <div className="flex space-x-6 text-[0.8rem] opacity-70">
+            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[0.8rem] opacity-70">
               <Link to={ROUTES.PRIVACY} className={`transition-colors ${linkHoverClass}`}>Privacy Policy</Link>
               <Link to={ROUTES.TERMS} className={`transition-colors ${linkHoverClass}`}>Terms and Conditions</Link>
               <Link to={ROUTES.SITEMAP} className={`transition-colors ${linkHoverClass}`}>Sitemap</Link>

@@ -237,10 +237,10 @@ const Home: React.FC = () => {
             fetchPriority="high"
             loading="eager"
             decoding="async"
-            className="h-full w-full object-cover object-[58%_32%] sm:object-[56%_28%] lg:object-[68%_center]"
+            className="h-full w-full scale-[1.05] object-cover object-center blur-[5px] sm:scale-100 sm:object-[52%_28%] sm:blur-0 lg:object-[62%_center] xl:object-[68%_center]"
           />
         </picture>
-        <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.78)_0%,rgba(17,21,29,0.72)_34%,rgba(17,21,29,0.46)_62%,rgba(17,21,29,0.62)_100%)] sm:bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.12)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.16)_100%)]"></div>
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-6.75rem)] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
