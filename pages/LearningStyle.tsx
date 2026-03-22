@@ -347,38 +347,38 @@ const LearningStyle: React.FC = () => {
                 <FadeInSection
                   key={step.number}
                   as="div"
-                  className="relative grid grid-cols-[minmax(0,1fr)_148px_minmax(0,1fr)] items-center gap-2"
+                  className="relative grid grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center gap-6"
                 >
-                  <div className={`${isLeft ? 'pr-12 text-right' : 'col-start-3 pl-12'}`}>
-                    <div className={`mx-auto max-w-[26.5rem] ${isLeft ? 'mr-0' : 'ml-0'}`}>
-                      <div className={`flex items-center gap-3 ${isLeft ? 'justify-end' : ''}`}>
+                  <div className={`${isLeft ? 'pr-10 text-right' : 'col-start-3 pl-10'}`}>
+                    <div className={`mx-auto max-w-[28rem] ${isLeft ? 'mr-0' : 'ml-0'}`}>
+                      <div className={`flex items-start gap-5 ${isLeft ? 'flex-row-reverse text-right' : ''}`}>
+                        <div className="shrink-0 rounded-[1.5rem] border border-[rgba(184,132,30,0.14)] bg-white/92 px-3.5 py-3 text-center shadow-[0_22px_50px_-36px_rgba(17,21,29,0.24)]">
+                          <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(184,132,30,0.1)] text-[#b8841e]">
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <p className="mt-3 text-[0.62rem] font-semibold uppercase tracking-[0.22em] ryze-text-secondary">Step</p>
+                          <p className="mt-1 font-display text-[2.05rem] leading-none tracking-[-0.05em] ryze-text-primary">
+                            {step.number}
+                          </p>
+                        </div>
+                        <div className={`min-w-0 ${isLeft ? 'items-end' : ''}`}>
+                          <div className={`flex items-center gap-3 ${isLeft ? 'justify-end' : ''}`}>
                         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#b8841e]">
                           Step {step.number}
                         </span>
                         <span className="h-px w-14 bg-[rgba(184,132,30,0.24)]" />
+                          </div>
+                          <h3 className="mt-4 ryze-heading-3 ryze-text-primary">
+                            {step.title}
+                          </h3>
+                          <p className="mt-4 text-[0.98rem] leading-8 ryze-text-secondary">{step.description}</p>
+                        </div>
                       </div>
-                      <h3 className="mt-4 ryze-heading-3 ryze-text-primary">
-                        {step.title}
-                      </h3>
-                      <p className="mt-4 text-[0.98rem] leading-8 ryze-text-secondary">{step.description}</p>
                     </div>
                   </div>
 
                   <div className="relative flex h-full items-center justify-center">
                     <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#b8841e] shadow-[0_0_0_8px_rgba(184,132,30,0.08)]" />
-                    <div
-                      className={`relative w-[5.8rem] rounded-[1.7rem] border border-[rgba(184,132,30,0.14)] bg-white/92 px-3 py-3.5 text-center shadow-[0_22px_50px_-36px_rgba(17,21,29,0.34)] ${
-                        isLeft ? '-translate-x-7' : 'translate-x-7'
-                      }`}
-                    >
-                      <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(184,132,30,0.1)] text-[#b8841e]">
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <p className="mt-3 text-[0.62rem] font-semibold uppercase tracking-[0.22em] ryze-text-secondary">Step</p>
-                      <p className="mt-1 font-display text-[2.15rem] leading-none tracking-[-0.05em] ryze-text-primary">
-                        {step.number}
-                      </p>
-                    </div>
                   </div>
                 </FadeInSection>
               );
@@ -678,7 +678,7 @@ const LearningStyle: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(5,150,105,0.1)] text-[#059669]">
                 <Calendar className="h-5 w-5" />
               </div>
-              <h3 className="text-[1.08rem] font-bold ryze-text-primary">Early Enrolments</h3>
+              <h3 className="font-display text-[1.32rem] font-semibold leading-[1.08] ryze-text-primary">Early Enrolments</h3>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -698,7 +698,7 @@ const LearningStyle: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(5,150,105,0.1)] text-[#059669]">
                 <CreditCard className="h-5 w-5" />
               </div>
-              <h3 className="text-[1.08rem] font-bold ryze-text-primary">Pay Year Upfront</h3>
+              <h3 className="font-display text-[1.32rem] font-semibold leading-[1.08] ryze-text-primary">Pay Year Upfront</h3>
             </div>
             <p className="text-[0.94rem] leading-7 ryze-text-secondary">
               Receive a <span className="rounded-md bg-[#059669] px-1.5 py-0.5 text-[0.78rem] font-bold ryze-text-inverse">15% discount</span> when you pay for the full year in advance.
@@ -711,7 +711,7 @@ const LearningStyle: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(5,150,105,0.1)] text-[#059669]">
                 <Repeat className="h-5 w-5" />
               </div>
-              <h3 className="text-[1.08rem] font-bold ryze-text-primary">Rebate Rewards</h3>
+              <h3 className="font-display text-[1.32rem] font-semibold leading-[1.08] ryze-text-primary">Rebate Rewards</h3>
             </div>
             <p className="text-[0.94rem] leading-7 ryze-text-secondary">
               Alternatively, we offer <span className="rounded-md bg-[#059669] px-1.5 py-0.5 text-[0.78rem] font-bold ryze-text-inverse">7.5% rebate</span> / cash back towards your next course if you decide to continue the following term.
@@ -724,7 +724,7 @@ const LearningStyle: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(5,150,105,0.1)] text-[#059669]">
                 <Users className="h-5 w-5" />
               </div>
-              <h3 className="text-[1.08rem] font-bold ryze-text-primary">Sibling Discounts</h3>
+              <h3 className="font-display text-[1.32rem] font-semibold leading-[1.08] ryze-text-primary">Sibling Discounts</h3>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -744,7 +744,7 @@ const LearningStyle: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(5,150,105,0.1)] text-[#059669]">
                 <Gift className="h-5 w-5" />
               </div>
-              <h3 className="text-[1.08rem] font-bold ryze-text-primary">Referral Bonus</h3>
+              <h3 className="font-display text-[1.32rem] font-semibold leading-[1.08] ryze-text-primary">Referral Bonus</h3>
             </div>
             <p className="text-[0.94rem] leading-7 ryze-text-secondary">
               Refer a friend and you&apos;ll both receive a <span className="rounded-md bg-[#059669] px-1.5 py-0.5 text-[0.78rem] font-bold ryze-text-inverse">$100 credit</span> towards your enrolments.

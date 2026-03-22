@@ -26,11 +26,11 @@ const AcceleratedMathsProgram: React.FC = () => (
     config={{
       pageId: 'accelerated_maths_program',
       path: ROUTES.ACCELERATED_MATHS_PROGRAM,
-      title: 'Accelerated Maths Sydney | Advanced Maths Program | Ryze Education',
+      title: 'Accelerated Pathways Sydney | Advanced Maths Program | Ryze Education',
       description: 'An accelerated maths program for ambitious students ready for deeper reasoning, faster progression, and a more demanding mathematical pathway.',
-      ogTitle: 'Accelerated Maths Sydney | Ryze Education',
+      ogTitle: 'Accelerated Pathways Sydney | Ryze Education',
       ogDescription: 'For highly capable students ready to move ahead with stronger fluency, sharper reasoning, and disciplined weekly progression.',
-      heroBadge: 'Accelerated Maths | Advanced Pathway',
+      heroBadge: 'Accelerated Pathways | Advanced Pathway',
       heroTitle: 'For students ready to work ahead of school, not just keep up.',
       heroSubheading: 'This program is built for ambitious, highly capable students who need stronger pace, deeper mathematical fluency, and a pathway that stretches them well beyond the standard school rhythm.',
       heroImageSrc: heroSrc,
@@ -92,7 +92,7 @@ const AcceleratedMathsProgram: React.FC = () => (
       contactHighlights: ['Free consultation with honest placement advice', 'Pacing matched to school readiness, not ego', 'Private and small-group options available'],
       studentSegments: ['Working ahead of school', 'Needs deeper challenge', 'Advanced problem solving', 'Accelerated pathway'],
       studentLevelOptions: ['Working ahead of school', 'Needs deeper challenge', 'Advanced problem solving', 'Not sure yet'],
-      subjectPrefix: 'Accelerated Maths Program Enquiry',
+      subjectPrefix: 'Accelerated Pathways Program Enquiry',
     }}
   />
 );

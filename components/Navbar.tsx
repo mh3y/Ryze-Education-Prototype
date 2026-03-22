@@ -24,11 +24,11 @@ const Navbar: React.FC = () => {
     { name: 'How Ryze Works', path: ROUTES.HOW_IT_WORKS, desc: 'Our process explained.' },
   ];
   const programSubLinks = [
-    { name: 'HSC Mathematics', path: ROUTES.HSC_MATHS_PROGRAM, desc: 'Senior maths for Advanced and Extension students.' },
-    { name: 'Accelerated Maths', path: ROUTES.ACCELERATED_MATHS_PROGRAM, desc: 'For ambitious students ready for a faster and more advanced mathematical pace.' },
-    { name: 'Junior Foundations', path: ROUTES.JUNIOR_FOUNDATIONS_PROGRAM, desc: 'Years 7-10 support aligned with the NSW curriculum.' },
+    { name: 'HSC | Year 11 and 12', path: ROUTES.HSC_MATHS_PROGRAM, desc: 'Senior maths for Year 11 and 12 students in Advanced and Extension pathways.' },
+    { name: 'Accelerated Pathways', path: ROUTES.ACCELERATED_MATHS_PROGRAM, desc: 'For ambitious students ready for a faster and more advanced mathematical pace.' },
+    { name: 'Junior Foundations | Year 7 -10', path: ROUTES.JUNIOR_FOUNDATIONS_PROGRAM, desc: 'Year 7-10 support aligned with the NSW curriculum.' },
     { name: 'OC & Selective Exam Preparation', path: ROUTES.SELECTIVE_OC_PROGRAM, desc: 'OC and selective preparation with stronger reasoning.' },
-    { name: 'Primary Maths', path: ROUTES.PRIMARY_MATHS_PROGRAM, desc: 'Years 3-6 building confidence and fluency early.' },
+    { name: 'Primary | Year 3 - 6', path: ROUTES.PRIMARY_MATHS_PROGRAM, desc: 'Years 3-6 building confidence and fluency early.' },
   ];
 
   useEffect(() => {

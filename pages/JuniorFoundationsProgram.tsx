@@ -19,11 +19,11 @@ const JuniorFoundationsProgram: React.FC = () => (
     config={{
       pageId: 'junior_foundations_program',
       path: ROUTES.JUNIOR_FOUNDATIONS_PROGRAM,
-      title: 'Junior Foundations Sydney | Years 7-10 | Ryze Education',
+      title: 'Junior Foundations | Year 7 -10 Sydney | Ryze Education',
       description: 'A Years 7-10 maths program aligned with the NSW curriculum and Ryze in-house content to build fluency, confidence, and stronger school performance.',
-      ogTitle: 'Junior Foundations Sydney | Ryze Education',
+      ogTitle: 'Junior Foundations | Year 7 -10 Sydney | Ryze Education',
       ogDescription: 'A Years 7-10 maths program aligned with NSW curriculum and Ryze in-house content for stronger fluency, confidence, and academic consistency.',
-      heroBadge: 'Junior Foundations | Years 7-10',
+      heroBadge: 'Junior Foundations | Year 7 -10',
       heroTitle: 'A stronger Years 7-10 maths base before senior pressure arrives.',
       heroSubheading: 'This program follows the NSW curriculum while using Ryze’s in-house content structure to keep students in pace with school, close gaps early, and build steadier mathematical confidence.',
       heroImageSrc: heroSrc,
@@ -85,7 +85,7 @@ const JuniorFoundationsProgram: React.FC = () => (
       contactHighlights: ['Free consultation with a clear recommendation', 'Aligned to NSW curriculum and Ryze in-house structure', 'Private and small-group options available'],
       studentSegments: ['Year 7', 'Year 8', 'Year 9', 'Year 10', 'Junior Foundations'],
       studentLevelOptions: ['Year 7', 'Year 8', 'Year 9', 'Year 10'],
-      subjectPrefix: 'Junior Foundations Program Enquiry',
+      subjectPrefix: 'Junior Foundations | Year 7 -10 Program Enquiry',
     }}
   />
 );
