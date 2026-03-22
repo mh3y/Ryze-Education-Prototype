@@ -24,6 +24,7 @@ import { trackPhoneClick, postMetaConversion } from '../src/lib/tracking';
 import { validateEmail, validatePhone } from '../src/lib/validation';
 import { testimonials } from '../data/testimonials';
 import { applySeo } from '../src/utils/seo';
+import { ROUTES } from '../src/constants/routes';
 
 const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto';
 const heroImageId = 'ryze/images/image-v1';
@@ -168,23 +169,23 @@ const HscMathsTutoring: React.FC = () => {
       isExt2Focus,
       isHscFocus,
       heroTitle: isExt2Focus
-        ? 'HSC Maths tutoring for students chasing the top band.'
-        : 'HSC Maths tutoring built for stronger marks and calmer exams.',
+        ? 'HSC Maths program for students chasing the top band.'
+        : 'HSC Maths program built for stronger marks and calmer exams.',
       subheading: isExt2Focus
         ? 'Extension 2 mentoring for sharper proofs, cleaner structure, and better high-pressure execution.'
         : isHscFocus
-          ? 'Advanced and Extension tutoring for students who need stronger working, better judgement, and more reliable exam performance.'
+          ? 'Advanced and Extension support for students who need stronger working, better judgement, and more reliable exam performance.'
           : 'Private and small-group HSC Maths support for students who want clearer working, stronger marks, and more confidence before trials and the HSC.',
     };
   }, [location.search]);
 
   useEffect(() => {
     applySeo({
-      title: 'HSC Maths Tutoring Sydney | Advanced, Ext 1, Ext 2 | Ryze Education',
+      title: 'HSC Maths Sydney | Advanced, Ext 1, Ext 2 | Ryze Education',
       description:
-        'High-performance HSC Maths tutoring in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.',
-      path: '/hsc-maths-tutoring',
-      ogTitle: 'HSC Maths Tutoring Sydney | Ryze Education',
+        'High-performance HSC Maths program in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.',
+      path: ROUTES.HSC_MATHS_PROGRAM,
+      ogTitle: 'HSC Maths Sydney | Ryze Education',
       ogDescription:
         'Targeted HSC Maths programs for Advanced, Extension 1, and Extension 2 with weekly feedback and exam-focused mentoring.',
       jsonLd: {
@@ -192,7 +193,7 @@ const HscMathsTutoring: React.FC = () => {
         '@type': 'LocalBusiness',
         name: 'Ryze Education',
         areaServed: 'Sydney',
-        url: `${window.location.origin}/hsc-maths-tutoring`,
+        url: `${window.location.origin}${ROUTES.HSC_MATHS_PROGRAM}`,
         telephone: '+61 413 885 839',
       },
     });
@@ -332,11 +333,11 @@ const HscMathsTutoring: React.FC = () => {
           src={heroImageSrc}
           srcSet={heroImageSrcSet}
           sizes="100vw"
-          alt="HSC Maths tutoring in Sydney"
+          alt="HSC Maths program in Sydney"
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]"
+          className="absolute inset-0 h-full w-full scale-x-[-1] object-cover object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />

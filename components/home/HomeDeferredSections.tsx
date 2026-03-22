@@ -1,10 +1,12 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 const Testimonials = React.lazy(() => import('../Testimonials'));
 import { motion } from 'framer-motion';
 import {
   Activity,
   ArrowRight,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   GraduationCap,
   Laptop,
@@ -25,41 +27,74 @@ import { teamMembers } from '../../data/team';
 
 
 
-const programs = [
+const programSlides = [
   {
-    id: 'program-hsc',
-    badge: 'PRIMARY PATHWAY',
-    title: 'HSC Maths',
-    blurb:
-      'A serious HSC pathway for Advanced and Extension students who need mathematical clarity, disciplined exam preparation, and a format matched carefully to pace, confidence, and goal.',
-    bestFor: 'Best for: Years 10-12 - Advanced / Ext 1 / Ext 2',
-    whatYouGet: 'What you get: Weekly planning - Topic tests - exam technique - correction-driven feedback',
-    ctaLabel: 'View HSC Pathway',
-    href: ROUTES.HSC_MATHS_TUTORING,
+    id: 'core-programs',
+    featured: {
+      id: 'program-hsc',
+      badge: 'PRIMARY PATHWAY',
+      title: 'HSC Maths',
+      blurb:
+        'A serious senior maths program for students aiming to perform strongly in Advanced, Extension 1, and Extension 2 with clearer method, steadier weekly execution, and far less guesswork under exam pressure.',
+      detailLead: 'Academic standard: senior maths taught with strong emphasis on exam-method discipline, correction quality, and written mathematical precision.',
+      detailSupport: 'How support works: weekly planning, targeted topic testing, timed practice, and direct feedback so families can see exactly where marks are being built or lost.',
+      ctaLabel: 'View HSC Program',
+      href: ROUTES.HSC_MATHS_PROGRAM,
+    },
+    secondary: [
+      {
+        id: 'program-selective',
+        badge: 'PROGRAM',
+        title: 'Selective & OC',
+        blurb: 'Structured preparation for families who want more than worksheets and trial papers. This program builds mathematical reasoning, speed, accuracy, and confidence for OC and selective school exams.',
+        detailLead: 'What matters here: disciplined problem solving, exam composure, and the ability to think clearly under timed conditions.',
+        detailSupport: 'Program structure: concept teaching, deliberate question sets, correction review, and the habits that make performance more reliable on the day.',
+        ctaLabel: 'View Selective Program',
+        href: ROUTES.SELECTIVE_OC_PROGRAM,
+      },
+      {
+        id: 'program-accelerated',
+        badge: 'PROGRAM',
+        title: 'Accelerated Maths',
+        blurb: 'Built for ambitious students who are ready for a faster pace, deeper challenge, and more serious mathematical work than standard school progression usually provides.',
+        detailLead: 'What matters here: ahead-of-school sequencing, richer abstraction, and challenge that actually extends understanding rather than just increasing workload.',
+        detailSupport: 'Program structure: carefully paced extension, stronger problem-solving demands, and close guidance so acceleration stays stable, not superficial.',
+        ctaLabel: 'View Accelerated Program',
+        href: ROUTES.ACCELERATED_MATHS_PROGRAM,
+      },
+    ],
   },
   {
-    id: 'program-selective-details',
-    badge: 'PROGRAM',
-    title: 'Selective & OC',
-    blurb: 'Structured preparation for students building mathematical reasoning, precision, and confidence for OC and selective school entry.',
-    bestFor: 'Best for: Years 4-6',
-    ctaLabel: 'View Selective Pathway',
-    href: '#program-selective-details',
-  },
-  {
-    id: 'program-junior-details',
-    badge: 'PROGRAM',
-    title: 'Junior Foundations',
-    blurb: 'Build fluency, confidence, and sound mathematical habits early so later years feel more secure, less rushed, and easier to navigate well.',
-    bestFor: 'Best for: Years 3-9',
-    ctaLabel: 'See Junior Program',
-    href: '#program-junior-details',
+    id: 'foundations-programs',
+    featured: {
+      id: 'program-primary',
+      badge: 'PRIMARY PATHWAY',
+      title: 'Primary Maths',
+      blurb:
+        'A strong primary maths program focused on fluency, confidence, and the habits that make later learning feel more natural, less rushed, and far less fragile.',
+      detailLead: 'Academic standard: careful attention to core number fluency, reasoning, written method, and the confidence to explain how an answer was reached.',
+      detailSupport: 'How support works: explicit teaching, structured practice, and regular parent visibility so growth is steady rather than left to chance.',
+      ctaLabel: 'View Primary Program',
+      href: ROUTES.PRIMARY_MATHS_PROGRAM,
+    },
+    secondary: [
+      {
+        id: 'program-junior-foundations',
+        badge: 'PROGRAM',
+        title: 'Junior Foundations',
+        blurb: 'A structured Years 7-10 program aligned with the NSW curriculum and Ryze in-house sequencing to repair gaps, strengthen fluency, and make school maths feel more manageable week to week.',
+        detailLead: 'What matters here: prerequisite repair, consistent school alignment, and rebuilding confidence before senior mathematics becomes more demanding.',
+        detailSupport: 'Program structure: explicit teaching, correction-driven review, and steady weekly support so progress feels visible to both students and parents.',
+        ctaLabel: 'View Junior Program',
+        href: ROUTES.JUNIOR_FOUNDATIONS_PROGRAM,
+      },
+    ],
   },
 ];
 
 const deliveryFormats = [
   {
-    title: 'Weekly Private Tutoring',
+    title: 'Structured Private Mentoring',
     intro: 'For students who need highly tailored pacing, direct diagnosis, and close academic attention.',
     points: [
       'Best when confidence is uneven or progress has stalled',
@@ -132,7 +167,11 @@ const HomeDeferredSections: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [isAvailable, setIsAvailable] = useState(false);
-  const [hscProgram, ...secondaryPrograms] = programs;
+  const [activeProgramSlide, setActiveProgramSlide] = useState(0);
+  const programSlidesRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingProgramsRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollLeftRef = useRef(0);
 
   useEffect(() => {
     const checkAvailability = () => {
@@ -148,6 +187,14 @@ const HomeDeferredSections: React.FC = () => {
   }, []);
 
   const handlePhoneClick = () => trackPhoneClick('home', 'home_bottom_cta');
+  const scrollToProgramSlide = (index: number) => {
+    const rail = programSlidesRef.current;
+    if (!rail) return;
+    const nextIndex = (index + programSlides.length) % programSlides.length;
+    const target = rail.children.item(nextIndex) as HTMLElement | null;
+    target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    setActiveProgramSlide(nextIndex);
+  };
 
   return (
     <>
@@ -161,53 +208,138 @@ const HomeDeferredSections: React.FC = () => {
               </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.75fr)]">
-            <article
-              id={hscProgram.id}
-              className="relative overflow-hidden rounded-[2rem] border border-[rgba(23,29,40,0.08)] ryze-bg-surface-dark p-8 ryze-text-inverse shadow-[0_28px_72px_-44px_rgba(17,21,29,0.52)] sm:p-10"
+          <div className="relative">
+            <div
+              ref={programSlidesRef}
+              onPointerDown={(event) => {
+                if (event.pointerType !== 'mouse') return;
+                const rail = event.currentTarget;
+                isDraggingProgramsRef.current = true;
+                dragStartXRef.current = event.clientX;
+                dragStartScrollLeftRef.current = rail.scrollLeft;
+                rail.style.cursor = 'grabbing';
+              }}
+              onPointerMove={(event) => {
+                if (!isDraggingProgramsRef.current || event.pointerType !== 'mouse') return;
+                const rail = event.currentTarget;
+                const delta = event.clientX - dragStartXRef.current;
+                rail.scrollLeft = dragStartScrollLeftRef.current - delta;
+              }}
+              onPointerUp={(event) => {
+                if (event.pointerType !== 'mouse') return;
+                isDraggingProgramsRef.current = false;
+                event.currentTarget.style.cursor = 'grab';
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType !== 'mouse') return;
+                isDraggingProgramsRef.current = false;
+                event.currentTarget.style.cursor = 'grab';
+              }}
+              onScroll={(event) => {
+                const rail = event.currentTarget;
+                const slideWidth = rail.clientWidth;
+                if (slideWidth === 0) return;
+                const nextIndex = Math.round(rail.scrollLeft / slideWidth);
+                if (nextIndex !== activeProgramSlide) setActiveProgramSlide(nextIndex);
+              }}
+              className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-4 sm:gap-6 sm:px-4 sm:pb-3"
+              style={{ touchAction: 'pan-x', cursor: 'grab' }}
             >
-              <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,158,43,0.8),transparent)]" />
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[var(--ryze-200)]">{hscProgram.badge}</p>
-              <h3 className="mt-4 ryze-heading-2 ryze-text-inverse">{hscProgram.title}</h3>
-              <p className="mt-5 max-w-2xl text-[1rem] leading-relaxed ryze-text-inverse-muted">{hscProgram.blurb}</p>
-              <div className="mt-8 grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-2">
-                <p className="text-sm font-medium ryze-text-inverse-muted">{hscProgram.bestFor}</p>
-                <p className="text-sm ryze-text-inverse-muted">{hscProgram.whatYouGet}</p>
-              </div>
-              <PrimaryCTA
-                page="home"
-                placement="programs_hsc"
-                styleVariant="primary"
-                size="md"
-                label={hscProgram.ctaLabel}
-                href={hscProgram.href}
-                className="mt-8"
-              />
-            </article>
+              {programSlides.map((slide) => (
+                <div key={slide.id} className="min-w-full snap-start">
+                  <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.75fr)]">
+                    <article
+                      id={slide.featured.id}
+                      className="relative overflow-hidden rounded-[1.7rem] border border-[rgba(23,29,40,0.08)] ryze-bg-surface-dark p-6 ryze-text-inverse shadow-[0_28px_72px_-44px_rgba(17,21,29,0.52)] sm:rounded-[2rem] sm:p-8 lg:p-10"
+                    >
+                      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,158,43,0.8),transparent)]" />
+                      <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[var(--ryze-200)]">{slide.featured.badge}</p>
+                      <h3 className="mt-4 ryze-heading-2 ryze-text-inverse">{slide.featured.title}</h3>
+                      <p className="mt-4 max-w-2xl text-[0.97rem] leading-8 ryze-text-inverse-muted sm:mt-5 sm:text-[1rem]">{slide.featured.blurb}</p>
+                      <div className="mt-6 grid gap-4 border-t border-white/10 pt-5 sm:mt-8 sm:pt-6 lg:grid-cols-2">
+                        <p className="text-sm font-medium leading-6 ryze-text-inverse-muted sm:leading-7">{slide.featured.detailLead}</p>
+                        <p className="text-sm leading-6 ryze-text-inverse-muted sm:leading-7">{slide.featured.detailSupport}</p>
+                      </div>
+                      <PrimaryCTA
+                        page="home"
+                        placement={`programs_${slide.featured.id}`}
+                        styleVariant="primary"
+                        size="md"
+                        label={slide.featured.ctaLabel}
+                        href={slide.featured.href}
+                        className="mt-7 w-full sm:mt-8 sm:w-auto"
+                      />
+                    </article>
 
-            <div className="flex flex-col gap-5">
-              {secondaryPrograms.map((program) => (
-                <article
-                  key={program.id}
-                  id={program.id}
-                  className="rounded-[1.7rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.72)] p-6 shadow-[0_22px_52px_-40px_rgba(17,21,29,0.26)] backdrop-blur-sm"
-                >
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">{program.badge}</p>
-                  <h3 className="mt-3 ryze-heading-3 ryze-text-primary">{program.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed ryze-text-secondary">{program.blurb}</p>
-                  <p className="mt-5 text-sm font-medium ryze-text-primary">{program.bestFor}</p>
-                  <PrimaryCTA
-                    page="home"
-                    placement={`programs_${program.id}`}
-                    styleVariant="primary"
-                    size="sm"
-                    label={program.ctaLabel}
-                    href={program.href}
-                    className="mt-5"
-                  />
-                </article>
+                    <div className="flex flex-col gap-4 sm:gap-5">
+                      {slide.secondary.map((program) => (
+                        <article
+                          key={program.id}
+                          id={program.id}
+                          className="rounded-[1.45rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.72)] p-5 shadow-[0_22px_52px_-40px_rgba(17,21,29,0.26)] backdrop-blur-sm sm:rounded-[1.7rem] sm:p-6"
+                        >
+                          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">{program.badge}</p>
+                          <h3 className="mt-3 ryze-heading-3 ryze-text-primary">{program.title}</h3>
+                          <p className="mt-3 text-sm leading-6 ryze-text-secondary sm:leading-7">{program.blurb}</p>
+                          <div className="mt-4 space-y-3 border-t border-[rgba(23,29,40,0.08)] pt-4 sm:mt-5">
+                            <p className="text-sm font-medium leading-6 ryze-text-primary sm:leading-7">{program.detailLead}</p>
+                            <p className="text-sm leading-6 ryze-text-secondary sm:leading-7">{program.detailSupport}</p>
+                          </div>
+                          <PrimaryCTA
+                            page="home"
+                            placement={`programs_${program.id}`}
+                            styleVariant="primary"
+                            size="sm"
+                            label={program.ctaLabel}
+                            href={program.href}
+                            className="mt-5 w-full sm:w-auto"
+                          />
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between gap-3 sm:mt-7">
+            <button
+              type="button"
+              onClick={() => scrollToProgramSlide(activeProgramSlide - 1)}
+              className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full border border-[rgba(200,158,43,0.38)] bg-[linear-gradient(135deg,#171d28_0%,#21293a_100%)] px-3.5 text-[#f8f3ea] shadow-[0_24px_52px_-28px_rgba(17,21,29,0.46)] transition duration-200 hover:border-[rgba(200,158,43,0.68)] hover:bg-[linear-gradient(135deg,#11151d_0%,#263149_100%)] sm:h-14 sm:px-5"
+              aria-label="Show previous program slide"
+            >
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#d6a12a_0%,#b8841e_100%)] text-[#171d28] sm:h-9 sm:w-9">
+                <ChevronLeft size={20} strokeWidth={2.8} />
+              </span>
+              <span className="pr-0.5 text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-white/88 sm:text-[0.78rem]">Prev</span>
+            </button>
+
+            <div className="flex items-center justify-center gap-3">
+            {programSlides.map((slide, index) => (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => scrollToProgramSlide(index)}
+                className={`h-3 rounded-full transition-all ${index === activeProgramSlide ? 'w-10 bg-[var(--accent)]' : 'w-3 bg-[rgba(23,29,40,0.14)]'}`}
+                aria-label={`Show program slide ${index + 1}`}
+                aria-pressed={index === activeProgramSlide}
+              />
+            ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => scrollToProgramSlide(activeProgramSlide + 1)}
+              className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full border border-[rgba(200,158,43,0.38)] bg-[linear-gradient(135deg,#171d28_0%,#21293a_100%)] px-3.5 text-[#f8f3ea] shadow-[0_24px_52px_-28px_rgba(17,21,29,0.46)] transition duration-200 hover:border-[rgba(200,158,43,0.68)] hover:bg-[linear-gradient(135deg,#11151d_0%,#263149_100%)] sm:h-14 sm:px-5"
+              aria-label="Show next program slide"
+            >
+              <span className="pl-0.5 text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-white/88 sm:text-[0.78rem]">Next</span>
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#d6a12a_0%,#b8841e_100%)] text-[#171d28] sm:h-9 sm:w-9">
+                <ChevronRight size={20} strokeWidth={2.8} />
+              </span>
+            </button>
           </div>
 
           <div className="mt-8 rounded-[1.8rem] border border-[rgba(23,29,40,0.08)] bg-white/55 p-6 backdrop-blur-sm sm:flex sm:items-center sm:justify-between sm:gap-6">

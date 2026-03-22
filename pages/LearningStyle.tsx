@@ -27,6 +27,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { FadeInSection } from '../src/components/animation';
+import { ROUTES } from '../src/constants/routes';
 
 type FormatOption = 'private' | 'group';
 
@@ -39,7 +40,7 @@ type JourneyStep = {
 
 const formatCards = {
   private: {
-    eyebrow: 'Weekly Private Tutoring',
+    eyebrow: 'Structured Private Mentoring',
     title: 'Dedicated one-to-one support, built around the student.',
     description:
       'Private tuition is suited to students who need diagnosis, pace adjustment, and fully personalised teaching. Each lesson is shaped around the student in front of us.',
@@ -201,14 +202,14 @@ const LearningStyle: React.FC = () => {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/contact"
+                to={ROUTES.CONTACT}
                 className="inline-flex items-center gap-2 rounded-full bg-[#b8841e] px-6 py-3.5 text-sm font-semibold ryze-text-inverse transition hover:bg-[#9d7119]"
               >
                 Book a consultation
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/how-it-works"
+                to={ROUTES.HOW_IT_WORKS}
                 className="inline-flex items-center gap-2 rounded-full border ryze-border-subtle bg-white/70 px-6 py-3.5 text-sm font-semibold ryze-text-primary transition hover:border-[rgba(184,132,30,0.28)] hover:bg-white"
               >
                 See how it works

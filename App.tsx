@@ -10,6 +10,10 @@ import { usePageTracking } from './src/analytics/router';
 
 const Home = lazy(() => import('./pages/Home'));
 const HscMathsTutoring = lazy(() => import('./pages/HscMathsTutoring'));
+const SelectiveOcProgram = lazy(() => import('./pages/SelectiveOcProgram'));
+const AcceleratedMathsProgram = lazy(() => import('./pages/AcceleratedMathsProgram'));
+const PrimaryMathsProgram = lazy(() => import('./pages/PrimaryMathsProgram'));
+const JuniorFoundationsProgram = lazy(() => import('./pages/JuniorFoundationsProgram'));
 const Navbar = lazy(() => import('./components/Navbar'));
 const Footer = lazy(() => import('./components/Footer'));
 const Starfield = lazy(() =>
@@ -90,9 +94,17 @@ const RouteTracking = () => {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
-  const isHscLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_TUTORING;
+  const programLandingPaths = [
+    ROUTES.HSC_MATHS_PROGRAM,
+    ROUTES.SELECTIVE_OC_PROGRAM,
+    ROUTES.ACCELERATED_MATHS_PROGRAM,
+    ROUTES.PRIMARY_MATHS_PROGRAM,
+    ROUTES.JUNIOR_FOUNDATIONS_PROGRAM,
+  ];
+  const isHscLanding = location.pathname.toLowerCase() === ROUTES.HSC_MATHS_PROGRAM;
   const isMathsLanding = location.pathname.toLowerCase() === ROUTES.MATHS_TUTORING;
-  const isLanding = isHscLanding || isMathsLanding;
+  const isProgramLanding = programLandingPaths.includes(location.pathname.toLowerCase() as any);
+  const isLanding = isProgramLanding || isMathsLanding;
 
   const shouldShowStarfield =
     location.pathname === '/login' ||
@@ -125,7 +137,12 @@ const AppContent: React.FC = () => {
       <main className="ryze-main-with-sticky relative z-10 flex w-full flex-grow flex-col">
         <Routes location={location}>
           <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
-          <Route path={ROUTES.HSC_MATHS_TUTORING} element={<HscMathsTutoring />} />
+          <Route path={ROUTES.HSC_MATHS_PROGRAM} element={<HscMathsTutoring />} />
+          <Route path="/hsc-maths-tutoring" element={<Navigate to={ROUTES.HSC_MATHS_PROGRAM} replace />} />
+          <Route path={ROUTES.SELECTIVE_OC_PROGRAM} element={<SelectiveOcProgram />} />
+          <Route path={ROUTES.ACCELERATED_MATHS_PROGRAM} element={<AcceleratedMathsProgram />} />
+          <Route path={ROUTES.PRIMARY_MATHS_PROGRAM} element={<PrimaryMathsProgram />} />
+          <Route path={ROUTES.JUNIOR_FOUNDATIONS_PROGRAM} element={<JuniorFoundationsProgram />} />
           <Route path={ROUTES.MATHS_TUTORING} element={<MathsTutoring />} />
           <Route path="/landing" element={<Navigate to={ROUTES.MATHS_TUTORING} replace />} />
           <Route path="/the-ryze-truth" element={<PageWrapper><TheRyzeTruth /></PageWrapper>} />

@@ -87,8 +87,8 @@ const Contact: React.FC = () => {
               <FadeInSection as="section" id="contact-form-section" className="ryze-section-padding">
                  <div className="max-w-2xl mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h3 className="ryze-heading-3 ryze-text-inverse mb-4">{t("Send us a Message")}</h3>
-                        <p className="text-[rgba(248,243,234,0.74)]">{t("We typically respond within 24 hours.")}</p>
+                        <h3 className="ryze-heading-1 ryze-text-inverse mb-6 whitespace-nowrap">{t("Send us a Message")}</h3>
+                        <p className="text-xl font-light text-[rgba(248,243,234,0.8)]">{t("We typically respond within 24 hours.")}</p>
                     </div>
                     
                     {status === 'success' ? (
