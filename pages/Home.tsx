@@ -226,7 +226,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden ryze-bg-primary font-sans">
+    <div className="w-full overflow-hidden bg-[var(--ryze-surface-dark)] font-sans md:ryze-bg-primary">
       <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden ryze-bg-surface-dark pb-10 pt-[calc(5.75rem+env(safe-area-inset-top))] md:pb-14 md:pt-[calc(6.25rem+env(safe-area-inset-top))] lg:pb-16 lg:pt-[calc(6.5rem+env(safe-area-inset-top))]">
         <picture className="absolute inset-0">
           <img
@@ -237,7 +237,7 @@ const Home: React.FC = () => {
             fetchPriority="high"
             loading="eager"
             decoding="async"
-            className="h-full w-full object-cover lg:object-[68%_center] object-center"
+            className="h-full w-full object-cover object-[58%_32%] sm:object-[56%_28%] lg:object-[68%_center]"
           />
         </picture>
         <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
@@ -365,7 +365,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 w-full">
+      <section className="w-full ryze-bg-primary py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="mb-10 text-center text-sm font-bold tracking-widest ryze-text-secondary uppercase">
             TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS

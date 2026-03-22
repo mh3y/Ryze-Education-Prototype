@@ -168,6 +168,14 @@ const LearningStyle: React.FC = () => {
   const [activeFormat, setActiveFormat] = useState<FormatOption>('private');
   const currentFormat = formatCards[activeFormat];
 
+  const handleFormatSelect = (format: FormatOption) => {
+    setActiveFormat(format);
+
+    const targetSectionId = format === 'private' ? 'private-mentorship' : 'group-tutoring';
+    const targetSection = document.getElementById(targetSectionId);
+    targetSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <motion.div
       initial="initial"
@@ -175,9 +183,9 @@ const LearningStyle: React.FC = () => {
       variants={pageShift}
       className="ryze-bg-primary ryze-text-primary"
     >
-      <section className="relative overflow-hidden border-b ryze-border-subtle bg-[linear-gradient(180deg,rgba(255,255,255,0.38),rgba(244,239,231,0.96))]">
-        <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(184,132,30,0.18),transparent_60%)]" />
-        <div className="absolute inset-y-0 right-0 hidden w-[34rem] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.26),transparent_68%)] lg:block" />
+      <section className="ryze-page-hero relative overflow-hidden border-b ryze-border-subtle">
+        <div className="pointer-events-none absolute left-1/2 top-[-12rem] h-[34rem] w-[72rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(243,231,201,0.58),transparent_72%)] opacity-90 blur-3xl" />
+        <div className="pointer-events-none absolute right-[-8rem] top-[-5rem] hidden h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.52),transparent_72%)] opacity-85 blur-3xl lg:block" />
         <div className="mx-auto grid max-w-7xl gap-12 px-4 pb-18 pt-18 sm:px-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-24">
           <FadeInSection as="div" className="relative z-10 max-w-3xl self-center">
             <span className="inline-flex rounded-full border border-[rgba(184,132,30,0.28)] bg-white/72 px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-[#b8841e]">
@@ -244,14 +252,14 @@ const LearningStyle: React.FC = () => {
               </p>
 
               <div className="mt-8 space-y-4">
-                {(['private', 'group'] as FormatOption[]).map((format) => {
+                {(['group', 'private'] as FormatOption[]).map((format) => {
                   const item = formatCards[format];
                   const active = activeFormat === format;
                   return (
                     <button
                       key={format}
                       type="button"
-                      onClick={() => setActiveFormat(format)}
+                      onClick={() => handleFormatSelect(format)}
                       className={`w-full rounded-[1.6rem] border px-5 py-5 text-left transition ${
                         active
                           ? 'border-[#d7b878] bg-white text-[#151b25] shadow-[0_24px_44px_-28px_rgba(215,184,120,0.88)]'
@@ -278,7 +286,10 @@ const LearningStyle: React.FC = () => {
         </div>
       </section>
 
-      <FadeInSection as="section" className="mx-auto max-w-7xl px-4 py-18 sm:px-6 lg:px-8 lg:py-24">
+      <FadeInSection
+        as="section"
+        className="mx-auto max-w-7xl px-4 py-18 sm:px-6 lg:px-8 lg:py-24"
+      >
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex rounded-full border border-[rgba(184,132,30,0.24)] bg-white/78 px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.3em] text-[#b8841e]">
             Journey
@@ -421,8 +432,14 @@ const LearningStyle: React.FC = () => {
       </section>
 
       {/* ── Group Tutoring Detail ─────────────────────────────────────── */}
-      <FadeInSection as="section" className="mx-auto max-w-7xl px-4 py-18 sm:px-6 lg:px-8 lg:py-24">
-        <div className="rounded-[2.4rem] border border-[rgba(23,29,40,0.1)] bg-white/82 p-8 shadow-[0_28px_70px_-50px_rgba(17,21,29,0.44)] sm:p-10 lg:p-14">
+      <FadeInSection
+        as="section"
+        className="mx-auto max-w-7xl px-4 py-18 sm:px-6 lg:px-8 lg:py-24"
+      >
+        <div
+          id="group-tutoring"
+          className="scroll-mt-28 rounded-[2.4rem] border border-[rgba(23,29,40,0.1)] bg-white/82 p-8 shadow-[0_28px_70px_-50px_rgba(17,21,29,0.44)] sm:p-10 lg:p-14"
+        >
           <div className="mx-auto max-w-3xl text-center mb-12">
             <h2 className="ryze-heading-2 ryze-text-primary mb-4">
               How Our Group Tutoring Works
@@ -524,7 +541,11 @@ const LearningStyle: React.FC = () => {
       </FadeInSection>
 
       {/* ── Private Mentorship Detail ────────────────────────────────── */}
-      <FadeInSection as="section" className="mx-auto max-w-7xl px-4 pb-18 sm:px-6 lg:px-8 lg:pb-24">
+      <FadeInSection
+        as="section"
+        id="private-mentorship"
+        className="mx-auto max-w-7xl scroll-mt-28 px-4 pb-18 sm:px-6 lg:px-8 lg:pb-24"
+      >
         <div className="rounded-[2.4rem] border border-[rgba(23,29,40,0.1)] bg-white/82 p-8 shadow-[0_28px_70px_-50px_rgba(17,21,29,0.44)] sm:p-10 lg:p-14">
           <div className="mx-auto max-w-3xl text-center mb-8">
             <h2 className="ryze-heading-2 ryze-text-primary mb-4">

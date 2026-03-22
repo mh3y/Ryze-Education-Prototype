@@ -1,19 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  Activity,
   ArrowRight,
   BadgeCheck,
   BookOpenCheck,
   CalendarCheck2,
   CheckCircle2,
+  ChevronRight,
   MessageCircle,
+  PenTool,
   Phone,
   ShieldCheck,
   Star,
+  Target,
   Users,
 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import PrimaryCTA from '../components/PrimaryCTA';
-import { Container, DesignCard, Section, StatCard, TestimonialCard, ValueCard } from '../components/design';
+import { Container, TestimonialCard } from '../components/design';
 import { trackEvent } from '../src/analytics';
 import { trackPhoneClick, postMetaConversion } from '../src/lib/tracking';
 import { validateEmail, validatePhone } from '../src/lib/validation';
@@ -33,26 +38,87 @@ const heroImageSrcSet = [
   `${heroImageBase},w_1280/${heroImageId} 1280w`,
 ].join(', ');
 
-const howItWorksSteps = [
+const heroSignals = [
+  { label: 'Streams', value: 'Advanced, Ext 1, Ext 2' },
+  { label: 'Format', value: 'Private and small-group' },
+  { label: 'Method', value: 'Exam technique and weekly review' },
+  { label: 'Families', value: 'Clear parent communication' },
+];
+
+const proofPillars = [
   {
-    title: '1. Diagnostic Call',
-    description: 'We assess current level, gaps, target marks, and exam timeline in one focused call.',
+    title: 'Exam technique taught explicitly',
+    description:
+      'Students learn mark-efficient structure, notation, and method instead of hoping good habits appear on their own.',
+    icon: PenTool,
   },
   {
-    title: '2. Personalised Program',
-    description: 'Students are matched to the right stream: Year 11, Year 12, Advanced, Ext 1, or Ext 2.',
+    title: 'Weekly accountability that compounds',
+    description:
+      'Each lesson is tied to revision targets, timed work, and a clear next step so momentum does not drift between classes.',
+    icon: CalendarCheck2,
   },
   {
-    title: '3. Weekly Execution',
-    description: 'High-impact lessons, exam-style drills, and weekly progress updates keep momentum high.',
+    title: 'Calmer high-stakes performance',
+    description:
+      'We train for trials and the HSC with repetition, pressure rehearsal, and feedback that sharpens both speed and judgement.',
+    icon: Target,
   },
 ];
 
+const programTracks = [
+  {
+    title: 'Mathematics Advanced',
+    summary:
+      'For students who need stronger algebra, cleaner working, and steadier performance across core HSC topics.',
+    focus: ['Algebraic fluency and graphing', 'Exam structure and mark conversion', 'Confidence before trials'],
+  },
+  {
+    title: 'Extension 1',
+    summary:
+      'For students ready to lift their pace, refine proof structure, and become more reliable under time pressure.',
+    focus: ['Higher-order problem solving', 'Structured reasoning and notation', 'Consistent top-band preparation'],
+  },
+  {
+    title: 'Extension 2',
+    summary:
+      'For ambitious students who need sharper proofs, stronger mathematical judgement, and disciplined weekly execution.',
+    focus: ['Proof writing and extension topics', 'Polished written communication', 'Top-band exam rehearsal'],
+  },
+];
+
+const weeklySystem = [
+  {
+    title: 'Diagnostic starting point',
+    description: 'We identify current level, topic gaps, target marks, and the exam timeline before lessons begin.',
+  },
+  {
+    title: 'Focused weekly lessons',
+    description: 'Each session tackles syllabus content, exam method, and the exact errors currently holding marks back.',
+  },
+  {
+    title: 'Timed practice and review',
+    description: 'Students complete exam-style work with direct feedback on structure, accuracy, and mark efficiency.',
+  },
+  {
+    title: 'Parent visibility',
+    description:
+      'Families get clarity on progress, current priorities, and what needs to happen before the next milestone.',
+  },
+];
+
+const contactHighlights = [
+  'Free consultation with a clear recommendation',
+  'Placement across Advanced, Extension 1, or Extension 2',
+  'Private and small-group options available',
+];
+
 const studentSegments = [
-  'Years 11-12 HSC Maths',
-  'Mathematics Advanced',
-  'Mathematics Extension 1',
-  'Mathematics Extension 2',
+  'Year 11 - Advanced',
+  'Year 11 - Extension 1',
+  'Year 12 - Advanced',
+  'Year 12 - Extension 1',
+  'Year 12 - Extension 2',
 ];
 
 type FormState = {
@@ -71,10 +137,9 @@ const defaultForm: FormState = {
   honey: '',
 };
 
-
-
 const HscMathsTutoring: React.FC = () => {
   const location = useLocation();
+  const reduceMotion = useReducedMotion();
   const [formData, setFormData] = useState<FormState>(defaultForm);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -95,11 +160,14 @@ const HscMathsTutoring: React.FC = () => {
     return {
       isExt2Focus,
       isHscFocus,
+      heroTitle: isExt2Focus
+        ? 'HSC Maths tutoring for students chasing the top band.'
+        : 'HSC Maths tutoring built for stronger marks and calmer exams.',
       subheading: isExt2Focus
-        ? 'Extension 2 mentoring for sharper proofs, better structure, and top-band exam execution.'
+        ? 'Extension 2 mentoring for sharper proofs, cleaner structure, and better high-pressure execution.'
         : isHscFocus
-          ? 'Advanced and Extension tutoring built for stronger marks, cleaner working, and calmer exam performance.'
-          : 'Small-group and 1:1 HSC Maths support for students who want stronger marks, clearer working, and more confidence in trials and the HSC.',
+          ? 'Advanced and Extension tutoring for students who need stronger working, better judgement, and more reliable exam performance.'
+          : 'Private and small-group HSC Maths support for students who want clearer working, stronger marks, and more confidence before trials and the HSC.',
     };
   }, [location.search]);
 
@@ -132,7 +200,7 @@ const HscMathsTutoring: React.FC = () => {
     });
 
     return () => {
-      if (disposePerfDebug) disposePerfDebug();
+      disposePerfDebug?.();
     };
   }, []);
 
@@ -220,42 +288,42 @@ const HscMathsTutoring: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen ryze-bg-primary ryze-text-primary">
-      <Section variant="gradient" className="pt-10 md:pt-16">
-        <Container>
-          <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
-            <div className="space-y-5">
-              <p className="inline-flex items-center gap-2 rounded-full border ryze-border-subtle ryze-bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide ryze-text-primary">
+    <div className="min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
+      <section className="relative overflow-hidden bg-[#11151d] pt-[calc(6rem+env(safe-area-inset-top))]">
+        <img
+          src={heroImageSrc}
+          srcSet={heroImageSrcSet}
+          sizes="100vw"
+          alt="HSC Maths tutoring in Sydney"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-[62%_center] md:object-[60%_center] lg:object-[68%_center]"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.18)_0%,rgba(17,21,29,0)_26%,rgba(17,21,29,0.26)_100%)]" />
+
+        <Container className="relative z-10 pb-12 sm:pb-16 lg:pb-20">
+          <div className="grid min-h-[calc(100svh-6rem)] items-end gap-12 py-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 28 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              className="max-w-[44rem]"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(184,132,30,0.35)] bg-[rgba(255,255,255,0.05)] px-4 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-ryze-400)] backdrop-blur-md">
                 <ShieldCheck size={14} aria-hidden="true" />
-                HSC Maths Advanced and Extension Specialists
-              </p>
-              <h1 className="ryze-heading-1 ryze-text-primary mb-4">
-                HSC Maths Tutoring for Stronger Marks in Advanced, Ext 1, and Ext 2
+                HSC Maths | Sydney
+              </div>
+              <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3.6rem,8vw,6.8rem)] font-semibold leading-[0.86] tracking-[-0.055em] text-[#f8f3ea]">
+                {landingVariant.heroTitle}
               </h1>
-              <p className="max-w-xl text-base leading-relaxed ryze-text-secondary sm:text-lg">{landingVariant.subheading}</p>
+              <p className="mt-6 max-w-[34rem] text-[1.05rem] leading-8 text-white/74 sm:text-[1.12rem]">
+                {landingVariant.subheading}
+              </p>
 
-              <ul className="grid gap-2 text-sm sm:grid-cols-3">
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
-                  <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Small groups or 1:1
-                </li>
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
-                  <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Advanced to Ext 2
-                </li>
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
-                  <CheckCircle2 size={16} className="text-[var(--accent)]" />
-                  Weekly parent updates
-                </li>
-              </ul>
-
-              {landingVariant.isHscFocus && (
-                <p className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide ryze-text-primary">
-                  Offer matched: HSC Maths campaign
-                </p>
-              )}
-
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <PrimaryCTA
                   variant="link"
                   href="#book"
@@ -267,164 +335,337 @@ const HscMathsTutoring: React.FC = () => {
                 <a
                   href="tel:+61413885839"
                   onClick={handlePhoneClick}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 ryze-bg-surface px-6 py-3 text-sm font-semibold ryze-text-primary transition-colors hover:ryze-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
                   aria-label="Call Ryze Education"
                 >
                   <Phone size={16} aria-hidden="true" />
                   Call +61 413 885 839
                 </a>
               </div>
-              <p className="text-sm ryze-text-secondary">Free consultation. No lock-in. We usually reply within one business day.</p>
-            </div>
 
-            <DesignCard className="overflow-hidden ryze-bg-surface">
-              <img
-                src={heroImageSrc}
-                srcSet={heroImageSrcSet}
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 100vw, 560px"
-                alt="HSC Maths tutoring in Sydney"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                width="1280"
-                height="960"
-                className="h-48 w-full object-cover object-center sm:h-56 md:h-64 lg:h-full"
-              />
-              <div className="p-5">
-                <h2 className="text-xl font-bold ryze-text-primary">Results Families Can Trust</h2>
-                <p className="mt-2 text-sm ryze-text-secondary">
-                  Built for families who need measurable academic growth, not generic tutoring.
-                </p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                  <StatCard value="500+" label="Students supported across Sydney" icon={<Users size={18} />} className="p-4" />
-                  <StatCard value="4.9/5" label="Average parent and student rating" icon={<Star size={18} />} className="p-4" />
-                  <StatCard value="13+ years" label="Teaching and HSC mentoring experience" icon={<BadgeCheck size={18} />} className="p-4" />
-                </div>
+              <p className="mt-4 text-sm text-white/58">Free consultation. Clear recommendation. No lock-in commitment.</p>
+
+              <div className="mt-10 grid gap-5 border-t border-white/10 pt-8 sm:grid-cols-2 xl:grid-cols-4">
+                {heroSignals.map((item, index) => (
+                  <motion.div
+                    key={item.label}
+                    initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
+                    animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    transition={{ duration: 0.55, delay: 0.12 + index * 0.08 }}
+                    className="border-l border-white/10 pl-4"
+                  >
+                    <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[var(--color-ryze-400)]">{item.label}</p>
+                    <p className="mt-2 text-[1rem] font-semibold leading-[1.45] text-white/92">{item.value}</p>
+                  </motion.div>
+                ))}
               </div>
-            </DesignCard>
+            </motion.div>
+
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, x: 24 }}
+              animate={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="hidden border-l border-white/10 pl-8 lg:block"
+            >
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.22em] text-white/48">Why families come to Ryze</p>
+              <div className="mt-6 space-y-6">
+                {proofPillars.map((pillar) => (
+                  <div key={pillar.title}>
+                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(184,132,30,0.35)] bg-[rgba(255,255,255,0.05)] text-[var(--color-ryze-400)]">
+                      <pillar.icon size={18} aria-hidden="true" />
+                    </div>
+                    <h2 className="mt-4 text-[1.05rem] font-semibold leading-[1.35] text-[#f8f3ea]">{pillar.title}</h2>
+                    <p className="mt-2 text-sm leading-7 text-white/62">{pillar.description}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </Container>
-      </Section>
+      </section>
 
-      <Section variant="default">
+      <section className="bg-[#f4efe7] py-18 text-[#171d28] sm:py-24">
         <Container>
-          <div className="max-w-3xl">
-            <h2 className="ryze-heading-2 ryze-text-primary">What Students Get Every Week</h2>
-            <p className="mt-3 ryze-text-secondary">A consistent system built for Advanced, Extension 1, and Extension 2 outcomes.</p>
-          </div>
-          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <ValueCard
-              title="Exam-Focused Lessons"
-              description="Students train with mark-efficient methods, structure, and time management used in real HSC papers."
-              icon={<BookOpenCheck size={20} />}
-            />
-            <ValueCard
-              title="Personalised Pathway"
-              description="Targeted support based on current level, weak topics, and upcoming milestones."
-              icon={<CalendarCheck2 size={20} />}
-            />
-            <ValueCard
-              title="Parent Visibility"
-              description="Regular feedback means families know exactly where progress is strong and where to focus next."
-              icon={<MessageCircle size={20} />}
-            />
-          </div>
-        </Container>
-      </Section>
-
-      <Section variant="tint">
-        <Container>
-          <h2 className="ryze-heading-2 ryze-text-primary">How It Works</h2>
-          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-            {howItWorksSteps.map((step, index) => (
-              <DesignCard key={step.title} className="h-full p-6">
-                <p className="inline-flex h-8 w-8 items-center justify-center rounded-full ryze-bg-surface-dark text-xs font-bold ryze-text-inverse">
-                  {index + 1}
-                </p>
-                <h3 className="mt-4 ryze-heading-3 ryze-text-primary">{step.title.replace(/^[0-9]+\.\s*/, '')}</h3>
-                <p className="mt-2 text-sm leading-relaxed ryze-text-secondary">{step.description}</p>
-              </DesignCard>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <Section variant="default">
-        <Container>
-          <h2 className="ryze-heading-2 ryze-text-primary">Student Results and Parent Feedback</h2>
-          <div className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
-            {featuredTestimonials.map((item) => (
-              <TestimonialCard
-                key={item.id}
-                achievement={item.achievement}
-                quote={item.message}
-                reviewerName={item.reviewerName}
-                reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`}
-                className="min-w-[84%] snap-start sm:min-w-[62%] md:min-w-0"
-              />
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <Section id="book" variant="tint">
-        <Container>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <DesignCard className="p-6 md:p-8">
-              <h2 className="ryze-heading-2 ryze-text-primary">Book Your Free Consultation</h2>
-              <p className="mt-3 max-w-lg ryze-text-secondary">
-                Tell us your current level and goals. We will recommend the right stream and next steps.
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-[0.78rem] font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">The Ryze difference</p>
+              <h2 className="mt-4 max-w-[12ch] font-display text-[clamp(2.7rem,5vw,4.7rem)] font-semibold leading-[0.94] tracking-[-0.05em] text-[#171d28]">
+                A sharper system for Advanced, Extension 1, and Extension 2.
+              </h2>
+              <p className="mt-5 max-w-[30rem] text-[1.03rem] leading-8 text-[#4f4a44]">
+                This page is built for families who are not looking for generic tutoring. They want a program that improves mathematical judgement, written structure, and exam performance over the term.
               </p>
-              <p className="mt-3 text-sm font-medium ryze-text-secondary">No obligation. Clear recommendation. Response within one business day.</p>
-              <div className="mt-5 flex flex-wrap gap-2">
+            </motion.div>
+
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.08 }}
+              className="grid gap-6 border-t border-[#171d28]/10 pt-6 sm:grid-cols-3"
+            >
+              <div>
+                <p className="text-[2.35rem] font-semibold tracking-[-0.05em] text-[#171d28]">500+</p>
+                <p className="mt-2 text-sm leading-6 text-[#5b5752]">Students supported across Sydney with structured maths mentoring.</p>
+              </div>
+              <div>
+                <p className="text-[2.35rem] font-semibold tracking-[-0.05em] text-[#171d28]">4.9/5</p>
+                <p className="mt-2 text-sm leading-6 text-[#5b5752]">Average parent and student satisfaction across our tutoring programs.</p>
+              </div>
+              <div>
+                <p className="text-[2.35rem] font-semibold tracking-[-0.05em] text-[#171d28]">13+ years</p>
+                <p className="mt-2 text-sm leading-6 text-[#5b5752]">Teaching and senior-maths mentoring experience behind the program.</p>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="mt-16 grid gap-8 border-t border-[#171d28]/10 pt-10 lg:grid-cols-3">
+            {programTracks.map((track, index) => (
+              <motion.div
+                key={track.title}
+                initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.55, delay: index * 0.06 }}
+                className="border-l border-[#171d28]/10 pl-5"
+              >
+                <p className="text-[0.72rem] font-bold uppercase tracking-[0.26em] text-[var(--accent)]">Program track</p>
+                <h3 className="mt-4 text-[1.6rem] font-semibold tracking-[-0.03em] text-[#171d28]">{track.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#5b5752]">{track.summary}</p>
+                <div className="mt-6 space-y-3">
+                  {track.focus.map((item) => (
+                    <div key={item} className="flex items-start gap-3 text-sm leading-6 text-[#171d28]">
+                      <CheckCircle2 size={16} className="mt-1 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-[#11151d] py-18 sm:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-16">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-[0.78rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-ryze-400)]">Weekly rhythm</p>
+              <h2 className="mt-4 max-w-[12ch] font-display text-[clamp(2.7rem,5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-[#f8f3ea]">
+                How the program runs each week.
+              </h2>
+              <p className="mt-5 max-w-[30rem] text-[1.02rem] leading-8 text-white/68">
+                Strong results usually come from disciplined repetition, not last-minute intensity. We structure the week so students know what to learn, what to revise, and what to fix next.
+              </p>
+            </motion.div>
+
+            <div className="space-y-8 border-l border-white/10 pl-6 sm:pl-8">
+              {weeklySystem.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={reduceMotion ? undefined : { opacity: 0, x: 22 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="relative"
+                >
+                  <div className="absolute -left-[2.15rem] top-1.5 h-3 w-3 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_18px_rgba(184,132,30,0.7)]" />
+                  <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[var(--color-ryze-400)]">Step {index + 1}</p>
+                  <h3 className="mt-3 text-[1.35rem] font-semibold tracking-[-0.02em] text-[#f8f3ea]">{item.title}</h3>
+                  <p className="mt-2 max-w-[38rem] text-sm leading-7 text-white/66">{item.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.6, delay: 0.08 }}
+            className="mt-16 grid gap-6 border-t border-white/10 pt-8 sm:grid-cols-3"
+          >
+            <div className="border-l border-white/10 pl-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[var(--color-ryze-400)]">
+                <BookOpenCheck size={18} aria-hidden="true" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-[#f8f3ea]">Method over memorisation</h3>
+              <p className="mt-2 text-sm leading-7 text-white/62">Students learn how marks are actually won in senior maths, not just what content appears in the syllabus.</p>
+            </div>
+            <div className="border-l border-white/10 pl-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[var(--color-ryze-400)]">
+                <Activity size={18} aria-hidden="true" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-[#f8f3ea]">Visible academic movement</h3>
+              <p className="mt-2 text-sm leading-7 text-white/62">The focus stays on measurable improvement: cleaner working, stronger judgement, and fewer repeated errors.</p>
+            </div>
+            <div className="border-l border-white/10 pl-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[var(--color-ryze-400)]">
+                <MessageCircle size={18} aria-hidden="true" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-[#f8f3ea]">Family communication</h3>
+              <p className="mt-2 text-sm leading-7 text-white/62">Parents know what is improving, where the pressure points are, and what matters before the next milestone.</p>
+            </div>
+          </motion.div>
+        </Container>
+      </section>
+
+      <section className="bg-[#f8f3ea] py-18 text-[#171d28] sm:py-24">
+        <Container>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-[0.78rem] font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">Results and feedback</p>
+              <h2 className="mt-4 max-w-[12ch] font-display text-[clamp(2.7rem,5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-[#171d28]">
+                Families stay when the progress is obvious.
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.6, delay: 0.08 }}
+              className="grid gap-4 sm:grid-cols-3"
+            >
+              <div className="border-l border-[#171d28]/10 pl-4">
+                <Users size={18} className="text-[var(--accent)]" aria-hidden="true" />
+                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#171d28]/58">Students</p>
+                <p className="mt-2 text-sm leading-7 text-[#5b5752]">From Advanced through Extension 2, across both Year 11 and Year 12.</p>
+              </div>
+              <div className="border-l border-[#171d28]/10 pl-4">
+                <Star size={18} className="text-[var(--accent)]" aria-hidden="true" />
+                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#171d28]/58">Parents</p>
+                <p className="mt-2 text-sm leading-7 text-[#5b5752]">Families value clarity, consistency, and the sense that someone is genuinely steering the process.</p>
+              </div>
+              <div className="border-l border-[#171d28]/10 pl-4">
+                <BadgeCheck size={18} className="text-[var(--accent)]" aria-hidden="true" />
+                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#171d28]/58">Trust</p>
+                <p className="mt-2 text-sm leading-7 text-[#5b5752]">The program is designed for families who want quality control, not casual tutoring.</p>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+            {featuredTestimonials.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.06 }}
+                className="min-w-[84%] snap-start sm:min-w-[62%] md:min-w-0"
+              >
+                <TestimonialCard
+                  achievement={item.achievement}
+                  quote={item.message}
+                  reviewerName={item.reviewerName}
+                  reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`}
+                />
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section id="book" className="bg-[#171d28] py-18 sm:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-[0.78rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-ryze-400)]">Book a consultation</p>
+              <h2 className="mt-4 max-w-[12ch] font-display text-[clamp(2.7rem,5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-[#f8f3ea]">
+                Start with a clear recommendation, not guesswork.
+              </h2>
+              <p className="mt-5 max-w-[30rem] text-[1.02rem] leading-8 text-white/68">
+                Tell us the student&apos;s current level, stream, and target. We will recommend the right placement and the most useful next step.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                {contactHighlights.map((item) => (
+                  <div key={item} className="flex items-start gap-3 border-l border-white/10 pl-4 text-sm leading-7 text-white/74">
+                    <CheckCircle2 size={17} className="mt-1 shrink-0 text-[var(--color-ryze-400)]" aria-hidden="true" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                <a
+                  href="tel:+61413885839"
+                  onClick={handlePhoneClick}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                  aria-label="Call Ryze Education"
+                >
+                  <Phone size={16} aria-hidden="true" />
+                  Call +61 413 885 839
+                </a>
+                <a
+                  href="https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleWhatsappClick}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 px-6 py-3 text-sm font-semibold text-white/84 transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                  aria-label="Open WhatsApp chat with Ryze Education"
+                >
+                  <MessageCircle size={16} aria-hidden="true" />
+                  Prefer WhatsApp?
+                  <ArrowRight size={14} aria-hidden="true" />
+                </a>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-2">
                 {studentSegments.map((segment) => (
                   <span
                     key={segment}
                     className={`rounded-full border px-3 py-1 text-xs font-semibold ${
                       landingVariant.isExt2Focus && segment.includes('Extension 2')
-                        ? 'border-[var(--accent)] bg-[var(--accent)]/10 ryze-text-primary'
-                        : 'ryze-border-subtle ryze-bg-surface ryze-text-primary'
+                        ? 'border-[var(--color-ryze-400)] bg-[rgba(184,132,30,0.12)] text-[#f8f3ea]'
+                        : 'border-white/12 bg-white/5 text-white/76'
                     }`}
                   >
                     {segment}
                   </span>
                 ))}
               </div>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <PrimaryCTA
-                  variant="link"
-                  href="#book"
-                  size="lg"
-                  page="hsc_landing"
-                  placement="hsc_bottom_cta"
-                  className="w-full justify-center sm:w-auto"
-                />
-                <a
-                  href="tel:+61413885839"
-                  onClick={handlePhoneClick}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 ryze-bg-surface px-6 py-3 text-sm font-semibold ryze-text-primary transition-colors hover:ryze-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
-                  aria-label="Call Ryze Education"
-                >
-                  <Phone size={16} aria-hidden="true" />
-                  Call Us
-                </a>
-              </div>
-              <a
-                href="https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleWhatsappClick}
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold ryze-text-primary hover:opacity-80"
-                aria-label="Open WhatsApp chat with Ryze Education"
-              >
-                <MessageCircle size={16} aria-hidden="true" />
-                Prefer WhatsApp? Start chat now
-                <ArrowRight size={14} aria-hidden="true" />
-              </a>
-            </DesignCard>
+            </motion.div>
 
-            <DesignCard className="p-6 md:p-8">
-              <form onSubmit={handleSubmit}>
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.08 }}
+              className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.03)_100%)] p-6 shadow-[0_34px_80px_-54px_rgba(0,0,0,0.58)] backdrop-blur-xl md:p-8"
+            >
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-5">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-ryze-400)]">Enquiry form</p>
+                  <p className="mt-2 text-sm leading-6 text-white/62">Response usually within one business day.</p>
+                </div>
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/6 text-[var(--color-ryze-400)]">
+                  <ChevronRight size={18} aria-hidden="true" />
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="mt-6">
                 <input
                   type="text"
                   name="honey"
@@ -434,8 +675,9 @@ const HscMathsTutoring: React.FC = () => {
                   tabIndex={-1}
                   autoComplete="off"
                 />
+
                 <div className="grid grid-cols-1 gap-4">
-                  <label htmlFor="hsc-name" className="text-sm font-medium">
+                  <label htmlFor="hsc-name" className="text-sm font-medium text-white/86">
                     Name
                     <input
                       id="hsc-name"
@@ -447,11 +689,11 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1.5 w-full rounded-[1rem] border border-white/12 bg-white/6 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/28 focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
-                  <label htmlFor="hsc-email" className="text-sm font-medium">
+                  <label htmlFor="hsc-email" className="text-sm font-medium text-white/86">
                     Email
                     <input
                       id="hsc-email"
@@ -463,11 +705,11 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1.5 w-full rounded-[1rem] border border-white/12 bg-white/6 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/28 focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
-                  <label htmlFor="hsc-phone" className="text-sm font-medium">
+                  <label htmlFor="hsc-phone" className="text-sm font-medium text-white/86">
                     Phone
                     <input
                       id="hsc-phone"
@@ -480,11 +722,11 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1.5 w-full rounded-[1rem] border border-white/12 bg-white/6 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/28 focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
-                  <label htmlFor="hsc-student-level" className="text-sm font-medium">
+                  <label htmlFor="hsc-student-level" className="text-sm font-medium text-white/86">
                     Student Level
                     <select
                       id="hsc-student-level"
@@ -492,13 +734,11 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.studentLevel}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1.5 w-full rounded-[1rem] border border-white/12 bg-white/6 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                      <option>Year 11 - Advanced</option>
-                      <option>Year 11 - Extension 1</option>
-                      <option>Year 12 - Advanced</option>
-                      <option>Year 12 - Extension 1</option>
-                      <option>Year 12 - Extension 2</option>
+                      {studentSegments.map((segment) => (
+                        <option key={segment}>{segment}</option>
+                      ))}
                     </select>
                   </label>
                 </div>
@@ -506,28 +746,28 @@ const HscMathsTutoring: React.FC = () => {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full ryze-bg-surface-dark px-6 py-3 text-sm font-semibold ryze-text-inverse transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-ryze-500)] px-6 py-3.5 text-sm font-semibold text-[#11151d] transition-colors hover:bg-[var(--color-ryze-400)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <BookOpenCheck size={16} aria-hidden="true" />
                   {status === 'sending' ? 'Submitting...' : 'Submit Enquiry'}
                 </button>
 
                 {status === 'success' && (
-                  <p role="status" aria-live="polite" className="mt-4 rounded-[var(--radius-sm)] border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                  <p role="status" aria-live="polite" className="mt-4 rounded-[1rem] border border-emerald-300/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
                     Thanks, your enquiry has been sent. We will contact you shortly.
                   </p>
                 )}
 
                 {status === 'error' && (
-                  <p role="alert" className="mt-4 rounded-[var(--radius-sm)] border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  <p role="alert" className="mt-4 rounded-[1rem] border border-red-300/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     {errorMessage || 'Submission failed. Please try again or call us directly.'}
                   </p>
                 )}
               </form>
-            </DesignCard>
+            </motion.div>
           </div>
         </Container>
-      </Section>
+      </section>
     </div>
   );
 };
