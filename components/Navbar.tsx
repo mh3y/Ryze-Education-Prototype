@@ -150,7 +150,7 @@ const Navbar: React.FC = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
-              className={`${textClass} rounded-full p-2 transition-colors duration-300 hover:bg-black/5`}
+              className={`${textClass} rounded-full p-2 transition-colors duration-300 hover:bg-black/5 ${isOpen ? 'bg-[rgba(23,29,40,0.06)]' : ''}`}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -160,7 +160,15 @@ const Navbar: React.FC = () => {
 
       {isOpen && (
         <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto ryze-bg-primary transition-transform duration-300 ease-out">
-          <div className="flex min-h-screen flex-col px-6 pt-24 pb-12">
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
+            className="absolute top-[calc(env(safe-area-inset-top)+1.15rem)] right-6 z-50 rounded-full border border-white/10 bg-[rgba(23,29,40,0.72)] p-2 text-white shadow-[0_20px_40px_-24px_rgba(0,0,0,0.7)] backdrop-blur-md md:hidden"
+          >
+            <X size={22} />
+          </button>
+          <div className="flex min-h-screen flex-col px-6 pt-24 pb-[calc(env(safe-area-inset-bottom)+3rem)]">
             <div className="flex-grow space-y-6">
               <div className="border-b ryze-border-subtle pb-4">
                 <button
