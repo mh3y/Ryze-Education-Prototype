@@ -233,7 +233,7 @@ const Home: React.FC = () => {
             src={HOME_HERO_IMAGE_SRC}
             srcSet={HOME_HERO_IMAGE_SRC_SET}
             sizes="100vw"
-            alt="HSC Maths tutoring in Sydney - Ryze Education"
+            alt="Specialist maths programs in Sydney - Ryze Education"
             fetchPriority="high"
             loading="eager"
             decoding="async"
