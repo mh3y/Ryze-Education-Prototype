@@ -19,11 +19,11 @@ const PrimaryMathsProgram: React.FC = () => (
     config={{
       pageId: 'primary_maths_program',
       path: ROUTES.PRIMARY_MATHS_PROGRAM,
-      title: 'Primary Maths Sydney | Years 3-6 | Ryze Education',
+      title: 'Primary | Year 3 - 6 Sydney | Ryze Education',
       description: 'A Years 3-6 primary maths program focused on fluency, confidence, and strong early mathematical habits.',
-      ogTitle: 'Primary Maths Sydney | Ryze Education',
+      ogTitle: 'Primary | Year 3 - 6 Sydney | Ryze Education',
       ogDescription: 'A structured Years 3-6 maths program building confidence, fluency, and stronger habits before secondary years begin.',
-      heroBadge: 'Primary Maths | Years 3-6',
+      heroBadge: 'Primary | Year 3 - 6',
       heroTitle: 'Early confidence matters more than early pressure.',
       heroSubheading: 'Our primary maths program helps students in Years 3-6 build fluency, clearer reasoning, and better habits before gaps become identity-level problems later.',
       heroImageSrc: heroSrc,
@@ -87,7 +87,7 @@ const PrimaryMathsProgram: React.FC = () => (
       contactHighlights: ['Free consultation with a clear recommendation', 'Placement across Years 3-6', 'Private and small-group options available'],
       studentSegments: ['Year 3', 'Year 4', 'Year 5', 'Year 6', 'Primary pathway'],
       studentLevelOptions: ['Year 3', 'Year 4', 'Year 5', 'Year 6'],
-      subjectPrefix: 'Primary Maths Program Enquiry',
+      subjectPrefix: 'Primary | Year 3 - 6 Program Enquiry',
     }}
   />
 );

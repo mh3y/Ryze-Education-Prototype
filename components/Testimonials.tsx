@@ -63,12 +63,12 @@ const getStoryMetadata = (testimonial: Testimonial, reviewerTypeText: string): S
     ) {
       programTitle = 'HSC Advanced Maths';
     } else {
-      programTitle = 'HSC Maths';
+      programTitle = 'HSC | Year 11 and 12';
     }
   } else if (isSelective) {
     programTitle = category.includes('oc') ? 'OC Preparation' : 'Selective Preparation';
   } else if (isPrimary) {
-    programTitle = 'Primary Maths Foundations';
+    programTitle = 'Primary | Year 3 - 6';
   } else if (category.includes('competition')) {
     programTitle = 'Competition Maths';
   }

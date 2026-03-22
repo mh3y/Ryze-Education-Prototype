@@ -169,25 +169,25 @@ const HscMathsTutoring: React.FC = () => {
       isExt2Focus,
       isHscFocus,
       heroTitle: isExt2Focus
-        ? 'HSC Maths program for students chasing the top band.'
-        : 'HSC Maths program built for stronger marks and calmer exams.',
+        ? 'HSC | Year 11 and 12 program for students chasing the top band.'
+        : 'HSC | Year 11 and 12 program built for stronger marks and calmer exams.',
       subheading: isExt2Focus
         ? 'Extension 2 mentoring for sharper proofs, cleaner structure, and better high-pressure execution.'
         : isHscFocus
           ? 'Advanced and Extension support for students who need stronger working, better judgement, and more reliable exam performance.'
-          : 'Private and small-group HSC Maths support for students who want clearer working, stronger marks, and more confidence before trials and the HSC.',
+          : 'Private and small-group HSC | Year 11 and 12 support for students who want clearer working, stronger marks, and more confidence before trials and the HSC.',
     };
   }, [location.search]);
 
   useEffect(() => {
     applySeo({
-      title: 'HSC Maths Sydney | Advanced, Ext 1, Ext 2 | Ryze Education',
+      title: 'HSC | Year 11 and 12 Sydney | Advanced, Ext 1, Ext 2 | Ryze Education',
       description:
-        'High-performance HSC Maths program in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.',
+        'High-performance HSC | Year 11 and 12 program in Sydney for Advanced, Extension 1, and Extension 2. Book a free consultation and get a personalised study plan.',
       path: ROUTES.HSC_MATHS_PROGRAM,
-      ogTitle: 'HSC Maths Sydney | Ryze Education',
+      ogTitle: 'HSC | Year 11 and 12 Sydney | Ryze Education',
       ogDescription:
-        'Targeted HSC Maths programs for Advanced, Extension 1, and Extension 2 with weekly feedback and exam-focused mentoring.',
+        'Targeted HSC | Year 11 and 12 programs for Advanced, Extension 1, and Extension 2 with weekly feedback and exam-focused mentoring.',
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
@@ -333,7 +333,7 @@ const HscMathsTutoring: React.FC = () => {
           src={heroImageSrc}
           srcSet={heroImageSrcSet}
           sizes="100vw"
-          alt="HSC Maths program in Sydney"
+          alt="HSC | Year 11 and 12 program in Sydney"
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -353,7 +353,7 @@ const HscMathsTutoring: React.FC = () => {
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(184,132,30,0.35)] bg-[rgba(255,255,255,0.05)] px-4 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-ryze-400)] backdrop-blur-md">
                 <ShieldCheck size={14} aria-hidden="true" />
-                HSC Maths | Sydney
+                HSC | Year 11 and 12 | Sydney
               </div>
               <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3.6rem,8vw,6.8rem)] font-semibold leading-[0.86] tracking-[-0.055em] text-[#f8f3ea]">
                 {landingVariant.heroTitle}

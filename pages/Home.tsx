@@ -133,9 +133,9 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     applySeo({
-      title: 'Ryze Education | HSC Maths Tutor Sydney | Extension 2 Expert',
+      title: 'Ryze Education | HSC | Year 11 and 12 Sydney | Extension 2 Expert',
       description:
-        'Maths tutoring in Sydney for HSC Maths, Extension 1, and Extension 2, delivered through private tutoring and small-group classes with expert teaching and clear progress.',
+        'Maths tutoring in Sydney for HSC | Year 11 and 12, Extension 1, and Extension 2, delivered through private tutoring and small-group classes with expert teaching and clear progress.',
       path: ROUTES.HOME,
       jsonLd: {
         '@context': 'https://schema.org',
@@ -277,7 +277,7 @@ const Home: React.FC = () => {
                     <div className="absolute -left-1 top-0 h-2.5 w-2.5 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_12px_rgba(184,132,30,0.8)]"></div>
                   </div>
                   <p className="text-[0.75rem] font-bold uppercase tracking-[0.3em] text-[var(--color-ryze-500)]">Teaching</p>
-                  <p className="mt-2 text-[1.05rem] font-semibold leading-[1.4] ryze-text-inverse opacity-95">Accredited teachers & scholars</p>
+                  <p className="mt-2 text-[1.05rem] font-semibold leading-[1.4] ryze-text-inverse opacity-95">NSW Qualified Teachers & High-Achieving Scholars</p>
                 </div>
                 <div className="relative pl-6">
                   <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">

@@ -290,7 +290,7 @@ const TheRyzeTruth: React.FC = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {results.map((result) => (
               <div key={result.title} className={`rounded-3xl border-t-4 bg-white p-8 shadow-sm ${result.borderClass}`}>
-                <h3 className="mb-4 text-lg font-bold ryze-text-primary">{t(result.title)}</h3>
+                <h3 className="mb-4 font-display text-[1.35rem] font-semibold leading-[1.08] ryze-text-primary">{t(result.title)}</h3>
                 <p className="text-[0.98rem] leading-relaxed ryze-text-secondary">{t(result.text)}</p>
               </div>
             ))}

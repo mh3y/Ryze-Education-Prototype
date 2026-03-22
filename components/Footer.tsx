@@ -120,11 +120,11 @@ const Footer: React.FC = () => {
             <div className="lg:col-span-2 lg:col-start-6">
               <h4 className={`mb-3 text-[1.08rem] font-extrabold uppercase tracking-[0.1em] ${headingClass}`}>{t('Programs')}</h4>
               <ul className="space-y-2.5 text-sm leading-6">
-                <li><Link to={ROUTES.HSC_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('HSC Mathematics')}</Link></li>
-                <li><Link to={ROUTES.ACCELERATED_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Accelerated Maths')}</Link></li>
+                <li><Link to={ROUTES.HSC_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('HSC')}</Link></li>
+                <li><Link to={ROUTES.ACCELERATED_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Accelerated Pathways')}</Link></li>
                 <li><Link to={ROUTES.JUNIOR_FOUNDATIONS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Junior Foundations')}</Link></li>
                 <li><Link to={ROUTES.SELECTIVE_OC_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('OC & Selective Exam Preparation')}</Link></li>
-                <li><Link to={ROUTES.PRIMARY_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Primary Maths')}</Link></li>
+                <li><Link to={ROUTES.PRIMARY_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Primary')}</Link></li>
               </ul>
             </div>
             

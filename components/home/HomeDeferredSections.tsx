@@ -33,7 +33,7 @@ const programSlides = [
     featured: {
       id: 'program-hsc',
       badge: 'PRIMARY PATHWAY',
-      title: 'HSC Maths',
+      title: 'HSC | Year 11 and 12',
       blurb:
         'A serious senior maths program for students aiming to perform strongly in Advanced, Extension 1, and Extension 2 with clearer method, steadier weekly execution, and far less guesswork under exam pressure.',
       detailLead: 'Academic standard: senior maths taught with strong emphasis on exam-method discipline, correction quality, and written mathematical precision.',
@@ -55,7 +55,7 @@ const programSlides = [
       {
         id: 'program-accelerated',
         badge: 'PROGRAM',
-        title: 'Accelerated Maths',
+        title: 'Accelerated Pathways',
         blurb: 'Built for ambitious students who are ready for a faster pace, deeper challenge, and more serious mathematical work than standard school progression usually provides.',
         detailLead: 'What matters here: ahead-of-school sequencing, richer abstraction, and challenge that actually extends understanding rather than just increasing workload.',
         detailSupport: 'Program structure: carefully paced extension, stronger problem-solving demands, and close guidance so acceleration stays stable, not superficial.',
@@ -69,7 +69,7 @@ const programSlides = [
     featured: {
       id: 'program-primary',
       badge: 'PRIMARY PATHWAY',
-      title: 'Primary Maths',
+      title: 'Primary | Year 3 - 6',
       blurb:
         'A strong primary maths program focused on fluency, confidence, and the habits that make later learning feel more natural, less rushed, and far less fragile.',
       detailLead: 'Academic standard: careful attention to core number fluency, reasoning, written method, and the confidence to explain how an answer was reached.',
@@ -81,7 +81,7 @@ const programSlides = [
       {
         id: 'program-junior-foundations',
         badge: 'PROGRAM',
-        title: 'Junior Foundations',
+        title: 'Junior Foundations | Year 7 -10',
         blurb: 'A structured Years 7-10 program aligned with the NSW curriculum and Ryze in-house sequencing to repair gaps, strengthen fluency, and make school maths feel more manageable week to week.',
         detailLead: 'What matters here: prerequisite repair, consistent school alignment, and rebuilding confidence before senior mathematics becomes more demanding.',
         detailSupport: 'Program structure: explicit teaching, correction-driven review, and steady weekly support so progress feels visible to both students and parents.',
@@ -587,7 +587,7 @@ const HomeDeferredSections: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 lg:justify-start">
+                <div className="flex flex-col justify-center gap-3 sm:flex-row sm:items-stretch sm:gap-4 lg:justify-start">
                   <PrimaryCTA
                     variant="link"
                     href={ROUTES.CONTACT}
@@ -596,7 +596,7 @@ const HomeDeferredSections: React.FC = () => {
                     placement="home_bottom_cta"
                     label="Book a Free Consultation"
                     icon="calendar_alert"
-                    className="w-full justify-between !text-white hover:!text-white sm:w-[clamp(220px,24vw,244px)]"
+                    className="group w-full justify-between rounded-[1.55rem] border border-[rgba(184,132,30,0.16)] bg-[linear-gradient(135deg,#d29a20_0%,#b8841e_100%)] px-5 py-4 !text-white shadow-[0_22px_48px_-26px_rgba(184,132,30,0.5)] hover:border-[rgba(184,132,30,0.24)] hover:!text-white hover:shadow-[0_28px_58px_-28px_rgba(184,132,30,0.58)] sm:min-h-[5.4rem] sm:w-[clamp(238px,24vw,270px)]"
                   />
                   <PrimaryCTA
                     page="home"
@@ -606,7 +606,7 @@ const HomeDeferredSections: React.FC = () => {
                     label={t('Give us a call now!')}
                     icon="phone"
                     href="tel:+61413885839"
-                    className="w-full sm:w-[clamp(220px,24vw,244px)]"
+                    className="group w-full justify-between rounded-[1.55rem] border border-[rgba(23,29,40,0.1)] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(250,246,239,0.94))] px-5 py-4 !text-[#171d28] shadow-[0_20px_44px_-30px_rgba(17,21,29,0.24)] hover:border-[rgba(184,132,30,0.24)] hover:!text-[#171d28] hover:shadow-[0_26px_54px_-32px_rgba(17,21,29,0.28)] sm:min-h-[5.4rem] sm:w-[clamp(238px,24vw,270px)] [&_svg]:text-[var(--accent)]"
                     onClick={handlePhoneClick}
                   />
                 </div>
