@@ -37,7 +37,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
             loading="lazy"
             decoding="async"
             fetchPriority="low"
-            className="absolute inset-0 w-full h-full object-cover z-0"
+            className="absolute inset-0 z-0 h-full w-full object-cover object-center sm:object-[52%_center] lg:object-[56%_center]"
             alt=""
             aria-hidden="true"
           />

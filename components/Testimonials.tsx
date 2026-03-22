@@ -187,10 +187,10 @@ const ReviewCard = memo(function ReviewCard({
 
   return (
     <article
-      className={`flex h-full flex-col rounded-[1.6rem] border bg-[rgba(255,255,255,0.92)] shadow-[0_22px_52px_-40px_rgba(17,21,29,0.18)] ${
+      className={`flex h-full flex-col rounded-[1.45rem] border bg-[rgba(255,255,255,0.94)] shadow-[0_20px_44px_-36px_rgba(17,21,29,0.16)] ${
         featured
-          ? 'border-[rgba(184,132,30,0.18)] p-5 sm:p-6'
-          : 'border-[rgba(23,29,40,0.08)] p-4.5 sm:p-5'
+          ? 'border-[rgba(184,132,30,0.18)] p-4.5 sm:p-5'
+          : 'border-[rgba(23,29,40,0.08)] p-4 sm:p-4.5'
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -209,9 +209,9 @@ const ReviewCard = memo(function ReviewCard({
         </span>
       </div>
 
-      <div className="mt-5 flex items-start gap-3.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full ryze-bg-surface-dark ryze-text-inverse">
-          <Quote size={16} />
+      <div className="mt-4 flex items-start gap-3">
+        <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full ryze-bg-surface-dark ryze-text-inverse">
+          <Quote size={15} />
         </div>
         <div>
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
@@ -219,31 +219,31 @@ const ReviewCard = memo(function ReviewCard({
           </p>
           <h3
             className={`mt-3 font-display font-bold leading-[0.95] ryze-text-primary ${
-              featured ? 'max-w-[11ch] text-[2.25rem] sm:text-[2.45rem]' : 'max-w-[13ch] text-[1.6rem] sm:text-[1.72rem]'
+              featured ? 'max-w-[13ch] text-[1.7rem] sm:max-w-[10ch] sm:text-[2.15rem]' : 'max-w-[14ch] text-[1.22rem] sm:max-w-[12ch] sm:text-[1.5rem]'
             }`}
           >
             {achievement}
           </h3>
-          <p className={`mt-2.5 font-medium ryze-text-primary ${featured ? 'text-[1rem]' : 'text-[0.92rem]'}`}>
+          <p className={`mt-2 font-medium ryze-text-primary ${featured ? 'text-[0.95rem]' : 'text-[0.88rem]'}`}>
             {meta.programTitle}
           </p>
         </div>
       </div>
 
       <blockquote
-        className={`mt-5 ryze-text-secondary ${featured ? 'max-w-[34ch] text-[0.98rem] leading-relaxed' : 'line-clamp-5 text-[0.92rem] leading-relaxed'}`}
+        className={`mt-4 ryze-text-secondary ${featured ? 'text-[0.92rem] leading-7 line-clamp-6 sm:max-w-[32ch] sm:text-[0.95rem]' : 'text-[0.88rem] leading-6 line-clamp-5'}`}
       >
         &ldquo;{message}&rdquo;
       </blockquote>
 
-      <div className="mt-auto pt-5">
-        <div className="flex items-center gap-3 border-t border-[rgba(23,29,40,0.08)] pt-3.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full ryze-bg-surface-dark text-[0.68rem] font-bold uppercase tracking-[0.08em] ryze-text-inverse">
+      <div className="mt-auto pt-4">
+        <div className="flex items-center gap-3 border-t border-[rgba(23,29,40,0.08)] pt-3">
+          <span className="flex h-8.5 w-8.5 items-center justify-center rounded-full ryze-bg-surface-dark text-[0.65rem] font-bold uppercase tracking-[0.08em] ryze-text-inverse">
             {getInitials(reviewerName)}
           </span>
           <div>
-            <p className="text-[0.92rem] font-semibold ryze-text-primary">{reviewerName}</p>
-            <p className="text-[0.84rem] ryze-text-secondary">
+            <p className="text-[0.88rem] font-semibold leading-tight ryze-text-primary">{reviewerName}</p>
+            <p className="text-[0.8rem] leading-tight ryze-text-secondary">
               {reviewerType} / {reviewerGrade}
             </p>
           </div>
@@ -264,6 +264,7 @@ const Testimonials: React.FC = () => {
     scrollLeft: number;
   } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [railState, setRailState] = useState({
     canScroll: false,
     isAtStart: true,
@@ -272,6 +273,17 @@ const Testimonials: React.FC = () => {
 
   const orderedTestimonials = useMemo(() => orderTestimonials(testimonials), []);
   const columns = useMemo(() => buildColumns(orderedTestimonials), [orderedTestimonials]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const updateViewport = () => setIsMobileViewport(mediaQuery.matches);
+
+    updateViewport();
+    mediaQuery.addEventListener('change', updateViewport);
+    return () => mediaQuery.removeEventListener('change', updateViewport);
+  }, []);
 
   useEffect(() => {
     const rail = railRef.current;
@@ -325,13 +337,13 @@ const Testimonials: React.FC = () => {
     if (!rail) return;
 
     rail.scrollBy({
-      left: direction * Math.max(rail.clientWidth * 0.72, 320),
+      left: direction * Math.max(rail.clientWidth * (isMobileViewport ? 0.88 : 0.72), isMobileViewport ? 260 : 320),
       behavior: 'smooth',
     });
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!railRef.current) return;
+    if (!railRef.current || event.pointerType !== 'mouse') return;
 
     dragStateRef.current = {
       pointerId: event.pointerId,
@@ -362,7 +374,7 @@ const Testimonials: React.FC = () => {
   };
 
   return (
-    <section className="overflow-hidden ryze-bg-primary py-16 ryze-text-primary sm:py-20">
+    <section className="overflow-hidden ryze-bg-primary py-14 ryze-text-primary sm:py-18">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <div className="eyebrow">Testimonials</div>
@@ -377,7 +389,7 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 rounded-[1.45rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.58)] px-4 py-4 shadow-[0_18px_40px_-34px_rgba(17,21,29,0.18)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="mt-7 flex flex-col gap-3 rounded-[1.3rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.58)] px-4 py-3.5 shadow-[0_18px_40px_-34px_rgba(17,21,29,0.18)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div className="flex items-center gap-3">
             <span className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
               Verified Stories
@@ -399,8 +411,8 @@ const Testimonials: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8">
-          <div className="relative rounded-[1.7rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.34)] p-4 shadow-[0_20px_46px_-40px_rgba(17,21,29,0.18)] sm:p-5">
+        <div className="mt-7">
+          <div className="relative rounded-[1.45rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.34)] p-3.5 shadow-[0_20px_46px_-40px_rgba(17,21,29,0.18)] sm:p-4">
             {railState.canScroll && (
               <>
                 <button
@@ -432,51 +444,66 @@ const Testimonials: React.FC = () => {
               onPointerMove={handlePointerMove}
               onPointerUp={endDrag}
               onPointerCancel={endDrag}
-              className={`ryze-review-rail snap-x snap-proximity overflow-x-auto pb-4 [touch-action:pan-y] ${
-                isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+              className={`ryze-review-rail snap-x snap-proximity overflow-x-auto pb-4 ${
+                isMobileViewport ? '[touch-action:pan-x]' : '[touch-action:pan-y]'
+              } ${isDragging ? 'cursor-grabbing select-none' : isMobileViewport ? 'cursor-auto' : 'cursor-grab'
               }`}
             >
-              <div className="flex min-w-max items-stretch gap-4 pr-4">
-                {columns.map((column, columnIndex) =>
-                  column.variant === 'featured' ? (
-                    <div
-                      key={column.id}
-                      className="ryze-review-column ryze-review-column-featured w-[min(27rem,86vw)] shrink-0 snap-start"
-                    >
-                      <ReviewCard testimonial={column.items[0]} featured />
-                    </div>
-                  ) : (
-                    <div
-                      key={column.id}
-                      className="ryze-review-column grid w-[min(18.5rem,80vw)] shrink-0 snap-start gap-4"
-                    >
-                      {column.items.map((testimonial) => (
-                        <ReviewCard key={testimonial.id} testimonial={testimonial} />
-                      ))}
-                    </div>
-                  ),
-                )}
+              <div className="flex min-w-max items-stretch gap-3.5 pr-3">
+                {isMobileViewport
+                  ? orderedTestimonials.map((testimonial, index) => (
+                      <div
+                        key={testimonial.id}
+                        className={`w-[min(19.5rem,82vw)] shrink-0 snap-center ${index === 0 ? 'sm:w-[min(21rem,84vw)]' : ''}`}
+                      >
+                        <ReviewCard testimonial={testimonial} featured={index === 0} />
+                      </div>
+                    ))
+                  : columns.map((column) =>
+                      column.variant === 'featured' ? (
+                        <div
+                          key={column.id}
+                          className="ryze-review-column ryze-review-column-featured w-[min(23rem,72vw)] shrink-0 snap-start xl:w-[25rem]"
+                        >
+                          <ReviewCard testimonial={column.items[0]} featured />
+                        </div>
+                      ) : (
+                        <div
+                          key={column.id}
+                          className="ryze-review-column grid w-[min(16rem,36vw)] shrink-0 snap-start gap-3.5 xl:w-[17rem]"
+                        >
+                          {column.items.map((testimonial) => (
+                            <ReviewCard key={testimonial.id} testimonial={testimonial} />
+                          ))}
+                        </div>
+                      ),
+                    )}
               </div>
             </div>
 
             {railState.canScroll && (
-              <div className="mt-4 flex items-center justify-center gap-3 lg:hidden">
+              <div className="mt-4 flex items-center justify-between gap-3 lg:hidden">
                 <button
                   type="button"
-                  aria-label="Scroll testimonials left"
+                  aria-label="Show previous testimonial"
                   onClick={() => scrollRailBy(-1)}
                   disabled={railState.isAtStart}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] px-4 py-2.5 text-[0.9rem] font-semibold ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ArrowLeft size={16} />
+                  <span>Previous</span>
                 </button>
+                <span className="text-[0.82rem] font-medium uppercase tracking-[0.14em] ryze-text-secondary">
+                  Swipe or tap
+                </span>
                 <button
                   type="button"
-                  aria-label="Scroll testimonials right"
+                  aria-label="Show next testimonial"
                   onClick={() => scrollRailBy(1)}
                   disabled={railState.isAtEnd}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] px-4 py-2.5 text-[0.9rem] font-semibold ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
+                  <span>Next</span>
                   <ArrowRight size={16} />
                 </button>
               </div>
@@ -486,7 +513,9 @@ const Testimonials: React.FC = () => {
           <div className="mt-4 flex flex-col gap-2 text-[0.92rem] ryze-text-secondary sm:flex-row sm:items-center sm:justify-between">
             <p>
               {railState.canScroll
-                ? 'Use the arrows, drag with the mouse, or swipe sideways to review every testimonial.'
+                ? isMobileViewport
+                  ? 'Swipe naturally through each review or use the buttons to move one testimonial at a time.'
+                  : 'Use the arrows, drag with the mouse, or swipe sideways to review every testimonial.'
                 : 'All available review cards are currently visible.'}
             </p>
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   ArrowRight,
@@ -140,15 +140,22 @@ const defaultForm: FormState = {
 const HscMathsTutoring: React.FC = () => {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const mobileTestimonialsRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<FormState>(defaultForm);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [activeMobileReview, setActiveMobileReview] = useState(0);
 
   const featuredTestimonials = useMemo(() => {
-    const hsc = testimonials.filter((item) => item.category === 'HSC').slice(0, 3);
-    if (hsc.length === 3) return hsc;
-    return testimonials.slice(0, 3);
+    const hsc = testimonials.filter((item) => item.category === 'HSC' && item.studentGrade === 'Year 12');
+    if (hsc.length > 0) return hsc;
+    return testimonials.slice(0, 6);
   }, []);
+
+  const testimonialMarquee = useMemo(
+    () => (reduceMotion ? featuredTestimonials : [...featuredTestimonials, ...featuredTestimonials]),
+    [featuredTestimonials, reduceMotion],
+  );
 
   const landingVariant = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -287,6 +294,37 @@ const HscMathsTutoring: React.FC = () => {
     }
   };
 
+  const scrollToMobileReview = (index: number) => {
+    const rail = mobileTestimonialsRef.current;
+    if (!rail) return;
+
+    const nextIndex = (index + featuredTestimonials.length) % featuredTestimonials.length;
+    const target = rail.children.item(nextIndex) as HTMLElement | null;
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    setActiveMobileReview(nextIndex);
+  };
+
+  useEffect(() => {
+    if (reduceMotion || typeof window === 'undefined' || featuredTestimonials.length <= 1) return;
+
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    if (!mediaQuery.matches) return;
+
+    const interval = window.setInterval(() => {
+      setActiveMobileReview((current) => {
+        const next = (current + 1) % featuredTestimonials.length;
+        const rail = mobileTestimonialsRef.current;
+        const target = rail?.children.item(next) as HTMLElement | null;
+        target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        return next;
+      });
+    }, 4200);
+
+    return () => window.clearInterval(interval);
+  }, [featuredTestimonials.length, reduceMotion]);
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
       <section className="relative overflow-hidden bg-[#11151d] pt-[calc(6rem+env(safe-area-inset-top))]">
@@ -298,7 +336,7 @@ const HscMathsTutoring: React.FC = () => {
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-[62%_center] md:object-[60%_center] lg:object-[68%_center]"
+          className="absolute inset-0 h-full w-full object-cover object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
@@ -560,24 +598,153 @@ const HscMathsTutoring: React.FC = () => {
             </motion.div>
           </div>
 
-          <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+          <motion.div
+            initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
+            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.55, delay: 0.06 }}
+            className="mt-10 border-y border-[#171d28]/10 py-4"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex rounded-full border border-[rgba(184,132,30,0.24)] bg-[rgba(184,132,30,0.08)] px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+                  HSC only
+                </span>
+                <p className="text-sm leading-6 text-[#5b5752]">
+                  {featuredTestimonials.length} Year 12 reviews rotating across real Advanced, Extension 1, and Extension 2 outcomes.
+                </p>
+              </div>
+              {!reduceMotion && (
+                <p className="hidden text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-[#171d28]/50 md:block">
+                  Hover to pause
+                </p>
+              )}
+            </div>
+          </motion.div>
+
+          <div
+            ref={mobileTestimonialsRef}
+            onScroll={(event) => {
+              const rail = event.currentTarget;
+              const viewportCenter = rail.scrollLeft + rail.clientWidth / 2;
+              let nextIndex = 0;
+              let nearestDistance = Number.POSITIVE_INFINITY;
+
+              Array.from(rail.children).forEach((child, index) => {
+                const element = child as HTMLElement;
+                const cardCenter = element.offsetLeft + element.offsetWidth / 2;
+                const distance = Math.abs(cardCenter - viewportCenter);
+                if (distance < nearestDistance) {
+                  nearestDistance = distance;
+                  nextIndex = index;
+                }
+              });
+
+              if (nextIndex !== activeMobileReview) {
+                setActiveMobileReview(nextIndex);
+              }
+            }}
+            className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden"
+          >
             {featuredTestimonials.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={reduceMotion ? undefined : { opacity: 0, y: 22 }}
                 whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, delay: index * 0.06 }}
-                className="min-w-[84%] snap-start sm:min-w-[62%] md:min-w-0"
+                transition={{ duration: 0.45, delay: index * 0.04 }}
+                className="min-w-[88%] snap-center sm:min-w-[62%]"
               >
                 <TestimonialCard
                   achievement={item.achievement}
                   quote={item.message}
                   reviewerName={item.reviewerName}
                   reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`}
+                  className="min-h-[17rem] rounded-[1.8rem] border-[rgba(23,29,40,0.1)] bg-[rgba(255,255,255,0.88)] shadow-[0_22px_52px_-38px_rgba(17,21,29,0.22)] backdrop-blur-sm"
                 />
               </motion.div>
             ))}
+          </div>
+
+          {featuredTestimonials.length > 1 && (
+            <div className="mt-5 flex items-center justify-between gap-3 md:hidden">
+              <button
+                type="button"
+                onClick={() => scrollToMobileReview(activeMobileReview - 1)}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white"
+                aria-label="Show previous testimonial"
+              >
+                Previous
+              </button>
+
+              <div className="flex items-center gap-2" aria-label="Testimonial position">
+                {featuredTestimonials.map((item, index) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => scrollToMobileReview(index)}
+                    className={`h-2.5 rounded-full transition-all ${
+                      index === activeMobileReview ? 'w-7 bg-[var(--accent)]' : 'w-2.5 bg-[#171d28]/18'
+                    }`}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                    aria-pressed={index === activeMobileReview}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => scrollToMobileReview(activeMobileReview + 1)}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white"
+                aria-label="Show next testimonial"
+              >
+                Next
+              </button>
+            </div>
+          )}
+
+          <div className="mt-8 hidden md:block">
+            {reduceMotion ? (
+              <div className="grid gap-4 lg:grid-cols-3">
+                {featuredTestimonials.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 22 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.45, delay: index * 0.04 }}
+                  >
+                    <TestimonialCard
+                      achievement={item.achievement}
+                      quote={item.message}
+                      reviewerName={item.reviewerName}
+                      reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`}
+                      className="min-h-[18.5rem] rounded-[1.8rem] border-[rgba(23,29,40,0.1)] bg-[rgba(255,255,255,0.88)] shadow-[0_22px_52px_-38px_rgba(17,21,29,0.22)] backdrop-blur-sm"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="logo-marquee [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+                <div className="logo-marquee-track gap-5 py-2 [animation-duration:78s]">
+                  {testimonialMarquee.map((item, index) => (
+                    <div
+                      key={`${item.id}-${index}`}
+                      aria-hidden={index >= featuredTestimonials.length}
+                      className="w-[19.5rem] shrink-0 lg:w-[21rem]"
+                    >
+                      <TestimonialCard
+                        achievement={item.achievement}
+                        quote={item.message}
+                        reviewerName={item.reviewerName}
+                        reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`}
+                        className="min-h-[18.5rem] rounded-[1.8rem] border-[rgba(23,29,40,0.1)] bg-[rgba(255,255,255,0.88)] shadow-[0_22px_52px_-38px_rgba(17,21,29,0.22)] backdrop-blur-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </Container>
       </section>
