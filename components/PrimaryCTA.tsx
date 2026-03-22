@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Phone } from 'lucide-react';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
-export const PRIMARY_CTA_LABEL = 'Book a Free Consultation';
+export const PRIMARY_CTA_LABEL = 'Book a Consultation';
 
 type PrimaryCtaSize = 'sm' | 'md' | 'lg';
 type PrimaryCtaVariant = 'button' | 'link';
 
 type PrimaryCTAProps = {
   variant?: PrimaryCtaVariant;
+  styleVariant?: 'primary' | 'secondary' | 'dark' | 'ghost';
   size?: PrimaryCtaSize;
   className?: string;
   href?: string;
@@ -22,18 +23,26 @@ type PrimaryCTAProps = {
 };
 
 const sizeClasses: Record<PrimaryCtaSize, string> = {
-  sm: 'px-4 py-2 text-sm',
-  md: 'px-6 py-3 text-base',
-  lg: 'px-8 py-4 text-lg',
+  sm: 'min-h-[2.75rem] px-4 py-2 text-[0.95rem]',
+  md: 'min-h-[3.25rem] px-6 py-3 text-[1rem]',
+  lg: 'min-h-[3.75rem] px-7 py-4 text-[1.04rem]',
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-full bg-ryze text-white font-semibold shadow-lg shadow-ryze/20 transition-all hover:bg-ryze-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ryze focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+  'inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-px active:scale-95';
+
+const styleVariantClasses: Record<string, string> = {
+  primary: 'ryze-cta-primary',
+  secondary: 'ryze-cta-secondary',
+  dark: 'ryze-cta-dark',
+  ghost: 'ryze-cta-ghost',
+};
 
 const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWith('//');
 
 const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   variant = 'link',
+  styleVariant = 'primary',
   size = 'md',
   className = '',
   href = '/contact',
@@ -44,7 +53,7 @@ const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   ariaLabel,
   icon = 'arrow',
 }) => {
-  const combinedClassName = `${baseClasses} ${sizeClasses[size]} ${className}`.trim();
+  const combinedClassName = `${styleVariantClasses[styleVariant]} ${baseClasses} ${className}`.trim();
 
   const handleClick = () => {
     trackPrimaryCtaClick(page, placement);

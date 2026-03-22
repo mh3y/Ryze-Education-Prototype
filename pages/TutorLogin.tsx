@@ -30,13 +30,13 @@ const TutorLogin: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-transparent text-slate-300 font-sans selection:bg-[#3b82f6] selection:text-white"
+      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-transparent ryze-text-inverse-muted font-sans selection:bg-[#3b82f6] selection:ryze-text-inverse"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Return to Portal Gateway */}
       <Link 
          to="/login" 
-         className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white transition-colors font-bold text-sm z-20"
+         className="absolute top-8 left-8 flex items-center gap-2 ryze-text-muted hover:ryze-text-inverse transition-colors font-bold text-sm z-20"
       >
          <ArrowLeft size={16} /> {t("Back to Portal Selection")}
       </Link>
@@ -47,8 +47,8 @@ const TutorLogin: React.FC = () => {
                <div className="w-16 h-16 bg-[#3b82f6]/10 rounded-2xl flex items-center justify-center text-[#3b82f6] mx-auto mb-6 border border-[#3b82f6]/20">
                   <BookOpen size={32} />
                </div>
-               <h1 className="text-2xl font-bold text-white mb-2">{t("Tutor Workspace")}</h1>
-               <p className="text-sm text-slate-500">{t("Access class management and marking tools.")}</p>
+               <h1 className="text-2xl font-bold ryze-text-inverse mb-2">{t("Tutor Workspace")}</h1>
+               <p className="text-sm ryze-text-muted">{t("Access class management and marking tools.")}</p>
             </div>
 
             {error && (
@@ -60,30 +60,30 @@ const TutorLogin: React.FC = () => {
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Staff ID")}</label>
+                <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-2">{t("Staff ID")}</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 ryze-text-muted" size={18} />
                   <input 
                     type="email" 
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/50 transition-all font-medium text-white placeholder-slate-600"
+                    className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/50 transition-all font-medium ryze-text-inverse placeholder-slate-600"
                     placeholder="tutor@ryze.edu.au"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{t("Password")}</label>
+                <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-2">{t("Password")}</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 ryze-text-muted" size={18} />
                   <input 
                     type="password" 
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/50 transition-all font-medium text-white placeholder-slate-600"
+                    className="w-full pl-11 pr-4 py-3.5 bg-[#050510] border border-white/10 rounded-xl focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/50 transition-all font-medium ryze-text-inverse placeholder-slate-600"
                     placeholder="••••••••"
                   />
                 </div>
@@ -92,7 +92,7 @@ const TutorLogin: React.FC = () => {
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-[#3b82f6] text-white font-bold text-sm py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:bg-[#2563eb] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
+                className="w-full bg-[#3b82f6] ryze-text-inverse font-bold text-sm py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:bg-[#2563eb] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -103,7 +103,7 @@ const TutorLogin: React.FC = () => {
             </form>
             
             <div className="mt-8 pt-6 border-t border-white/5 text-center">
-               <p className="text-xs text-slate-600">
+               <p className="text-xs ryze-text-secondary">
                   {t("System access is restricted to authorised staff.")}
                </p>
             </div>

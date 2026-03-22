@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div 
-      className="flex h-screen bg-transparent font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:text-black"
+      className="flex h-screen bg-transparent font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:ryze-text-primary"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Application UI Layer */}
@@ -69,10 +69,10 @@ const Dashboard: React.FC = () => {
           {/* Header */}
           <header className="h-16 md:h-20 bg-[#050510]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-10">
              <div className="flex items-center gap-4">
-                <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-400 hover:text-white transition-colors">
+                <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="ryze-text-muted hover:ryze-text-inverse transition-colors">
                   <Layers size={20} />
                 </button>
-                <h1 className="text-lg md:text-xl font-bold text-white capitalize tracking-wide truncate">
+                <h1 className="text-lg md:text-xl font-bold ryze-text-inverse capitalize tracking-wide truncate">
                   {activeTab.replace('-', ' ')}
                 </h1>
              </div>
@@ -82,14 +82,14 @@ const Dashboard: React.FC = () => {
                    <input 
                      type="text" 
                      placeholder="Search..." 
-                     className="pl-10 pr-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-sm focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 outline-none w-64 transition-all text-white placeholder-slate-500"
+                     className="pl-10 pr-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-sm focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 outline-none w-64 transition-all ryze-text-inverse placeholder-slate-500"
                    />
-                   <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                   <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 ryze-text-muted group-hover:ryze-text-inverse-muted transition-colors" />
                 </div>
                 <div className="flex items-center gap-4">
                    <div className="text-right hidden md:block">
-                      <div className="text-sm font-bold text-white">{userName}</div>
-                      <div className="text-xs text-slate-400 capitalize">{userRole}</div>
+                      <div className="text-sm font-bold ryze-text-inverse">{userName}</div>
+                      <div className="text-xs ryze-text-muted capitalize">{userRole}</div>
                    </div>
                    <div className="w-8 h-8 rounded-full bg-[#FFB000] flex items-center justify-center text-[#0a0f1e] font-bold">
                       <User size={16} />
@@ -110,12 +110,12 @@ const Dashboard: React.FC = () => {
                       <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-6 md:p-10 text-white relative overflow-hidden border border-white/5 shadow-2xl group"
+                        className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-6 md:p-10 ryze-text-inverse relative overflow-hidden border border-white/5 shadow-2xl group"
                       >
                         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-700"></div>
                         <div className="relative z-10">
                             <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, {userName.split(' ')[0]}.</h2>
-                            <p className="text-slate-400 mb-8 max-w-xl text-base md:text-lg leading-relaxed">
+                            <p className="ryze-text-muted mb-8 max-w-xl text-base md:text-lg leading-relaxed">
                               {userRole === 'student' ? "Ryze AI has analysed your last assignment. Focus on Quadratic Equations this week." : "You have 4 assignments pending review."}
                             </p>
                             <button onClick={() => setActiveTab('ryze-ai')} className="px-8 py-3.5 bg-[#FFB000] text-[#050510] font-bold rounded-xl hover:bg-[#ffc133] transition-all shadow-[0_0_20px_rgba(255,176,0,0.2)] hover:shadow-[0_0_30px_rgba(255,176,0,0.4)]">
@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
                       </motion.div>
                       
                       <div>
-                        <h3 className="font-bold text-2xl text-white mb-6">Your Courses</h3>
+                        <h3 className="font-bold text-2xl ryze-text-inverse mb-6">Your Courses</h3>
                         <CoursesList courses={courses} />
                       </div>
                   </div>
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
                 {/* LMS COURSES */}
                 {activeTab === 'courses' && (
                     <div>
-                      <h2 className="text-3xl font-bold text-white mb-8">Active Enrolments</h2>
+                      <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Active Enrolments</h2>
                       <CoursesList courses={courses} />
                     </div>
                 )}
@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
                 {/* LMS ASSIGNMENTS */}
                 {activeTab === 'assignments' && (
                     <div>
-                      <h2 className="text-3xl font-bold text-white mb-8">Assignments</h2>
+                      <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Assignments</h2>
                       <AssignmentsList assignments={assignments} />
                     </div>
                 )}
@@ -156,14 +156,14 @@ const Dashboard: React.FC = () => {
                 {/* PLACEHOLDERS */}
                 {['analytics', 'users', 'settings'].includes(activeTab) && (
                     <div className="h-full flex flex-col items-center justify-center text-center">
-                      <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-slate-500 mb-6 border border-white/5">
+                      <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center ryze-text-muted mb-6 border border-white/5">
                           <Settings size={40} />
                       </div>
-                      <h2 className="text-3xl font-bold text-white mb-3">Module Under Construction</h2>
-                      <p className="text-slate-400 max-w-md mb-8 leading-relaxed">
+                      <h2 className="text-3xl font-bold ryze-text-inverse mb-3">Module Under Construction</h2>
+                      <p className="ryze-text-muted max-w-md mb-8 leading-relaxed">
                           The <strong>{activeTab}</strong> module is defined in the architecture but not yet implemented in this preview.
                       </p>
-                      <button onClick={() => setActiveTab('overview')} className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/5">
+                      <button onClick={() => setActiveTab('overview')} className="px-8 py-3 bg-white/10 hover:bg-white/20 ryze-text-inverse font-bold rounded-xl transition-all border border-white/5">
                           Return to Dashboard
                       </button>
                     </div>

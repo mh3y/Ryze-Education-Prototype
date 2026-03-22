@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "images:upload": "node scripts/upload-to-cloudinary.mjs",
     "images:replace": "node scripts/replace-image-refs.mjs --write",
-    "images:replace:dry": "node scripts/replace-image-refs.mjs"
+    "images:replace:dry": "node scripts/replace-image-refs.mjs",
+    "lint:colours": "node scripts/lint-colours.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",

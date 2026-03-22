@@ -42,7 +42,7 @@ const PortalHome: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-transparent text-white font-sans selection:bg-[#FFB000] selection:text-black py-12 md:py-0"
+      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-transparent ryze-text-inverse font-sans selection:bg-[#FFB000] selection:ryze-text-primary py-12 md:py-0"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Return Home */}
@@ -51,7 +51,7 @@ const PortalHome: React.FC = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.5 }}
         onClick={() => navigate('/')}
-        className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium group text-sm md:text-base"
+        className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex items-center gap-2 ryze-text-muted hover:ryze-text-inverse transition-colors font-medium group text-sm md:text-base"
       >
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
         <span className="hidden md:inline">{t("Back to Home")}</span>
@@ -75,7 +75,7 @@ const PortalHome: React.FC = () => {
              className="h-12 md:h-16 w-auto mx-auto mb-6 md:mb-8"
           />
           <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tight">{t("Select Your Portal")}</h1>
-          <p className="text-slate-400 text-base md:text-xl max-w-2xl mx-auto font-light px-4">
+          <p className="ryze-text-muted text-base md:text-xl max-w-2xl mx-auto font-light px-4">
             {t("Welcome back. Please select your account type to continue.")}
           </p>
         </motion.div>
@@ -103,14 +103,14 @@ const PortalHome: React.FC = () => {
                  </div>
 
                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-4">{t(role.title)}</h3>
-                    <p className="text-slate-400 text-sm md:text-base md:mb-10 leading-relaxed md:block truncate md:whitespace-normal">
+                    <h3 className="text-lg md:text-2xl font-bold ryze-text-inverse mb-1 md:mb-4">{t(role.title)}</h3>
+                    <p className="ryze-text-muted text-sm md:text-base md:mb-10 leading-relaxed md:block truncate md:whitespace-normal">
                       {t(role.description)}
                     </p>
                  </div>
 
                  {/* Mobile Chevron */}
-                 <div className="md:hidden ml-4 text-slate-500 group-hover:text-white transition-colors">
+                 <div className="md:hidden ml-4 ryze-text-muted group-hover:ryze-text-inverse transition-colors">
                     <ChevronRight size={20} />
                  </div>
 
@@ -132,7 +132,7 @@ const PortalHome: React.FC = () => {
           transition={{ delay: 1 }}
           className="mt-12 md:mt-16 text-center"
         >
-           <p className="text-slate-500 text-xs md:text-sm">
+           <p className="ryze-text-muted text-xs md:text-sm">
              {t("Having trouble signing in?")} <button onClick={() => navigate('/contact')} className="text-[#FFB000] hover:underline">{t("Contact Support")}</button>
            </p>
         </motion.div>

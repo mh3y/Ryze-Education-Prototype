@@ -111,7 +111,7 @@ const CodeTerminal = () => {
          <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
          <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
        </div>
-       <div className="ml-4 text-xs text-slate-400 font-mono flex items-center gap-2">
+       <div className="ml-4 text-xs ryze-text-muted font-mono flex items-center gap-2">
          <Terminal size={12} />
          ryze_core_engine.exe
        </div>
@@ -127,7 +127,7 @@ const CodeTerminal = () => {
            animate={{ opacity: 1, x: 0 }}
            className="mb-2"
          >
-           <span className="text-slate-500 mr-3">{String(i + 1).padStart(2, '0')}</span>
+           <span className="ryze-text-muted mr-3">{String(i + 1).padStart(2, '0')}</span>
            <span className={`${
              line && line.includes("Error") ? "text-red-400" :
              line && line.includes("Root Cause") ? "text-[#FFB000]" :
@@ -152,6 +152,7 @@ const CodeTerminal = () => {
 const RyzeAI: React.FC = () => {
  const navigate = useNavigate();
  const { t } = useLanguage();
+ const pageRef = useRef<HTMLDivElement>(null);
  const canvasRef = useRef<HTMLCanvasElement>(null);
  const { scrollY } = useScroll();
  const headerY = useTransform(scrollY, [0, 500], [0, 200]);
@@ -159,39 +160,22 @@ const RyzeAI: React.FC = () => {
 
 
  useEffect(() => {
+   const page = pageRef.current;
    const canvas = canvasRef.current;
-   if (!canvas) return;
+   if (!page || !canvas) return;
    
    const ctx = canvas.getContext('2d');
    if (!ctx) return;
 
 
-   let width = window.innerWidth;
-   let height = window.innerHeight;
+   let width = page.clientWidth;
+   let height = Math.max(page.scrollHeight, window.innerHeight);
   
    const getStarCount = (w: number) => {
      if (w < 768) return 150;  
      if (w < 1024) return 300;
      return 600; // Increased count slightly, but logic will ensure they are small and sharp
    };
-
-
-   const resize = () => {
-     const dpr = window.devicePixelRatio || 1;
-     width = window.innerWidth;
-     height = window.innerHeight;
-     // Set actual size in memory (scaled to account for extra pixel density)
-     canvas.width = width * dpr;
-     canvas.height = height * dpr;
-     // Normalize coordinate system to use css pixels
-     canvas.style.width = `${width}px`;
-     canvas.style.height = `${height}px`;
-     ctx.scale(dpr, dpr);
-   };
-  
-   window.addEventListener('resize', resize);
-   resize();
-
 
    interface Star {
      x: number;
@@ -213,85 +197,90 @@ const RyzeAI: React.FC = () => {
      opacity: number;
    }
 
-
    const stars: Star[] = [];
    const shootingStars: ShootingStar[] = [];
    let shootingStarTimer = 0;
    const SHOOTING_STAR_PROBABILITY = 0.02; 
-  
+
    const initStars = () => {
      stars.length = 0;
      const count = getStarCount(width);
      
      for (let i = 0; i < count; i++) {
-       // Star colors: Cool White, Warm White, Rare Gold
        const r = Math.random();
-       let color = "255, 255, 255"; // Pure white
-       if (r > 0.8) color = "200, 220, 255"; // Blue-ish
-       else if (r > 0.95) color = "255, 200, 100"; // Gold-ish (Rare)
+       let color = "255, 255, 255";
+       if (r > 0.8) color = "200, 220, 255";
+       else if (r > 0.95) color = "255, 200, 100";
 
-       const baseOpacity = Math.random() * 0.8 + 0.2; // Brighter range
+       const baseOpacity = Math.random() * 0.8 + 0.2;
        
        stars.push({
          x: Math.random() * width,
          y: Math.random() * height,
-         // Smaller size range for "4K" sharpness (0.2px to 1.2px)
          size: Math.random() * 1.0 + 0.2, 
          baseOpacity,
          opacity: 0,
-         speed: Math.random() * 0.02 + 0.005, // Extremely slow drift
-         twinkleSpeed: 0.005 + Math.random() * 0.02, 
+         speed: Math.random() * 0.02 + 0.005,
+         twinkleSpeed: 0.005 + Math.random() * 0.02,
          twinklePhase: Math.random() * Math.PI * 2,
          color
        });
      }
    };
+
+   const resize = () => {
+     const dpr = window.devicePixelRatio || 1;
+     width = page.clientWidth;
+     height = Math.max(page.scrollHeight, window.innerHeight);
+     canvas.width = width * dpr;
+     canvas.height = height * dpr;
+     canvas.style.width = `${width}px`;
+     canvas.style.height = `${height}px`;
+     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+     initStars();
+   };
   
-   initStars();
+   window.addEventListener('resize', resize);
+   const resizeObserver = new ResizeObserver(resize);
+   resizeObserver.observe(page);
+   resize();
 
 
    const animate = () => {
-     // Clear with consideration for high DPI width/height
      ctx.clearRect(0, 0, width, height);
 
-     // --- Static Stars ---
      stars.forEach(star => {
        star.twinklePhase += star.twinkleSpeed;
-       // Sine wave for smooth twinkling - range 0.4 to 1.4
        const twinkle = Math.sin(star.twinklePhase) * 0.5 + 0.9;
        const currentOpacity = Math.min(1, star.baseOpacity * twinkle);
        
-       // Draw Glow (Halo) - Only for larger stars to reduce draw calls
        if (star.size > 0.8) {
           ctx.beginPath();
           ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${star.color}, ${currentOpacity * 0.15})`; // Very faint bloom
+          ctx.fillStyle = `rgba(${star.color}, ${currentOpacity * 0.15})`;
           ctx.fill();
        }
 
-       // Draw Core - The "4K" Pixel
        ctx.beginPath();
-       ctx.arc(star.x, star.y, star.size * 0.7, 0, Math.PI * 2); // Tight core
+       ctx.arc(star.x, star.y, star.size * 0.7, 0, Math.PI * 2);
        ctx.fillStyle = `rgba(${star.color}, ${currentOpacity})`;
        ctx.fill();
 
-       // Parallax/Drift
        star.y -= star.speed;
        if (star.y < -10) {
            star.y = height + 10;
-           star.x = Math.random() * width; // Randomize X on reset to prevent patterns
+           star.x = Math.random() * width;
        }
      });
 
-     // --- Shooting Stars ---
      shootingStarTimer++;
      if (shootingStarTimer > 100 && Math.random() < SHOOTING_STAR_PROBABILITY) {
         shootingStarTimer = 0;
         shootingStars.push({
            x: Math.random() * width,
-           y: Math.random() * (height * 0.4), // Start in top 40%
-           len: Math.random() * 100 + 50, // Length
-           speed: Math.random() * 2 + 1, // Reduced shooting star speed
+           y: Math.random() * (Math.min(height, window.innerHeight) * 0.4),
+           len: Math.random() * 100 + 50,
+           speed: Math.random() * 2 + 1,
            opacity: 1
         });
      }
@@ -307,7 +296,6 @@ const RyzeAI: React.FC = () => {
            shootingStars.splice(i, 1);
         } else {
            ctx.beginPath();
-           // Crisp linear gradient tail
            const grad = ctx.createLinearGradient(star.x, star.y, star.x - star.len, star.y - star.len * 0.4);
            grad.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
            grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
@@ -336,6 +324,7 @@ const RyzeAI: React.FC = () => {
 
    return () => {
      window.removeEventListener('resize', resize);
+     resizeObserver.disconnect();
      cancelAnimationFrame(animationId);
    };
  }, []);
@@ -343,14 +332,14 @@ const RyzeAI: React.FC = () => {
 
  return (
    <div
-     className="min-h-screen bg-[#050510] text-white overflow-x-hidden selection:bg-[#FFB000] selection:text-black relative font-sans"
+     ref={pageRef}
+     className="relative min-h-screen overflow-hidden bg-[#050510] font-sans ryze-text-inverse selection:bg-[#FFB000] selection:ryze-text-primary"
      style={{ fontFamily: "'Inter', sans-serif" }}
    >
-     {/* 1. Canvas Layer (Stars + Shooting Stars) - The ONLY background element */}
-     <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
+     {/* Scope background effects to the Ryze AI page so they do not bleed into the global footer. */}
+     <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none" />
     
-     {/* 2. Deep Vignette - Pure black, reduced opacity to 40% to let stars shine through */}
-     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-40"></div>
      </div>
 
@@ -378,7 +367,7 @@ const RyzeAI: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.9, letterSpacing: "0.1em" }}
                   animate={{ opacity: 1, scale: 1, letterSpacing: "0.2em" }}
                   transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-[0.2em] drop-shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+                  className="font-display text-5xl font-bold ryze-text-inverse tracking-[0.12em] drop-shadow-[0_0_40px_rgba(255,255,255,0.1)] md:text-8xl lg:text-9xl"
                 >
                   RYZE<span className="text-[#FFB000]">AI</span>
                 </motion.h1>
@@ -396,9 +385,9 @@ const RyzeAI: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-xl md:text-3xl text-slate-300 font-light tracking-wide mb-8"
+                className="mb-8 text-xl tracking-[0.01em] ryze-text-inverse-muted md:text-3xl"
               >
-                {t("Learning That")} <span className="text-white font-semibold">{t("Adapts")}</span> {t("to You")}
+                {t("Learning That")} <span className="ryze-text-inverse font-semibold">{t("Adapts")}</span> {t("to You")}
               </motion.p>
              
               <motion.div
@@ -408,7 +397,7 @@ const RyzeAI: React.FC = () => {
                  className="flex flex-col items-center gap-4"
               >
                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-[#FFB000] to-transparent"></div>
-                 <p className="text-[#FFB000] text-xs md:text-sm font-mono tracking-[0.2em] uppercase text-center">
+                 <p className="font-sans text-center text-xs font-semibold uppercase tracking-[0.18em] text-[#FFB000] md:text-sm">
                    {t("Personalised understanding, not memorisation")}
                  </p>
               </motion.div>
@@ -427,7 +416,7 @@ const RyzeAI: React.FC = () => {
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <ChevronDown className="text-slate-500 w-6 h-6" />
+              <ChevronDown className="ryze-text-muted w-6 h-6" />
             </motion.div>
           </motion.div>
        </header>
@@ -445,14 +434,14 @@ const RyzeAI: React.FC = () => {
              <div className="relative bg-[#0a0f1e]/30 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/10 shadow-2xl">
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                   <div className="lg:col-span-4">
-                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t("The Real Problem")}</h2>
+                     <h2 className="ryze-heading-2 ryze-text-inverse mb-6">{t("The Real Problem")}</h2>
                      <div className="w-20 h-1.5 bg-[#FFB000] rounded-full mb-6"></div>
                   </div>
-                  <div className="lg:col-span-8 space-y-8 text-lg text-slate-300 font-light leading-relaxed">
+                  <div className="lg:col-span-8 space-y-8 text-lg ryze-text-inverse-muted font-light leading-relaxed">
                      <p className="text-xl" dangerouslySetInnerHTML={{ __html: t("Most students don't fail because they're not smart enough.</strong> They fail because they don't know what they don't know.") }}></p>
                      <p>{t("Students spend hours reviewing material they've already mastered while their actual weak spots go unaddressed. They cram facts without understanding concepts. They walk into exams anxious and underprepared—not because they didn't study, but because they studied the wrong things in the wrong ways.")}</p>
                      <div className="pl-6 border-l-2 border-[#FFB000]/30">
-                       <p className="text-slate-400 italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
+                       <p className="ryze-text-muted italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
                      </div>
                   </div>
                </div>
@@ -466,11 +455,11 @@ const RyzeAI: React.FC = () => {
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
-                 className="text-3xl md:text-6xl font-bold text-white mb-6"
+                 className="ryze-heading-2 ryze-text-inverse mb-6"
                >
                  {t("How")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB000] to-yellow-200">Ryze AI</span> {t("Works")}
                </motion.h2>
-               <p className="text-slate-400 text-lg max-w-2xl mx-auto">{t("A neural network for your education. It learns how you learn.")}</p>
+               <p className="ryze-text-muted text-lg max-w-2xl mx-auto">{t("A neural network for your education. It learns how you learn.")}</p>
              </div>
 
 
@@ -516,8 +505,8 @@ const RyzeAI: React.FC = () => {
                           <item.icon size={28} />
                         </div>
                        
-                        <h3 className="text-2xl font-bold text-white mb-4">{t(item.title)}</h3>
-                        <p className="text-slate-400 leading-relaxed flex-grow">{t(item.desc)}</p>
+                        <h3 className="ryze-heading-3 ryze-text-inverse mb-4">{t(item.title)}</h3>
+                        <p className="ryze-text-muted leading-relaxed flex-grow">{t(item.desc)}</p>
                        
                         <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent mt-8"></div>
                      </div>
@@ -534,14 +523,14 @@ const RyzeAI: React.FC = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                 >
-                   <div className="inline-flex items-center gap-2 text-[#FFB000] font-mono text-sm mb-4 border border-[#FFB000]/30 px-3 py-1 rounded-full bg-[#FFB000]/5">
+                   <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#FFB000]/30 bg-[#FFB000]/5 px-3 py-1 text-sm font-semibold uppercase tracking-[0.16em] text-[#FFB000]">
                       <Cpu size={14} />
                       <span>LIVE_ANALYSIS_ENGINE</span>
                    </div>
-                   <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                   <h2 className="ryze-heading-2 ryze-text-inverse mb-6">
                       {t("Thinking in")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{t("Real-Time")}</span>
                    </h2>
-                   <p className="text-slate-300 text-lg leading-relaxed mb-8">
+                   <p className="ryze-text-inverse-muted text-lg leading-relaxed mb-8">
                       {t("Unlike standard quiz apps that just mark \"Correct\" or \"Incorrect\", Ryze AI deconstructs your answer. It identifies the specific cognitive step where you failed—was it a calculation error, a conceptual gap, or a misinterpretation?")}
                    </p>
                   
@@ -551,7 +540,7 @@ const RyzeAI: React.FC = () => {
                         "Real-time Curriculum Adjustment",
                         "Micro-Concept Mapping"
                       ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-slate-400">
+                        <li key={i} className="flex items-center gap-3 ryze-text-muted">
                            <Activity size={18} className="text-[#FFB000]" />
                            {t(item)}
                         </li>
@@ -578,7 +567,7 @@ const RyzeAI: React.FC = () => {
                viewport={{ once: true }}
                className="mb-16 text-center md:text-left"
              >
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">{t("The Impact")}</h2>
+                <h2 className="ryze-heading-2 ryze-text-inverse mb-4">{t("The Impact")}</h2>
              </motion.div>
 
 
@@ -600,14 +589,14 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-400 mb-8 border border-blue-500/20">
                              <GraduationCap size={32} />
                           </div>
-                          <h3 className="text-3xl font-bold text-white mb-6">{t("For Students")}</h3>
+                          <h3 className="ryze-heading-3 ryze-text-inverse mb-6">{t("For Students")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Less time wasted on what you already know.",
                                "More confidence going into exams.",
                                "Understanding that carries forward into future courses."
                              ].map((text, i) => (
-                               <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
+                               <li key={i} className="flex gap-4 items-start ryze-text-inverse-muted text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0 shadow-[0_0_10px_#60a5fa]"></div>
                                   <span>{t(text)}</span>
                                </li>
@@ -635,14 +624,14 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-400 mb-8 border border-purple-500/20">
                              <Brain size={32} />
                           </div>
-                          <h3 className="text-3xl font-bold text-white mb-6">{t("For Teachers")}</h3>
+                          <h3 className="ryze-heading-3 ryze-text-inverse mb-6">{t("For Teachers")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Insights into where your class struggles to inform planning.",
                                "Automated assessment means more time for teaching.",
                                "We augment your expertise, not replace it."
                              ].map((text, i) => (
-                               <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
+                               <li key={i} className="flex gap-4 items-start ryze-text-inverse-muted text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0 shadow-[0_0_10px_#c084fc]"></div>
                                   <span>{t(text)}</span>
                                </li>
@@ -659,8 +648,8 @@ const RyzeAI: React.FC = () => {
              {/* Transparency reduced to 30% */}
              <div className="bg-[#0a0e1f]/30 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
                 <div className="relative z-10">
-                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t("Development Roadmap")}</h2>
-                   <p className="text-slate-400 mb-16 max-w-2xl mx-auto text-lg">
+                   <h2 className="ryze-heading-2 ryze-text-inverse mb-6">{t("Development Roadmap")}</h2>
+                   <p className="ryze-text-muted mb-16 max-w-2xl mx-auto text-lg">
                       {t("Ryze AI is currently in active beta testing with selected users. We're refining our algorithms based on real student interactions.")}
                    </p>
                    <div className="flex flex-col md:flex-row justify-center items-center gap-0 md:gap-0">
@@ -668,7 +657,7 @@ const RyzeAI: React.FC = () => {
                            <div className="w-4 h-4 bg-[#FFB000] rounded-full shadow-[0_0_20px_#FFB000] mb-6 relative">
                                <div className="absolute inset-0 bg-[#FFB000] rounded-full animate-ping opacity-50"></div>
                            </div>
-                           <div className="text-[#FFB000] font-bold text-2xl mb-2 tracking-wider">{t("NOW")}</div>
+                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.04em] text-[#FFB000]">{t("NOW")}</div>
                            <div className="text-slate-200 font-medium bg-[#FFB000]/10 px-4 py-1 rounded-full border border-[#FFB000]/20">{t("Beta Testing")}</div>
                        </div>
                        <div className="h-24 w-0.5 md:h-0.5 md:w-48 bg-gradient-to-b md:bg-gradient-to-r from-[#FFB000] to-slate-800 relative mb-12 md:mb-0">
@@ -676,8 +665,8 @@ const RyzeAI: React.FC = () => {
                        </div>
                        <div className="relative z-10 flex flex-col items-center w-64 opacity-50">
                            <div className="w-3 h-3 bg-slate-700 rounded-full mb-6 border border-slate-500"></div>
-                           <div className="text-white font-bold text-2xl mb-2 tracking-wider">June 2026</div>
-                           <div className="text-slate-400 font-medium">{t("Public Launch")}</div>
+                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.02em] ryze-text-inverse">June 2026</div>
+                           <div className="ryze-text-muted font-medium">{t("Public Launch")}</div>
                        </div>
                    </div>
                 </div>
@@ -693,10 +682,10 @@ const RyzeAI: React.FC = () => {
                 <div className="absolute inset-0 bg-[#FFB000] blur-[100px] opacity-10"></div>
                 {/* Transparency reduced to 30% */}
                 <div className="relative bg-[#050510]/30 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
-                   <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 relative z-10">
+                   <h2 className="ryze-heading-2 ryze-text-inverse relative z-10 mb-8">
                       {t("Join the")} <span className="text-[#FFB000]">{t("Future")}</span>
                    </h2>
-                   <p className="text-slate-300 text-xl mb-12 relative z-10 max-w-2xl mx-auto font-light">
+                   <p className="ryze-text-inverse-muted text-xl mb-12 relative z-10 max-w-2xl mx-auto font-light">
                       {t("If you'd like to discuss Ryze AI, explore partnership opportunities, or express interest in beta access, we'd love to hear from you.")}
                    </p>
                    <a

@@ -15,10 +15,12 @@ import { useLocation } from 'react-router-dom';
 import PrimaryCTA from '../components/PrimaryCTA';
 import { Container, DesignCard, Section, StatCard, TestimonialCard, ValueCard } from '../components/design';
 import { trackEvent } from '../src/analytics';
+import { trackPhoneClick, postMetaConversion } from '../src/lib/tracking';
+import { validateEmail, validatePhone } from '../src/lib/validation';
 import { testimonials } from '../data/testimonials';
 import { applySeo } from '../src/utils/seo';
 
-const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+const heroImageBase = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto';
 const heroImageId = 'ryze/images/image-v1';
 const heroImageSrc = `${heroImageBase},w_768/${heroImageId}`;
 const heroImageSrcSet = [
@@ -69,24 +71,7 @@ const defaultForm: FormState = {
   honey: '',
 };
 
-const validateEmail = (email: string) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.toLowerCase());
 
-const validatePhone = (phone: string) => /^\+?[\d]{8,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
-
-const postMetaConversion = async (payload: Record<string, string>) => {
-  try {
-    await fetch('/api/meta-conversion', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-      keepalive: true,
-    });
-  } catch (error) {
-    console.error('Meta CAPI submission error:', error);
-  }
-};
 
 const HscMathsTutoring: React.FC = () => {
   const location = useLocation();
@@ -151,21 +136,7 @@ const HscMathsTutoring: React.FC = () => {
     };
   }, []);
 
-  const handlePhoneClick = () => {
-    trackEvent('phone_click', { page: 'hsc_landing', placement: 'book' });
-    const gtag = (window as typeof window & { gtag?: (...args: any[]) => void }).gtag;
-    if (typeof gtag === 'function') {
-      gtag('event', 'conversion', {
-        send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
-      });
-    }
-
-    void postMetaConversion({
-      eventName: 'Lead',
-      userAgent: navigator.userAgent,
-      sourceUrl: window.location.href,
-    });
-  };
+  const handlePhoneClick = () => trackPhoneClick('hsc_landing', 'book');
 
   const handleWhatsappClick = () => {
     trackEvent('whatsapp_click', { page: 'hsc_landing', placement: 'book' });
@@ -249,37 +220,37 @@ const HscMathsTutoring: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <div className="min-h-screen ryze-bg-primary ryze-text-primary">
       <Section variant="gradient" className="pt-10 md:pt-16">
         <Container>
           <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
             <div className="space-y-5">
-              <p className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
+              <p className="inline-flex items-center gap-2 rounded-full border ryze-border-subtle ryze-bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide ryze-text-primary">
                 <ShieldCheck size={14} aria-hidden="true" />
                 HSC Maths Advanced and Extension Specialists
               </p>
-              <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="ryze-heading-1 ryze-text-primary mb-4">
                 HSC Maths Tutoring for Stronger Marks in Advanced, Ext 1, and Ext 2
               </h1>
-              <p className="max-w-xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">{landingVariant.subheading}</p>
+              <p className="max-w-xl text-base leading-relaxed ryze-text-secondary sm:text-lg">{landingVariant.subheading}</p>
 
               <ul className="grid gap-2 text-sm sm:grid-cols-3">
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
                   Small groups or 1:1
                 </li>
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
                   Advanced to Ext 2
                 </li>
-                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+                <li className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-3 py-2">
                   <CheckCircle2 size={16} className="text-[var(--accent)]" />
                   Weekly parent updates
                 </li>
               </ul>
 
               {landingVariant.isHscFocus && (
-                <p className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
+                <p className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide ryze-text-primary">
                   Offer matched: HSC Maths campaign
                 </p>
               )}
@@ -296,31 +267,32 @@ const HscMathsTutoring: React.FC = () => {
                 <a
                   href="tel:+61413885839"
                   onClick={handlePhoneClick}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 ryze-bg-surface px-6 py-3 text-sm font-semibold ryze-text-primary transition-colors hover:ryze-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
                   aria-label="Call Ryze Education"
                 >
                   <Phone size={16} aria-hidden="true" />
                   Call +61 413 885 839
                 </a>
               </div>
-              <p className="text-sm text-[var(--muted)]">Free consultation. No lock-in. We usually reply within one business day.</p>
+              <p className="text-sm ryze-text-secondary">Free consultation. No lock-in. We usually reply within one business day.</p>
             </div>
 
-            <DesignCard className="overflow-hidden bg-[var(--surface)]">
+            <DesignCard className="overflow-hidden ryze-bg-surface">
               <img
                 src={heroImageSrc}
                 srcSet={heroImageSrcSet}
                 sizes="(max-width: 640px) 92vw, (max-width: 1024px) 100vw, 560px"
                 alt="HSC Maths tutoring in Sydney"
                 loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 width="1280"
                 height="960"
-                className="h-48 w-full object-cover sm:h-56 md:h-64 lg:h-full"
+                className="h-48 w-full object-cover object-center sm:h-56 md:h-64 lg:h-full"
               />
               <div className="p-5">
-                <h2 className="text-xl font-bold text-[var(--primary)]">Results Families Can Trust</h2>
-                <p className="mt-2 text-sm text-[var(--muted)]">
+                <h2 className="text-xl font-bold ryze-text-primary">Results Families Can Trust</h2>
+                <p className="mt-2 text-sm ryze-text-secondary">
                   Built for families who need measurable academic growth, not generic tutoring.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
@@ -337,8 +309,8 @@ const HscMathsTutoring: React.FC = () => {
       <Section variant="default">
         <Container>
           <div className="max-w-3xl">
-            <h2 className="text-3xl font-bold sm:text-4xl">What Students Get Every Week</h2>
-            <p className="mt-3 text-[var(--muted)]">A consistent system built for Advanced, Extension 1, and Extension 2 outcomes.</p>
+            <h2 className="ryze-heading-2 ryze-text-primary">What Students Get Every Week</h2>
+            <p className="mt-3 ryze-text-secondary">A consistent system built for Advanced, Extension 1, and Extension 2 outcomes.</p>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             <ValueCard
@@ -362,15 +334,15 @@ const HscMathsTutoring: React.FC = () => {
 
       <Section variant="tint">
         <Container>
-          <h2 className="text-3xl font-bold sm:text-4xl">How It Works</h2>
+          <h2 className="ryze-heading-2 ryze-text-primary">How It Works</h2>
           <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             {howItWorksSteps.map((step, index) => (
               <DesignCard key={step.title} className="h-full p-6">
-                <p className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)]">
+                <p className="inline-flex h-8 w-8 items-center justify-center rounded-full ryze-bg-surface-dark text-xs font-bold ryze-text-inverse">
                   {index + 1}
                 </p>
-                <h3 className="mt-4 text-xl font-bold">{step.title.replace(/^[0-9]+\.\s*/, '')}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{step.description}</p>
+                <h3 className="mt-4 ryze-heading-3 ryze-text-primary">{step.title.replace(/^[0-9]+\.\s*/, '')}</h3>
+                <p className="mt-2 text-sm leading-relaxed ryze-text-secondary">{step.description}</p>
               </DesignCard>
             ))}
           </div>
@@ -379,7 +351,7 @@ const HscMathsTutoring: React.FC = () => {
 
       <Section variant="default">
         <Container>
-          <h2 className="text-3xl font-bold sm:text-4xl">Student Results and Parent Feedback</h2>
+          <h2 className="ryze-heading-2 ryze-text-primary">Student Results and Parent Feedback</h2>
           <div className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
             {featuredTestimonials.map((item) => (
               <TestimonialCard
@@ -399,19 +371,19 @@ const HscMathsTutoring: React.FC = () => {
         <Container>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <DesignCard className="p-6 md:p-8">
-              <h2 className="text-3xl font-bold text-[var(--primary)] sm:text-4xl">Book Your Free Consultation</h2>
-              <p className="mt-3 max-w-lg text-[var(--muted)]">
+              <h2 className="ryze-heading-2 ryze-text-primary">Book Your Free Consultation</h2>
+              <p className="mt-3 max-w-lg ryze-text-secondary">
                 Tell us your current level and goals. We will recommend the right stream and next steps.
               </p>
-              <p className="mt-3 text-sm font-medium text-[var(--muted)]">No obligation. Clear recommendation. Response within one business day.</p>
+              <p className="mt-3 text-sm font-medium ryze-text-secondary">No obligation. Clear recommendation. Response within one business day.</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {studentSegments.map((segment) => (
                   <span
                     key={segment}
                     className={`rounded-full border px-3 py-1 text-xs font-semibold ${
                       landingVariant.isExt2Focus && segment.includes('Extension 2')
-                        ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--primary)]'
-                        : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
+                        ? 'border-[var(--accent)] bg-[var(--accent)]/10 ryze-text-primary'
+                        : 'ryze-border-subtle ryze-bg-surface ryze-text-primary'
                     }`}
                   >
                     {segment}
@@ -430,7 +402,7 @@ const HscMathsTutoring: React.FC = () => {
                 <a
                   href="tel:+61413885839"
                   onClick={handlePhoneClick}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--primary)]/20 ryze-bg-surface px-6 py-3 text-sm font-semibold ryze-text-primary transition-colors hover:ryze-bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
                   aria-label="Call Ryze Education"
                 >
                   <Phone size={16} aria-hidden="true" />
@@ -442,7 +414,7 @@ const HscMathsTutoring: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWhatsappClick}
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:opacity-80"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold ryze-text-primary hover:opacity-80"
                 aria-label="Open WhatsApp chat with Ryze Education"
               >
                 <MessageCircle size={16} aria-hidden="true" />
@@ -475,7 +447,7 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
@@ -491,7 +463,7 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
@@ -508,7 +480,7 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     />
                   </label>
 
@@ -520,7 +492,7 @@ const HscMathsTutoring: React.FC = () => {
                       value={formData.studentLevel}
                       onChange={handleChange}
                       disabled={status === 'sending'}
-                      className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                      className="mt-1 w-full rounded-[var(--radius-sm)] border ryze-border-subtle ryze-bg-surface px-4 py-3 text-sm ryze-text-primary outline-none focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       <option>Year 11 - Advanced</option>
                       <option>Year 11 - Extension 1</option>
@@ -534,7 +506,7 @@ const HscMathsTutoring: React.FC = () => {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full ryze-bg-surface-dark px-6 py-3 text-sm font-semibold ryze-text-inverse transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <BookOpenCheck size={16} aria-hidden="true" />
                   {status === 'sending' ? 'Submitting...' : 'Submit Enquiry'}

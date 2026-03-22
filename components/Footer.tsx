@@ -1,18 +1,14 @@
 import React from 'react';
-import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
 // @ts-ignore
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import PrimaryCTA from './PrimaryCTA';
 import { ROUTES } from '../src/constants/routes';
-import { trackEvent } from '../src/analytics';
+import { trackPhoneClick } from '../src/lib/tracking';
+import { socialLinks } from '../data/socialLinks';
 
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void;
-  }
-}
-
-const WhatsappIcon = ({ size = 24, className }: { size?: number, className?: string }) => (
+const WhatsappIcon = ({ size = 24, className }: { size?: number; className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -34,138 +30,156 @@ const Footer: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
   const isRyzeAi = location.pathname === ROUTES.RYZE_AI;
-  const brandLogoUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
+  
+  // Choose correct logo variant based on theme
+  const brandLogoUrl = isRyzeAi
+    ? 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/white_logo_png_bvs11z.png'
+    : 'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
 
-  const handlePhoneClick = () => {
-    trackEvent('phone_click', { page: 'global_footer', placement: 'footer' });
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-17763964178/xkRDCOqQr_wbEJKqwpZC',
-        event_callback: () => {
-          console.log('Google Ads conversion event successfully sent from Footer.');
-        },
-      });
-    }
-  };
+  const handlePhoneClick = () => trackPhoneClick('global_footer', 'footer');
 
-  const socialLinks = [
-    {
-      Icon: Facebook,
-      href: 'https://www.facebook.com/people/Ryze-Education/61583067491158/?mibextid=wwXIfr&rdid=pqwYdpqBoSmmo7cn&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ch1Yo8qHp%2F%3Fmibextid%3DwwXIfr',
-      label: 'Ryze Education on Facebook'
-    },
-    {
-      Icon: Instagram,
-      href: 'https://www.instagram.com/ryzeeducation/?igsh=MTI3Z21xcHRzZnFxZA%3D%3D&utm_source=qr#',
-      label: 'Ryze Education on Instagram'
-    },
-    {
-      Icon: Linkedin,
-      href: 'https://www.linkedin.com/company/ryze-education',
-      label: 'Ryze Education on LinkedIn'
-    },
-    {
-      Icon: WhatsappIcon,
-      href: 'https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0',
-      label: 'Chat with Ryze Education on WhatsApp'
-    },
-  ];
+  const footerSocialLinks = socialLinks.map((link) =>
+    link.label.includes('WhatsApp') ? { ...link, Icon: WhatsappIcon as any } : link,
+  );
 
-  // Dynamic Styles based on Page
-  const footerBg = isRyzeAi ? 'bg-[#050510]/90 backdrop-blur-md border-white/10' : 'bg-white border-slate-100';
-  const headingColor = isRyzeAi ? 'text-white' : 'text-slate-900';
-  const textColor = isRyzeAi ? 'text-slate-400' : 'text-slate-700';
-  const linkHoverColor = isRyzeAi ? 'hover:text-[#FFB000]' : 'hover:text-ryze';
-  const cardBg = isRyzeAi ? 'bg-white/5 border-white/10' : 'bg-white border-slate-100';
-  const socialBg = isRyzeAi ? 'bg-white/10 text-slate-300 hover:bg-[#FFB000]' : 'bg-slate-50 text-slate-600 hover:bg-ryze';
+  // Deep structural CSS driven purely by semantic tokens. 
+  // We decouple the CTA background conceptually so it floats on standard page background.
+  const footerContainerClass = isRyzeAi
+    ? 'ryze-bg-midnight backdrop-blur-xl ryze-text-midnight-muted'
+    : 'ryze-bg-surface-dark ryze-text-inverse-muted';
+    
+  const headingClass = isRyzeAi 
+    ? 'ryze-text-midnight' 
+    : 'ryze-text-inverse';
+    
+  const linkHoverClass = isRyzeAi 
+    ? 'hover:text-[var(--ryze-primary)]' 
+    : 'hover:text-[var(--ryze-100)]';
+
+  // The CTA layout is strictly muted into a clean surface box
+  const ctaCardClass = isRyzeAi
+    ? 'ryze-bg-midnight border border-white/5'
+    : 'ryze-bg-surface ryze-border-subtle';
 
   return (
-    <footer className={`${footerBg} pt-14 pb-8 border-t transition-colors duration-300`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-10">
-          {/* Brand Column */}
-          <div className="lg:col-span-4 space-y-4">
-            <Link to={ROUTES.HOME} className="block">
-              <img
-                src={brandLogoUrl}
-                alt="Ryze Education"
-                width={250}
-                height={64}
-                className="h-14 w-auto mb-2"
+    <div className="flex flex-col">
+      {/* 1. SEPARATED PRE-FOOTER CTA (SUBTLE) */}
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+        <div className={`relative isolate flex flex-col items-center justify-between gap-6 overflow-hidden rounded-[1.5rem] border p-8 sm:p-10 lg:flex-row ${ctaCardClass}`}>
+           <div className="max-w-2xl text-center lg:text-left">
+              <h2 className={`mb-2 ryze-heading-3 ${isRyzeAi ? 'ryze-text-inverse' : 'ryze-text-primary'}`}>
+                {t('Accelerate ahead of the curve')}
+              </h2>
+              <p className={`text-[0.95rem] leading-relaxed max-w-[50ch] mx-auto lg:mx-0 ${isRyzeAi ? 'ryze-text-midnight-muted' : 'ryze-text-secondary'}`}>
+                {t("Ryze students build lasting confidence, stronger marks, and genuine understanding. Take the first step today.")}
+              </p>
+           </div>
+           
+           <div className="shrink-0 w-full sm:w-auto mt-2 lg:mt-0">
+             <PrimaryCTA
+                page="global_footer"
+                placement="footer"
+                styleVariant={isRyzeAi ? 'ghost' : 'dark'}
+                className="w-full sm:w-auto"
               />
-            </Link>
-            <p className={`${textColor} text-sm leading-relaxed max-w-xs font-medium`}>
-              {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
-            </p>
-            <div className="flex gap-3 pt-1">
-              {socialLinks.map(({ Icon, href, label }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center hover:text-white transition-all duration-300 ${socialBg}`}
-                >
-                  <Icon size={16} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Links Columns */}
-          <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Company')}</h4>
-            <ul className={`space-y-3 text-sm font-medium ${textColor}`}>
-              <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
-              <li><Link to={ROUTES.HOW_IT_WORKS} className={`${linkHoverColor} transition-colors`}>{t('How It Works')}</Link></li>
-              <li><Link to={ROUTES.RYZE_AI} className={`${linkHoverColor} transition-colors flex items-center gap-2`}>{t('Ryze AI')} <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded font-bold">NEW</span></Link></li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Resources')}</h4>
-            <ul className={`space-y-3 text-sm font-medium ${textColor}`}>
-              <li><Link to={ROUTES.HOME} className={`${linkHoverColor} transition-colors`}>{t('Home')}</Link></li>
-              <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('HSC Maths Tutoring')}</Link></li>
-              <li><Link to={ROUTES.MATHS_TUTORING} className={`${linkHoverColor} transition-colors`}>{t('Maths Tutoring')}</Link></li>
-              <li><Link to={ROUTES.CONTACT} className={`${linkHoverColor} transition-colors`}>{t('Contact Us')}</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Column */}
-          <div className="lg:col-span-4">
-            <h4 className={`font-bold mb-4 text-sm uppercase tracking-wider ${headingColor}`}>{t('Contact')}</h4>
-            <div className={`p-5 rounded-2xl border space-y-3 ${cardBg}`}>
-              <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-[#FFB000] shrink-0 mt-0.5" />
-                <span className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'}`}>Sydney, NSW Australia</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-[#FFB000] shrink-0" />
-                <a href="tel:+61413885839" onClick={handlePhoneClick} className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>+61 413 885 839</a>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail size={16} className="text-[#FFB000] shrink-0" />
-                <a href="mailto:ryzeeducationgroup@gmail.com" className={`text-sm font-medium ${isRyzeAi ? 'text-slate-300' : 'text-slate-600'} ${linkHoverColor}`}>ryzeeducationgroup@gmail.com</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={`border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-3 ${isRyzeAi ? 'border-white/10' : 'border-slate-100'}`}>
-          <p className={`text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-600'}`}>
-            © {new Date().getFullYear()} Ryze Education. All rights reserved.
-          </p>
-          <div className={`flex space-x-6 text-xs font-medium ${isRyzeAi ? 'text-slate-500' : 'text-slate-600'}`}>
-            <Link to={ROUTES.PRIVACY} className={`${linkHoverColor} transition-colors`}>{t('Privacy Policy')}</Link>
-            <Link to={ROUTES.TERMS} className={`${linkHoverColor} transition-colors`}>{t('Terms and Conditions')}</Link>
-            <Link to={ROUTES.SITEMAP} className={`${linkHoverColor} transition-colors`}>{t('Sitemap')}</Link>
-          </div>
+           </div>
         </div>
       </div>
-    </footer>
+
+      {/* 2. FORMAL MINIMALIST FOOTER */}
+      <footer className={`relative z-20 border-t border-[rgba(255,255,255,0.06)] pt-16 pb-8 transition-colors duration-300 ${footerContainerClass}`}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 mb-16">
+            
+            {/* Left Column: Brand & Manifesto (Span 4) */}
+            <div className="space-y-6 lg:col-span-4 lg:pr-8">
+              <Link to={ROUTES.HOME} className="block w-fit">
+                <img src={brandLogoUrl} alt="Ryze Education" width={180} height={46} className="h-10 w-auto" />
+              </Link>
+              <p className="text-sm leading-relaxed max-w-sm">
+                {t('Education that sees you. Diagnosing gaps, building understanding, and creating confidence in every student.')}
+              </p>
+              <div className="flex gap-4 pt-2">
+                {footerSocialLinks.map(({ Icon, href, label }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-transparent text-[rgba(255,255,255,0.8)] transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] hover:-translate-y-0.5"
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Middle Columns: Math Navigation (Span 2) */}
+            <div className="lg:col-span-2 lg:col-start-6">
+              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Programs')}</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link to={ROUTES.HOME} className={`transition-colors flex ${linkHoverClass}`}>{t('Home')}</Link></li>
+                <li><Link to={ROUTES.HSC_MATHS_TUTORING} className={`transition-colors flex ${linkHoverClass}`}>{t('HSC Mathematics')}</Link></li>
+                <li><Link to={ROUTES.MATHS_TUTORING} className={`transition-colors flex ${linkHoverClass}`}>{t('High School Maths')}</Link></li>
+              </ul>
+            </div>
+            
+            {/* Middle Columns: Platform Nav (Span 2) */}
+            <div className="lg:col-span-2">
+              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Platform')}</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link to={ROUTES.HOW_IT_WORKS} className={`transition-colors flex ${linkHoverClass}`}>{t('How It Works')}</Link></li>
+                <li>
+                  <Link to={ROUTES.RYZE_AI} className={`flex items-center gap-2 transition-colors ${linkHoverClass}`}>
+                    {t('Ryze AI')} <span className="rounded bg-[var(--accent)]/10 text-[var(--accent)] px-1.5 py-0.5 text-[0.65rem] font-bold">NEW</span>
+                  </Link>
+                </li>
+                <li><Link to={ROUTES.CONTACT} className={`transition-colors flex ${linkHoverClass}`}>{t('Contact Us')}</Link></li>
+              </ul>
+            </div>
+
+            {/* Right Column: Contact Details (Span 3) */}
+            <div className="lg:col-span-3">
+              <h4 className={`text-[1.2rem] font-bold uppercase tracking-[0.1em] mb-4 ${headingClass}`}>{t('Contact')}</h4>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <a href="mailto:ryzeeducationgroup@gmail.com" className={`flex transition-colors ${linkHoverClass}`}>
+                    <span className="opacity-70 w-[70px] shrink-0 font-medium">Email</span> 
+                    <span className="truncate">ryzeeducationgroup@gmail.com</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+61413885839" onClick={handlePhoneClick} className={`flex transition-colors ${linkHoverClass}`}>
+                    <span className="opacity-70 w-[70px] shrink-0 font-medium">Phone</span> 
+                    <span>+61 413 885 839</span>
+                  </a>
+                </li>
+                <li>
+                  <span className="flex">
+                    <span className="opacity-70 w-[70px] shrink-0 font-medium">Location</span> 
+                    <span>Sydney, NSW Australia</span>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-[rgba(255,255,255,0.06)] pt-6 md:flex-row">
+            <p className="text-[0.8rem] opacity-70">
+              {'\u00A9'} {new Date().getFullYear()} Ryze Education. All rights reserved.
+            </p>
+            <div className="flex space-x-6 text-[0.8rem] opacity-70">
+              <Link to={ROUTES.PRIVACY} className={`transition-colors ${linkHoverClass}`}>Privacy Policy</Link>
+              <Link to={ROUTES.TERMS} className={`transition-colors ${linkHoverClass}`}>Terms and Conditions</Link>
+              <Link to={ROUTES.SITEMAP} className={`transition-colors ${linkHoverClass}`}>Sitemap</Link>
+            </div>
+          </div>
+          
+        </div>
+      </footer>
+    </div>
   );
 };
 

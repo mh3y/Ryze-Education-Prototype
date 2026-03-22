@@ -10,10 +10,10 @@ type SectionProps = React.HTMLAttributes<HTMLElement> & {
 };
 
 const variantClasses: Record<SectionVariant, string> = {
-  default: 'bg-[var(--bg)] text-[var(--text)]',
-  tint: 'bg-[var(--surface)] text-[var(--text)]',
-  gradient: 'bg-[linear-gradient(180deg,var(--surface)_0%,var(--bg)_55%,var(--bg)_100%)] text-[var(--text)]',
-  dark: 'bg-[var(--primary)] text-[var(--primary-foreground)] [color-scheme:dark] selection:bg-[var(--accent)] selection:text-[var(--accent-foreground)]',
+  default: 'ryze-bg-primary ryze-text-primary',
+  tint: 'ryze-bg-surface ryze-text-primary',
+  gradient: 'bg-[linear-gradient(180deg,var(--surface)_0%,var(--bg)_55%,var(--bg)_100%)] ryze-text-primary',
+  dark: 'ryze-bg-surface-dark ryze-text-inverse [color-scheme:dark] selection:bg-[var(--accent)] selection:text-[var(--accent-foreground)]',
 };
 
 const Section: React.FC<SectionProps> = ({
@@ -25,7 +25,7 @@ const Section: React.FC<SectionProps> = ({
   ...props
 }) => {
   const Tag = as;
-  const spacingClass = compact ? 'py-12 md:py-16' : 'py-16 md:py-24';
+  const spacingClass = compact ? 'py-12 md:py-16' : 'ryze-section-padding';
 
   return (
     <Tag className={cn('relative', spacingClass, variantClasses[variant], className)} {...props}>

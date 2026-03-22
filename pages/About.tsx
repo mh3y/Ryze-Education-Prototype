@@ -33,7 +33,7 @@ const About: React.FC = () => {
         "BDataSci - First Class Honours | UNSW",
         "North Sydney Boys High School Alumni"
       ],
-      bio: "William co-founded Ryze to demonstrate the effectiveness of small-group learning. As Head of Technology, he oversees Ryze AI and curriculum development, ensuring rigorous standards. Ranking among UNSW's highest performers, his PhD research in AI directly informs Ryze's evidence-driven design."
+      bio: "William co-founded Ryze to demonstrate the effectiveness of structured, attentive teaching. As Head of Technology, he oversees Ryze AI and curriculum development, ensuring rigorous standards. Ranking among UNSW's highest performers, his PhD research in AI directly informs Ryze's evidence-driven design."
     },
     {
       name: "Mr Michael Yang",
@@ -47,112 +47,112 @@ const About: React.FC = () => {
         "English Advanced": "93",
         "Physics": "93"
       },
-      wordsFromFounder: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction.",
-      bio: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model prioritizing meaningful interaction. He built the organisation around small-group learning, capping classes at six students, employing teachers who value personalised instruction."
+      wordsFromFounder: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model centred on meaningful interaction, careful diagnosis, and teaching that can adapt to the student. Ryze now offers both small-group classes and private tutoring, each built around the same academic standard and expectation of care.",
+      bio: "Michael founded Ryze after recognising the limitations of large, standardised tutoring environments. He set out to design a model centred on meaningful interaction, careful diagnosis, and teaching that can adapt to the student. Ryze now offers both small-group classes and private tutoring, each built around the same academic standard and expectation of care."
     }
   ];
 
   return (
-    <div className="pt-20 font-sans">
+    <div className="ryze-bg-primary pt-20 font-sans ryze-text-primary">
       {/* Header */}
-      <div className="bg-white pt-16 pb-20 px-4 border-b border-slate-100">
+      <div className="border-b ryze-border-subtle ryze-bg-primary pt-16 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 text-slate-900">The Ryze Truth</h1>
+          <h1 className="ryze-heading-1 ryze-text-primary mb-6">The Ryze Truth</h1>
         </div>
       </div>
 
       {/* The Story Section */}
       <section className="py-20 px-4 max-w-3xl mx-auto">
         <div className="prose prose-lg prose-slate mx-auto">
-          <h2 className="text-3xl font-display font-bold text-slate-900 mb-8">I Know This Because I've Lived It</h2>
+          <h2 className="ryze-heading-2 ryze-text-primary mb-8">I Know This Because I've Lived It</h2>
           
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
             I still remember the feeling.
             <br/>Packing my bag after school, that weight settling in my chest. Not the weight of textbooks — the weight of knowing where I was headed next.
             <br/>The bus ride to tutoring. Twenty minutes of dread.
           </p>
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
             I'd walk into that centre and become invisible. Just another student in a room of twenty others, 
             all of us sitting in rows, staring at a whiteboard while a tutor droned through problems like 
             they were reading a script they'd memorised years ago.
           </p>
-          <p className="text-slate-900 font-medium italic mb-6">
+          <p className="ryze-text-primary font-medium italic mb-6">
             15 hours. Every week.
           </p>
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
             I wasn't learning. I was enduring.
             <br/>The tutor didn't know my name. Didn't notice when I zoned out. Didn't see the confusion on my face 
             when they skipped steps I didn't understand. I was a seat filled, a number on their attendance sheet, 
             revenue on their spreadsheet.
           </p>
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
             But the worst part wasn't the boredom. It was the guilt.
             <br/>Sitting there, watching the clock, knowing my parents were paying for this. Knowing they worked hard for that money. 
             Knowing they believed this was helping me. And feeling like I was the problem.
           </p>
 
-          <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-ryze my-10">
-            <h3 className="text-xl font-bold italic text-slate-900 mb-2">Why am I falling behind when everyone else seems fine?</h3>
-            <h3 className="text-xl font-bold italic text-slate-900 mb-2">Why can't I just get this?</h3>
-            <h3 className="text-xl font-bold italic text-slate-900">What's wrong with me?</h3>
+          <div className="my-10 rounded-[1.75rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(243,231,201,0.48)] p-8">
+            <h3 className="mb-2 text-xl font-display font-bold italic ryze-text-primary">Why am I falling behind when everyone else seems fine?</h3>
+            <h3 className="mb-2 text-xl font-display font-bold italic ryze-text-primary">Why can't I just get this?</h3>
+            <h3 className="text-xl font-display font-bold italic text-[var(--accent)]">What's wrong with me?</h3>
           </div>
 
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
              I started to believe I wasn't smart enough. That I wasn't "a math person." That maybe I just didn't have what it took.
           </p>
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
              The truth—the one I couldn't see then—was simpler:
-             <br/><strong className="text-slate-900 block mt-4 text-lg">Nothing was wrong with me. Something was wrong with the environment.</strong>
+             <br/><strong className="ryze-text-primary block mt-4 text-lg">Nothing was wrong with me. Something was wrong with the environment.</strong>
           </p>
-          <p className="text-slate-600 leading-relaxed mb-6">
+          <p className="ryze-text-secondary leading-relaxed mb-6">
              I wasn't stupid. I wasn't lazy. I just needed someone to actually see me, to notice where I was stuck, to teach in a way that made sense to <i>me</i>—not to some imaginary average student in the middle of the class.
           </p>
-          <p className="text-slate-600 leading-relaxed">
+          <p className="ryze-text-secondary leading-relaxed">
              That experience left me with a question: Why does so much tutoring fail to actually help?
           </p>
         </div>
       </section>
 
       {/* The 4 Problems */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 ryze-bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 mb-16 text-center">What I Learned About Why Tutoring Fails</h2>
+          <h2 className="ryze-heading-2 ryze-text-primary mb-16 text-center">What I Learned About Why Tutoring Fails</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Problem 1 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+            <div className="flex flex-col rounded-3xl border ryze-border-subtle bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
                <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 mb-6">
                  <Microscope size={28} />
                </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">Problem 1 - Misdiagnosis</h3>
-               <p className="text-slate-600 leading-relaxed">Most tutoring treats symptoms, not causes. A student struggles with quadratic equations, so they get drilled on quadratics. But often the real issue is three years back—incomplete understanding of fractions or basic algebra. Without diagnosing the foundational gap, you're building on sand.</p>
+               <h3 className="ryze-heading-3 ryze-text-primary mb-4">Problem 1 - Misdiagnosis</h3>
+               <p className="ryze-text-secondary leading-relaxed">Most tutoring treats symptoms, not causes. A student struggles with quadratic equations, so they get drilled on quadratics. But often the real issue is three years back—incomplete understanding of fractions or basic algebra. Without diagnosing the foundational gap, you're building on sand.</p>
             </div>
 
             {/* Problem 2 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+            <div className="flex flex-col rounded-3xl border ryze-border-subtle bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
                <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-500 mb-6">
                  <BedDouble size={28} />
                </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">Problem 2 - Passive Learning</h3>
-               <p className="text-slate-600 leading-relaxed">Sitting and watching someone solve problems doesn't create understanding. Real learning requires active struggle—attempting problems, making mistakes, getting immediate feedback, and trying again. Large classes default to passive learning because managing active learning for twenty different students simultaneously is nearly impossible.</p>
+               <h3 className="ryze-heading-3 ryze-text-primary mb-4">Problem 2 - Passive Learning</h3>
+               <p className="ryze-text-secondary leading-relaxed">Sitting and watching someone solve problems doesn't create understanding. Real learning requires active struggle—attempting problems, making mistakes, getting immediate feedback, and trying again. Large classes default to passive learning because managing active learning for twenty different students simultaneously is nearly impossible.</p>
             </div>
 
             {/* Problem 3 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
-               <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 mb-6">
+            <div className="flex flex-col rounded-3xl border ryze-border-subtle bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
+               <div className="w-14 h-14 ryze-bg-surface rounded-2xl flex items-center justify-center ryze-text-muted mb-6">
                  <BellOff size={28} />
                </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">Problem 3 - The Silence Problem</h3>
-               <p className="text-slate-600 leading-relaxed">Students don't ask questions in large groups. Not because they're shy, but because the social cost is high and the benefit is uncertain. Will the tutor actually help, or will they give a rushed explanation before moving on? In my old tutoring centre, I asked maybe three questions across six months.</p>
+               <h3 className="ryze-heading-3 ryze-text-primary mb-4">Problem 3 - The Silence Problem</h3>
+               <p className="ryze-text-secondary leading-relaxed">Students don't ask questions in large groups. Not because they're shy, but because the social cost is high and the benefit is uncertain. Will the tutor actually help, or will they give a rushed explanation before moving on? In my old tutoring centre, I asked maybe three questions across six months.</p>
             </div>
 
             {/* Problem 4 */}
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
-               <div className="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center text-ryze mb-6">
+            <div className="flex flex-col rounded-3xl border ryze-border-subtle bg-[rgba(248,243,234,0.86)] p-10 shadow-sm transition-shadow hover:shadow-md">
+               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(243,231,201,0.7)] text-[var(--accent)]">
                  <Zap size={28} />
                </div>
-               <h3 className="text-2xl font-bold text-slate-900 mb-4">Problem 4 - Mismatched Pacing</h3>
-               <p className="text-slate-600 leading-relaxed">Every student needs a different pace. In large classes, tutors teach to the middle. Advanced students waste time. Struggling students get left behind. Almost no one gets what they actually need.</p>
+               <h3 className="ryze-heading-3 ryze-text-primary mb-4">Problem 4 - Mismatched Pacing</h3>
+               <p className="ryze-text-secondary leading-relaxed">Every student needs a different pace. In large classes, tutors teach to the middle. Advanced students waste time. Struggling students get left behind. Almost no one gets what they actually need.</p>
             </div>
           </div>
         </div>
@@ -160,7 +160,7 @@ const About: React.FC = () => {
 
       {/* Why Small Groups Work */}
       <section className="py-20 px-4 max-w-4xl mx-auto">
-         <h2 className="text-3xl font-display font-bold text-slate-900 mb-8 text-center">Why Small Groups Actually Work</h2>
+         <h2 className="ryze-heading-2 ryze-text-primary mb-8 text-center">Why Small Groups Actually Work</h2>
          <div className="prose prose-lg prose-slate mx-auto">
            <p className="leading-relaxed mb-8">
               I'm not claiming small groups are magic. Bad teaching is bad teaching regardless of class size. But small groups enable something that large classes cannot: adaptive, individualised teaching.
@@ -169,53 +169,53 @@ const About: React.FC = () => {
            
            <ul className="space-y-6 list-none pl-0">
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
-               <div><span className="font-bold text-slate-900">Real Diagnosis:</span> I can assess each student individually. I can trace their confusion back to its source—whether that's last week's lesson or a concept from three years ago.</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
+               <div><span className="font-bold ryze-text-primary">Real Diagnosis:</span> I can assess each student individually. I can trace their confusion back to its source—whether that's last week's lesson or a concept from three years ago.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
-               <div><span className="font-bold text-slate-900">Active Learning:</span> Every student works through problems during the session. I watch them work. I see where they hesitate, where their logic breaks down.</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
+               <div><span className="font-bold ryze-text-primary">Active Learning:</span> Every student works through problems during the session. I watch them work. I see where they hesitate, where their logic breaks down.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
-               <div><span className="font-bold text-slate-900">Questions Get Answered:</span> With six students, asking questions feels normal. Students ask when they're confused.</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
+               <div><span className="font-bold ryze-text-primary">Questions Get Answered:</span> With six students, asking questions feels normal. Students ask when they're confused.</div>
              </li>
              <li className="flex gap-4">
-               <div className="shrink-0 mt-1 text-ryze font-bold">•</div>
-               <div><span className="font-bold text-slate-900">Flexible Pacing:</span> I can adjust the speed for each student. If someone needs fifteen minutes on a concept, they get it.</div>
+               <div className="shrink-0 mt-1 font-bold text-[var(--accent)]">•</div>
+               <div><span className="font-bold ryze-text-primary">Flexible Pacing:</span> I can adjust the speed for each student. If someone needs fifteen minutes on a concept, they get it.</div>
              </li>
            </ul>
          </div>
       </section>
 
       {/* What Results Look Like */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 ryze-bg-secondary">
         <div className="max-w-3xl mx-auto px-4">
-           <h2 className="text-3xl font-display font-bold text-slate-900 mb-8 text-center">What Results Look Like</h2>
-           <p className="text-slate-600 leading-relaxed mb-6">
+           <h2 className="ryze-heading-2 ryze-text-primary mb-8 text-center">What Results Look Like</h2>
+           <p className="ryze-text-secondary leading-relaxed mb-6">
              I won't promise transformation. Some students need more than tutoring — they need curriculum changes, learning assessments, or different educational approaches entirely.
            </p>
-           <p className="text-slate-600 leading-relaxed mb-6">
+           <p className="ryze-text-secondary leading-relaxed mb-6">
              But here's what happens when students get the right environment:
            </p>
-           <p className="text-slate-600 leading-relaxed mb-6">
+           <p className="ryze-text-secondary leading-relaxed mb-6">
              Students who came to us convinced they "weren't math people" start consistently scoring B's and A's—not because we worked magic, but because we identified where their understanding broke down years ago and filled those gaps.
            </p>
-           <p className="text-slate-600 leading-relaxed mb-6">
+           <p className="ryze-text-secondary leading-relaxed mb-6">
              Advanced students who felt bored and disengaged get extension material while others work at their level. They start enjoying the subject again. Their teachers notice.
            </p>
-           <p className="text-slate-600 leading-relaxed">
+           <p className="ryze-text-secondary leading-relaxed">
              Students who went months without asking a single question at their previous centre ask ten, fifteen, twenty questions in their first session with us.
            </p>
         </div>
       </section>
 
       {/* What We're Not / Are */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="ryze-section-padding max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
               <h2 className="text-2xl font-bold text-red-500 mb-6">What We're Not</h2>
-              <ul className="space-y-4 text-slate-600">
+              <ul className="space-y-4 ryze-text-secondary">
                 <li className="flex gap-3"><XCircle className="text-red-400 shrink-0" /> We're not a magic solution. We can't fix everything.</li>
                 <li className="flex gap-3"><XCircle className="text-red-400 shrink-0" /> We're not the cheapest option. We can't be, given our model.</li>
                 <li className="flex gap-3"><XCircle className="text-red-400 shrink-0" /> We're not promising straight A's or university admission.</li>
@@ -223,13 +223,13 @@ const About: React.FC = () => {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-green-600 mb-6">What We Are</h2>
-              <p className="text-slate-600 leading-relaxed mb-4">
+              <p className="ryze-text-secondary leading-relaxed mb-4">
                 We're a tutoring centre that deliberately limits class sizes to six students because that's the threshold where individualised teaching becomes possible.
               </p>
-              <p className="text-slate-600 leading-relaxed mb-4">
+              <p className="ryze-text-secondary leading-relaxed mb-4">
                 We diagnose where students actually struggle, not where the curriculum says they should be.
               </p>
-              <p className="text-slate-600 leading-relaxed">
+              <p className="ryze-text-secondary leading-relaxed">
                 We charge accordingly because quality teaching at small ratios costs more to deliver.
               </p>
             </div>
@@ -237,25 +237,25 @@ const About: React.FC = () => {
       </section>
 
       {/* The Real Question */}
-      <section className="py-16 bg-ryze-50 border-t border-ryze/20">
+      <section className="border-t border-[rgba(184,132,30,0.16)] bg-[rgba(243,231,201,0.42)] py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-display font-bold text-ryze-600 mb-6">The Real Question</h2>
+          <h2 className="mb-6 ryze-heading-2 text-[var(--accent)]">The Real Question</h2>
           
-           <p className="text-slate-800 text-lg mb-6">
-             The question isn't whether small groups are better than large groups in some abstract sense.
+           <p className="ryze-text-primary text-lg mb-6">
+             The question isn&apos;t which format sounds better in the abstract.
              <br/>The question is: <span className="font-bold">has what you're currently doing worked?</span>
            </p>
-           <p className="text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+           <p className="ryze-text-secondary mb-8 leading-relaxed max-w-2xl mx-auto">
              If your child has been attending tutoring for months and nothing has changed, then something about that environment isn't working for them.
              If you want to see whether our approach works for your child, book a trial session.
            </p>
-           <p className="font-bold text-slate-900 text-lg mb-8">
+           <p className="font-bold ryze-text-primary text-lg mb-8">
              If it works, continue. If it doesn't, at least you'll know.
            </p>
 
            <button 
              onClick={() => navigate('/contact')}
-             className="px-8 py-4 bg-ryze text-white font-bold rounded-xl shadow-lg hover:bg-ryze-600 transition-all transform hover:-translate-y-1 inline-flex items-center gap-2"
+             className="inline-flex items-center gap-2 rounded-full border border-[rgba(184,132,30,0.32)] bg-[var(--accent)] px-8 py-4 font-bold text-[var(--accent-foreground)] shadow-[0_20px_42px_-26px_rgba(17,21,29,0.35)] transition-all hover:-translate-y-1 hover:bg-[#c89e2b]"
            >
              Book a Trial Lesson <ArrowRight size={20} />
            </button>
@@ -263,11 +263,11 @@ const About: React.FC = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 ryze-bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold text-slate-900">Meet Our Team</h2>
-            <p className="text-slate-600 mt-4 max-w-2xl mx-auto leading-relaxed">
+            <h2 className="ryze-heading-2 ryze-text-primary">Meet Our Team</h2>
+            <p className="ryze-text-secondary mt-4 max-w-2xl mx-auto leading-relaxed">
               Meet the tutors who make learning click. Our experienced educators are committed to helping every student thrive.
             </p>
           </div>
@@ -288,39 +288,39 @@ const About: React.FC = () => {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                      <div className="absolute bottom-0 left-0 p-6 text-white">
-                         <h3 className="text-2xl font-bold font-display">{member.name}</h3>
-                         <p className="text-ryze-200 font-medium">{member.role}</p>
+                      <div className="absolute bottom-0 left-0 p-6 ryze-text-inverse">
+                         <h3 className="ryze-heading-3">{member.name}</h3>
+                         <p className="font-medium text-[var(--ryze-200)]">{member.role}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="w-full md:w-2/3 space-y-6">
-                    <h3 className="text-3xl font-bold text-slate-900">{member.name}</h3>
-                    <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-                       <h4 className="font-bold text-slate-800 mb-4">HSC Marks</h4>
+                    <h3 className="ryze-heading-2 ryze-text-primary">{member.name}</h3>
+                    <div className="rounded-xl border ryze-border-subtle bg-[rgba(248,243,234,0.8)] p-6">
+                       <h4 className="font-bold ryze-text-primary mb-4">HSC Marks</h4>
                        <ul className="space-y-2">
                          {member.hscMarks && Object.entries(member.hscMarks).map(([subject, score]) => (
-                           <li key={subject} className="flex justify-between items-center text-slate-700 font-medium">
+                           <li key={subject} className="flex justify-between items-center ryze-text-secondary font-medium">
                              <span>{subject}</span>
-                             <span className="font-mono font-bold text-ryze">{score}</span>
+                             <span className="font-sans font-bold text-[var(--accent)]">{score}</span>
                            </li>
                          ))}
                        </ul>
                     </div>
                     {member.wordsFromFounder && (
-                      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-                        <h4 className="font-bold text-slate-800 mb-4">Words from our Founder</h4>
-                        <p className="text-slate-600 leading-relaxed">{member.wordsFromFounder}</p>
+                      <div className="rounded-xl border ryze-border-subtle bg-[rgba(248,243,234,0.8)] p-6">
+                        <h4 className="font-bold ryze-text-primary mb-4">Words from our Founder</h4>
+                        <p className="ryze-text-secondary leading-relaxed">{member.wordsFromFounder}</p>
                       </div>
                     )}
                     {member.quote && (
-                       <blockquote className="border-l-4 border-ryze pl-6 italic text-slate-600 text-lg">
+                       <blockquote className="border-l-4 border-[var(--accent)] pl-6 italic ryze-text-secondary text-lg">
                          "{member.quote}"
                        </blockquote>
                     )}
                     <div className="prose prose-slate">
-                       <p className="text-slate-600 leading-relaxed">
+                       <p className="ryze-text-secondary leading-relaxed">
                          {member.bio}
                        </p>
                     </div>

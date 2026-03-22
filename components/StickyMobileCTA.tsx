@@ -41,15 +41,15 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({ page, href }) => {
 
   return (
     <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
-      <div className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-[0_10px_40px_-20px_rgba(2,6,23,0.6)] backdrop-blur-sm">
+      <div className="mx-auto max-w-xl rounded-[1.5rem] border border-[rgba(23,29,40,0.12)] bg-[rgba(248,243,234,0.96)] p-3 shadow-[0_16px_44px_-24px_rgba(17,21,29,0.32)] backdrop-blur-md">
         <PrimaryCTA
           variant="link"
           href={href}
           page={page}
           placement="sticky"
           size="md"
-          className="w-full justify-center !bg-transparent !text-[#FFB000] hover:!bg-[#FFB000]/10 !border-[3px] !border-[#FFB000]/70 !backdrop-blur-[4px] !shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)]"
-          ariaLabel="Book a free consultation"
+          className="w-full justify-center ryze-cta-primary"
+          ariaLabel="Book a consultation"
         />
       </div>
     </div>

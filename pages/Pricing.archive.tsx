@@ -82,8 +82,8 @@ const DiscountsSection = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 mt-24 mb-24">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-slate-900 mb-4">{t("Available Discounts")}</h2>
-        <p className="text-slate-500 text-lg max-w-2xl mx-auto">{t("Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. Reach out to us to discuss how we can help you! ")}</p>
+        <h2 className="text-4xl font-bold ryze-text-primary mb-4">{t("Available Discounts")}</h2>
+        <p className="ryze-text-muted text-lg max-w-2xl mx-auto">{t("Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals. Reach out to us to discuss how we can help you! ")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -93,16 +93,16 @@ const DiscountsSection = () => {
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
               <Calendar size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{t("Early Enrolments")}</h3>
+            <h3 className="text-xl font-bold ryze-text-primary">{t("Early Enrolments")}</h3>
           </div>
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
               <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">7.5%</span>
-              <span className="text-slate-600 text-sm mt-0.5">{t("before Dec 31, 2025")} <br/><span className="text-slate-400 text-xs">{t("(included above)")}</span></span>
+              <span className="ryze-text-secondary text-sm mt-0.5">{t("before Dec 31, 2025")} <br/><span className="ryze-text-muted text-xs">{t("(included above)")}</span></span>
             </li>
             <li className="flex items-center gap-3">
               <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">5%</span>
-              <span className="text-slate-600 text-sm">{t("before Jan 31, 2026")}</span>
+              <span className="ryze-text-secondary text-sm">{t("before Jan 31, 2026")}</span>
             </li>
           </ul>
         </div>
@@ -113,9 +113,9 @@ const DiscountsSection = () => {
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
               <CreditCard size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{t("Pay Year Upfront")}</h3>
+            <h3 className="text-xl font-bold ryze-text-primary">{t("Pay Year Upfront")}</h3>
           </div>
-          <p className="text-slate-600 text-sm leading-relaxed">
+          <p className="ryze-text-secondary text-sm leading-relaxed">
             {t("Receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("15% discount")}</span> {t("when you pay for the full year in advance.")}
           </p>
         </div>
@@ -126,9 +126,9 @@ const DiscountsSection = () => {
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
               <RefreshCw size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{t("Rebate Rewards")}</h3>
+            <h3 className="text-xl font-bold ryze-text-primary">{t("Rebate Rewards")}</h3>
           </div>
-          <p className="text-slate-600 text-sm leading-relaxed">
+          <p className="ryze-text-secondary text-sm leading-relaxed">
             {t("Alternatively, we offer")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("7.5% rebate")}</span> {t("/ cash back towards your next course if you decide to continue the following term.")}
           </p>
         </div>
@@ -139,16 +139,16 @@ const DiscountsSection = () => {
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
               <Users size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{t("Sibling Discounts")}</h3>
+            <h3 className="text-xl font-bold ryze-text-primary">{t("Sibling Discounts")}</h3>
           </div>
           <ul className="space-y-4">
             <li className="flex items-center gap-3">
               <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">10% off</span>
-              <span className="text-slate-600 text-sm">{t("for the second child")}</span>
+              <span className="ryze-text-secondary text-sm">{t("for the second child")}</span>
             </li>
             <li className="flex items-center gap-3">
               <span className="bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded text-sm shrink-0">15% off</span>
-              <span className="text-slate-600 text-sm">{t("for the 3rd child")}</span>
+              <span className="ryze-text-secondary text-sm">{t("for the 3rd child")}</span>
             </li>
           </ul>
         </div>
@@ -159,12 +159,12 @@ const DiscountsSection = () => {
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
               <Gift size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{t("Referral Bonus")}</h3>
+            <h3 className="text-xl font-bold ryze-text-primary">{t("Referral Bonus")}</h3>
           </div>
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+          <p className="ryze-text-secondary text-sm leading-relaxed mb-4">
             {t("Refer a friend and you’ll both receive a")} <span className="bg-emerald-100 text-emerald-700 font-bold px-1.5 rounded">{t("$100 credit")}</span> {t("towards your enrolments.")}
           </p>
-          <p className="text-xs text-slate-400 italic">
+          <p className="text-xs ryze-text-muted italic">
             {t("*Conditions apply. Credits are applied after successful enrolment.")}
           </p>
         </div>
@@ -247,16 +247,16 @@ const Pricing: React.FC = () => {
     : (displayOriginalPrice - displayPrice) * 3; // Total term savings shown even on monthly view for impact
 
   return (
-    <div className="bg-slate-50 min-h-screen font-sans pb-32">
+    <div className="ryze-bg-surface min-h-screen font-sans pb-32">
       
       {/* Header - Standardized */}
       <div className="bg-white pt-32 md:pt-40 pb-48 px-4 border-b border-slate-100 relative">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-sans font-bold text-slate-900 mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-sans font-bold ryze-text-primary mb-6 tracking-tight">
             {t("Transparent Pricing")}
           </h1>
-          <p className="text-xl md:text-2xl text-slate-500 font-light max-w-2xl mx-auto leading-relaxed">
-            {t("Invest in results, not promises.")} <span className="font-medium text-slate-900">{t("Simple, term-based pricing")}</span> {t("with no hidden fees.")}
+          <p className="text-xl md:text-2xl ryze-text-muted font-light max-w-2xl mx-auto leading-relaxed">
+            {t("Invest in results, not promises.")} <span className="font-medium ryze-text-primary">{t("Simple, term-based pricing")}</span> {t("with no hidden fees.")}
           </p>
         </div>
       </div>
@@ -273,12 +273,12 @@ const Pricing: React.FC = () => {
               {/* 1. Category & Billing Row */}
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                  {/* Category Toggle */}
-                 <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex relative">
+                 <div className="ryze-bg-surface p-1.5 rounded-2xl inline-flex relative">
                     {(['Primary', 'Secondary'] as Category[]).map((cat) => (
                        <button
                           key={cat}
                           onClick={() => handleCategoryChange(cat)}
-                          className={`relative px-8 py-3 rounded-xl text-sm font-bold transition-all z-10 ${category === cat ? 'text-white' : 'text-slate-500 hover:text-slate-700'}`}
+                          className={`relative px-8 py-3 rounded-xl text-sm font-bold transition-all z-10 ${category === cat ? 'ryze-text-inverse' : 'ryze-text-muted hover:ryze-text-secondary'}`}
                        >
                           {t(cat)}
                           {category === cat && (
@@ -293,10 +293,10 @@ const Pricing: React.FC = () => {
                  </div>
 
                  {/* Billing Toggle */}
-                 <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex relative">
+                 <div className="ryze-bg-surface p-1.5 rounded-2xl inline-flex relative">
                     <button 
                        onClick={() => setBillingPeriod('quarterly')}
-                       className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'quarterly' ? 'text-[#0f172a]' : 'text-slate-400 hover:text-slate-600'}`}
+                       className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'quarterly' ? 'text-[#0f172a]' : 'ryze-text-muted hover:ryze-text-secondary'}`}
                     >
                        {t("Quarterly")}
                        {billingPeriod === 'quarterly' && (
@@ -309,7 +309,7 @@ const Pricing: React.FC = () => {
                     </button>
                     <button 
                        onClick={() => setBillingPeriod('monthly')}
-                       className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'monthly' ? 'text-[#0f172a]' : 'text-slate-400 hover:text-slate-600'}`}
+                       className={`relative px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-10 ${billingPeriod === 'monthly' ? 'text-[#0f172a]' : 'ryze-text-muted hover:ryze-text-secondary'}`}
                     >
                        {t("Monthly")}
                        {billingPeriod === 'monthly' && (
@@ -325,7 +325,7 @@ const Pricing: React.FC = () => {
 
               {/* 2. Year Selection */}
               <div className="space-y-3">
-                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">{t("Select Year Group")}</div>
+                 <div className="text-xs font-bold ryze-text-muted uppercase tracking-widest pl-1">{t("Select Year Group")}</div>
                  <div className="flex flex-wrap gap-3">
                     {CATEGORY_MAP[category].map((year) => (
                        <button
@@ -334,7 +334,7 @@ const Pricing: React.FC = () => {
                           className={`relative px-5 py-3 rounded-xl text-sm font-bold transition-all border ${
                              selectedYear === year 
                              ? 'text-[#0f172a] border-[#FFB000]/50 bg-[#FFB000]/10' 
-                             : 'text-slate-500 border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                             : 'ryze-text-muted border-slate-200 bg-white hover:border-slate-300 hover:ryze-bg-surface'
                           }`}
                        >
                           {t(year) || year}
@@ -352,7 +352,7 @@ const Pricing: React.FC = () => {
 
               {/* 3. Subject Selection */}
               <div className="space-y-3">
-                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">{t("Select Subject")}</div>
+                 <div className="text-xs font-bold ryze-text-muted uppercase tracking-widest pl-1">{t("Select Subject")}</div>
                  <div className="flex flex-wrap gap-3">
                     {availableSubjects.map((sub) => (
                        <button
@@ -360,8 +360,8 @@ const Pricing: React.FC = () => {
                           onClick={() => setSelectedSubject(sub)}
                           className={`relative px-6 py-3 rounded-xl text-sm font-bold transition-all ${
                              selectedSubject === sub 
-                             ? 'text-white' 
-                             : 'text-slate-600 bg-slate-100 hover:bg-slate-200'
+                             ? 'ryze-text-inverse' 
+                             : 'ryze-text-secondary ryze-bg-surface hover:bg-slate-200'
                           }`}
                        >
                           {t(sub) || sub}
@@ -393,8 +393,8 @@ const Pricing: React.FC = () => {
                      <div className="text-xs font-bold text-[#FFB000] uppercase tracking-widest mb-2 flex items-center gap-2">
                         <Layers size={14} /> {t("During the Term")}
                      </div>
-                     <h3 className="text-3xl font-bold text-slate-900">{t("Term course")}</h3>
-                     <p className="text-slate-500 mt-2 text-sm font-medium">{WEEKS_PER_TERM} {t("lessons over 9 weeks")} <br/> ({config.lessonDuration} {t("hours per lesson")})</p>
+                     <h3 className="text-3xl font-bold ryze-text-primary">{t("Term course")}</h3>
+                     <p className="ryze-text-muted mt-2 text-sm font-medium">{WEEKS_PER_TERM} {t("lessons over 9 weeks")} <br/> ({config.lessonDuration} {t("hours per lesson")})</p>
                   </div>
                   <div className="w-12 h-12 bg-[#FFB000]/10 rounded-2xl flex items-center justify-center text-[#FFB000]">
                      <MapPin size={24} />
@@ -406,14 +406,14 @@ const Pricing: React.FC = () => {
                  <div className="flex gap-8 border-b-2 border-[#FFB000]/10 mb-8 relative z-10">
                     <button 
                       onClick={() => setLearningMode('campus')}
-                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'campus' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'campus' ? 'text-[#FFB000]' : 'ryze-text-muted hover:ryze-text-secondary'}`}
                     >
                        <MapPin size={16} /> {t("on-campus")}
                        {learningMode === 'campus' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
                     </button>
                     <button 
                       onClick={() => setLearningMode('online')}
-                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'online' ? 'text-[#FFB000]' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`pb-4 text-sm font-bold flex items-center gap-2 transition-colors relative ${learningMode === 'online' ? 'text-[#FFB000]' : 'ryze-text-muted hover:ryze-text-secondary'}`}
                     >
                        <Laptop size={16} /> {t("online")}
                        {learningMode === 'online' && <motion.div layoutId="underline" className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#FFB000]" />}
@@ -424,7 +424,7 @@ const Pricing: React.FC = () => {
                {/* Fixed Promo Mode Indicator (if promo active) */}
                {hasPromo && (
                   <div className="mb-8 relative z-10">
-                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-200 animate-pulse">
+                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 ryze-text-inverse px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-200 animate-pulse">
                         <Zap size={12} fill="currentColor" /> {t("Limited Offer")}
                      </div>
                   </div>
@@ -434,11 +434,11 @@ const Pricing: React.FC = () => {
                <div className="mb-8 relative z-10">
                   <div className="flex items-end gap-3 flex-wrap">
                      <div className="flex items-baseline gap-1">
-                        <span className={`text-xl font-bold ${hasPromo ? 'text-red-500' : 'text-slate-900'}`}>$</span>
+                        <span className={`text-xl font-bold ${hasPromo ? 'text-red-500' : 'ryze-text-primary'}`}>$</span>
                         <span className={`text-6xl font-bold tracking-tight ${
                            hasPromo 
                            ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600' 
-                           : 'text-slate-900'
+                           : 'ryze-text-primary'
                         }`}>
                            {displayPrice}
                         </span>
@@ -446,7 +446,7 @@ const Pricing: React.FC = () => {
                      
                      {hasPromo && (
                         <div className="flex flex-col mb-2">
-                           <span className="text-slate-400 text-lg font-medium line-through decoration-red-400/50 decoration-2">
+                           <span className="ryze-text-muted text-lg font-medium line-through decoration-red-400/50 decoration-2">
                               ${displayOriginalPrice}
                            </span>
                            <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wide">
@@ -455,15 +455,15 @@ const Pricing: React.FC = () => {
                         </div>
                      )}
                   </div>
-                  <span className="text-slate-500 font-medium bg-[#FFB000]/5 px-3 py-1 rounded-lg text-xs mt-2 inline-block">
+                  <span className="ryze-text-muted font-medium bg-[#FFB000]/5 px-3 py-1 rounded-lg text-xs mt-2 inline-block">
                      {billingPeriod === 'quarterly' ? t("per term") : t("per month")} &bull; {t("Inc GST")}
                   </span>
                </div>
 
                {/* Features */}
                <ul className="space-y-4 mb-10 flex-grow relative z-10">
-                  <li className="flex gap-3 items-start text-sm text-slate-700 font-bold bg-[#FFB000]/5 p-2 rounded-lg -mx-2">
-                      <div className="p-0.5 bg-[#FFB000] rounded text-white mt-0.5"><Zap size={12} fill="currentColor"/></div>
+                  <li className="flex gap-3 items-start text-sm ryze-text-secondary font-bold bg-[#FFB000]/5 p-2 rounded-lg -mx-2">
+                      <div className="p-0.5 bg-[#FFB000] rounded ryze-text-inverse mt-0.5"><Zap size={12} fill="currentColor"/></div>
                       <span className="text-[#FFB000]">{t("Includes Beta Access to Ryze AI")}</span>
                   </li>
                   {[
@@ -474,7 +474,7 @@ const Pricing: React.FC = () => {
                     "Weekly homework marking & feedback",
                     "Progress tracking for students and parents"
                   ].map((feat, i) => (
-                    <li key={i} className="flex gap-3 items-start text-sm text-slate-700">
+                    <li key={i} className="flex gap-3 items-start text-sm ryze-text-secondary">
                         <Check size={16} className="text-[#FFB000] shrink-0 mt-0.5" />
                         <span>{t(feat)}</span>
                     </li>
@@ -483,26 +483,26 @@ const Pricing: React.FC = () => {
 
                <button 
                  onClick={() => navigate('/contact')}
-                 className="w-full bg-[#FFB000] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:bg-[#e6a000] hover:-translate-y-1 transition-all relative z-10"
+                 className="w-full bg-[#FFB000] ryze-text-inverse font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:bg-[#e6a000] hover:-translate-y-1 transition-all relative z-10"
                >
                  {t("Enrol now")}
                </button>
             </div>
 
             {/* 2. Private Tuition Card */}
-            <div className="bg-[#0f172a] text-white rounded-[2.5rem] p-10 flex flex-col relative overflow-hidden shadow-2xl group">
+            <div className="bg-[#0f172a] ryze-text-inverse rounded-[2.5rem] p-10 flex flex-col relative overflow-hidden shadow-2xl group">
                {/* Background Gradient */}
                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 group-hover:bg-blue-600/30 transition-colors duration-500"></div>
                
                <div className="flex justify-between items-start mb-8 relative z-10">
                   <div>
-                     <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                     <div className="text-xs font-bold ryze-text-muted uppercase tracking-widest mb-2 flex items-center gap-2">
                         <Star size={14} className="text-[#FFB000]" /> {t("Private Tuition")}
                      </div>
-                     <h3 className="text-3xl font-bold text-white">{t("1-on-1 Mentorship")}</h3>
-                     <p className="text-slate-400 mt-2 text-sm font-medium">{t("Completely personalised attention")}</p>
+                     <h3 className="text-3xl font-bold ryze-text-inverse">{t("1-on-1 Mentorship")}</h3>
+                     <p className="ryze-text-muted mt-2 text-sm font-medium">{t("Completely personalised attention")}</p>
                   </div>
-                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white border border-white/10">
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center ryze-text-inverse border border-white/10">
                      <GraduationCap size={24} />
                   </div>
                </div>
@@ -511,14 +511,14 @@ const Pricing: React.FC = () => {
                   <div className="inline-block px-4 py-2 border border-[#FFB000] text-[#FFB000] text-xs font-bold rounded-lg uppercase tracking-wider mb-6 bg-[#FFB000]/10">
                      {t("Premium")}
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-white/20 pl-4">
+                  <p className="ryze-text-inverse-muted text-sm leading-relaxed border-l-2 border-white/20 pl-4">
                      {t("We deliberately limit our private intake to ensure the highest quality of service and mentor availability.")}
                   </p>
                </div>
 
                <ul className="space-y-4 mb-10 flex-grow relative z-10">
                   <li className="flex gap-3 items-start text-sm font-bold bg-white/5 p-2 rounded-lg -mx-2">
-                      <div className="p-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded text-white mt-0.5"><Zap size={12} fill="currentColor"/></div>
+                      <div className="p-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded ryze-text-inverse mt-0.5"><Zap size={12} fill="currentColor"/></div>
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">{t("Includes Beta Access to Ryze AI")}</span>
                   </li>
                   {[
@@ -529,9 +529,9 @@ const Pricing: React.FC = () => {
                     "Detailed weekly feedback reports",
                     "Support available between lessons"
                   ].map((feat, i) => (
-                    <li key={i} className="flex gap-3 items-start text-sm text-slate-300">
+                    <li key={i} className="flex gap-3 items-start text-sm ryze-text-inverse-muted">
                         <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/10">
-                           <Check size={10} className="text-white" />
+                           <Check size={10} className="ryze-text-inverse" />
                         </div>
                         <span>{t(feat)}</span>
                     </li>
@@ -540,11 +540,11 @@ const Pricing: React.FC = () => {
 
                <button 
                  onClick={() => navigate('/contact')}
-                 className="w-full bg-white text-[#0f172a] font-bold py-4 rounded-2xl shadow-lg hover:bg-slate-100 hover:-translate-y-1 transition-all relative z-10"
+                 className="w-full bg-white text-[#0f172a] font-bold py-4 rounded-2xl shadow-lg hover:ryze-bg-surface hover:-translate-y-1 transition-all relative z-10"
                >
                  {t("Enquire for Private")}
                </button>
-               <p className="text-center text-xs text-slate-500 mt-4 relative z-10">*{t("Private pricing available upon application")}</p>
+               <p className="text-center text-xs ryze-text-muted mt-4 relative z-10">*{t("Private pricing available upon application")}</p>
             </div>
 
         </div>
@@ -556,15 +556,15 @@ const Pricing: React.FC = () => {
 
       {/* FAQ Section */}
       <section className="max-w-4xl mx-auto px-4 pt-24 pb-12 border-t border-slate-100">
-         <h2 className="text-3xl font-bold text-slate-900 text-center mb-16 font-sans">{t("Frequently Asked Questions")}</h2>
+         <h2 className="text-3xl font-bold ryze-text-primary text-center mb-16 font-sans">{t("Frequently Asked Questions")}</h2>
          <div className="grid gap-6">
             {FAQS.map((faq, idx) => (
                <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                  <h3 className="font-bold text-slate-900 mb-3 flex items-start gap-3 text-lg">
+                  <h3 className="font-bold ryze-text-primary mb-3 flex items-start gap-3 text-lg">
                      <HelpCircle size={24} className="text-[#FFB000] shrink-0" />
                      {faq.q}
                   </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed pl-9">
+                  <p className="ryze-text-secondary text-sm leading-relaxed pl-9">
                      {faq.a}
                   </p>
                </div>
