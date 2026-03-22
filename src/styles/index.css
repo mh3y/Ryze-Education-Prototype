@@ -79,6 +79,46 @@
   --ryze-motion-testimonial-duration-reverse: 72s;
   --ryze-motion-vertical-scroll-fast: 30s;
   --ryze-motion-vertical-scroll-slow: 38s;
+
+  /* --- Ryze Semantic Flavour System --- */
+  /* Brand */
+  --ryze-primary: #ffb000;
+  --ryze-primary-hover: #c89e2b;
+  --ryze-accent: #b8841e;
+
+  /* Backgrounds */
+  --ryze-bg-primary: var(--bg);
+  --ryze-bg-secondary: #fbf6ec;
+  --ryze-surface: var(--surface);
+  --ryze-surface-dark: #171d28;
+
+  /* Text */
+  --ryze-text-primary: var(--text);
+  --ryze-text-secondary: var(--muted);
+  --ryze-text-muted: #8c8883;
+  --ryze-text-inverse: #f8f3ea;
+  --ryze-text-inverse-muted: rgba(248, 243, 234, 0.7);
+
+  /* Actions */
+  --ryze-cta-primary: var(--ryze-accent);
+  --ryze-cta-primary-hover: #966a17;
+  --ryze-cta-secondary: rgba(255,176,0,0.12);
+  --ryze-cta-secondary-hover: var(--ryze-primary);
+
+  /* Status & Feedback */
+  --ryze-success: #22c55e;
+  --ryze-success-soft: rgba(34, 197, 94, 0.1);
+  --ryze-error: #ef4444;
+  --ryze-error-soft: rgba(239, 68, 68, 0.1);
+
+  /* Borders */
+  --ryze-border-subtle: rgba(23, 29, 40, 0.12);
+  --ryze-border-strong: rgba(23, 29, 40, 0.24);
+
+  /* Special Themes (Midnight) */
+  --ryze-bg-midnight: #050510;
+  --ryze-text-midnight-primary: #e2e8f0;   /* slate-200 */
+  --ryze-text-midnight-secondary: #94a3b8; /* slate-400 */
 }
 
 html {
@@ -126,6 +166,140 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 .ryze-card {
   border-radius: var(--ryze-radius-card);
   box-shadow: var(--ryze-shadow-soft);
+}
+
+/* 
+ * Ryze Responsive System Utilities
+ * Core layer enforcing consistent spacing, typography, and interactive targets.
+ * 
+ * DESIGN RULE: Do not use raw Tailwind colour utilities (e.g., text-slate-800) 
+ * directly in JSX. Use the semantic .ryze- utilities below to ensure
+ * surface-safe contrast and automatic responsive scaling.
+ */
+
+.ryze-container {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ryze-section-padding {
+  @apply py-16 sm:py-24 md:py-32;
+}
+
+.ryze-heading-1 {
+  @apply text-[clamp(2.8rem,8vw,6.2rem)] font-display font-bold leading-[0.85] tracking-[-0.04em];
+}
+
+.ryze-heading-2 {
+  @apply text-[clamp(2.2rem,6vw,4.2rem)] font-display font-bold leading-[0.95] tracking-[-0.035em];
+}
+
+.ryze-heading-3 {
+  @apply text-2xl sm:text-3xl font-display font-bold tracking-tight leading-tight;
+}
+
+@utility ryze-text-primary { color: var(--ryze-text-primary); }
+@utility ryze-text-secondary { color: var(--ryze-text-secondary); }
+@utility ryze-text-muted { color: var(--ryze-text-muted); }
+@utility ryze-text-inverse { color: var(--ryze-text-inverse); }
+@utility ryze-text-inverse-muted { color: var(--ryze-text-inverse-muted); }
+
+@utility ryze-bg-primary { background-color: var(--ryze-bg-primary); }
+@utility ryze-bg-secondary { background-color: var(--ryze-bg-secondary); }
+@utility ryze-bg-surface { background-color: var(--ryze-surface); }
+@utility ryze-bg-surface-dark { background-color: var(--ryze-surface-dark); }
+@utility ryze-bg-placeholder { @apply bg-ryze-100/20 backdrop-blur-sm; }
+
+/* Midnight Theme Helpers */
+@utility ryze-bg-midnight { background-color: var(--ryze-bg-midnight); }
+@utility ryze-text-midnight { color: var(--ryze-text-midnight-primary); }
+@utility ryze-text-midnight-muted { color: var(--ryze-text-midnight-secondary); }
+
+@utility ryze-border-subtle { border-color: var(--ryze-border-subtle); }
+@utility ryze-border-strong { border-color: var(--ryze-border-strong); }
+
+@utility ryze-text-success { color: var(--ryze-success); }
+@utility ryze-text-error { color: var(--ryze-error); }
+
+.ryze-form-label {
+  @apply block font-sans text-sm font-semibold uppercase tracking-[0.12em] ryze-text-inverse-muted opacity-80;
+}
+
+.ryze-form-input {
+  @apply w-full rounded-2xl border border-white/20 bg-black/20 px-6 py-4 font-sans text-[1.02rem] font-medium ryze-text-inverse outline-none transition-all placeholder:text-white/40;
+}
+
+.ryze-form-input:focus {
+  @apply border-[var(--color-ryze)] bg-black/30 ring-2 ring-[rgba(255,176,0,0.16)];
+}
+
+.ryze-cta-primary {
+  @apply inline-flex items-center justify-center min-h-[48px] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all shadow-lg select-none outline-none;
+  background-color: var(--ryze-cta-primary);
+  color: var(--ryze-text-inverse);
+}
+
+.ryze-cta-primary:hover,
+.ryze-cta-primary:focus-visible {
+  background-color: var(--ryze-cta-primary-hover);
+  box-shadow: 0 0 0 3px rgba(184, 132, 30, 0.4);
+  transform: translateY(-1px);
+}
+
+.ryze-cta-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.ryze-cta-primary:disabled {
+  @apply opacity-50 cursor-not-allowed transform-none shadow-none;
+}
+
+.ryze-cta-secondary {
+  @apply inline-flex items-center justify-center min-h-[48px] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all border shadow-lg select-none outline-none;
+  background-color: var(--ryze-cta-secondary);
+  border-color: rgba(255,176,0,0.38);
+  color: var(--ryze-text-primary);
+}
+
+.ryze-cta-secondary:hover,
+.ryze-cta-secondary:focus-visible {
+  background-color: var(--ryze-cta-secondary-hover);
+  color: var(--ryze-surface-dark);
+  border-color: transparent;
+  transform: translateY(-1px);
+}
+
+.ryze-cta-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.ryze-cta-dark {
+  @apply inline-flex items-center justify-center min-h-[48px] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all shadow-lg select-none outline-none;
+  background-color: var(--ryze-surface-dark);
+  color: var(--ryze-text-inverse);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ryze-cta-dark:hover,
+.ryze-cta-dark:focus-visible {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  transform: translateY(-1px);
+}
+
+.ryze-cta-ghost {
+  @apply inline-flex items-center justify-center min-h-[48px] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all shadow-lg select-none outline-none;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--ryze-text-inverse);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.ryze-cta-ghost:hover,
+.ryze-cta-ghost:focus-visible {
+  background-color: #f8f3ea;
+  color: var(--ryze-text-primary);
+  border-color: transparent;
+  transform: translateY(-1px);
 }
 
 .eyebrow {
@@ -251,6 +425,25 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 }
 
 .feature-marquee:is(:hover, :focus-within) .feature-marquee-track {
+  animation-play-state: paused;
+}
+
+.logo-marquee {
+  overflow: hidden;
+  position: relative;
+}
+
+.logo-marquee-track {
+  align-items: center;
+  animation: ryze-marquee var(--ryze-motion-logo-marquee-duration) linear infinite;
+  display: flex;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  transform: translate3d(0, 0, 0);
+  width: max-content;
+  will-change: transform;
+}
+
+.logo-marquee:is(:hover, :focus-within) .logo-marquee-track {
   animation-play-state: paused;
 }
 

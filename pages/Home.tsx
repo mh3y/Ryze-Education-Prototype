@@ -8,11 +8,12 @@ import usePrefersReducedMotion from '../src/hooks/usePrefersReducedMotion';
 import { ROUTES } from '../src/constants/routes';
 import { applySeo } from '../src/utils/seo';
 import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
+import { schoolLogos } from '../data/schoolLogos';
 
 const HomeDeferredSections = React.lazy(() => import('../components/home/HomeDeferredSections'));
 
 const HOME_HERO_IMAGE_BASE =
-  'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto,dpr_auto';
+  'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,c_fill,g_auto';
 const HOME_HERO_IMAGE_ID = 'ryze/images/image-v1';
 const HOME_HERO_IMAGE_SRC = `${HOME_HERO_IMAGE_BASE},w_768/${HOME_HERO_IMAGE_ID}`;
 const HOME_HERO_IMAGE_SRC_SET = [
@@ -49,7 +50,7 @@ const HeroProofTile = ({
   priority?: boolean;
   fetchPriority?: 'high' | 'low' | 'auto';
 }) => (
-  <div className={`group relative overflow-hidden rounded-[1.4rem] border border-white/8 bg-[rgba(255,255,255,0.03)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${className}`}>
+  <div className={`group relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-[rgba(255,255,255,0.03)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_15px_35px_-10px_rgba(0,0,0,0.6)] ${className}`}>
     <img
       src={image.src}
       srcSet={image.srcSet}
@@ -60,17 +61,17 @@ const HeroProofTile = ({
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={fetchPriority}
       decoding="async"
-      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+      className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
     />
-    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.04)_0%,rgba(17,21,29,0.16)_38%,rgba(17,21,29,0.86)_100%)]"></div>
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.1),transparent_34%)] opacity-50"></div>
-    <div className="absolute left-3 top-3">
-      <span className="rounded-full border border-[rgba(184,132,30,0.45)] bg-[rgba(17,21,29,0.46)] px-2.5 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-[var(--ryze-100)] backdrop-blur-md sm:text-[0.64rem]">
+    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0)_0%,rgba(17,21,29,0.3)_40%,rgba(17,21,29,0.95)_100%)]"></div>
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.1),transparent_40%)] opacity-50"></div>
+    <div className="absolute left-4 top-4">
+      <span className="rounded-full border border-white/20 bg-[rgba(17,21,29,0.92)] px-3 py-1.5 text-[0.62rem] font-bold uppercase tracking-[0.25em] text-white shadow-xl backdrop-blur-md">
         {tag}
       </span>
     </div>
-    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-4.5">
-      <h3 className={`max-w-[10ch] text-[1.18rem] font-semibold leading-[0.96] text-white sm:text-[1.34rem] ${titleClassName}`}>{title}</h3>
+    <div className="absolute inset-x-0 bottom-0 p-6">
+      <h3 className={`font-display font-semibold leading-[1.1] ryze-text-inverse drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] text-[1.3rem] sm:text-[1.5rem] ${titleClassName}`}>{title}</h3>
     </div>
   </div>
 );
@@ -205,28 +206,28 @@ const Home: React.FC = () => {
 
   const marketingCardImages = {
     ocSelectiveExam: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/personalised',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/personalised',
     ),
     smallGroupFocus: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/class4',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/class4',
     ),
     nswAccreditedTeachers: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/tutor2',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/tutor2',
     ),
     hscExcellence: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/image-v4',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/image-v4',
     ),
     hybridLearning: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/onlinev4',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/onlinev4',
     ),
     distinguishedMentors: buildMarketingCardImage(
-      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960,dpr_auto/ryze/images/gordon',
+      'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_720,h_960/ryze/images/gordon',
     ),
   };
 
   return (
-    <div className="w-full overflow-hidden bg-[var(--bg)] font-sans">
-      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden bg-[var(--primary)] pb-8 pt-20 md:pb-10 md:pt-24 lg:pb-10 lg:pt-24">
+    <div className="w-full overflow-hidden ryze-bg-primary font-sans">
+      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden ryze-bg-surface-dark pb-10 pt-[calc(5.75rem+env(safe-area-inset-top))] md:pb-14 md:pt-[calc(6.25rem+env(safe-area-inset-top))] lg:pb-16 lg:pt-[calc(6.5rem+env(safe-area-inset-top))]">
         <picture className="absolute inset-0">
           <img
             src={HOME_HERO_IMAGE_SRC}
@@ -236,44 +237,58 @@ const Home: React.FC = () => {
             fetchPriority="high"
             loading="eager"
             decoding="async"
-            className="h-full w-full object-cover object-[68%_center]"
+            className="h-full w-full object-cover lg:object-[68%_center] object-center"
           />
         </picture>
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(17,21,29,0.92)_0%,rgba(17,21,29,0.84)_42%,rgba(17,21,29,0.62)_68%,rgba(17,21,29,0.74)_100%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.1),transparent_20%)]"></div>
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-7rem)] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <div className="grid w-full grid-cols-1 items-center gap-9 lg:grid-cols-[minmax(0,1fr)_minmax(395px,0.82fr)] lg:gap-12">
-            <div className="max-w-[45rem] text-center lg:text-left">
-              <div className="max-w-[40rem] space-y-4">
-                <div className="eyebrow mx-auto !border-[1.5px] !border-[var(--color-ryze-500)] !bg-transparent !px-5 !py-3 !text-[var(--color-ryze-500)] !font-bold lg:mx-0">
+        <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.12)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.16)_100%)]"></div>
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-6.75rem)] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="grid w-full grid-cols-1 items-center gap-12 py-6 sm:py-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.74fr)] lg:gap-14 lg:py-8 xl:gap-18">
+            <div className="max-w-[44rem] text-center lg:text-left">
+              <div className="mx-auto max-w-[40rem] lg:mx-0">
+                <div className="eyebrow !border-[1.5px] !border-[var(--color-ryze-500)] !bg-transparent !px-5 !py-3 !text-[var(--color-ryze-500)] !font-bold">
                   <Sparkles size={14} className="text-[var(--color-ryze)]" />
                   <span>{t('Founded by NSW Teachers & Scholars')}</span>
                 </div>
-                <p className="text-[1rem] font-semibold uppercase tracking-[0.2em] text-white/74">Ryze Education</p>
-                <h1 className="max-w-[11.5ch] text-[clamp(3.45rem,7.8vw,6.35rem)] font-semibold leading-[0.9] text-white">
-                  {t('Specialist Maths Tuition')} <br />
-                  <span className="mt-2 block whitespace-nowrap text-[0.76em] lowercase leading-[0.98] text-[var(--ryze-200)]">
-                    {t('for students aiming higher')}
-                  </span>
-                </h1>
-              </div>
-
-              <div className="mt-10 grid max-w-[44rem] gap-4 border-t border-white/10 pt-6 text-left text-white/78 sm:grid-cols-3 lg:mt-12 lg:pt-7">
-                <div className="border-l border-white/18 pl-4">
-                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Learning Format</p>
-                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Private tutoring and small-group classes</p>
-                </div>
-                <div className="border-l border-white/18 pl-4">
-                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Teaching Standard</p>
-                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Accredited teachers and exceptional mentors</p>
-                </div>
-                <div className="border-l border-white/18 pl-4">
-                  <p className="text-[0.86rem] uppercase tracking-[0.18em] text-white/54">Parent Confidence</p>
-                  <p className="mt-2 text-[1.08rem] font-semibold leading-[1.4] text-white">Structured progress, calm accountability, direct communication</p>
+                <div className="mt-6 sm:mt-8">
+                  <h1 className="font-display text-[clamp(3.9rem,9vw,7.25rem)] font-semibold leading-[0.84] tracking-[-0.05em] ryze-text-inverse">
+                    <span className="block whitespace-nowrap">{t('Specialist Maths')}</span>
+                    <span className="mt-1 block">{t('Tuition')}</span>
+                  </h1>
+                  <div className="mt-5 sm:mt-6">
+                    <span className="block text-[clamp(1.6rem,4.5vw,3.15rem)] font-display italic leading-[1.04] tracking-[-0.03em] ryze-text-inverse">
+                      {t('for students aiming higher')}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:mt-10 lg:justify-start">
+              <div className="mt-10 grid max-w-[48rem] gap-x-8 gap-y-8 border-t border-white/10 pt-8 text-left sm:grid-cols-3 lg:mt-12 lg:gap-x-10 lg:pt-10">
+                <div className="relative pl-6">
+                  <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">
+                    <div className="absolute -left-1 top-0 h-2.5 w-2.5 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_12px_rgba(184,132,30,0.8)]"></div>
+                  </div>
+                  <p className="text-[0.75rem] font-bold uppercase tracking-[0.3em] text-[var(--color-ryze-500)]">Format</p>
+                  <p className="mt-2 text-[1.05rem] font-semibold leading-[1.4] ryze-text-inverse opacity-95">Private & small-group classes</p>
+                </div>
+                <div className="relative pl-6">
+                  <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">
+                    <div className="absolute -left-1 top-0 h-2.5 w-2.5 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_12px_rgba(184,132,30,0.8)]"></div>
+                  </div>
+                  <p className="text-[0.75rem] font-bold uppercase tracking-[0.3em] text-[var(--color-ryze-500)]">Teaching</p>
+                  <p className="mt-2 text-[1.05rem] font-semibold leading-[1.4] ryze-text-inverse opacity-95">Accredited teachers & scholars</p>
+                </div>
+                <div className="relative pl-6">
+                  <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">
+                    <div className="absolute -left-1 top-0 h-2.5 w-2.5 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_12px_rgba(184,132,30,0.8)]"></div>
+                  </div>
+                  <p className="text-[0.75rem] font-bold uppercase tracking-[0.3em] text-[var(--color-ryze-500)]">Progress</p>
+                  <p className="mt-2 text-[1.05rem] font-semibold leading-[1.4] ryze-text-inverse opacity-95">Structured growth & accountability</p>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row lg:mt-12 lg:justify-start">
                 <PrimaryCTA
                   variant="link"
                   href={ROUTES.CONTACT}
@@ -281,33 +296,33 @@ const Home: React.FC = () => {
                   label="Book a Consultation"
                   page="home"
                   placement="home_hero"
-                  className="w-full justify-center whitespace-nowrap !border-[var(--color-ryze-500)] !bg-[var(--color-ryze-500)] !text-white !font-bold hover:!bg-[var(--color-ryze-400)] hover:!border-[var(--color-ryze-400)] hover:!text-white sm:min-w-[244px] sm:w-auto"
+                  className="w-full sm:min-w-[244px] sm:w-auto"
                 />
-                <a href="#programs" className="inline-flex items-center gap-2 text-[1rem] font-semibold uppercase tracking-[0.06em] text-white/82 transition-colors hover:text-white">
+                <a href="#programs" className="inline-flex items-center gap-2 text-[0.98rem] font-semibold uppercase tracking-[0.1em] ryze-text-inverse-muted transition-colors hover:ryze-text-inverse">
                   Explore programs
                   <ArrowRight size={16} />
                 </a>
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[32rem] lg:ml-auto lg:w-[27rem] lg:max-w-none lg:justify-self-end">
-              <div className="pointer-events-none absolute inset-x-[16%] top-[8%] h-24 rounded-full bg-[rgba(184,132,30,0.15)] blur-3xl"></div>
-              <div className="relative rounded-[1.85rem] border border-white/10 bg-[linear-gradient(180deg,rgba(28,32,40,0.82)_0%,rgba(17,21,29,0.72)_100%)] p-3.5 shadow-[0_38px_90px_-54px_rgba(0,0,0,0.82)] backdrop-blur-2xl sm:p-4.5 lg:p-5">
-                <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent)]"></div>
-                <div className="grid h-[292px] grid-cols-2 gap-3 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] sm:h-[364px] sm:gap-3 lg:h-[45svh] lg:min-h-[408px] lg:max-h-[480px]">
+            <div className="relative mx-auto w-full max-w-[22rem] sm:max-w-[26rem] lg:ml-auto lg:w-[24rem] lg:max-w-none lg:justify-self-end xl:w-[25.5rem]">
+              <div className="pointer-events-none absolute inset-x-[16%] top-[8%] h-40 rounded-full bg-[rgba(184,132,30,0.18)] blur-3xl"></div>
+              <div className="relative rounded-[2.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(28,32,40,0.9)_0%,rgba(17,21,29,0.78)_100%)] p-4 shadow-[0_55px_110px_-42px_rgba(0,0,0,0.92)] backdrop-blur-3xl sm:p-5 lg:p-6">
+                <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)]"></div>
+                <div className="grid h-[400px] grid-cols-2 gap-4 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] sm:h-[480px] sm:gap-5 lg:h-[62svh] lg:min-h-[560px] lg:max-h-[690px]">
                   <ScrollingColumn direction="up" durationVar="var(--ryze-motion-vertical-scroll-slow)" reducedMotion={reduceMotion}>
                     <HeroProofTile
                       image={marketingCardImages.nswAccreditedTeachers}
                       title={t('Accredited Teachers')}
                       tag="Faculty"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
                     />
                     <HeroProofTile
                       image={marketingCardImages.ocSelectiveExam}
                       title={t('OC & Selective')}
                       tag="Primary"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
-                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
+                      titleClassName="max-w-[10ch]"
                       priority
                       fetchPriority="high"
                     />
@@ -315,8 +330,8 @@ const Home: React.FC = () => {
                       image={marketingCardImages.smallGroupFocus}
                       title={t('Small Group Focus')}
                       tag="Method"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
-                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
+                      titleClassName="max-w-[10ch]"
                     />
                   </ScrollingColumn>
                   <ScrollingColumn direction="down" durationVar="var(--ryze-motion-vertical-scroll-fast)" reducedMotion={reduceMotion}>
@@ -324,23 +339,23 @@ const Home: React.FC = () => {
                       image={marketingCardImages.distinguishedMentors}
                       title={t('Mentor Support')}
                       tag="Experts"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
-                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
+                      titleClassName="max-w-[10ch]"
                     />
                     <HeroProofTile
                       image={marketingCardImages.hscExcellence}
                       title={t('HSC Excellence')}
                       tag="Senior"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
-                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
+                      titleClassName="max-w-[10ch]"
                       priority
                     />
                     <HeroProofTile
                       image={marketingCardImages.hybridLearning}
                       title={t('Hybrid Learning')}
                       tag="Flexibility"
-                      className="aspect-[0.88] min-h-[10.5rem] sm:min-h-[12.2rem]"
-                      titleClassName="max-w-[8ch] text-[1.04rem] sm:text-[1.18rem]"
+                      className="aspect-[0.92] min-h-[14rem]"
+                      titleClassName="max-w-[10ch]"
                     />
                   </ScrollingColumn>
                 </div>
@@ -350,9 +365,36 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      <section className="py-16 sm:py-24 w-full">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-10 text-center text-sm font-bold tracking-widest ryze-text-secondary uppercase">
+            TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS
+          </p>
+          <div className="relative w-full overflow-hidden group">
+            <div className="logo-marquee-track">
+              {(reduceMotion ? schoolLogos : [...schoolLogos, ...schoolLogos]).map((logo, idx) => (
+                <div
+                  key={`${logo.alt}-${idx}`}
+                  className="flex h-16 w-24 shrink-0 items-center justify-center sm:h-20 sm:w-32 md:h-24 md:w-40"
+                >
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+                    aria-hidden={!reduceMotion && idx >= schoolLogos.length}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div ref={deferredTriggerRef} className="h-px w-full" aria-hidden="true" />
       {shouldLoadDeferred && (
-        <Suspense fallback={<div className="h-[120vh] w-full bg-[var(--bg)]" />}>
+        <Suspense fallback={<div className="h-[120vh] w-full ryze-bg-primary" />}>
           <HomeDeferredSections />
         </Suspense>
       )}

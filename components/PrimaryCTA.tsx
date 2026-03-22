@@ -10,6 +10,7 @@ type PrimaryCtaVariant = 'button' | 'link';
 
 type PrimaryCTAProps = {
   variant?: PrimaryCtaVariant;
+  styleVariant?: 'primary' | 'secondary' | 'dark' | 'ghost';
   size?: PrimaryCtaSize;
   className?: string;
   href?: string;
@@ -28,12 +29,20 @@ const sizeClasses: Record<PrimaryCtaSize, string> = {
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(184,132,30,0.28)] bg-[var(--accent)] text-white font-semibold tracking-[-0.01em] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.34)] transition-all duration-300 hover:-translate-y-px hover:bg-[#d19a24] hover:text-white hover:shadow-[0_22px_48px_-28px_rgba(17,21,29,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+  'inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-px active:scale-95';
+
+const styleVariantClasses: Record<string, string> = {
+  primary: 'ryze-cta-primary',
+  secondary: 'ryze-cta-secondary',
+  dark: 'ryze-cta-dark',
+  ghost: 'ryze-cta-ghost',
+};
 
 const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWith('//');
 
 const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   variant = 'link',
+  styleVariant = 'primary',
   size = 'md',
   className = '',
   href = '/contact',
@@ -44,7 +53,7 @@ const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   ariaLabel,
   icon = 'arrow',
 }) => {
-  const combinedClassName = `${baseClasses} ${sizeClasses[size]} ${className}`.trim();
+  const combinedClassName = `${styleVariantClasses[styleVariant]} ${baseClasses} ${className}`.trim();
 
   const handleClick = () => {
     trackPrimaryCtaClick(page, placement);

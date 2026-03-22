@@ -31,12 +31,6 @@ const getInitials = (name: string) =>
     .map((part) => part[0]?.toUpperCase() || '')
     .join('');
 
-const avatarAccentMap = [
-  'bg-[#d7b878] text-[#1b2330]',
-  'bg-[#b7c7d9] text-[#1b2330]',
-  'bg-[#c8d1b0] text-[#1b2330]',
-  'bg-[#d9c3b7] text-[#1b2330]',
-];
 
 const parseYear = (grade: string) => {
   const match = grade.match(/(\d+)/);
@@ -201,7 +195,7 @@ const ReviewCard = memo(function ReviewCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] ryze-text-secondary">
             {meta.trackLabel}
           </p>
           <div className="mt-2.5 inline-flex items-center gap-1 text-[var(--accent)]">
@@ -216,7 +210,7 @@ const ReviewCard = memo(function ReviewCard({
       </div>
 
       <div className="mt-5 flex items-start gap-3.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-[var(--primary-foreground)]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full ryze-bg-surface-dark ryze-text-inverse">
           <Quote size={16} />
         </div>
         <div>
@@ -224,32 +218,32 @@ const ReviewCard = memo(function ReviewCard({
             {meta.verifiedLabel}
           </p>
           <h3
-            className={`mt-3 font-display font-bold leading-[0.95] text-[var(--primary)] ${
+            className={`mt-3 font-display font-bold leading-[0.95] ryze-text-primary ${
               featured ? 'max-w-[11ch] text-[2.25rem] sm:text-[2.45rem]' : 'max-w-[13ch] text-[1.6rem] sm:text-[1.72rem]'
             }`}
           >
             {achievement}
           </h3>
-          <p className={`mt-2.5 font-medium text-[var(--primary)] ${featured ? 'text-[1rem]' : 'text-[0.92rem]'}`}>
+          <p className={`mt-2.5 font-medium ryze-text-primary ${featured ? 'text-[1rem]' : 'text-[0.92rem]'}`}>
             {meta.programTitle}
           </p>
         </div>
       </div>
 
       <blockquote
-        className={`mt-5 text-[var(--muted)] ${featured ? 'max-w-[34ch] text-[0.98rem] leading-relaxed' : 'line-clamp-5 text-[0.92rem] leading-relaxed'}`}
+        className={`mt-5 ryze-text-secondary ${featured ? 'max-w-[34ch] text-[0.98rem] leading-relaxed' : 'line-clamp-5 text-[0.92rem] leading-relaxed'}`}
       >
         &ldquo;{message}&rdquo;
       </blockquote>
 
       <div className="mt-auto pt-5">
         <div className="flex items-center gap-3 border-t border-[rgba(23,29,40,0.08)] pt-3.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--primary)] text-[0.68rem] font-bold uppercase tracking-[0.08em] text-[var(--primary-foreground)]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full ryze-bg-surface-dark text-[0.68rem] font-bold uppercase tracking-[0.08em] ryze-text-inverse">
             {getInitials(reviewerName)}
           </span>
           <div>
-            <p className="text-[0.92rem] font-semibold text-[var(--primary)]">{reviewerName}</p>
-            <p className="text-[0.84rem] text-[var(--muted)]">
+            <p className="text-[0.92rem] font-semibold ryze-text-primary">{reviewerName}</p>
+            <p className="text-[0.84rem] ryze-text-secondary">
               {reviewerType} / {reviewerGrade}
             </p>
           </div>
@@ -278,15 +272,6 @@ const Testimonials: React.FC = () => {
 
   const orderedTestimonials = useMemo(() => orderTestimonials(testimonials), []);
   const columns = useMemo(() => buildColumns(orderedTestimonials), [orderedTestimonials]);
-  const trustFaces = useMemo(
-    () =>
-      orderedTestimonials.slice(0, 4).map((testimonial, index) => ({
-        id: testimonial.id,
-        initials: getInitials(cleanText(t(testimonial.reviewerName))),
-        accent: avatarAccentMap[index % avatarAccentMap.length],
-      })),
-    [orderedTestimonials, t],
-  );
 
   useEffect(() => {
     const rail = railRef.current;
@@ -377,17 +362,17 @@ const Testimonials: React.FC = () => {
   };
 
   return (
-    <section className="overflow-hidden bg-[var(--bg)] py-16 text-slate-800 sm:py-20">
+    <section className="overflow-hidden ryze-bg-primary py-16 ryze-text-primary sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <div className="eyebrow">Testimonials</div>
-          <h2 className="mt-4 text-4xl font-display font-bold leading-[0.96] text-[var(--primary)] sm:text-5xl">
+          <h2 className="mt-4 text-4xl font-display font-bold leading-[0.96] ryze-text-primary sm:text-5xl">
             Results that speak volumes.
           </h2>
           <p className="mt-2 text-[1.8rem] font-display text-[rgba(23,29,40,0.52)] sm:text-[2.2rem]">
             Read success stories.
           </p>
-          <p className="mx-auto mt-4 max-w-xl text-[0.98rem] leading-relaxed text-[var(--muted)]">
+          <p className="mx-auto mt-4 max-w-xl text-[0.98rem] leading-relaxed ryze-text-secondary">
             Student and parent stories from across HSC, selective, OC, primary, and foundational maths support.
           </p>
         </div>
@@ -398,28 +383,19 @@ const Testimonials: React.FC = () => {
               Verified Stories
             </span>
             <span className="h-1 w-1 rounded-full bg-[rgba(23,29,40,0.18)]" />
-            <span className="text-[0.92rem] font-medium text-[var(--muted)]">
+            <span className="text-[0.92rem] font-medium ryze-text-secondary">
               {orderedTestimonials.length} student and parent reviews
             </span>
           </div>
-          <div className="inline-flex items-center gap-4 rounded-full border border-white/80 bg-[linear-gradient(180deg,rgba(132,132,132,0.28),rgba(104,104,104,0.38))] px-4 py-2.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_34px_-24px_rgba(17,21,29,0.28)]">
-            <div className="flex items-center">
-              {trustFaces.map((face, index) => (
-                <span
-                  key={face.id}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-[0.68rem] font-bold uppercase tracking-[0.08em] ${face.accent} ${index === 0 ? '' : '-ml-2.5'}`}
-                >
-                  {face.initials}
-                </span>
+          <div className="inline-flex items-center gap-3 rounded-full border border-[rgba(184,132,30,0.18)] bg-[rgba(248,243,234,0.72)] px-4 py-2.5 shadow-[0_12px_28px_-18px_rgba(17,21,29,0.14)]">
+            <div className="flex items-center gap-0.5 text-[var(--accent)]">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={13} className="fill-current" />
               ))}
             </div>
-            <span className="h-8 w-px bg-white/30" />
-            <span className="leading-tight">
-              <span className="block text-[0.92rem] font-extrabold uppercase tracking-[0.08em] text-[#ffb000]">
-                100% Rated
-              </span>
-              <span className="block text-[1rem] font-semibold text-white">Client Satisfaction</span>
-            </span>
+            <span className="text-[0.88rem] font-bold tracking-[-0.01em] ryze-text-primary">5.0</span>
+            <span className="hidden h-4 w-px bg-[rgba(23,29,40,0.12)] sm:block" />
+            <span className="hidden text-[0.82rem] font-medium ryze-text-secondary sm:block">from 250+ families</span>
           </div>
         </div>
 
@@ -432,7 +408,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials left"
                   onClick={() => scrollRailBy(-1)}
                   disabled={railState.isAtStart}
-                  className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                  className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -441,7 +417,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials right"
                   onClick={() => scrollRailBy(1)}
                   disabled={railState.isAtEnd}
-                  className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                  className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
                 >
                   <ArrowRight size={16} />
                 </button>
@@ -490,7 +466,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials left"
                   onClick={() => scrollRailBy(-1)}
                   disabled={railState.isAtStart}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -499,7 +475,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials right"
                   onClick={() => scrollRailBy(1)}
                   disabled={railState.isAtEnd}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] text-[var(--primary)] shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ArrowRight size={16} />
                 </button>
@@ -507,7 +483,7 @@ const Testimonials: React.FC = () => {
             )}
           </div>
 
-          <div className="mt-4 flex flex-col gap-2 text-[0.92rem] text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-4 flex flex-col gap-2 text-[0.92rem] ryze-text-secondary sm:flex-row sm:items-center sm:justify-between">
             <p>
               {railState.canScroll
                 ? 'Use the arrows, drag with the mouse, or swipe sideways to review every testimonial.'

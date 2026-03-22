@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside 
         className={`
           fixed md:relative z-50 h-full flex flex-col flex-shrink-0 transition-all duration-300
-          bg-[#0a0f1e] text-slate-300 border-r border-white/5
+          bg-[#0a0f1e] ryze-text-inverse-muted border-r border-white/5
           ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0 md:w-24'}
         `}
       >
@@ -68,10 +68,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                height={32}
                className="h-8 w-auto" 
             />
-            {isOpen && <span className="font-bold text-xl tracking-tight text-white">Ryze<span className="text-[#FFB000]">OS</span></span>}
+            {isOpen && <span className="font-bold text-xl tracking-tight ryze-text-inverse">Ryze<span className="text-[#FFB000]">OS</span></span>}
           </div>
           {/* Mobile Close Button */}
-          <button onClick={onCloseMobile} className="md:hidden text-slate-400 hover:text-white">
+          <button onClick={onCloseMobile} className="md:hidden ryze-text-muted hover:ryze-text-inverse">
             <X size={24} />
           </button>
         </div>
@@ -84,8 +84,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             {isOpen && (
               <div className="overflow-hidden">
-                 <div className="font-bold text-sm text-white truncate">Alex Student</div>
-                 <div className="text-xs text-slate-400 capitalize">{userRole} Account</div>
+                 <div className="font-bold text-sm ryze-text-inverse truncate">Alex Student</div>
+                 <div className="text-xs ryze-text-muted capitalize">{userRole} Account</div>
               </div>
             )}
           </div>
@@ -98,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-medium transition-all group relative ${
                   activeTab === item.id 
                   ? 'bg-[#FFB000] text-[#0a0f1e] shadow-[0_0_15px_rgba(255,176,0,0.3)]' 
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                  : 'ryze-text-muted hover:bg-white/5 hover:ryze-text-inverse'
                 } ${!isOpen && 'justify-center'}`}
               >
                 <item.icon size={22} className={`shrink-0 ${item.highlight && activeTab !== item.id ? 'text-[#FFB000]' : ''}`} />
@@ -106,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 
                 {/* Desktop Tooltip */}
                 {!isOpen && (
-                  <div className="hidden md:block absolute left-full ml-4 bg-[#1e293b] text-white px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-xl border border-white/10 font-bold tracking-wide">
+                  <div className="hidden md:block absolute left-full ml-4 bg-[#1e293b] ryze-text-inverse px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-xl border border-white/10 font-bold tracking-wide">
                     {item.label}
                   </div>
                 )}
@@ -118,13 +118,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* RBAC Simulator */}
         {isOpen && (
           <div className="mt-auto px-6 py-6 border-t border-white/5 bg-[#0a0f1e]">
-             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Viewing As</div>
+             <div className="text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-3">Viewing As</div>
              <div className="flex gap-2 bg-black/20 p-1 rounded-xl border border-white/5">
                 {(['student', 'tutor', 'admin'] as UserRole[]).map(role => (
                    <button
                      key={role}
                      onClick={() => onRoleChange(role)}
-                     className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg capitalize transition-all ${userRole === role ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+                     className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg capitalize transition-all ${userRole === role ? 'bg-slate-700 ryze-text-inverse shadow-sm' : 'ryze-text-muted hover:ryze-text-inverse-muted'}`}
                    >
                      {role}
                    </button>
@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-6 bg-[#0a0f1e]">
            <button 
              onClick={onLogout} 
-             className={`flex items-center gap-4 text-slate-500 hover:text-white transition-colors text-sm font-medium w-full px-4 py-2 ${!isOpen && 'justify-center'}`}
+             className={`flex items-center gap-4 ryze-text-muted hover:ryze-text-inverse transition-colors text-sm font-medium w-full px-4 py-2 ${!isOpen && 'justify-center'}`}
            >
              <LogOut size={20} /> {isOpen && "Sign Out"}
            </button>

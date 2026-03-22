@@ -48,7 +48,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({ page, href }) => {
           page={page}
           placement="sticky"
           size="md"
-          className="w-full justify-center !border-[var(--color-ryze-500)] !bg-[var(--color-ryze-500)] !text-white hover:!border-[var(--color-ryze-400)] hover:!bg-[var(--color-ryze-400)] !shadow-[0_18px_36px_-22px_rgba(17,21,29,0.4)]"
+          className="w-full justify-center ryze-cta-primary"
           ariaLabel="Book a consultation"
         />
       </div>

@@ -111,7 +111,7 @@ const CodeTerminal = () => {
          <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
          <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
        </div>
-       <div className="ml-4 text-xs text-slate-400 font-mono flex items-center gap-2">
+       <div className="ml-4 text-xs ryze-text-muted font-mono flex items-center gap-2">
          <Terminal size={12} />
          ryze_core_engine.exe
        </div>
@@ -127,7 +127,7 @@ const CodeTerminal = () => {
            animate={{ opacity: 1, x: 0 }}
            className="mb-2"
          >
-           <span className="text-slate-500 mr-3">{String(i + 1).padStart(2, '0')}</span>
+           <span className="ryze-text-muted mr-3">{String(i + 1).padStart(2, '0')}</span>
            <span className={`${
              line && line.includes("Error") ? "text-red-400" :
              line && line.includes("Root Cause") ? "text-[#FFB000]" :
@@ -333,7 +333,7 @@ const RyzeAI: React.FC = () => {
  return (
    <div
      ref={pageRef}
-     className="relative min-h-screen overflow-hidden bg-[#050510] font-sans text-white selection:bg-[#FFB000] selection:text-black"
+     className="relative min-h-screen overflow-hidden bg-[#050510] font-sans ryze-text-inverse selection:bg-[#FFB000] selection:ryze-text-primary"
      style={{ fontFamily: "'Inter', sans-serif" }}
    >
      {/* Scope background effects to the Ryze AI page so they do not bleed into the global footer. */}
@@ -367,7 +367,7 @@ const RyzeAI: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.9, letterSpacing: "0.1em" }}
                   animate={{ opacity: 1, scale: 1, letterSpacing: "0.2em" }}
                   transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-display text-5xl font-bold text-white tracking-[0.12em] drop-shadow-[0_0_40px_rgba(255,255,255,0.1)] md:text-8xl lg:text-9xl"
+                  className="font-display text-5xl font-bold ryze-text-inverse tracking-[0.12em] drop-shadow-[0_0_40px_rgba(255,255,255,0.1)] md:text-8xl lg:text-9xl"
                 >
                   RYZE<span className="text-[#FFB000]">AI</span>
                 </motion.h1>
@@ -385,9 +385,9 @@ const RyzeAI: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="mb-8 text-xl tracking-[0.01em] text-slate-300 md:text-3xl"
+                className="mb-8 text-xl tracking-[0.01em] ryze-text-inverse-muted md:text-3xl"
               >
-                {t("Learning That")} <span className="text-white font-semibold">{t("Adapts")}</span> {t("to You")}
+                {t("Learning That")} <span className="ryze-text-inverse font-semibold">{t("Adapts")}</span> {t("to You")}
               </motion.p>
              
               <motion.div
@@ -416,7 +416,7 @@ const RyzeAI: React.FC = () => {
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <ChevronDown className="text-slate-500 w-6 h-6" />
+              <ChevronDown className="ryze-text-muted w-6 h-6" />
             </motion.div>
           </motion.div>
        </header>
@@ -434,14 +434,14 @@ const RyzeAI: React.FC = () => {
              <div className="relative bg-[#0a0f1e]/30 backdrop-blur-xl p-8 md:p-16 rounded-3xl border border-white/10 shadow-2xl">
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                   <div className="lg:col-span-4">
-                     <h2 className="mb-6 text-3xl font-display font-bold text-white md:text-5xl">{t("The Real Problem")}</h2>
+                     <h2 className="ryze-heading-2 ryze-text-inverse mb-6">{t("The Real Problem")}</h2>
                      <div className="w-20 h-1.5 bg-[#FFB000] rounded-full mb-6"></div>
                   </div>
-                  <div className="lg:col-span-8 space-y-8 text-lg text-slate-300 font-light leading-relaxed">
+                  <div className="lg:col-span-8 space-y-8 text-lg ryze-text-inverse-muted font-light leading-relaxed">
                      <p className="text-xl" dangerouslySetInnerHTML={{ __html: t("Most students don't fail because they're not smart enough.</strong> They fail because they don't know what they don't know.") }}></p>
                      <p>{t("Students spend hours reviewing material they've already mastered while their actual weak spots go unaddressed. They cram facts without understanding concepts. They walk into exams anxious and underprepared—not because they didn't study, but because they studied the wrong things in the wrong ways.")}</p>
                      <div className="pl-6 border-l-2 border-[#FFB000]/30">
-                       <p className="text-slate-400 italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
+                       <p className="ryze-text-muted italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
                      </div>
                   </div>
                </div>
@@ -455,11 +455,11 @@ const RyzeAI: React.FC = () => {
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
-                 className="mb-6 text-3xl font-display font-bold text-white md:text-6xl"
+                 className="ryze-heading-2 ryze-text-inverse mb-6"
                >
                  {t("How")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB000] to-yellow-200">Ryze AI</span> {t("Works")}
                </motion.h2>
-               <p className="text-slate-400 text-lg max-w-2xl mx-auto">{t("A neural network for your education. It learns how you learn.")}</p>
+               <p className="ryze-text-muted text-lg max-w-2xl mx-auto">{t("A neural network for your education. It learns how you learn.")}</p>
              </div>
 
 
@@ -505,8 +505,8 @@ const RyzeAI: React.FC = () => {
                           <item.icon size={28} />
                         </div>
                        
-                        <h3 className="mb-4 text-2xl font-display font-bold text-white">{t(item.title)}</h3>
-                        <p className="text-slate-400 leading-relaxed flex-grow">{t(item.desc)}</p>
+                        <h3 className="ryze-heading-3 ryze-text-inverse mb-4">{t(item.title)}</h3>
+                        <p className="ryze-text-muted leading-relaxed flex-grow">{t(item.desc)}</p>
                        
                         <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent mt-8"></div>
                      </div>
@@ -527,10 +527,10 @@ const RyzeAI: React.FC = () => {
                       <Cpu size={14} />
                       <span>LIVE_ANALYSIS_ENGINE</span>
                    </div>
-                   <h2 className="mb-6 text-3xl font-display font-bold text-white md:text-5xl">
+                   <h2 className="ryze-heading-2 ryze-text-inverse mb-6">
                       {t("Thinking in")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{t("Real-Time")}</span>
                    </h2>
-                   <p className="text-slate-300 text-lg leading-relaxed mb-8">
+                   <p className="ryze-text-inverse-muted text-lg leading-relaxed mb-8">
                       {t("Unlike standard quiz apps that just mark \"Correct\" or \"Incorrect\", Ryze AI deconstructs your answer. It identifies the specific cognitive step where you failed—was it a calculation error, a conceptual gap, or a misinterpretation?")}
                    </p>
                   
@@ -540,7 +540,7 @@ const RyzeAI: React.FC = () => {
                         "Real-time Curriculum Adjustment",
                         "Micro-Concept Mapping"
                       ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-slate-400">
+                        <li key={i} className="flex items-center gap-3 ryze-text-muted">
                            <Activity size={18} className="text-[#FFB000]" />
                            {t(item)}
                         </li>
@@ -567,7 +567,7 @@ const RyzeAI: React.FC = () => {
                viewport={{ once: true }}
                className="mb-16 text-center md:text-left"
              >
-                <h2 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">{t("The Impact")}</h2>
+                <h2 className="ryze-heading-2 ryze-text-inverse mb-4">{t("The Impact")}</h2>
              </motion.div>
 
 
@@ -589,14 +589,14 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-400 mb-8 border border-blue-500/20">
                              <GraduationCap size={32} />
                           </div>
-                          <h3 className="mb-6 text-3xl font-display font-bold text-white">{t("For Students")}</h3>
+                          <h3 className="ryze-heading-3 ryze-text-inverse mb-6">{t("For Students")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Less time wasted on what you already know.",
                                "More confidence going into exams.",
                                "Understanding that carries forward into future courses."
                              ].map((text, i) => (
-                               <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
+                               <li key={i} className="flex gap-4 items-start ryze-text-inverse-muted text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0 shadow-[0_0_10px_#60a5fa]"></div>
                                   <span>{t(text)}</span>
                                </li>
@@ -624,14 +624,14 @@ const RyzeAI: React.FC = () => {
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-400 mb-8 border border-purple-500/20">
                              <Brain size={32} />
                           </div>
-                          <h3 className="mb-6 text-3xl font-display font-bold text-white">{t("For Teachers")}</h3>
+                          <h3 className="ryze-heading-3 ryze-text-inverse mb-6">{t("For Teachers")}</h3>
                           <ul className="space-y-5">
                              {[
                                "Insights into where your class struggles to inform planning.",
                                "Automated assessment means more time for teaching.",
                                "We augment your expertise, not replace it."
                              ].map((text, i) => (
-                               <li key={i} className="flex gap-4 items-start text-slate-300 text-lg">
+                               <li key={i} className="flex gap-4 items-start ryze-text-inverse-muted text-lg">
                                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0 shadow-[0_0_10px_#c084fc]"></div>
                                   <span>{t(text)}</span>
                                </li>
@@ -648,8 +648,8 @@ const RyzeAI: React.FC = () => {
              {/* Transparency reduced to 30% */}
              <div className="bg-[#0a0e1f]/30 border border-[#FFB000]/20 backdrop-blur-md rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
                 <div className="relative z-10">
-                   <h2 className="mb-6 text-3xl font-display font-bold text-white md:text-4xl">{t("Development Roadmap")}</h2>
-                   <p className="text-slate-400 mb-16 max-w-2xl mx-auto text-lg">
+                   <h2 className="ryze-heading-2 ryze-text-inverse mb-6">{t("Development Roadmap")}</h2>
+                   <p className="ryze-text-muted mb-16 max-w-2xl mx-auto text-lg">
                       {t("Ryze AI is currently in active beta testing with selected users. We're refining our algorithms based on real student interactions.")}
                    </p>
                    <div className="flex flex-col md:flex-row justify-center items-center gap-0 md:gap-0">
@@ -665,8 +665,8 @@ const RyzeAI: React.FC = () => {
                        </div>
                        <div className="relative z-10 flex flex-col items-center w-64 opacity-50">
                            <div className="w-3 h-3 bg-slate-700 rounded-full mb-6 border border-slate-500"></div>
-                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.02em] text-white">June 2026</div>
-                           <div className="text-slate-400 font-medium">{t("Public Launch")}</div>
+                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.02em] ryze-text-inverse">June 2026</div>
+                           <div className="ryze-text-muted font-medium">{t("Public Launch")}</div>
                        </div>
                    </div>
                 </div>
@@ -682,10 +682,10 @@ const RyzeAI: React.FC = () => {
                 <div className="absolute inset-0 bg-[#FFB000] blur-[100px] opacity-10"></div>
                 {/* Transparency reduced to 30% */}
                 <div className="relative bg-[#050510]/30 border border-[#FFB000]/30 p-12 md:p-20 rounded-[3rem] overflow-hidden backdrop-blur-xl">
-                   <h2 className="relative z-10 mb-8 text-4xl font-display font-bold text-white md:text-6xl">
+                   <h2 className="ryze-heading-2 ryze-text-inverse relative z-10 mb-8">
                       {t("Join the")} <span className="text-[#FFB000]">{t("Future")}</span>
                    </h2>
-                   <p className="text-slate-300 text-xl mb-12 relative z-10 max-w-2xl mx-auto font-light">
+                   <p className="ryze-text-inverse-muted text-xl mb-12 relative z-10 max-w-2xl mx-auto font-light">
                       {t("If you'd like to discuss Ryze AI, explore partnership opportunities, or express interest in beta access, we'd love to hear from you.")}
                    </p>
                    <a

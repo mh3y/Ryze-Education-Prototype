@@ -15,9 +15,9 @@ const StatCard: React.FC<StatCardProps> = ({ value, label, detail, icon, classNa
     <DesignCard className={cn('p-5', className)}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-3xl md:text-4xl font-extrabold tracking-tight text-[var(--primary)]">{value}</p>
-          <p className="mt-1 text-sm font-semibold text-[var(--muted)]">{label}</p>
-          {detail && <p className="mt-2 text-sm text-[var(--muted)]">{detail}</p>}
+          <p className="text-3xl md:text-4xl font-extrabold tracking-tight ryze-text-primary">{value}</p>
+          <p className="mt-1 text-sm font-semibold ryze-text-secondary">{label}</p>
+          {detail && <p className="mt-2 text-sm ryze-text-secondary">{detail}</p>}
         </div>
         {icon && (
           <div aria-hidden="true" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/15 text-[var(--accent)]">

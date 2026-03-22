@@ -13,12 +13,12 @@ const ValueCard: React.FC<ValueCardProps> = ({ title, description, icon, classNa
   return (
     <DesignCard className={cn('h-full p-6', className)}>
       {icon && (
-        <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)]/10 text-[var(--primary)] ring-1 ring-[var(--primary)]/10">
+        <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)]/10 ryze-text-primary ring-1 ring-[var(--primary)]/10">
           {icon}
         </div>
       )}
-      <h3 className="mt-4 text-lg md:text-xl font-bold text-[var(--text)]">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{description}</p>
+      <h3 className="mt-4 text-xl md:text-2xl font-bold font-display ryze-text-primary">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed ryze-text-secondary">{description}</p>
     </DesignCard>
   );
 };

@@ -33,7 +33,7 @@ const TheRyzeTruth: React.FC = () => {
     },
     {
       icon: BellOff,
-      iconClass: 'text-slate-500',
+      iconClass: 'ryze-text-muted',
       title: 'Problem 3 - The Silence Problem',
       text:
         "Students don't ask questions in large groups. Not because they're shy, but because the social cost is high and the benefit is uncertain. Will the tutor actually help, or will they give a rushed explanation before moving on? In my old tutoring centre, I asked maybe three questions across six months.",
@@ -88,10 +88,10 @@ const TheRyzeTruth: React.FC = () => {
   ];
 
   return (
-    <div className="bg-[var(--bg)] pt-20 font-sans text-[var(--text)]">
-      <div className="ryze-page-hero border-b border-[var(--border)] px-4 pb-24 pt-24">
+    <div className="ryze-bg-primary pt-20 font-sans ryze-text-primary">
+      <div className="ryze-section-padding ryze-page-hero border-b ryze-border-subtle px-4">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="ryze-page-title mb-6 text-5xl font-display font-bold tracking-tight md:text-7xl">
+          <h1 className="ryze-heading-1 ryze-text-primary mb-6">
             {t('The Ryze Truth')}
           </h1>
           <p className="ryze-page-lead text-xl font-light">
@@ -100,8 +100,8 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </div>
 
-      <section className="mx-auto max-w-2xl px-4 py-24">
-        <div className="mx-auto space-y-8 text-lg font-light leading-relaxed text-[var(--muted)]">
+      <section className="ryze-section-padding mx-auto max-w-2xl px-4">
+        <div className="mx-auto space-y-8 text-lg font-light leading-relaxed ryze-text-secondary">
           <p className="mb-8">
             {t('Parents rarely come to us at the beginning.')}
             <br />
@@ -114,7 +114,7 @@ const TheRyzeTruth: React.FC = () => {
             <br />
             {t('Months go by. The routines become familiar.')}
           </p>
-          <p className="mb-8 text-xl font-medium text-[var(--primary)]">
+          <p className="mb-8 text-xl font-medium ryze-text-primary">
             {t('But the understanding never really changes.')}
           </p>
           <p className="mb-8">
@@ -122,7 +122,7 @@ const TheRyzeTruth: React.FC = () => {
           </p>
           <div className="my-10 border-l-4 border-[var(--accent)] py-2 pl-6">
             <p
-              className="text-lg italic text-[var(--primary)]"
+              className="text-lg italic ryze-text-primary"
               dangerouslySetInnerHTML={{
                 __html: t(
                   "And that's the tragedy: not that the tutoring didn't work, but that the child starts to believe <strong>they</strong> didn't work.",
@@ -135,7 +135,7 @@ const TheRyzeTruth: React.FC = () => {
             <br />
             {t("They were placed in environments that weren't built to notice them - classrooms too crowded to see their confusion, too rigid to adapt to their pace, too busy to hear their questions.")}
           </p>
-          <p className="text-lg font-bold text-[var(--primary)]">
+          <p className="text-lg font-bold ryze-text-primary">
             {t('Nothing was wrong with them.')}
             <br />
             {t('Something was wrong with the setup around them.')}
@@ -143,13 +143,13 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[rgba(243,231,201,0.22)] py-24">
+      <section className="ryze-section-padding relative overflow-hidden ryze-bg-secondary">
         <div className="absolute right-0 top-0 -z-10 h-[600px] w-[600px] rounded-full bg-[rgba(243,231,201,0.58)] blur-[100px] opacity-70" />
         <div className="mx-auto max-w-3xl px-4">
-          <h2 className="mb-12 text-center text-4xl font-display font-bold text-[var(--primary)]">
+          <h2 className="ryze-heading-2 ryze-text-primary mb-12 text-center">
             {t("I Know This Because I've Lived It")}
           </h2>
-          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed text-[var(--muted)]">
+          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed ryze-text-secondary">
             <p className="mb-6">
               {t('I still remember the feeling.')}
               <br />
@@ -159,7 +159,7 @@ const TheRyzeTruth: React.FC = () => {
             <p className="mb-6">
               {t("I'd walk into that centre and become invisible. Just another student in a room of twenty others, all of us sitting in rows, staring at a whiteboard while a tutor droned through problems like they were reading a script they'd memorised years ago.")}
             </p>
-            <p className="mb-6 font-bold italic text-slate-900">{t('15 hours. Every week.')}</p>
+            <p className="mb-6 font-bold italic ryze-text-primary">{t('15 hours. Every week.')}</p>
             <p className="mb-6">{t("I wasn't learning. I was enduring.")}</p>
             <p className="mb-6">
               {t("The tutor didn't know my name. Didn't notice when I zoned out. Didn't see the confusion on my face when they skipped steps I didn't understand. I was a seat filled, a number on their attendance sheet, revenue on their spreadsheet.")}
@@ -167,10 +167,10 @@ const TheRyzeTruth: React.FC = () => {
 
             <div className="my-12 rounded-[2rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(248,243,234,0.92)] p-10 text-center shadow-[0_24px_60px_-42px_rgba(17,21,29,0.34)]">
               <Quote className="mx-auto mb-6 h-10 w-10 text-[var(--accent)] opacity-60" />
-              <p className="mb-4 text-xl font-bold text-slate-900">
+              <p className="mb-4 text-xl font-bold ryze-text-primary">
                 {t('Why am I falling behind when everyone else seems fine?')}
               </p>
-              <p className="mb-4 text-xl font-bold text-slate-900">
+              <p className="mb-4 text-xl font-bold ryze-text-primary">
                 {t("Why can't I just get this?")}
               </p>
               <p className="text-2xl font-bold text-[var(--accent)]">{t("What's wrong with me?")}</p>
@@ -182,7 +182,7 @@ const TheRyzeTruth: React.FC = () => {
             <p className="mb-6">
               {t("The truth - the one I couldn't see then - was simpler:")}
               <br />
-              <strong className="font-bold text-slate-900">
+              <strong className="font-bold ryze-text-primary">
                 {t('Nothing was wrong with me. Something was wrong with the environment.')}
               </strong>
             </p>
@@ -194,20 +194,20 @@ const TheRyzeTruth: React.FC = () => {
                 ),
               }}
             />
-            <p className="text-lg font-medium text-slate-900">
+            <p className="text-lg font-medium ryze-text-primary">
               {t('That experience left me with a question: Why does so much tutoring fail to actually help?')}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="bg-[var(--bg)] py-24">
+      <section className="ryze-section-padding ryze-bg-primary">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-20 text-center">
-            <h2 className="mb-4 text-4xl font-display font-bold text-[var(--primary)] md:text-5xl">
+            <h2 className="ryze-heading-2 ryze-text-primary mb-4">
               {t('Why Tutoring Fails')}
             </h2>
-            <p className="text-slate-500">{t('The systemic issues we identified and solved.')}</p>
+            <p className="ryze-text-muted">{t('The systemic issues we identified and solved.')}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -223,8 +223,8 @@ const TheRyzeTruth: React.FC = () => {
                   >
                     <Icon size={32} />
                   </div>
-                  <h3 className="mb-4 text-2xl font-bold text-slate-900">{t(problem.title)}</h3>
-                  <p className="leading-relaxed text-slate-600">{t(problem.text)}</p>
+                  <h3 className="ryze-heading-3 ryze-text-primary mb-4">{t(problem.title)}</h3>
+                  <p className="leading-relaxed ryze-text-secondary">{t(problem.text)}</p>
                 </div>
               );
             })}
@@ -232,17 +232,17 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-24 text-white">
+      <section className="ryze-section-padding ryze-bg-surface-dark px-4 ryze-text-inverse">
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-12 text-center text-4xl font-display font-bold">
+          <h2 className="ryze-heading-2 ryze-text-inverse mb-12 text-center">
             {t('Why Attention Actually Works')}
           </h2>
           <div className="prose prose-invert mx-auto prose-lg">
             <p
-              className="mb-12 text-center text-xl leading-relaxed text-slate-300"
+              className="mb-12 text-center text-xl leading-relaxed ryze-text-inverse-muted"
               dangerouslySetInnerHTML={{
                 __html: t(
-                  `I'm not claiming one format is magic. Bad teaching is bad teaching regardless of class size. What matters is attention: <span className="text-white font-bold">adaptive, individualised teaching that responds to the student in front of you.</span>`,
+                  `I'm not claiming one format is magic. Bad teaching is bad teaching regardless of class size. What matters is attention: <span className="ryze-text-inverse font-bold">adaptive, individualised teaching that responds to the student in front of you.</span>`,
                 ),
               }}
             />
@@ -251,7 +251,7 @@ const TheRyzeTruth: React.FC = () => {
               {attentionPoints.map((item) => (
                 <div key={item.title} className="rounded-2xl border border-white/10 bg-white/10 p-8">
                   <h4 className="mb-3 text-xl font-bold text-[var(--ryze-200)]">{t(item.title)}</h4>
-                  <p className="leading-relaxed text-slate-300">{t(item.text)}</p>
+                  <p className="leading-relaxed ryze-text-inverse-muted">{t(item.text)}</p>
                 </div>
               ))}
             </div>
@@ -259,10 +259,10 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-[var(--bg)] py-24">
+      <section className="ryze-section-padding ryze-bg-primary">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <h2 className="mb-8 text-4xl font-display font-bold text-[var(--primary)]">{t('The Cost of Quality')}</h2>
-          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed text-[var(--muted)]">
+          <h2 className="ryze-heading-2 ryze-text-primary mb-8">{t('The Cost of Quality')}</h2>
+          <div className="mx-auto space-y-6 text-lg font-light leading-relaxed ryze-text-secondary">
             <p className="mb-6">
               {t('I need to be direct about pricing: serious tutoring costs more when it is structured properly, whether that is delivered in a small group or through private support.')}
             </p>
@@ -272,8 +272,8 @@ const TheRyzeTruth: React.FC = () => {
             <p className="mb-6">
               {t("We charge what we do because that's what it costs to pay qualified tutors properly, maintain quality facilities, and limit class sizes to six students maximum.")}
             </p>
-            <div className="mt-8 rounded-3xl border border-[var(--border)] bg-[rgba(248,243,234,0.86)] p-8 shadow-[0_18px_42px_-32px_rgba(17,21,29,0.2)]">
-              <p className="font-medium text-[var(--primary)]">
+            <div className="mt-8 rounded-3xl border ryze-border-subtle bg-[rgba(248,243,234,0.86)] p-8 shadow-[0_18px_42px_-32px_rgba(17,21,29,0.2)]">
+              <p className="font-medium ryze-text-primary">
                 {t("This isn't for everyone. If cost is your primary constraint, large group tutoring might be better. But if you're looking for something that actually works - then the higher price reflects the actual value: individualised attention that produces results.")}
               </p>
             </div>
@@ -281,32 +281,32 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative bg-[rgba(243,231,201,0.22)] py-24">
+      <section className="ryze-section-padding relative ryze-bg-secondary">
         <div className="mx-auto max-w-5xl px-4">
-          <h2 className="mb-16 text-center text-4xl font-display font-bold text-[var(--primary)]">
+          <h2 className="ryze-heading-2 ryze-text-primary mb-16 text-center">
             {t('What Results Look Like')}
           </h2>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {results.map((result) => (
               <div key={result.title} className={`rounded-3xl border-t-4 bg-white p-8 shadow-sm ${result.borderClass}`}>
-                <h3 className="mb-4 text-lg font-bold text-[var(--primary)]">{t(result.title)}</h3>
-                <p className="text-[0.98rem] leading-relaxed text-[var(--muted)]">{t(result.text)}</p>
+                <h3 className="mb-4 text-lg font-bold ryze-text-primary">{t(result.title)}</h3>
+                <p className="text-[0.98rem] leading-relaxed ryze-text-secondary">{t(result.text)}</p>
               </div>
             ))}
           </div>
 
-          <p className="mt-12 text-center italic text-[var(--muted)]">
+          <p className="mt-12 text-center italic ryze-text-secondary">
             {t("These aren't miracles. They're what happens when students get appropriate attention and teaching targeted to their actual needs.")}
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl bg-[var(--bg)] px-4 py-24 sm:px-6 lg:px-8">
+      <section className="ryze-section-padding mx-auto max-w-7xl ryze-bg-primary px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <div className="rounded-[3rem] bg-red-50 p-12">
-            <h2 className="mb-8 text-3xl font-bold text-red-500">{t("What We're Not")}</h2>
-            <ul className="space-y-6 font-medium text-slate-700">
+            <h2 className="ryze-heading-3 mb-8 text-red-500">{t("What We're Not")}</h2>
+            <ul className="space-y-6 font-medium ryze-text-secondary">
               <li className="flex items-center gap-4">
                 <XCircle className="shrink-0 text-red-400" size={24} />
                 {t("We're not a magic solution. We can't fix everything.")}
@@ -322,8 +322,8 @@ const TheRyzeTruth: React.FC = () => {
             </ul>
           </div>
           <div className="rounded-[3rem] bg-green-50 p-12">
-            <h2 className="mb-8 text-3xl font-bold text-green-600">{t('What We Are')}</h2>
-            <div className="space-y-6 leading-relaxed text-slate-700">
+            <h2 className="ryze-heading-3 mb-8 text-green-600">{t('What We Are')}</h2>
+            <div className="space-y-6 leading-relaxed ryze-text-secondary">
               <p>
                 {t("We're a tutoring centre that deliberately limits class sizes to six students because that's the threshold where individualised teaching becomes possible.")}
               </p>
@@ -334,9 +334,9 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="border-y border-[rgba(184,132,30,0.18)] bg-[rgba(243,231,201,0.42)] px-4 py-20 text-center">
+      <section className="ryze-section-padding border-y border-[rgba(184,132,30,0.18)] bg-[rgba(243,231,201,0.42)] px-4 text-center">
         <div className="mx-auto max-w-3xl">
-          <p className="font-display text-xl font-bold leading-relaxed text-[var(--primary)] md:text-2xl">
+          <p className="font-display text-xl font-bold leading-relaxed ryze-text-primary md:text-2xl">
             "{t("At Ryze, you're not a number. You're not a headcount.")}
             <br />
             {t('You matter. Your questions matter.')}
@@ -346,13 +346,13 @@ const TheRyzeTruth: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-[var(--bg)] py-24 text-center">
+      <section className="ryze-section-padding ryze-bg-primary text-center">
         <div className="mx-auto max-w-3xl px-4">
-          <h2 className="mb-8 text-4xl font-display font-bold text-[var(--accent)]">
+          <h2 className="ryze-heading-2 text-[var(--accent)] mb-8">
             {t('The Real Question')}
           </h2>
 
-          <p className="mb-8 text-xl font-medium text-slate-900">
+          <p className="mb-8 text-xl font-medium ryze-text-primary">
             {t("The question isn't which format sounds better in the abstract.")}
             <br />
             {t('The question is:')}{' '}
@@ -361,7 +361,7 @@ const TheRyzeTruth: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: t("has what you're currently doing worked?") }}
             />
           </p>
-          <p className="mb-12 leading-relaxed text-slate-600">
+          <p className="mb-12 leading-relaxed ryze-text-secondary">
             {t("If your child has been attending tutoring for months and nothing has changed, then something about that environment isn't working for them.")}
             {' '}
             {t('Maybe they need individual diagnosis. Maybe they need space to ask questions. Maybe they need a different pace.')}
@@ -374,7 +374,7 @@ const TheRyzeTruth: React.FC = () => {
             {t('Book a Trial Lesson')} <ArrowRight size={24} />
           </button>
 
-          <p className="mt-8 text-[0.92rem] font-bold uppercase tracking-[0.12em] text-slate-400">
+          <p className="mt-8 text-[0.92rem] font-bold uppercase tracking-[0.12em] ryze-text-muted">
             {t("If it works, continue. If it doesn't, at least you'll know.")}
           </p>
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown, ChevronRight, Menu, X, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import PrimaryCTA from './PrimaryCTA';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
 const Navbar: React.FC = () => {
@@ -14,7 +15,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const brandLogoUrl =
-    'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320,dpr_auto/v1764105292/yellow_logo_png_bvs11z.png';
+    'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: '/how-ryze-works', desc: 'Our process explained.' },
@@ -44,10 +45,13 @@ const Navbar: React.FC = () => {
 
   const isHeroRoute = ['/', '/ryze-ai', '/contact'].includes(pathname);
   const isSolid = isScrolled || isOpen || !isHeroRoute;
-  const textClass = isSolid ? 'text-[var(--text)]' : 'text-white';
+  const textClass = isSolid ? 'ryze-text-primary' : 'ryze-text-inverse';
   const shellClass = isSolid
     ? 'border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.84)] shadow-[0_24px_60px_-38px_rgba(17,21,29,0.42)] backdrop-blur-xl'
     : 'border-white/12 bg-transparent';
+  const desktopCtaClass = isSolid
+    ? '!min-h-[2.2rem] !rounded-full !border !border-[rgba(23,29,40,0.1)] !bg-[rgba(255,255,255,0.58)] !px-4 !py-2 !text-[0.84rem] !font-semibold !tracking-[0.01em] !text-[var(--ryze-text-primary)] !shadow-none hover:!border-[rgba(184,132,30,0.28)] hover:!bg-[rgba(184,132,30,0.12)] hover:!text-[var(--accent)]'
+    : '!min-h-[2.2rem] !rounded-full !border !border-white/14 !bg-white/[0.06] !px-4 !py-2 !text-[0.84rem] !font-semibold !tracking-[0.01em] !text-white !shadow-none hover:!border-white/28 hover:!bg-white/[0.12] hover:!text-white';
   const linkClass = (isActive: boolean) =>
     `${isActive ? 'text-[var(--accent)]' : textClass} text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300 hover:text-[var(--accent)]`;
 
@@ -93,8 +97,8 @@ const Navbar: React.FC = () => {
                         `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'}`
                       }
                     >
-                      <span className="block text-[0.95rem] font-bold text-[var(--text)]">{t(link.name)}</span>
-                      {language === 'en' && <span className="mt-0.5 block text-[0.82rem] text-[var(--muted)]">{t(link.desc)}</span>}
+                      <span className="block text-[0.95rem] font-bold ryze-text-primary">{t(link.name)}</span>
+                      {language === 'en' && <span className="mt-0.5 block text-[0.82rem] ryze-text-secondary">{t(link.desc)}</span>}
                     </NavLink>
                   ))}
                 </div>
@@ -122,17 +126,13 @@ const Navbar: React.FC = () => {
               {t('Learning Style')}
             </NavLink>
             <div className={`mx-3 h-6 w-px ${isSolid ? 'bg-[rgba(23,29,40,0.12)]' : 'bg-white/20'}`} />
-            <button
-              onClick={() => handleContactNavigate('nav_desktop')}
-              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-[0.95rem] font-semibold tracking-[-0.01em] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] transition-all duration-300 hover:-translate-y-px ${
-                isSolid
-                  ? 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]'
-                  : 'border border-white/20 bg-white/10 text-white hover:bg-white hover:text-[var(--primary)]'
-              }`}
-            >
-              <span>Book a Consultation</span>
-              <ArrowRight size={15} />
-            </button>
+            <PrimaryCTA
+              page="nav"
+              placement="nav_desktop"
+              styleVariant="ghost"
+              size="sm"
+              className={desktopCtaClass}
+            />
           </div>
 
           <div className="absolute top-1/2 right-0 z-50 flex -translate-y-1/2 items-center gap-2 md:hidden">
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
               <button
                 onClick={() => handleContactNavigate('nav_mobile_scroll_inline')}
                 className={`inline-flex h-10 items-center justify-center rounded-full px-4 text-[0.92rem] font-semibold shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] ${
-                  isSolid ? 'bg-[var(--primary)] text-[var(--primary-foreground)]' : 'border border-white/20 bg-white/10 text-white'
+                  isSolid ? 'ryze-bg-surface-dark ryze-text-inverse' : 'border border-white/20 bg-white/10 ryze-text-inverse'
                 }`}
                 aria-label="Enrol Now"
               >
@@ -159,16 +159,16 @@ const Navbar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto bg-[var(--bg)] transition-transform duration-300 ease-out">
+        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto ryze-bg-primary transition-transform duration-300 ease-out">
           <div className="flex min-h-screen flex-col px-6 pt-24 pb-12">
             <div className="flex-grow space-y-6">
-              <div className="border-b border-[rgba(23,29,40,0.12)] pb-4">
+              <div className="border-b ryze-border-subtle pb-4">
                 <button
                   onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
-                  className="flex w-full items-center justify-between py-2 text-xl font-semibold text-[var(--text)]"
+                  className="flex w-full items-center justify-between py-2 text-xl font-semibold ryze-text-primary"
                 >
                   {t('About')}
-                  <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-[var(--accent)]' : 'text-[var(--muted)]'}`} />
+                  <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-[var(--accent)]' : 'ryze-text-secondary'}`} />
                 </button>
                 {mobileAboutOpen && (
                   <div className="overflow-hidden">
@@ -178,7 +178,7 @@ const Navbar: React.FC = () => {
                           key={link.name}
                           to={link.path}
                           onClick={() => setIsOpen(false)}
-                          className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}
+                          className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-[var(--accent)]' : 'ryze-text-secondary'}`}
                         >
                           {t(link.name)}
                         </NavLink>
@@ -188,32 +188,29 @@ const Navbar: React.FC = () => {
                 )}
               </div>
 
-              <NavLink to="/meet-the-team" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+              <NavLink to="/meet-the-team" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
                 {t('Meet Our Team')}
               </NavLink>
-              <NavLink to="/ryze-ai" onClick={() => setIsOpen(false)} className="group flex items-center justify-between border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+              <NavLink to="/ryze-ai" onClick={() => setIsOpen(false)} className="group flex items-center justify-between border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
                 <span className="flex items-center gap-2">{t('Ryze AI')} <Zap size={18} className="text-[var(--accent)]" fill="currentColor" /></span>
-                <ChevronRight size={20} className="text-[var(--muted)] group-hover:text-[var(--accent)]" />
+                <ChevronRight size={20} className="ryze-text-secondary group-hover:text-[var(--accent)]" />
               </NavLink>
-              <NavLink to="/learning-style" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+              <NavLink to="/learning-style" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
                 {t('Learning Style')}
               </NavLink>
-              <NavLink to="/contact" onClick={() => setIsOpen(false)} className="block border-b border-[rgba(23,29,40,0.12)] pb-4 text-xl font-semibold text-[var(--text)]">
+              <NavLink to="/contact" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
                 {t('Contact')}
               </NavLink>
             </div>
 
             <div className="mt-8">
-              <button
-                onClick={() => {
-                  handleContactNavigate('nav_mobile');
-                  setIsOpen(false);
-                }}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--primary)] px-5 py-4 text-[0.95rem] font-semibold text-[var(--primary-foreground)] shadow-[0_18px_42px_-28px_rgba(17,21,29,0.42)] transition-all duration-300 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
-              >
-                <span>Book a Consultation</span>
-                <ArrowRight size={15} />
-              </button>
+              <PrimaryCTA
+                page="nav"
+                placement="nav_mobile"
+                styleVariant="dark"
+                className="w-full"
+                onClick={() => setIsOpen(false)}
+              />
             </div>
           </div>
         </div>

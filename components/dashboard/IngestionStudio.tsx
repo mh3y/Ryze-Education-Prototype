@@ -90,11 +90,11 @@ export const IngestionStudio: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8 h-full flex flex-col">
        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+          <h2 className="text-2xl md:text-3xl font-bold ryze-text-inverse flex items-center gap-3">
             <Database className="text-[#FFB000]" />
             Ingestion Pipeline
           </h2>
-          <p className="text-slate-400 mt-2 text-sm md:text-lg">Upload learning materials to the Ryze Knowledge Base. The AI Engine performs advanced layout analysis, OCR, chunking, and vectorisation.</p>
+          <p className="ryze-text-muted mt-2 text-sm md:text-lg">Upload learning materials to the Ryze Knowledge Base. The AI Engine performs advanced layout analysis, OCR, chunking, and vectorisation.</p>
        </div>
 
        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 overflow-visible">
@@ -120,20 +120,20 @@ export const IngestionStudio: React.FC = () => {
                   onChange={handleFileSelect}
                   disabled={isProcessing}
                 />
-                <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-transform relative z-10 ${isProcessing ? 'bg-white/5 text-slate-500' : 'bg-white/5 text-[#FFB000] border border-white/10 group-hover:scale-110 group-hover:bg-[#FFB000] group-hover:text-[#0a0f1e]'}`}>
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-transform relative z-10 ${isProcessing ? 'bg-white/5 ryze-text-muted' : 'bg-white/5 text-[#FFB000] border border-white/10 group-hover:scale-110 group-hover:bg-[#FFB000] group-hover:text-[#0a0f1e]'}`}>
                    {isProcessing ? <Loader2 size={36} className="animate-spin" /> : <Upload size={36} />}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 relative z-10">
+                <h3 className="text-xl font-bold ryze-text-inverse mb-2 relative z-10">
                   {isProcessing ? 'Ingesting Content...' : 'Upload Document'}
                 </h3>
-                <p className="text-slate-500 text-sm max-w-xs mx-auto relative z-10">
+                <p className="ryze-text-muted text-sm max-w-xs mx-auto relative z-10">
                   Supported: PNG, JPG (Scanned Worksheets, Exam Papers). <br/>Max 10MB.
                 </p>
              </div>
 
              {/* Pipeline Visualizer */}
              <div className="bg-[#0a0f1e] rounded-[2rem] border border-white/5 p-8 shadow-lg">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Processing Status</h4>
+                <h4 className="text-xs font-bold ryze-text-muted uppercase tracking-widest mb-6">Processing Status</h4>
                 <div className="space-y-6">
                    {PIPELINE_STEPS.map((step, idx) => {
                       const isCompleted = currentStep > idx;
@@ -144,13 +144,13 @@ export const IngestionStudio: React.FC = () => {
                            <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
                               isCompleted ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
                               isActive ? 'bg-[#FFB000] text-[#0f172a] scale-110 shadow-[0_0_20px_rgba(255,176,0,0.4)] border border-[#FFB000]' :
-                              'bg-white/5 text-slate-600 border border-white/5'
+                              'bg-white/5 ryze-text-secondary border border-white/5'
                            }`}>
                               {isActive && <div className="absolute inset-0 rounded-full bg-[#FFB000] animate-ping opacity-25"></div>}
                               {isCompleted ? <CheckCircle size={18} /> : <step.icon size={18} className={isActive ? "animate-pulse" : ""} />}
                            </div>
                            <div className="flex-1">
-                              <div className={`text-sm font-medium transition-colors ${isActive ? 'text-white font-bold' : isCompleted ? 'text-slate-300' : 'text-slate-600'}`}>
+                              <div className={`text-sm font-medium transition-colors ${isActive ? 'ryze-text-inverse font-bold' : isCompleted ? 'ryze-text-inverse-muted' : 'ryze-text-secondary'}`}>
                                  {step.name}
                               </div>
                               {isActive && (
@@ -178,7 +178,7 @@ export const IngestionStudio: React.FC = () => {
              {result ? (
                <div className="bg-[#0a0f1e] rounded-[2rem] border border-white/5 shadow-2xl h-full flex flex-col overflow-hidden">
                   <div className="p-6 md:p-8 border-b border-white/5 bg-[#0a0f1e] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                     <h3 className="font-bold text-white text-xl flex items-center gap-3">
+                     <h3 className="font-bold ryze-text-inverse text-xl flex items-center gap-3">
                         <FileJson size={24} className="text-[#FFB000]" />
                         Digital Twin
                      </h3>
@@ -198,22 +198,22 @@ export const IngestionStudio: React.FC = () => {
                      
                      {/* Summary Section */}
                      <div className="p-6 bg-[#0a0f1e] rounded-2xl border border-white/5">
-                        <h4 className="text-xs font-bold text-slate-500 uppercase mb-3 tracking-widest">Summary</h4>
-                        <p className="text-slate-300 leading-relaxed text-base md:text-lg">{result.summary}</p>
+                        <h4 className="text-xs font-bold ryze-text-muted uppercase mb-3 tracking-widest">Summary</h4>
+                        <p className="ryze-text-inverse-muted leading-relaxed text-base md:text-lg">{result.summary}</p>
                      </div>
 
                      {/* Semantic Chunks */}
                      {chunks.length > 0 && (
                         <div>
                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2 tracking-widest">
+                              <h4 className="text-xs font-bold ryze-text-muted uppercase flex items-center gap-2 tracking-widest">
                                  <Scissors size={16} className="text-[#FFB000]" /> Semantic Chunks
                               </h4>
-                              <span className="text-xs text-slate-600 font-mono bg-white/5 px-2 py-1 rounded">{chunks.length} Chunks Created</span>
+                              <span className="text-xs ryze-text-secondary font-mono bg-white/5 px-2 py-1 rounded">{chunks.length} Chunks Created</span>
                            </div>
                            <div className="grid grid-cols-1 gap-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 pr-2 scroll-smooth">
                               {chunks.map((chunk, i) => (
-                                 <div key={i} className="bg-[#0a0f1e] border border-white/5 rounded-xl p-4 text-xs text-slate-400 font-mono hover:border-white/20 transition-colors">
+                                 <div key={i} className="bg-[#0a0f1e] border border-white/5 rounded-xl p-4 text-xs ryze-text-muted font-mono hover:border-white/20 transition-colors">
                                     <div className="mb-2 flex justify-between opacity-50">
                                        <span>ID: chunk_{i}</span>
                                        <span>{chunk.length} chars</span>
@@ -228,27 +228,27 @@ export const IngestionStudio: React.FC = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Extracted Text */}
                         <div>
-                           <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
+                           <h4 className="text-xs font-bold ryze-text-muted uppercase mb-4 flex items-center gap-2 tracking-widest">
                               <FileText size={16} className="text-[#FFB000]" /> OCR Extraction
                            </h4>
-                           <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/5 text-sm text-slate-400 font-mono whitespace-pre-wrap max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scroll-smooth">
+                           <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/5 text-sm ryze-text-muted font-mono whitespace-pre-wrap max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scroll-smooth">
                               {result.extractedText}
                            </div>
                         </div>
 
                         {/* Vision Analysis */}
                         <div>
-                           <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
+                           <h4 className="text-xs font-bold ryze-text-muted uppercase mb-4 flex items-center gap-2 tracking-widest">
                               <Eye size={16} className="text-[#FFB000]" /> Vision Analysis
                            </h4>
                            <div className="space-y-4">
                               {result.diagrams.length > 0 ? result.diagrams.map((d, i) => (
                                  <div key={i} className="bg-[#FFB000]/5 p-5 rounded-2xl border border-[#FFB000]/20 text-sm">
                                     <span className="font-bold text-[#FFB000] block mb-2">{d.type}</span>
-                                    <span className="text-slate-300 leading-relaxed">{d.description}</span>
+                                    <span className="ryze-text-inverse-muted leading-relaxed">{d.description}</span>
                                  </div>
                               )) : (
-                                 <div className="text-slate-600 text-sm italic border border-white/5 p-4 rounded-xl text-center">No diagrams detected.</div>
+                                 <div className="ryze-text-secondary text-sm italic border border-white/5 p-4 rounded-xl text-center">No diagrams detected.</div>
                               )}
                            </div>
                         </div>
@@ -257,14 +257,14 @@ export const IngestionStudio: React.FC = () => {
                      {/* Structure Analysis */}
                      {result.structure && result.structure.length > 0 && (
                         <div>
-                           <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
+                           <h4 className="text-xs font-bold ryze-text-muted uppercase mb-4 flex items-center gap-2 tracking-widest">
                               <Layers size={16} className="text-[#FFB000]" /> Document Structure
                            </h4>
                            <div className="grid grid-cols-1 gap-4">
                               {result.structure.map((section, i) => (
                                  <div key={i} className="bg-[#0a0f1e] border border-white/5 rounded-2xl p-6 shadow-sm hover:border-white/10 transition-colors">
-                                    <h5 className="font-bold text-white mb-3 text-sm uppercase tracking-wide border-b border-white/5 pb-3">{section.header}</h5>
-                                    <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">{section.content}</p>
+                                    <h5 className="font-bold ryze-text-inverse mb-3 text-sm uppercase tracking-wide border-b border-white/5 pb-3">{section.header}</h5>
+                                    <p className="text-sm ryze-text-muted leading-relaxed whitespace-pre-line">{section.content}</p>
                                  </div>
                               ))}
                            </div>
@@ -274,16 +274,16 @@ export const IngestionStudio: React.FC = () => {
                      {/* Tables */}
                      {result.tables && result.tables.length > 0 && (
                         <div>
-                           <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
+                           <h4 className="text-xs font-bold ryze-text-muted uppercase mb-4 flex items-center gap-2 tracking-widest">
                               <Table size={16} className="text-[#FFB000]" /> Extracted Tables
                            </h4>
                            <div className="space-y-6">
                               {result.tables.map((table, i) => (
                                  <div key={i} className="bg-[#0a0f1e] border border-white/5 rounded-2xl overflow-hidden shadow-sm">
-                                    {table.caption && <div className="bg-white/5 px-6 py-3 border-b border-white/5 text-sm font-bold text-slate-300">{table.caption}</div>}
+                                    {table.caption && <div className="bg-white/5 px-6 py-3 border-b border-white/5 text-sm font-bold ryze-text-inverse-muted">{table.caption}</div>}
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm text-left">
-                                            <thead className="bg-black/20 text-slate-400 border-b border-white/5">
+                                            <thead className="bg-black/20 ryze-text-muted border-b border-white/5">
                                                 <tr>
                                                     {table.headers.map((h, hi) => <th key={hi} className="px-6 py-3 font-bold whitespace-nowrap uppercase text-xs tracking-wider">{h}</th>)}
                                                 </tr>
@@ -291,7 +291,7 @@ export const IngestionStudio: React.FC = () => {
                                             <tbody>
                                                 {table.rows.map((row, ri) => (
                                                     <tr key={ri} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                                                        {row.cells.map((cell, ci) => <td key={ci} className="px-6 py-3 text-slate-300 min-w-[100px]">{cell}</td>)}
+                                                        {row.cells.map((cell, ci) => <td key={ci} className="px-6 py-3 ryze-text-inverse-muted min-w-[100px]">{cell}</td>)}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -305,7 +305,7 @@ export const IngestionStudio: React.FC = () => {
 
                      {/* Original Image */}
                      <div>
-                        <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest">Source Document</h4>
+                        <h4 className="text-xs font-bold ryze-text-muted uppercase mb-4 tracking-widest">Source Document</h4>
                         <div className="rounded-2xl overflow-hidden border border-white/5 bg-black">
                            <img
                              src={previewUrl || ''}
@@ -322,11 +322,11 @@ export const IngestionStudio: React.FC = () => {
                   </div>
                </div>
              ) : (
-               <div className="h-full rounded-[2rem] border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 bg-[#0a0f1e]/50 min-h-[300px]">
+               <div className="h-full rounded-[2rem] border-2 border-dashed border-white/5 flex flex-col items-center justify-center ryze-text-secondary bg-[#0a0f1e]/50 min-h-[300px]">
                   <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5">
                      <Database size={48} className="opacity-30" />
                   </div>
-                  <p className="font-bold text-lg text-slate-500">Waiting for ingestion...</p>
+                  <p className="font-bold text-lg ryze-text-muted">Waiting for ingestion...</p>
                   <p className="text-sm opacity-60 mt-2">Upload a document to see the extraction result.</p>
                </div>
              )}

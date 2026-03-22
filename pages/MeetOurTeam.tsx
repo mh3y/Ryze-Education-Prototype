@@ -14,7 +14,7 @@ const MeetTheTeam: React.FC = () => {
       name: 'Mike Nojiri',
       role: 'Head of Education',
       image:
-        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg',
+        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg',
       fallbackImage:
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       atar: '99.25',
@@ -38,7 +38,7 @@ const MeetTheTeam: React.FC = () => {
       name: 'William Gong',
       role: 'Head of Technology',
       image:
-        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg',
+        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125/v1769568491/34b29c410f6278cf36653c984998c5fe_diuyma.jpg',
       fallbackImage:
         'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       atar: '99.50',
@@ -58,7 +58,7 @@ const MeetTheTeam: React.FC = () => {
       name: 'Gordon Ye',
       role: 'Senior Mentor',
       image:
-        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg',
+        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125/v1764460809/588278725_1528730215077629_8325133640910985831_n_mr2y31.jpg',
       fallbackImage:
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       atar: '99.55',
@@ -82,7 +82,7 @@ const MeetTheTeam: React.FC = () => {
       name: 'Michael Yang',
       role: 'Founder',
       image:
-        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125,dpr_auto/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg',
+        'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_900,h_1125/v1764105304/0739d6ceb5594812228108103c314c99_nd6cb5.jpg',
       fallbackImage:
         'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       wordsFromFounder:
@@ -91,8 +91,8 @@ const MeetTheTeam: React.FC = () => {
   ];
 
   return (
-    <div className="ryze-page min-h-screen pt-20 text-[var(--text)]">
-      <div className="ryze-page-hero relative overflow-hidden border-b border-[var(--border)] px-4 pb-24 pt-24">
+    <div className="ryze-page min-h-screen pt-20 ryze-text-primary">
+      <div className="ryze-page-hero relative overflow-hidden border-b ryze-border-subtle px-4 pb-24 pt-24">
         <div className="absolute left-1/2 top-0 -z-10 h-[400px] w-[1000px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(243,231,201,0.55),transparent_70%)] opacity-80 blur-3xl"></div>
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="ryze-page-title mb-6 text-5xl font-display font-bold tracking-tight md:text-7xl">
@@ -104,7 +104,7 @@ const MeetTheTeam: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-[var(--bg)]">
+      <div className="ryze-bg-primary">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
           <div className="space-y-40">
             {team.map((member, idx) => (
@@ -120,7 +120,7 @@ const MeetTheTeam: React.FC = () => {
                 <div className="w-full shrink-0 lg:w-5/12">
                   {member.scores && member.scores.length > 0 && (
                     <div className="mb-6">
-                      <div className="rounded-[1.35rem] border border-[var(--border)] bg-[rgba(248,243,234,0.92)] p-4 backdrop-blur-md shadow-[0_18px_40px_-30px_rgba(17,21,29,0.28)]">
+                      <div className="rounded-[1.35rem] border ryze-border-subtle bg-[rgba(248,243,234,0.92)] p-4 backdrop-blur-md shadow-[0_18px_40px_-30px_rgba(17,21,29,0.28)]">
                         <h4 className="mb-2 text-center text-[0.9rem] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
                           HSC Marks
                         </h4>
@@ -144,14 +144,14 @@ const MeetTheTeam: React.FC = () => {
                       {member.atar && (
                         <div className="absolute left-2 top-2 z-20 md:left-4 md:top-4">
                           <div className="transform rounded-[1.15rem] border border-[rgba(184,132,30,0.18)] bg-[rgba(248,243,234,0.92)] shadow-[0_18px_40px_-26px_rgba(17,21,29,0.34)] backdrop-blur-xl transition-transform duration-300 ease-in-out md:rounded-[1.35rem] md:hover:scale-[1.04]">
-                            <div className="px-3.5 py-2.5 text-left text-[var(--primary)] md:px-4.5 md:py-3.5">
+                            <div className="px-3.5 py-2.5 text-left ryze-text-primary md:px-4.5 md:py-3.5">
                               <div className="mb-1.5 flex items-center gap-1.5 md:gap-2">
                                 <Star className="h-3.5 w-3.5 text-[var(--accent)] md:h-4 md:w-4" fill="currentColor" />
                                 <p className="text-[0.76rem] font-bold uppercase tracking-[0.18em] text-[var(--accent)] md:text-[0.8rem]">
                                   ATAR
                                 </p>
                               </div>
-                              <p className="font-sans text-[1.45rem] font-extrabold tracking-[-0.04em] text-[var(--primary)] md:text-[1.7rem]">
+                              <p className="font-sans text-[1.45rem] font-extrabold tracking-[-0.04em] ryze-text-primary md:text-[1.7rem]">
                                 {member.atar}
                               </p>
                             </div>
@@ -172,7 +172,7 @@ const MeetTheTeam: React.FC = () => {
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
-                      <div className="absolute bottom-0 left-0 w-full p-8 text-white">
+                      <div className="absolute bottom-0 left-0 w-full p-8 ryze-text-inverse">
                         <h3 className="mb-2 text-4xl font-display font-bold tracking-tight">{t(member.name)}</h3>
                         <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-ryze)]">
                           {t(member.role)}
@@ -188,7 +188,7 @@ const MeetTheTeam: React.FC = () => {
                       <h4 className="mb-6 text-2xl font-bold uppercase tracking-widest text-[var(--accent)]">
                         Words from the Founder
                       </h4>
-                      <p className="whitespace-pre-line text-lg font-light leading-relaxed text-[var(--muted)]">
+                      <p className="whitespace-pre-line text-lg font-light leading-relaxed ryze-text-secondary">
                         {member.wordsFromFounder}
                       </p>
                     </div>
@@ -201,7 +201,7 @@ const MeetTheTeam: React.FC = () => {
                         {member.creds?.map((cred, i) => (
                           <li
                             key={i}
-                            className="inline-flex items-center rounded-xl border border-[var(--border)] bg-white/70 px-4 py-2 text-sm font-medium text-[var(--muted)]"
+                            className="inline-flex items-center rounded-xl border ryze-border-subtle bg-white/70 px-4 py-2 text-sm font-medium ryze-text-secondary"
                           >
                             <span dangerouslySetInnerHTML={{ __html: cred }}></span>
                           </li>
@@ -212,14 +212,14 @@ const MeetTheTeam: React.FC = () => {
 
                   {member.quote && (
                     <div className="relative border-l-4 border-[var(--accent)] pl-8">
-                      <blockquote className="font-display text-2xl font-medium leading-relaxed text-[var(--primary)]">
+                      <blockquote className="font-display text-2xl font-medium leading-relaxed ryze-text-primary">
                         "{member.quote}"
                       </blockquote>
                     </div>
                   )}
 
                   {member.bio && member.bio.length > 0 && (
-                    <div className="space-y-6 text-lg font-light leading-relaxed text-[var(--muted)]">
+                    <div className="space-y-6 text-lg font-light leading-relaxed ryze-text-secondary">
                       {member.bio.map((paragraph, i) => (
                         <p key={i}>{paragraph}</p>
                       ))}

@@ -34,7 +34,7 @@ const Sitemap: React.FC = () => {
 
   return (
     <div className="ryze-page">
-      <div className="ryze-page-hero border-b border-[var(--border)] px-4 py-16">
+      <div className="ryze-page-hero border-b ryze-border-subtle px-4 py-16">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="ryze-page-title text-3xl md:text-5xl">Sitemap</h1>
           <p className="ryze-page-lead mt-3 text-base">Overview of available pages.</p>
@@ -49,7 +49,7 @@ const Sitemap: React.FC = () => {
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgba(184,132,30,0.16)] bg-[rgba(243,231,201,0.5)] text-[var(--accent)]">
                   <section.icon size={20} />
                 </div>
-                <h2 className="text-xl font-bold text-[var(--primary)]">{section.title}</h2>
+                <h2 className="text-xl font-bold ryze-text-primary">{section.title}</h2>
               </div>
 
               <ul className="space-y-3">
@@ -57,7 +57,7 @@ const Sitemap: React.FC = () => {
                   <li key={linkIndex}>
                     <Link
                       to={link.path}
-                      className="group flex items-center gap-2 text-[var(--muted)] transition-colors hover:text-[var(--accent)]"
+                      className="group flex items-center gap-2 ryze-text-secondary transition-colors hover:text-[var(--accent)]"
                     >
                       <ChevronRight
                         size={14}
