@@ -227,7 +227,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-full overflow-hidden bg-[var(--ryze-surface-dark)] font-sans md:ryze-bg-primary">
-      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden ryze-bg-surface-dark pb-12 pt-[calc(5.2rem+env(safe-area-inset-top))] md:pb-14 md:pt-[calc(6.25rem+env(safe-area-inset-top))] lg:pb-16 lg:pt-[calc(6.5rem+env(safe-area-inset-top))]">
+      <section className="ryze-shell-grid relative min-h-screen min-h-[100dvh] overflow-hidden ryze-bg-surface-dark pb-12 pt-[5.2rem] md:pb-14 md:pt-[6.25rem] lg:pb-16 lg:pt-[6.5rem]">
         <picture className="absolute inset-0">
           <img
             src={HOME_HERO_IMAGE_SRC}
@@ -243,7 +243,7 @@ const Home: React.FC = () => {
         <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.12)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.16)_100%)]"></div>
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.75rem)] max-w-7xl items-center px-4 sm:min-h-[calc(100svh-6.75rem)] sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto flex min-h-[calc(100vh-5.75rem)] min-h-[calc(100dvh-5.75rem)] max-w-7xl items-center px-4 sm:min-h-[calc(100vh-6.75rem)] sm:min-h-[calc(100dvh-6.75rem)] sm:px-6 lg:px-8">
           <div className="grid w-full grid-cols-1 items-center gap-8 py-6 sm:gap-12 sm:py-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.74fr)] lg:gap-14 lg:py-8 xl:gap-18">
             <div className="max-w-[44rem] text-left lg:text-left">
               <div className="mx-auto max-w-[40rem] lg:mx-0">
