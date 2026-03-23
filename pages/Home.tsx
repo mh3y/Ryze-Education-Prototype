@@ -227,7 +227,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-full overflow-hidden bg-[var(--ryze-surface-dark)] font-sans md:ryze-bg-primary">
-      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden ryze-bg-surface-dark pb-10 pt-[calc(5.75rem+env(safe-area-inset-top))] md:pb-14 md:pt-[calc(6.25rem+env(safe-area-inset-top))] lg:pb-16 lg:pt-[calc(6.5rem+env(safe-area-inset-top))]">
+      <section className="ryze-shell-grid relative min-h-[100svh] overflow-hidden ryze-bg-surface-dark pb-12 pt-[calc(5.2rem+env(safe-area-inset-top))] md:pb-14 md:pt-[calc(6.25rem+env(safe-area-inset-top))] lg:pb-16 lg:pt-[calc(6.5rem+env(safe-area-inset-top))]">
         <picture className="absolute inset-0">
           <img
             src={HOME_HERO_IMAGE_SRC}
@@ -237,34 +237,34 @@ const Home: React.FC = () => {
             fetchPriority="high"
             loading="eager"
             decoding="async"
-            className="h-full w-full scale-[1.05] object-cover object-center blur-[5px] sm:scale-100 sm:object-[52%_28%] sm:blur-0 lg:object-[62%_center] xl:object-[68%_center]"
+            className="h-full w-full scale-[1.04] object-cover object-center blur-[2px] sm:scale-100 sm:object-[52%_28%] sm:blur-0 lg:object-[62%_center] xl:object-[68%_center]"
           />
         </picture>
-        <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.78)_0%,rgba(17,21,29,0.72)_34%,rgba(17,21,29,0.46)_62%,rgba(17,21,29,0.62)_100%)] sm:bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.12)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.16)_100%)]"></div>
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-6.75rem)] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <div className="grid w-full grid-cols-1 items-center gap-12 py-6 sm:py-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.74fr)] lg:gap-14 lg:py-8 xl:gap-18">
-            <div className="max-w-[44rem] text-center lg:text-left">
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.75rem)] max-w-7xl items-center px-4 sm:min-h-[calc(100svh-6.75rem)] sm:px-6 lg:px-8">
+          <div className="grid w-full grid-cols-1 items-center gap-8 py-6 sm:gap-12 sm:py-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.74fr)] lg:gap-14 lg:py-8 xl:gap-18">
+            <div className="max-w-[44rem] text-left lg:text-left">
               <div className="mx-auto max-w-[40rem] lg:mx-0">
                 <div className="eyebrow !border-[1.5px] !border-[var(--color-ryze-500)] !bg-transparent !px-5 !py-3 !text-[var(--color-ryze-500)] !font-bold">
                   <Sparkles size={14} className="text-[var(--color-ryze)]" />
                   <span>{t('Founded by NSW Teachers & Scholars')}</span>
                 </div>
-                <div className="mt-6 sm:mt-8">
-                  <h1 className="font-display text-[clamp(3.9rem,9vw,7.25rem)] font-semibold leading-[0.84] tracking-[-0.05em] ryze-text-inverse">
-                    <span className="block whitespace-nowrap">{t('Specialist Maths')}</span>
+                <div className="mt-5 sm:mt-8">
+                  <h1 className="font-display text-[clamp(3.2rem,14vw,7.25rem)] font-semibold leading-[0.86] tracking-[-0.05em] ryze-text-inverse drop-shadow-[0_10px_28px_rgba(0,0,0,0.45)] sm:text-[clamp(3.9rem,9vw,7.25rem)]">
+                    <span className="block sm:whitespace-nowrap">{t('Specialist Maths')}</span>
                     <span className="mt-1 block">{t('Tuition')}</span>
                   </h1>
-                  <div className="mt-5 sm:mt-6">
-                    <span className="block text-[clamp(1.6rem,4.5vw,3.15rem)] font-display italic leading-[1.04] tracking-[-0.03em] ryze-text-inverse">
+                  <div className="mt-4 sm:mt-6">
+                    <span className="block text-[clamp(1.4rem,6vw,3.15rem)] font-display italic leading-[1.06] tracking-[-0.03em] ryze-text-inverse drop-shadow-[0_6px_18px_rgba(0,0,0,0.38)]">
                       {t('for students aiming higher')}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-10 grid max-w-[48rem] gap-x-8 gap-y-8 border-t border-white/10 pt-8 text-left sm:grid-cols-3 lg:mt-12 lg:gap-x-10 lg:pt-10">
+              <div className="mt-8 grid max-w-[48rem] gap-x-8 gap-y-5 border-t border-white/10 pt-6 text-left sm:mt-10 sm:gap-y-8 sm:pt-8 sm:grid-cols-3 lg:mt-12 lg:gap-x-10 lg:pt-10">
                 <div className="relative pl-6">
                   <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">
                     <div className="absolute -left-1 top-0 h-2.5 w-2.5 rounded-full bg-[var(--color-ryze-500)] shadow-[0_0_12px_rgba(184,132,30,0.8)]"></div>
@@ -288,7 +288,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row lg:mt-12 lg:justify-start">
+              <div className="mt-8 flex flex-col items-start gap-4 sm:mt-10 sm:gap-5 sm:flex-row lg:mt-12 lg:justify-start">
                 <PrimaryCTA
                   variant="link"
                   href={ROUTES.CONTACT}
@@ -298,14 +298,14 @@ const Home: React.FC = () => {
                   placement="home_hero"
                   className="w-full sm:min-w-[244px] sm:w-auto"
                 />
-                <a href="#programs" className="inline-flex items-center gap-2 text-[0.98rem] font-semibold uppercase tracking-[0.1em] ryze-text-inverse-muted transition-colors hover:ryze-text-inverse">
+                <a href="#programs" className="inline-flex self-center items-center gap-2 text-[0.98rem] font-semibold uppercase tracking-[0.1em] ryze-text-inverse-muted transition-colors hover:ryze-text-inverse sm:self-auto">
                   Explore programs
                   <ArrowRight size={16} />
                 </a>
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[22rem] sm:max-w-[26rem] lg:ml-auto lg:w-[24rem] lg:max-w-none lg:justify-self-end xl:w-[25.5rem]">
+            <div className="relative mx-auto hidden w-full max-w-[22rem] sm:max-w-[26rem] md:block lg:ml-auto lg:w-[24rem] lg:max-w-none lg:justify-self-end xl:w-[25.5rem]">
               <div className="pointer-events-none absolute inset-x-[16%] top-[8%] h-40 rounded-full bg-[rgba(184,132,30,0.18)] blur-3xl"></div>
               <div className="relative rounded-[2.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(28,32,40,0.9)_0%,rgba(17,21,29,0.78)_100%)] p-4 shadow-[0_55px_110px_-42px_rgba(0,0,0,0.92)] backdrop-blur-3xl sm:p-5 lg:p-6">
                 <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)]"></div>
@@ -370,7 +370,7 @@ const Home: React.FC = () => {
           <p className="mb-10 text-center text-sm font-bold tracking-widest ryze-text-secondary uppercase">
             TRUSTED BY STUDENTS FROM AUSTRALIA'S TOP INSTITUTIONS
           </p>
-          <div className="relative w-full overflow-hidden group">
+          <div className="logo-marquee group w-full py-1">
             <div className="logo-marquee-track">
               {(reduceMotion ? schoolLogos : [...schoolLogos, ...schoolLogos]).map((logo, idx) => (
                 <div
@@ -382,7 +382,7 @@ const Home: React.FC = () => {
                     alt={logo.alt}
                     loading="lazy"
                     decoding="async"
-                    className="max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+                    className="block max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
                     aria-hidden={!reduceMotion && idx >= schoolLogos.length}
                   />
                 </div>
@@ -392,7 +392,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <div ref={deferredTriggerRef} className="h-px w-full" aria-hidden="true" />
+      <div ref={deferredTriggerRef} className="h-px w-full ryze-bg-primary" aria-hidden="true" />
       {shouldLoadDeferred && (
         <Suspense fallback={<div className="h-[120vh] w-full ryze-bg-primary" />}>
           <HomeDeferredSections />

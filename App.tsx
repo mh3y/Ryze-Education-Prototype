@@ -94,6 +94,7 @@ const RouteTracking = () => {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
+  const isHome = location.pathname === ROUTES.HOME;
   const programLandingPaths = [
     ROUTES.HSC_MATHS_PROGRAM,
     ROUTES.SELECTIVE_OC_PROGRAM,
@@ -115,7 +116,11 @@ const AppContent: React.FC = () => {
     isDashboard;
 
   const bgClass =
-    shouldShowStarfield || location.pathname === '/ryze-ai' || isLanding ? 'bg-[#0D0D0D]' : 'bg-[var(--bg)]';
+    shouldShowStarfield || location.pathname === '/ryze-ai' || isLanding
+      ? 'bg-[#0D0D0D]'
+      : isHome
+        ? 'bg-[#171d28] md:bg-[var(--bg)]'
+        : 'bg-[var(--bg)]';
 
   return (
     <div className={`relative flex min-h-screen flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>

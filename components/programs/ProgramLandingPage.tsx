@@ -205,35 +205,27 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
     setActiveMobileReview(nextIndex);
   };
 
-  useEffect(() => {
-    if (reduceMotion || typeof window === 'undefined' || featuredTestimonials.length <= 1) return;
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    if (!mediaQuery.matches) return;
-    const interval = window.setInterval(() => scrollToMobileReview(activeMobileReview + 1), 4400);
-    return () => window.clearInterval(interval);
-  }, [activeMobileReview, featuredTestimonials.length, reduceMotion]);
-
   const heroImageClassName =
     config.heroImageClassName || 'object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]';
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
-      <section className="relative overflow-hidden bg-[#11151d] pt-[calc(6rem+env(safe-area-inset-top))]">
+      <section className="relative overflow-hidden bg-[#11151d] pt-[calc(5.5rem+env(safe-area-inset-top))] md:pt-[calc(6rem+env(safe-area-inset-top))]">
         <img src={config.heroImageSrc} srcSet={config.heroImageSrcSet} sizes="100vw" alt={config.heroImageAlt} loading="eager" fetchPriority="high" decoding="async" className={`absolute inset-0 h-full w-full object-cover ${heroImageClassName}`} />
         <div className="absolute inset-0 bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
         <Container className="relative z-10 pb-12 sm:pb-16 lg:pb-20">
-          <div className="grid min-h-[calc(100svh-6rem)] items-end gap-12 py-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
+          <div className="grid min-h-[calc(100svh-5.5rem)] items-end gap-10 py-8 md:min-h-[calc(100svh-6rem)] lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
             <motion.div initial={reduceMotion ? undefined : { opacity: 0, y: 28 }} animate={reduceMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }} className="max-w-[44rem]">
               <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(184,132,30,0.35)] bg-[rgba(255,255,255,0.05)] px-4 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-ryze-400)] backdrop-blur-md"><ShieldCheck size={14} aria-hidden="true" />{config.heroBadge}</div>
-              <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3.6rem,8vw,6.8rem)] font-semibold leading-[0.86] tracking-[-0.055em] text-[#f8f3ea]">{config.heroTitle}</h1>
-              <p className="mt-6 max-w-[34rem] text-[1.05rem] leading-8 text-white/74 sm:text-[1.12rem]">{config.heroSubheading}</p>
+              <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3rem,11vw,6.8rem)] font-semibold leading-[0.88] tracking-[-0.055em] text-[#f8f3ea] sm:text-[clamp(3.6rem,8vw,6.8rem)]">{config.heroTitle}</h1>
+              <p className="mt-5 max-w-[34rem] text-[1rem] leading-7 text-white/74 sm:mt-6 sm:text-[1.12rem] sm:leading-8">{config.heroSubheading}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <PrimaryCTA variant="link" href="#book" size="lg" page={config.pageId} placement={`${config.pageId}_hero`} className="w-full justify-center sm:w-auto" />
                 <a href="tel:+61413885839" onClick={handlePhoneClick} className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto"><Phone size={16} aria-hidden="true" />Call +61 413 885 839</a>
               </div>
               <p className="mt-4 text-sm text-white/58">Free consultation. Clear recommendation. No lock-in commitment.</p>
-              <div className="mt-10 grid gap-5 border-t border-white/10 pt-8 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-8 grid gap-4 border-t border-white/10 pt-6 sm:mt-10 sm:gap-5 sm:pt-8 sm:grid-cols-2 xl:grid-cols-4">
                 {config.heroSignals.map((item, index) => (
                   <motion.div key={item.label} initial={reduceMotion ? undefined : { opacity: 0, y: 18 }} animate={reduceMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.12 + index * 0.08 }} className="border-l border-white/10 pl-4">
                     <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[var(--color-ryze-400)]">{item.label}</p>
