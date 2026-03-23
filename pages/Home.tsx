@@ -257,7 +257,7 @@ const Home: React.FC = () => {
                     <span className="mt-1 block">{t('Tuition')}</span>
                   </h1>
                   <div className="mt-4 sm:mt-6">
-                    <span className="block text-[clamp(1.4rem,6vw,3.15rem)] font-display italic leading-[1.06] tracking-[-0.03em] ryze-text-inverse drop-shadow-[0_6px_18px_rgba(0,0,0,0.38)]">
+                    <span className="block text-[clamp(1.4rem,6vw,3.15rem)] font-display leading-[1.06] tracking-[-0.03em] ryze-text-inverse drop-shadow-[0_6px_18px_rgba(0,0,0,0.38)]">
                       {t('for students aiming higher')}
                     </span>
                   </div>

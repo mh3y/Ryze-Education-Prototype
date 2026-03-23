@@ -1,6 +1,5 @@
 import React from 'react';
-import { Activity, GraduationCap, Laptop, PenTool, Phone, Smile, Star, Trophy, Users } from 'lucide-react';
-import PrimaryCTA from '../PrimaryCTA';
+import { Activity, GraduationCap, Laptop, PenTool, Smile, Star, Trophy, Users } from 'lucide-react';
 
 type HeroSectionProps = {
   onScrollToCta: () => void;
@@ -122,31 +121,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
     {/* Background Overlay */}
     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
-    {/* Simplified Header */}
-    <header className="relative z-20 ryze-container py-4 sm:py-6 flex justify-between items-center gap-3">
-      <div className="text-xl sm:text-2xl md:text-3xl font-display font-bold ryze-text-inverse whitespace-nowrap">RYZE EDUCATION</div>
-      <div>
-      <PrimaryCTA
-        page="maths_tutoring"
-        placement="nav_hero_inline"
-        styleVariant="primary"
-        size="sm"
-        label="Book now"
-        className="sm:hidden"
-      />
-      <PrimaryCTA
-        page="maths_tutoring"
-        placement="nav_hero_inline"
-        styleVariant="primary"
-        size="md"
-        label="Book your free consultation"
-        className="hidden sm:flex"
-      />
-      </div>
-    </header>
-
     {/* Hero Content */}
-    <div className="relative z-10 ryze-container text-center pt-12 sm:pt-16 md:pt-20 pb-10 sm:pb-14 md:pb-16">
+    <div className="relative z-10 ryze-container text-center pt-28 sm:pt-32 md:pt-36 lg:pt-40 pb-10 sm:pb-14 md:pb-16">
       <h1 className="ryze-heading-1 ryze-text-inverse">
         YOUR PATH TO SUCCESS STARTS HERE
       </h1>

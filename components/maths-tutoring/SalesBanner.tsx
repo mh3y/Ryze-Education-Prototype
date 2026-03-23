@@ -6,7 +6,7 @@ type SalesBannerProps = {
 };
 
 const SalesBanner: React.FC<SalesBannerProps> = ({ onPhoneClick }) => (
-  <div className="sticky top-0 z-50 border-b border-[rgba(184,132,30,0.24)] bg-[rgba(23,29,40,0.92)] ryze-text-inverse text-center p-2.5 sm:p-3 shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-500">
+  <div className="sticky top-[calc(env(safe-area-inset-top)+5.35rem)] z-30 border-b border-[rgba(184,132,30,0.24)] bg-[rgba(23,29,40,0.92)] ryze-text-inverse text-center p-2.5 shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-500 sm:top-[calc(env(safe-area-inset-top)+5.75rem)] sm:p-3">
     <div className="ryze-container">
       <p className="font-semibold text-xs sm:text-sm md:text-base leading-relaxed">
         Save up to 50% through early enrolment, multiple subjects, upfront payments, and referrals.
