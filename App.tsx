@@ -133,7 +133,7 @@ const AppContent: React.FC = () => {
         </Suspense>
       )}
 
-      {!isDashboard && !shouldShowStarfield && !isLanding && (
+      {!isDashboard && !shouldShowStarfield && (
         <Suspense fallback={null}>
           <Navbar />
         </Suspense>

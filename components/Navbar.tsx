@@ -53,7 +53,18 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isHeroRoute = ['/', '/ryze-ai', '/contact'].includes(pathname);
+  const heroRoutes = [
+    ROUTES.HOME,
+    ROUTES.RYZE_AI,
+    ROUTES.CONTACT,
+    ROUTES.HSC_MATHS_PROGRAM,
+    ROUTES.SELECTIVE_OC_PROGRAM,
+    ROUTES.ACCELERATED_MATHS_PROGRAM,
+    ROUTES.PRIMARY_MATHS_PROGRAM,
+    ROUTES.JUNIOR_FOUNDATIONS_PROGRAM,
+    ROUTES.MATHS_TUTORING,
+  ];
+  const isHeroRoute = heroRoutes.includes(pathname as typeof heroRoutes[number]);
   const isSolid = isScrolled || isOpen || !isHeroRoute;
   const textClass = isSolid ? 'ryze-text-primary' : 'ryze-text-inverse';
   const shellClass = isSolid
