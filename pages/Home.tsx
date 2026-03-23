@@ -288,7 +288,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-col items-start gap-4 sm:mt-10 sm:gap-5 sm:flex-row lg:mt-12 lg:justify-start">
+              <div className="mt-8 flex flex-col items-start gap-4 sm:mt-10 sm:flex-row sm:items-center sm:gap-5 lg:mt-12">
                 <PrimaryCTA
                   variant="link"
                   href={ROUTES.CONTACT}
@@ -298,7 +298,7 @@ const Home: React.FC = () => {
                   placement="home_hero"
                   className="w-full sm:min-w-[244px] sm:w-auto"
                 />
-                <a href="#programs" className="inline-flex self-center items-center gap-2 text-[0.98rem] font-semibold uppercase tracking-[0.1em] ryze-text-inverse-muted transition-colors hover:ryze-text-inverse sm:self-auto">
+                <a href="#programs" className="inline-flex min-h-[3.5rem] self-center items-center gap-2 text-[0.98rem] font-semibold uppercase tracking-[0.1em] ryze-text-inverse-muted transition-colors hover:ryze-text-inverse sm:self-auto">
                   Explore programs
                   <ArrowRight size={16} />
                 </a>

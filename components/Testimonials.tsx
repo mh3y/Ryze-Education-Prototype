@@ -445,9 +445,12 @@ const Testimonials: React.FC = () => {
               onPointerUp={endDrag}
               onPointerCancel={endDrag}
               className={`ryze-review-rail snap-x snap-proximity overflow-x-auto pb-4 ${
-                isMobileViewport ? '[touch-action:pan-x]' : '[touch-action:pan-y]'
-              } ${isDragging ? 'cursor-grabbing select-none' : isMobileViewport ? 'cursor-auto' : 'cursor-grab'
+                isDragging ? 'cursor-grabbing select-none' : isMobileViewport ? 'cursor-auto' : 'cursor-grab'
               }`}
+              style={{
+                touchAction: isMobileViewport ? 'pan-x pan-y' : 'pan-y',
+                WebkitOverflowScrolling: 'touch',
+              }}
             >
               <div className="flex min-w-max items-stretch gap-3.5 pr-3">
                 {isMobileViewport
