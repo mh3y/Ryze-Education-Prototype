@@ -627,6 +627,7 @@ const HscMathsTutoring: React.FC = () => {
               }
             }}
             className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden"
+            style={{ touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}
           >
             {featuredTestimonials.map((item, index) => (
               <motion.div

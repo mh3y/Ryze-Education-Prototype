@@ -352,7 +352,7 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
               }
             });
             if (nextIndex !== activeMobileReview) setActiveMobileReview(nextIndex);
-          }} className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden">
+          }} className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden" style={{ touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}>
             {featuredTestimonials.map((item, index) => (
               <motion.div key={item.id} initial={reduceMotion ? undefined : { opacity: 0, y: 22 }} whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.45, delay: index * 0.04 }} className="min-w-[88%] snap-center sm:min-w-[62%]">
                 <TestimonialCard achievement={item.achievement} quote={item.message} reviewerName={item.reviewerName} reviewerMeta={`${item.reviewerType} - ${item.studentGrade}`} className="min-h-[17rem] rounded-[1.8rem] border-[rgba(23,29,40,0.1)] bg-[rgba(255,255,255,0.88)] shadow-[0_22px_52px_-38px_rgba(17,21,29,0.22)] backdrop-blur-sm" />
