@@ -40,7 +40,7 @@ const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({ page, href }) => {
   if (!enabled) return null;
 
   return (
-    <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+    <div className="ryze-sticky-cta-shell md:hidden px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]" style={{ ['--ryze-sticky-edge-rgb' as string]: '23, 29, 40' }}>
       <div className="mx-auto max-w-xl rounded-[1.5rem] border border-[rgba(23,29,40,0.12)] bg-[rgba(248,243,234,0.96)] p-3 shadow-[0_16px_44px_-24px_rgba(17,21,29,0.32)] backdrop-blur-md">
         <PrimaryCTA
           variant="link"

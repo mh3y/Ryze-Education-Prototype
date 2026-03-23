@@ -123,7 +123,7 @@ const AppContent: React.FC = () => {
         : 'bg-[var(--bg)]';
 
   return (
-    <div className={`relative flex min-h-screen min-h-[100dvh] flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>
+    <div className={`ryze-marketing-shell relative flex min-h-screen min-h-[100dvh] flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>
       {shouldShowStarfield && (
         <Suspense fallback={null}>
           <div className="pointer-events-none fixed inset-0 z-0">

@@ -62,7 +62,7 @@ const Footer: React.FC = () => {
     : 'ryze-bg-surface ryze-border-subtle';
 
   return (
-    <div className="flex flex-col">
+    <div className="ryze-footer-edge flex flex-col" style={{ ['--ryze-footer-edge-rgb' as string]: isRyzeAi ? '5, 5, 16' : '23, 29, 40' }}>
       {/* 1. SEPARATED PRE-FOOTER CTA (SUBTLE) */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className={`relative isolate flex flex-col items-center justify-between gap-4 overflow-hidden rounded-[1.5rem] border px-6 py-7 sm:px-8 sm:py-8 lg:flex-row ${ctaCardClass}`}>

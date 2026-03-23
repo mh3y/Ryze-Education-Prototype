@@ -50,6 +50,8 @@
   color-scheme: light;
   --ryze-shell-bg: #11151d;
   --ryze-shell-bg-gradient: linear-gradient(180deg, #171d28 0%, #0f172a 100%);
+  --ryze-safe-top: env(safe-area-inset-top, 0px);
+  --ryze-safe-bottom: env(safe-area-inset-bottom, 0px);
   --bg: #f4efe7;
   --surface: #e9dfd0;
   --text: #171c24;
@@ -149,6 +151,101 @@ body {
   min-height: 100%;
   min-height: 100dvh;
   background: transparent;
+}
+
+.ryze-marketing-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.ryze-page-shell--hero-bleed {
+  position: relative;
+  isolation: isolate;
+}
+
+.ryze-hero-edge {
+  --ryze-hero-top-bleed: calc(var(--ryze-safe-top) + clamp(3.75rem, 9vw, 5.25rem));
+  --ryze-hero-bottom-bleed: clamp(2rem, 7vw, 4rem);
+  position: relative;
+  isolation: isolate;
+}
+
+.ryze-hero-visual-bleed {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(-1 * var(--ryze-hero-top-bleed));
+  bottom: calc(-1 * var(--ryze-hero-bottom-bleed));
+}
+
+.ryze-hero-edge::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: calc(-1 * var(--ryze-hero-top-bleed));
+  height: calc(var(--ryze-hero-top-bleed) + 3rem);
+  background: linear-gradient(180deg, rgba(17, 21, 29, 0.26) 0%, rgba(17, 21, 29, 0.12) 48%, rgba(17, 21, 29, 0) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ryze-hero-edge > :not(.ryze-hero-visual-bleed) {
+  position: relative;
+  z-index: 2;
+}
+
+.ryze-footer-edge {
+  --ryze-footer-edge-rgb: 23, 29, 40;
+  position: relative;
+  isolation: isolate;
+}
+
+.ryze-footer-edge::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -3.5rem;
+  height: 3.5rem;
+  background: linear-gradient(180deg, rgba(var(--ryze-footer-edge-rgb), 0) 0%, rgba(var(--ryze-footer-edge-rgb), 0.22) 100%);
+  pointer-events: none;
+}
+
+.ryze-footer-edge::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: calc(var(--ryze-safe-bottom) + 2.75rem);
+  background: linear-gradient(180deg, rgba(var(--ryze-footer-edge-rgb), 0) 0%, rgba(var(--ryze-footer-edge-rgb), 0.2) 32%, rgba(var(--ryze-footer-edge-rgb), 0.92) 100%);
+  pointer-events: none;
+}
+
+.ryze-footer-edge > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ryze-sticky-cta-shell {
+  --ryze-sticky-edge-rgb: 23, 29, 40;
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+}
+
+.ryze-sticky-cta-shell::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: calc(100% + var(--ryze-safe-bottom) + 2.5rem);
+  background: linear-gradient(180deg, rgba(var(--ryze-sticky-edge-rgb), 0) 0%, rgba(var(--ryze-sticky-edge-rgb), 0.12) 36%, rgba(var(--ryze-sticky-edge-rgb), 0.74) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ryze-sticky-cta-shell > * {
+  position: relative;
+  z-index: 1;
 }
 
 h1,

@@ -209,11 +209,11 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
     config.heroImageClassName || 'object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]';
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
-      <section className="relative min-h-screen min-h-[100dvh] overflow-hidden bg-[#11151d] pt-[5.5rem] md:pt-[6rem]">
-        <img src={config.heroImageSrc} srcSet={config.heroImageSrcSet} sizes="100vw" alt={config.heroImageAlt} loading="eager" fetchPriority="high" decoding="async" className={`absolute inset-0 h-full w-full object-cover ${heroImageClassName}`} />
-        <div className="absolute inset-0 bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
+    <div className="ryze-page-shell--hero-bleed min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
+      <section className="ryze-hero-edge relative min-h-screen min-h-[100dvh] overflow-hidden bg-[#11151d] pt-[5.5rem] md:pt-[6rem]">
+        <img src={config.heroImageSrc} srcSet={config.heroImageSrcSet} sizes="100vw" alt={config.heroImageAlt} loading="eager" fetchPriority="high" decoding="async" className={`ryze-hero-visual-bleed h-full w-full object-cover ${heroImageClassName}`} />
+        <div className="ryze-hero-visual-bleed bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
+        <div className="ryze-hero-visual-bleed bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
         <Container className="relative z-10 pb-12 sm:pb-16 lg:pb-20">
           <div className="grid min-h-[calc(100vh-5.5rem)] min-h-[calc(100dvh-5.5rem)] items-end gap-10 py-8 md:min-h-[calc(100vh-6rem)] md:min-h-[calc(100dvh-6rem)] lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
             <motion.div initial={reduceMotion ? undefined : { opacity: 0, y: 28 }} animate={reduceMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }} className="max-w-[44rem]">
