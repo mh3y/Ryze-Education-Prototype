@@ -200,15 +200,74 @@ const HomeDeferredSections: React.FC = () => {
     <>
       <section id="programs" className="ryze-section ryze-bg-primary">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 max-w-3xl">
+          <div className="mb-10 max-w-3xl md:mb-12">
             <div className="eyebrow">Programs</div>
             <h2 className="mt-5 ryze-heading-2 ryze-text-primary">A more exact pathway for each stage of mathematics.</h2>
-              <p className="mt-4 max-w-2xl text-[1.02rem] leading-relaxed ryze-text-secondary">
-                Each Ryze program is shaped around the level of difficulty, independence, and support students need at that point in school.
-              </p>
+            <p className="mt-4 max-w-2xl text-[1rem] leading-relaxed ryze-text-secondary sm:text-[1.02rem]">
+              Each Ryze program is shaped around the level of difficulty, independence, and support students need at that point in school.
+            </p>
           </div>
 
-          <div className="relative">
+          <div className="space-y-5 md:hidden">
+            {programSlides.map((slide) => (
+              <section
+                key={`${slide.id}-mobile`}
+                className="space-y-4 rounded-[2rem] border border-[rgba(23,29,40,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(248,243,234,0.74))] p-4 shadow-[0_24px_58px_-42px_rgba(17,21,29,0.22)]"
+              >
+                <article
+                  id={slide.featured.id}
+                  className="relative overflow-hidden rounded-[1.7rem] border border-[rgba(23,29,40,0.08)] ryze-bg-surface-dark p-5 ryze-text-inverse shadow-[0_28px_72px_-44px_rgba(17,21,29,0.52)]"
+                >
+                  <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,158,43,0.8),transparent)]" />
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-[var(--ryze-200)]">{slide.featured.badge}</p>
+                  <h3 className="mt-3 text-[2rem] font-display font-bold leading-[0.95] tracking-[-0.04em] text-[#f8f3ea]">{slide.featured.title}</h3>
+                  <p className="mt-3 text-[0.95rem] leading-7 ryze-text-inverse-muted">{slide.featured.blurb}</p>
+                  <div className="mt-5 space-y-3 border-t border-white/10 pt-4">
+                    <p className="text-sm font-medium leading-6 ryze-text-inverse-muted">{slide.featured.detailLead}</p>
+                    <p className="text-sm leading-6 ryze-text-inverse-muted">{slide.featured.detailSupport}</p>
+                  </div>
+                  <PrimaryCTA
+                    page="home"
+                    placement={`programs_${slide.featured.id}`}
+                    styleVariant="primary"
+                    size="md"
+                    label={slide.featured.ctaLabel}
+                    href={slide.featured.href}
+                    className="mt-5 w-full"
+                  />
+                </article>
+
+                <div className="space-y-4">
+                  {slide.secondary.map((program) => (
+                    <article
+                      key={`${program.id}-mobile`}
+                      id={program.id}
+                      className="rounded-[1.6rem] border border-[rgba(23,29,40,0.08)] bg-[rgba(248,243,234,0.82)] p-5 shadow-[0_18px_40px_-30px_rgba(17,21,29,0.16)] backdrop-blur-sm"
+                    >
+                      <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">{program.badge}</p>
+                      <h3 className="mt-3 text-[1.55rem] font-display font-bold leading-[0.98] tracking-[-0.035em] ryze-text-primary">{program.title}</h3>
+                      <p className="mt-3 text-sm leading-6 ryze-text-secondary">{program.blurb}</p>
+                      <div className="mt-4 space-y-3 border-t border-[rgba(23,29,40,0.08)] pt-4">
+                        <p className="text-sm font-medium leading-6 ryze-text-primary">{program.detailLead}</p>
+                        <p className="text-sm leading-6 ryze-text-secondary">{program.detailSupport}</p>
+                      </div>
+                      <PrimaryCTA
+                        page="home"
+                        placement={`programs_${program.id}`}
+                        styleVariant="primary"
+                        size="sm"
+                        label={program.ctaLabel}
+                        href={program.href}
+                        className="mt-5 w-full"
+                      />
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <div className="relative hidden md:block">
             <div
               ref={programSlidesRef}
               onPointerDown={(event) => {
@@ -243,7 +302,7 @@ const HomeDeferredSections: React.FC = () => {
                 if (nextIndex !== activeProgramSlide) setActiveProgramSlide(nextIndex);
               }}
               className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-4 sm:gap-6 sm:px-4 sm:pb-3"
-              style={{ touchAction: 'pan-x', cursor: 'grab' }}
+              style={{ touchAction: 'pan-y pan-x', cursor: 'grab' }}
             >
               {programSlides.map((slide) => (
                 <div key={slide.id} className="min-w-full snap-start">
@@ -303,7 +362,7 @@ const HomeDeferredSections: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-3 sm:mt-7">
+          <div className="mt-6 hidden items-center justify-between gap-3 sm:mt-7 md:flex">
             <button
               type="button"
               onClick={() => scrollToProgramSlide(activeProgramSlide - 1)}
@@ -342,7 +401,7 @@ const HomeDeferredSections: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-8 rounded-[1.8rem] border border-[rgba(23,29,40,0.08)] bg-white/55 p-6 backdrop-blur-sm sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <div className="mt-8 rounded-[1.8rem] border border-[rgba(23,29,40,0.08)] bg-white/55 p-5 backdrop-blur-sm sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
             <div>
               <h3 className="ryze-heading-3 ryze-text-primary mb-4">Not sure which format or pathway fits best?</h3>
               <p className="mt-2 text-sm ryze-text-secondary">

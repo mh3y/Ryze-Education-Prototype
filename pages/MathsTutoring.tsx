@@ -208,7 +208,7 @@ const MathsTutoring: React.FC = () => {
 
       <TeamPreview isMobileViewport={isMobileViewport} />
 
-      <div ref={deferredTriggerRef} className="h-px w-full" aria-hidden="true" />
+      <div ref={deferredTriggerRef} className="h-px w-full bg-[#0D0D0D]" aria-hidden="true" />
 
       {shouldLoadDeferred && (
         <React.Suspense fallback={<div className="h-[60vh] w-full ryze-bg-primary" />}>

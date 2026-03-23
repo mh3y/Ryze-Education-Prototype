@@ -307,28 +307,9 @@ const HscMathsTutoring: React.FC = () => {
     setActiveMobileReview(nextIndex);
   };
 
-  useEffect(() => {
-    if (reduceMotion || typeof window === 'undefined' || featuredTestimonials.length <= 1) return;
-
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    if (!mediaQuery.matches) return;
-
-    const interval = window.setInterval(() => {
-      setActiveMobileReview((current) => {
-        const next = (current + 1) % featuredTestimonials.length;
-        const rail = mobileTestimonialsRef.current;
-        const target = rail?.children.item(next) as HTMLElement | null;
-        target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        return next;
-      });
-    }, 4200);
-
-    return () => window.clearInterval(interval);
-  }, [featuredTestimonials.length, reduceMotion]);
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#11151d] text-[#f8f3ea]">
-      <section className="relative overflow-hidden bg-[#11151d] pt-[calc(6rem+env(safe-area-inset-top))]">
+      <section className="relative overflow-hidden bg-[#11151d] pt-[calc(5.5rem+env(safe-area-inset-top))] md:pt-[calc(6rem+env(safe-area-inset-top))]">
         <img
           src={heroImageSrc}
           srcSet={heroImageSrcSet}
@@ -344,7 +325,7 @@ const HscMathsTutoring: React.FC = () => {
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.18)_0%,rgba(17,21,29,0)_26%,rgba(17,21,29,0.26)_100%)]" />
 
         <Container className="relative z-10 pb-12 sm:pb-16 lg:pb-20">
-          <div className="grid min-h-[calc(100svh-6rem)] items-end gap-12 py-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
+          <div className="grid min-h-[calc(100svh-5.5rem)] items-end gap-10 py-8 md:min-h-[calc(100svh-6rem)] lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">
             <motion.div
               initial={reduceMotion ? undefined : { opacity: 0, y: 28 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -358,7 +339,7 @@ const HscMathsTutoring: React.FC = () => {
               <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3.6rem,8vw,6.8rem)] font-semibold leading-[0.86] tracking-[-0.055em] text-[#f8f3ea]">
                 {landingVariant.heroTitle}
               </h1>
-              <p className="mt-6 max-w-[34rem] text-[1.05rem] leading-8 text-white/74 sm:text-[1.12rem]">
+              <p className="mt-5 max-w-[34rem] text-[1rem] leading-7 text-white/74 sm:mt-6 sm:text-[1.12rem] sm:leading-8">
                 {landingVariant.subheading}
               </p>
 
@@ -384,7 +365,7 @@ const HscMathsTutoring: React.FC = () => {
 
               <p className="mt-4 text-sm text-white/58">Free consultation. Clear recommendation. No lock-in commitment.</p>
 
-              <div className="mt-10 grid gap-5 border-t border-white/10 pt-8 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-8 grid gap-4 border-t border-white/10 pt-6 sm:mt-10 sm:gap-5 sm:pt-8 sm:grid-cols-2 xl:grid-cols-4">
                 {heroSignals.map((item, index) => (
                   <motion.div
                     key={item.label}

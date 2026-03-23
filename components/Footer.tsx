@@ -87,7 +87,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* 2. FORMAL MINIMALIST FOOTER */}
-      <footer className={`relative z-20 border-t border-[rgba(255,255,255,0.06)] pt-10 pb-6 transition-colors duration-300 sm:pt-12 ${footerContainerClass}`}>
+      <footer className={`relative z-20 border-t border-[rgba(255,255,255,0.06)] pt-10 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] transition-colors duration-300 sm:pt-12 sm:pb-6 ${footerContainerClass}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-6">
             
