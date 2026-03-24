@@ -83,14 +83,14 @@ const Contact: React.FC = () => {
                         {t("Sometimes it's just easier to talk. Call us directly and we'll help you out.")}
                       </p>
 
-                      <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,176,0,0.38)] bg-[rgba(255,176,0,0.12)] py-5 font-bold text-[#fff5db] transition-all hover:bg-[var(--color-ryze)] hover:text-[var(--accent-foreground)] shadow-lg">
+                      <a href="tel:+61413885839" onClick={handlePhoneClick} className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,176,0,0.38)] bg-[rgba(255,176,0,0.12)] py-5 font-bold text-[#fff5db] shadow-lg transition-[transform,background-color,border-color,color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[var(--color-ryze)] hover:text-[var(--accent-foreground)] hover:shadow-[0_22px_44px_-26px_rgba(184,132,30,0.42)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
                         Give us a call <Phone size={20} fill="currentColor" />
                       </a>
                   </InteractiveLift>
 
                   {/* Card 2: Message Us */}
                   <InteractiveLift as="article" className="bg-[rgba(17,21,29,0.72)] backdrop-blur-md rounded-[2.5rem] shadow-xl p-12 flex flex-col items-center text-center border border-white/14 h-full group">
-                      <div className="w-20 h-20 bg-[rgba(243,231,201,0.92)] rounded-full flex items-center justify-center text-[var(--accent)] mb-8 group-hover:bg-white transition-colors">
+                      <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[rgba(243,231,201,0.92)] text-[var(--accent)] transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[rgba(255,176,0,0.18)] group-hover:text-[#fff5db] group-hover:scale-105">
                         <Send size={32} />
                       </div>
                       <h2 className="ryze-heading-3 ryze-text-inverse mb-4">{t("Message Us")}</h2>
@@ -106,7 +106,7 @@ const Contact: React.FC = () => {
                           const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                           formElement?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                         }}
-                        className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/6 py-5 font-bold text-[rgba(248,243,234,0.84)] transition-all hover:border-[rgba(255,176,0,0.34)] hover:bg-white/10 hover:ryze-text-inverse"
+                        className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/6 py-5 font-bold text-[rgba(248,243,234,0.84)] transition-[transform,background-color,border-color,color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:border-[rgba(255,176,0,0.34)] hover:bg-[rgba(243,231,201,0.14)] hover:text-[#fff5db] hover:shadow-[0_22px_44px_-28px_rgba(17,21,29,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                       >
                         {t("Send Message")} <ArrowRight size={20} />
                       </button>

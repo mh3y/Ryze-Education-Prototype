@@ -110,12 +110,94 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#171d28" />
 
+    <script>
+      (function () {
+        var normalizedPath = window.location.pathname.replace(/\/+$/, '').toLowerCase() || '/';
+        var chrome = {
+          top: '#f4efe7',
+          bottom: '#171d28',
+          solid: '#f4efe7',
+          themeColor: '#f4efe7'
+        };
+
+        var programPaths = {
+          '/hsc-maths-program': true,
+          '/selective-oc-program': true,
+          '/accelerated-maths-program': true,
+          '/primary-maths-program': true,
+          '/junior-foundations-program': true,
+          '/hsc-maths-tutoring': true
+        };
+
+        var midnightPaths = {
+          '/ryze-ai': true,
+          '/login': true,
+          '/admin': true,
+          '/portal': true,
+          '/parent-portal': true,
+          '/tutor-portal': true
+        };
+
+        if (normalizedPath.indexOf('/dashboard') === 0 || midnightPaths[normalizedPath]) {
+          chrome = {
+            top: '#050510',
+            bottom: '#050510',
+            solid: '#050510',
+            themeColor: '#050510'
+          };
+        } else if (normalizedPath === '/') {
+          chrome = {
+            top: '#171d28',
+            bottom: '#171d28',
+            solid: '#171d28',
+            themeColor: '#171d28'
+          };
+        } else if (programPaths[normalizedPath]) {
+          chrome = {
+            top: '#11151d',
+            bottom: '#171d28',
+            solid: '#141922',
+            themeColor: '#11151d'
+          };
+        } else if (normalizedPath === '/maths-tutoring') {
+          chrome = {
+            top: '#0d0d0d',
+            bottom: '#171d28',
+            solid: '#111318',
+            themeColor: '#0d0d0d'
+          };
+        } else if (normalizedPath === '/contact') {
+          chrome = {
+            top: '#171d28',
+            bottom: '#171d28',
+            solid: '#161b24',
+            themeColor: '#171d28'
+          };
+        }
+
+        var root = document.documentElement;
+        root.style.setProperty('--ryze-mobile-chrome-top', chrome.top);
+        root.style.setProperty('--ryze-mobile-chrome-bottom', chrome.bottom);
+        root.style.setProperty('--ryze-mobile-chrome-solid', chrome.solid);
+
+        if (window.matchMedia('(max-width: 767px)').matches) {
+          var themeColorMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', chrome.themeColor);
+          }
+        }
+      })();
+    </script>
+
     <style>
       :root {
         --font-primary: 'Manrope', sans-serif;
         --font-display: 'Cormorant Garamond', serif;
         --ryze-shell-bg: #11151d;
         --ryze-shell-bg-gradient: linear-gradient(180deg, #171d28 0%, #0f172a 100%);
+        --ryze-mobile-chrome-top: #f5eee4;
+        --ryze-mobile-chrome-bottom: #e7dbc8;
+        --ryze-mobile-chrome-solid: #efe3d1;
       }
 
       html,
@@ -153,6 +235,19 @@
         width: 100%;
         touch-action: manipulation;
         box-sizing: border-box;
+      }
+
+      @media (max-width: 767px) {
+        html,
+        body {
+          min-height: 100svh;
+          background-color: var(--ryze-mobile-chrome-solid);
+          background-image: linear-gradient(180deg, var(--ryze-mobile-chrome-top) 0%, var(--ryze-mobile-chrome-bottom) 100%);
+        }
+
+        #root {
+          min-height: 100svh;
+        }
       }
 
       *,

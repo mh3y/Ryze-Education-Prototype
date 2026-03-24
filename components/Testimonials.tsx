@@ -420,7 +420,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials left"
                   onClick={() => scrollRailBy(-1)}
                   disabled={railState.isAtStart}
-                  className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                  className="ryze-surface-control absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 p-0 disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -429,7 +429,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Scroll testimonials right"
                   onClick={() => scrollRailBy(1)}
                   disabled={railState.isAtEnd}
-                  className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.24)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
+                  className="ryze-surface-control absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 p-0 disabled:cursor-not-allowed disabled:opacity-35 lg:inline-flex"
                 >
                   <ArrowRight size={16} />
                 </button>
@@ -491,7 +491,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Show previous testimonial"
                   onClick={() => scrollRailBy(-1)}
                   disabled={railState.isAtStart}
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] px-4 py-2.5 text-[0.9rem] font-semibold ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="ryze-surface-control gap-2 px-4 py-2.5 text-[0.9rem] hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ArrowLeft size={16} />
                   <span>Previous</span>
@@ -504,7 +504,7 @@ const Testimonials: React.FC = () => {
                   aria-label="Show next testimonial"
                   onClick={() => scrollRailBy(1)}
                   disabled={railState.isAtEnd}
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(23,29,40,0.08)] bg-[rgba(255,255,255,0.96)] px-4 py-2.5 text-[0.9rem] font-semibold ryze-text-primary shadow-[0_16px_34px_-22px_rgba(17,21,29,0.22)] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="ryze-surface-control gap-2 px-4 py-2.5 text-[0.9rem] hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <span>Next</span>
                   <ArrowRight size={16} />

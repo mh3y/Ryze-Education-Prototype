@@ -223,7 +223,7 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
               <p className="mt-5 max-w-[34rem] text-[1rem] leading-7 text-white/74 sm:mt-6 sm:text-[1.12rem] sm:leading-8">{config.heroSubheading}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <PrimaryCTA variant="link" href="#book" size="lg" page={config.pageId} placement={`${config.pageId}_hero`} className="w-full justify-center sm:w-auto" />
-                <a href="tel:+61413885839" onClick={handlePhoneClick} className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto"><Phone size={16} aria-hidden="true" />Call +61 413 885 839</a>
+                <a href="tel:+61413885839" onClick={handlePhoneClick} className="ryze-inline-glass-control w-full sm:w-auto"><Phone size={16} aria-hidden="true" />Call +61 413 885 839</a>
               </div>
               <p className="mt-4 text-sm text-white/58">Free consultation. Clear recommendation. No lock-in commitment.</p>
               <div className="mt-8 grid gap-4 border-t border-white/10 pt-6 sm:mt-10 sm:gap-5 sm:pt-8 sm:grid-cols-2 xl:grid-cols-4">
@@ -362,13 +362,13 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
           </div>
           {featuredTestimonials.length > 1 && (
             <div className="mt-5 flex items-center justify-between gap-3 md:hidden">
-              <button type="button" onClick={() => scrollToMobileReview(activeMobileReview - 1)} className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white">Previous</button>
+              <button type="button" onClick={() => scrollToMobileReview(activeMobileReview - 1)} className="ryze-surface-control min-h-11 px-4 text-sm hover:-translate-y-px">Previous</button>
               <div className="flex items-center gap-2" aria-label="Testimonial position">
                 {featuredTestimonials.map((item, index) => (
                   <button key={item.id} type="button" onClick={() => scrollToMobileReview(index)} className={`h-2.5 rounded-full transition-all ${index === activeMobileReview ? 'w-7 bg-[var(--accent)]' : 'w-2.5 bg-[#171d28]/18'}`} aria-label={`Go to testimonial ${index + 1}`} aria-pressed={index === activeMobileReview} />
                 ))}
               </div>
-              <button type="button" onClick={() => scrollToMobileReview(activeMobileReview + 1)} className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white">Next</button>
+              <button type="button" onClick={() => scrollToMobileReview(activeMobileReview + 1)} className="ryze-surface-control min-h-11 px-4 text-sm hover:-translate-y-px">Next</button>
             </div>
           )}
           <div className="mt-8 hidden md:block">
@@ -408,8 +408,8 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
                 ))}
               </div>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <a href="tel:+61413885839" onClick={handlePhoneClick} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"><Phone size={16} aria-hidden="true" />Call +61 413 885 839</a>
-                <a href="https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" onClick={handleWhatsappClick} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 px-6 py-3 text-sm font-semibold text-white/84 transition-colors hover:bg-white/8"><MessageCircle size={16} aria-hidden="true" />Prefer WhatsApp?<ArrowRight size={14} aria-hidden="true" /></a>
+                <a href="tel:+61413885839" onClick={handlePhoneClick} className="ryze-inline-glass-control"><Phone size={16} aria-hidden="true" />Call +61 413 885 839</a>
+                <a href="https://api.whatsapp.com/message/6GUJFT6GY2DHG1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" onClick={handleWhatsappClick} className="ryze-inline-glass-control"><MessageCircle size={16} aria-hidden="true" />Prefer WhatsApp?<ArrowRight size={14} aria-hidden="true" /></a>
               </div>
               <div className="mt-8 flex flex-wrap gap-2">
                 {config.studentSegments.map((segment) => <span key={segment} className="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-xs font-semibold text-white/76">{segment}</span>)}
