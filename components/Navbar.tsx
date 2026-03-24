@@ -218,7 +218,7 @@ const Navbar: React.FC = () => {
     : useInverseRestState
       ? `!min-h-[2.1rem] !rounded-full !border !border-white/24 !bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_100%)] !px-4 !py-1.5 !text-sm !font-semibold !tracking-[0.01em] !text-white !shadow-[0_10px_22px_-18px_rgba(0,0,0,0.34)] !backdrop-blur-xl ${navCtaHoverClass}`
       : `!min-h-[2.1rem] !rounded-full !border !border-[#171d28]/10 !bg-[rgba(23,29,40,0.92)] !px-4 !py-1.5 !text-sm !font-semibold !tracking-[0.01em] !text-[#f8f3ea] !shadow-[0_14px_28px_-22px_rgba(17,21,29,0.22)] ${navCtaHoverClass}`;
-  const mobileBannerClasses = `border-b border-white/10 bg-[linear-gradient(180deg,var(--ryze-mobile-chrome-top)_0%,var(--ryze-mobile-chrome-bottom)_100%)] backdrop-blur-xl transition-shadow duration-300 ${
+  const mobileBannerClasses = `border-b border-white/10 bg-[var(--ryze-mobile-chrome-solid)] backdrop-blur-xl transition-shadow duration-300 ${
     isScrolled || isOpen
       ? isDarkMobileChrome
         ? 'shadow-[0_24px_44px_-28px_rgba(0,0,0,0.5)]'
@@ -237,7 +237,7 @@ const Navbar: React.FC = () => {
     'inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full border border-[rgba(243,212,132,0.38)] bg-[linear-gradient(180deg,rgba(251,246,236,0.98)_0%,rgba(236,224,206,0.98)_100%)] px-3.5 text-[0.77rem] font-semibold tracking-[0.012em] text-[#141b26] shadow-[0_14px_28px_-24px_rgba(0,0,0,0.46),inset_0_1px_0_rgba(255,255,255,0.96)] transition-[transform,box-shadow,filter,border-color,background] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:border-[rgba(255,191,64,0.48)] hover:bg-[linear-gradient(180deg,rgba(253,249,242,1)_0%,rgba(242,231,214,0.99)_100%)] hover:shadow-[0_18px_32px_-22px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,191,64,0.2)] sm:min-h-10 sm:px-4 sm:text-[0.8rem]';
   const mobileMenuButtonClass =
     'inline-flex h-10 w-10 items-center justify-center rounded-[0.95rem] text-[#f8f3ea] transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[rgba(255,176,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,176,0,0.18)]';
-  const mobilePanelShellClass = `overflow-hidden border-b border-white/10 bg-[linear-gradient(180deg,var(--ryze-mobile-chrome-top)_0%,var(--ryze-mobile-chrome-bottom)_100%)] transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+  const mobilePanelShellClass = `overflow-hidden border-b border-white/10 bg-[var(--ryze-mobile-chrome-solid)] transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
     isOpen ? 'max-h-[calc(100svh-4.9rem)] opacity-100' : 'pointer-events-none max-h-0 opacity-0'
   }`;
   const mobileSectionButtonClass =
