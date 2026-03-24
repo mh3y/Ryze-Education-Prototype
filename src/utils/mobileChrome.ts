@@ -10,8 +10,8 @@ export type MobileChromeConfig = {
 
 const MARKETING_CONFIG: MobileChromeConfig = {
   top: '#171d28',
-  bottom: '#0f1724',
-  solid: '#121925',
+  bottom: '#171d28',
+  solid: '#171d28',
   tone: 'dark',
   themeColor: '#171d28',
 };

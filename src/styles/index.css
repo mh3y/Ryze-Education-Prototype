@@ -51,8 +51,8 @@
   --ryze-shell-bg: #11151d;
   --ryze-shell-bg-gradient: linear-gradient(180deg, #171d28 0%, #0f172a 100%);
   --ryze-mobile-chrome-top: #171d28;
-  --ryze-mobile-chrome-bottom: #0f1724;
-  --ryze-mobile-chrome-solid: #121925;
+  --ryze-mobile-chrome-bottom: #171d28;
+  --ryze-mobile-chrome-solid: #171d28;
   --ryze-safe-top: env(safe-area-inset-top, 0px);
   --ryze-safe-bottom: env(safe-area-inset-bottom, 0px);
   --ryze-nav-offset: calc(var(--ryze-safe-top) + 6.5rem);
