@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
   const menuPanelId = 'ryze-mobile-nav-panel';
   const brandLogoUrl =
     'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Book Consultation';
+  const bookConsultationLabel = 'Enrol Now';
   const mobileEnrolLabel = 'Enrol Now';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
@@ -212,7 +212,7 @@ const Navbar: React.FC = () => {
     isSolidNav ? 'bg-[rgba(23,29,40,0.12)]' : useInverseRestState ? 'bg-white/18' : 'bg-[rgba(23,29,40,0.12)]'
   }`;
   const navCtaHoverClass =
-    'hover:!border-[rgba(212,160,58,0.72)] hover:!bg-[#d4a03a] hover:!text-[#11151d] hover:!shadow-[0_18px_42px_-26px_rgba(184,132,30,0.48)] focus-visible:!border-[rgba(212,160,58,0.72)] focus-visible:!bg-[#d4a03a] focus-visible:!text-[#11151d] focus-visible:!shadow-[0_18px_42px_-26px_rgba(184,132,30,0.48)]';
+    'hover:!border-[rgba(212,160,58,0.72)] hover:!bg-[#d4a03a] hover:!text-white hover:!shadow-[0_18px_42px_-26px_rgba(184,132,30,0.48)] focus-visible:!border-[rgba(212,160,58,0.72)] focus-visible:!bg-[#d4a03a] focus-visible:!text-white focus-visible:!shadow-[0_18px_42px_-26px_rgba(184,132,30,0.48)]';
   const desktopCtaClass = isSolidNav
     ? `!min-h-[2.1rem] !rounded-full !border !border-[#171d28]/8 !bg-[#171d28] !px-4 !py-1.5 !text-sm !font-semibold !tracking-[0.01em] !text-[#f8f3ea] !shadow-[0_14px_28px_-20px_rgba(17,21,29,0.36)] ${navCtaHoverClass}`
     : useInverseRestState

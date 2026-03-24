@@ -114,23 +114,13 @@
       (function () {
         var normalizedPath = window.location.pathname.replace(/\/+$/, '').toLowerCase() || '/';
         var chrome = {
-          top: '#f4efe7',
-          bottom: '#171d28',
-          solid: '#f4efe7',
-          themeColor: '#f4efe7'
-        };
-
-        var programPaths = {
-          '/hsc-maths-program': true,
-          '/selective-oc-program': true,
-          '/accelerated-maths-program': true,
-          '/primary-maths-program': true,
-          '/junior-foundations-program': true,
-          '/hsc-maths-tutoring': true
+          top: '#171d28',
+          bottom: '#0f1724',
+          solid: '#121925',
+          themeColor: '#171d28'
         };
 
         var midnightPaths = {
-          '/ryze-ai': true,
           '/login': true,
           '/admin': true,
           '/portal': true,
@@ -148,29 +138,8 @@
         } else if (normalizedPath === '/') {
           chrome = {
             top: '#171d28',
-            bottom: '#171d28',
-            solid: '#171d28',
-            themeColor: '#171d28'
-          };
-        } else if (programPaths[normalizedPath]) {
-          chrome = {
-            top: '#11151d',
-            bottom: '#171d28',
-            solid: '#141922',
-            themeColor: '#11151d'
-          };
-        } else if (normalizedPath === '/maths-tutoring') {
-          chrome = {
-            top: '#0d0d0d',
-            bottom: '#171d28',
-            solid: '#111318',
-            themeColor: '#0d0d0d'
-          };
-        } else if (normalizedPath === '/contact') {
-          chrome = {
-            top: '#171d28',
-            bottom: '#171d28',
-            solid: '#161b24',
+            bottom: '#0f1724',
+            solid: '#121925',
             themeColor: '#171d28'
           };
         }
