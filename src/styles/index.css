@@ -52,6 +52,7 @@
   --ryze-shell-bg-gradient: linear-gradient(180deg, #171d28 0%, #0f172a 100%);
   --ryze-safe-top: env(safe-area-inset-top, 0px);
   --ryze-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ryze-nav-offset: calc(var(--ryze-safe-top) + 6.5rem);
   --bg: #f4efe7;
   --surface: #e9dfd0;
   --text: #171c24;
@@ -127,6 +128,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--ryze-nav-offset);
   background-color: var(--ryze-shell-bg);
   background-image: var(--ryze-shell-bg-gradient);
 }
@@ -145,6 +147,10 @@ body {
   font-family: var(--font-sans);
   line-height: 1.5;
   letter-spacing: -0.015em;
+}
+
+:where(section, div, main, article, nav, aside, footer)[id] {
+  scroll-margin-top: var(--ryze-nav-offset);
 }
 
 #root {

@@ -54,10 +54,12 @@ export const applySeo = (config: SeoConfig) => {
   );
 
   const socialTags: Array<{ property: string; content: string }> = [
+    { property: 'og:type', content: 'website' },
     { property: 'og:title', content: ogTitle },
     { property: 'og:description', content: ogDescription },
     { property: 'og:url', content: canonicalUrl },
     { property: 'og:image', content: ogImage },
+    { property: 'twitter:card', content: 'summary_large_image' },
     { property: 'twitter:title', content: ogTitle },
     { property: 'twitter:description', content: ogDescription },
     { property: 'twitter:url', content: canonicalUrl },

@@ -1,30 +1,60 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Phone, ArrowRight, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { FadeInSection, InteractiveLift } from '../src/components/animation';
 import { useContactForm } from '../src/hooks/useContactForm';
 import { trackPhoneClick } from '../src/lib/tracking';
+import { applySeo } from '../src/utils/seo';
+import { ROUTES } from '../src/constants/routes';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
-  const { formData, status, errorMessage, handleChange, handleSubmit } = useContactForm({
+  const { formData, status, errorMessage, handleChange, handleSubmit, resetForm } = useContactForm({
     page: 'contact',
     subjectPrefix: 'New Enquiry',
   });
 
   const handlePhoneClick = () => trackPhoneClick('contact', 'contact_speak_now');
 
+  useEffect(() => {
+    applySeo({
+      title: 'Contact Ryze Education | Sydney Maths Tutoring',
+      description:
+        'Speak with Ryze Education about private tutoring, small-group maths classes, and the right program for your child in Sydney.',
+      path: ROUTES.CONTACT,
+      ogTitle: 'Contact Ryze Education',
+      ogDescription:
+        'Book a consultation or send an enquiry about private tutoring and small-group maths programs in Sydney.',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'ContactPage',
+        name: 'Contact Ryze Education',
+        url: `${window.location.origin}${ROUTES.CONTACT}`,
+      },
+    });
+  }, []);
+
   return (
         <div className="ryze-page">
           <div className="relative isolate overflow-hidden pt-20">
             {/* Background Image and Overlay Layer */}
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage: `url('https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1280/ryze/images/home-background-overlayv2')`,
-                backgroundPosition: 'center center',
-              }}
+            <img
+              src="https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1280/ryze/images/home-background-overlayv2"
+              srcSet="
+                https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_640/ryze/images/home-background-overlayv2 640w,
+                https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_960/ryze/images/home-background-overlayv2 960w,
+                https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1280/ryze/images/home-background-overlayv2 1280w,
+                https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto,w_1440/ryze/images/home-background-overlayv2 1440w
+              "
+              sizes="100vw"
+              width={1440}
+              height={900}
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,21,29,0.72),rgba(17,21,29,0.82))]" />
 
@@ -70,9 +100,11 @@ const Contact: React.FC = () => {
                       </p>
 
                       <button 
+                        type="button"
                         onClick={() => {
                           const formElement = document.getElementById('contact-form-section');
-                          formElement?.scrollIntoView({ behavior: 'smooth' });
+                          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                          formElement?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                         }}
                         className="mt-auto flex w-full items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/6 py-5 font-bold text-[rgba(248,243,234,0.84)] transition-all hover:border-[rgba(255,176,0,0.34)] hover:bg-white/10 hover:ryze-text-inverse"
                       >
@@ -100,8 +132,9 @@ const Contact: React.FC = () => {
                          <p className="text-green-200 mb-8 max-w-md mx-auto">
                             {t("Thanks for reaching out to Ryze. We've received your enquiry and will be in touch with you shortly.")}
                          </p>
-                         <button 
-                            onClick={() => window.location.reload()}
+                         <button
+                            type="button"
+                            onClick={resetForm}
                             className="rounded-xl border border-slate-600 ryze-bg-surface-dark px-8 py-3 font-sans text-base font-semibold ryze-text-inverse transition-colors hover:bg-slate-700"
                          >
                             {t("Send Another Message")}

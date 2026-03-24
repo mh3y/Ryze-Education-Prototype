@@ -112,6 +112,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
       src={heroImageSrc}
       srcSet={heroImageSrcSet}
       sizes="(max-width: 768px) 100vw, 1200px"
+      width={1600}
+      height={900}
       alt="Maths tutoring - Ryze Education"
       fetchPriority="high"
       loading="eager"
@@ -119,7 +121,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
       className="absolute inset-0 h-full w-full object-cover object-center sm:object-[52%_center] lg:object-[56%_center]"
     />
     {/* Background Overlay */}
-    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div aria-hidden="true" className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
     {/* Hero Content */}
     <div className="relative z-10 ryze-container text-center pt-28 sm:pt-32 md:pt-36 lg:pt-40 pb-10 sm:pb-14 md:pb-16">
@@ -131,6 +133,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
       </p>
       <div className="mt-8 sm:mt-10 md:mt-12 flex flex-col items-center gap-3 sm:gap-4">
         <button
+          type="button"
           onClick={onScrollToCta}
           className="ryze-cta-primary w-full sm:w-auto"
         >

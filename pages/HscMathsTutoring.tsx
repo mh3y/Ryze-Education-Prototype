@@ -303,7 +303,8 @@ const HscMathsTutoring: React.FC = () => {
     const target = rail.children.item(nextIndex) as HTMLElement | null;
     if (!target) return;
 
-    target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'nearest', inline: 'start' });
     setActiveMobileReview(nextIndex);
   };
 
@@ -314,15 +315,17 @@ const HscMathsTutoring: React.FC = () => {
           src={heroImageSrc}
           srcSet={heroImageSrcSet}
           sizes="100vw"
+          width={1600}
+          height={960}
           alt="HSC | Year 11 and 12 program in Sydney"
           loading="eager"
           fetchPriority="high"
           decoding="async"
           className="ryze-hero-visual-bleed h-full w-full scale-x-[-1] object-cover object-center sm:object-[54%_center] lg:object-[62%_center] xl:object-[68%_center]"
         />
-        <div className="ryze-hero-visual-bleed bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
-        <div className="ryze-hero-visual-bleed bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
-        <div className="ryze-hero-visual-bleed bg-[linear-gradient(180deg,rgba(17,21,29,0.18)_0%,rgba(17,21,29,0)_26%,rgba(17,21,29,0.26)_100%)]" />
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[linear-gradient(96deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.9)_36%,rgba(17,21,29,0.56)_64%,rgba(17,21,29,0.78)_100%)]" />
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[radial-gradient(circle_at_78%_22%,rgba(200,158,43,0.16),transparent_24%)]" />
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[linear-gradient(180deg,rgba(17,21,29,0.18)_0%,rgba(17,21,29,0)_26%,rgba(17,21,29,0.26)_100%)]" />
 
         <Container className="relative z-10 pb-12 sm:pb-16 lg:pb-20">
           <div className="grid min-h-[calc(100vh-5.5rem)] min-h-[calc(100dvh-5.5rem)] items-end gap-10 py-8 md:min-h-[calc(100vh-6rem)] md:min-h-[calc(100dvh-6rem)] lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 lg:py-12">

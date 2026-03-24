@@ -19,24 +19,28 @@ export function usePageTracking() {
     if (prevPath.current === path) return;
     prevPath.current = path;
 
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'page_view',
-      page_path: path,
-      page_location: window.location.href,
-      page_title: document.title,
-    });
-
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'page_view', {
+    const frameId = window.requestAnimationFrame(() => {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'page_view',
         page_path: path,
         page_location: window.location.href,
         page_title: document.title,
       });
-    }
 
-    if (typeof window.fbq === 'function') {
-      window.fbq('track', 'PageView');
-    }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'page_view', {
+          page_path: path,
+          page_location: window.location.href,
+          page_title: document.title,
+        });
+      }
+
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'PageView');
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
   }, [location]);
 }
