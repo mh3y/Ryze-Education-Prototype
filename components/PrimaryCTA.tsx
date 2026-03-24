@@ -30,7 +30,7 @@ const sizeClasses: Record<PrimaryCtaSize, string> = {
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-px active:scale-95';
+  'inline-flex items-center justify-center gap-2 transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px active:scale-[0.985]';
 
 const styleVariantClasses: Record<string, string> = {
   primary: 'ryze-cta-primary',

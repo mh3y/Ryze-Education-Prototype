@@ -358,7 +358,7 @@ const HscMathsTutoring: React.FC = () => {
                 <a
                   href="tel:+61413885839"
                   onClick={handlePhoneClick}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:w-auto"
+                  className="ryze-inline-glass-control w-full sm:w-auto"
                   aria-label="Call Ryze Education"
                 >
                   <Phone size={16} aria-hidden="true" />
@@ -657,7 +657,7 @@ const HscMathsTutoring: React.FC = () => {
               <button
                 type="button"
                 onClick={() => scrollToMobileReview(activeMobileReview - 1)}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white"
+                className="ryze-surface-control min-h-11 px-4 text-sm hover:-translate-y-px"
                 aria-label="Show previous testimonial"
               >
                 Previous
@@ -681,7 +681,7 @@ const HscMathsTutoring: React.FC = () => {
               <button
                 type="button"
                 onClick={() => scrollToMobileReview(activeMobileReview + 1)}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171d28]/14 bg-white/70 px-4 text-sm font-semibold text-[#171d28] transition hover:bg-white"
+                className="ryze-surface-control min-h-11 px-4 text-sm hover:-translate-y-px"
                 aria-label="Show next testimonial"
               >
                 Next
@@ -765,7 +765,7 @@ const HscMathsTutoring: React.FC = () => {
                 <a
                   href="tel:+61413885839"
                   onClick={handlePhoneClick}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/6 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                  className="ryze-inline-glass-control"
                   aria-label="Call Ryze Education"
                 >
                   <Phone size={16} aria-hidden="true" />
@@ -776,7 +776,7 @@ const HscMathsTutoring: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleWhatsappClick}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 px-6 py-3 text-sm font-semibold text-white/84 transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                  className="ryze-inline-glass-control"
                   aria-label="Open WhatsApp chat with Ryze Education"
                 >
                   <MessageCircle size={16} aria-hidden="true" />

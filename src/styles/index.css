@@ -50,6 +50,9 @@
   color-scheme: light;
   --ryze-shell-bg: #11151d;
   --ryze-shell-bg-gradient: linear-gradient(180deg, #171d28 0%, #0f172a 100%);
+  --ryze-mobile-chrome-top: #f5eee4;
+  --ryze-mobile-chrome-bottom: #e7dbc8;
+  --ryze-mobile-chrome-solid: #efe3d1;
   --ryze-safe-top: env(safe-area-inset-top, 0px);
   --ryze-safe-bottom: env(safe-area-inset-bottom, 0px);
   --ryze-nav-offset: calc(var(--ryze-safe-top) + 6.5rem);
@@ -84,6 +87,8 @@
   --ryze-motion-testimonial-duration-reverse: 72s;
   --ryze-motion-vertical-scroll-fast: 30s;
   --ryze-motion-vertical-scroll-slow: 38s;
+  --ryze-motion-duration-fast: 240ms;
+  --ryze-motion-ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* --- Ryze Semantic Flavour System --- */
   /* Brand */
@@ -157,6 +162,25 @@ body {
   min-height: 100%;
   min-height: 100dvh;
   background: transparent;
+}
+
+@media (max-width: 767px) {
+  html,
+  body {
+    min-height: 100svh;
+    background-color: var(--ryze-mobile-chrome-solid);
+    background-image: linear-gradient(180deg, var(--ryze-mobile-chrome-top) 0%, var(--ryze-mobile-chrome-bottom) 100%);
+    overscroll-behavior-y: none;
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+
+  body.ryze-mobile-nav-open {
+    overflow: hidden;
+    touch-action: none;
+  }
 }
 
 .ryze-marketing-shell {
@@ -356,6 +380,7 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 .ryze-cta-primary:hover,
 .ryze-cta-primary:focus-visible {
   background-color: var(--ryze-cta-primary-hover);
+  color: var(--ryze-text-inverse);
   box-shadow: 0 0 0 3px rgba(184, 132, 30, 0.4);
   transform: translateY(-1px);
 }
@@ -380,6 +405,7 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
   background-color: var(--ryze-cta-secondary-hover);
   color: var(--ryze-surface-dark);
   border-color: transparent;
+  box-shadow: 0 18px 40px -26px rgba(184, 132, 30, 0.4);
   transform: translateY(-1px);
 }
 
@@ -396,8 +422,10 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 
 .ryze-cta-dark:hover,
 .ryze-cta-dark:focus-visible {
-  background-color: var(--accent);
+  background-color: #d4a03a;
   color: var(--accent-foreground);
+  border-color: rgba(212, 160, 58, 0.58);
+  box-shadow: 0 18px 40px -24px rgba(184, 132, 30, 0.44);
   transform: translateY(-1px);
 }
 
@@ -411,10 +439,77 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
 
 .ryze-cta-ghost:hover,
 .ryze-cta-ghost:focus-visible {
-  background-color: #f8f3ea;
+  background-color: rgba(248, 243, 234, 0.96);
   color: var(--ryze-text-primary);
-  border-color: transparent;
+  border-color: rgba(184, 132, 30, 0.28);
+  box-shadow: 0 18px 40px -26px rgba(17, 21, 29, 0.28);
   transform: translateY(-1px);
+}
+
+.ryze-cta-primary,
+.ryze-cta-secondary,
+.ryze-cta-dark,
+.ryze-cta-ghost {
+  transition:
+    transform var(--ryze-motion-duration-fast) var(--ryze-motion-ease-emphasized),
+    background-color var(--ryze-motion-duration-fast) ease,
+    border-color var(--ryze-motion-duration-fast) ease,
+    color var(--ryze-motion-duration-fast) ease,
+    box-shadow var(--ryze-motion-duration-fast) ease,
+    opacity var(--ryze-motion-duration-fast) ease;
+}
+
+.ryze-surface-control {
+  @apply inline-flex items-center justify-center rounded-full border font-semibold outline-none;
+  border-color: rgba(23, 29, 40, 0.1);
+  background-color: rgba(255, 255, 255, 0.82);
+  color: var(--ryze-text-primary);
+  box-shadow: 0 16px 34px -22px rgba(17, 21, 29, 0.22);
+  transition:
+    background-color var(--ryze-motion-duration-fast) ease,
+    border-color var(--ryze-motion-duration-fast) ease,
+    color var(--ryze-motion-duration-fast) ease,
+    box-shadow var(--ryze-motion-duration-fast) ease;
+}
+
+.ryze-surface-control:hover,
+.ryze-surface-control:focus-visible {
+  border-color: rgba(184, 132, 30, 0.3);
+  background-color: rgba(243, 231, 201, 0.9);
+  color: var(--ryze-text-primary);
+  box-shadow:
+    0 0 0 3px rgba(184, 132, 30, 0.18),
+    0 20px 40px -26px rgba(17, 21, 29, 0.26);
+}
+
+.ryze-inline-glass-control {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold outline-none;
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(248, 243, 234, 0.96);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(10px);
+  transition:
+    transform var(--ryze-motion-duration-fast) var(--ryze-motion-ease-emphasized),
+    background-color var(--ryze-motion-duration-fast) ease,
+    border-color var(--ryze-motion-duration-fast) ease,
+    color var(--ryze-motion-duration-fast) ease,
+    box-shadow var(--ryze-motion-duration-fast) ease;
+}
+
+.ryze-inline-glass-control:hover,
+.ryze-inline-glass-control:focus-visible {
+  border-color: rgba(184, 132, 30, 0.34);
+  background-color: rgba(243, 231, 201, 0.14);
+  color: rgba(248, 243, 234, 0.98);
+  box-shadow:
+    0 0 0 3px rgba(184, 132, 30, 0.18),
+    0 22px 44px -28px rgba(17, 21, 29, 0.34);
+  transform: translateY(-1px);
+}
+
+.ryze-inline-glass-control:active {
+  transform: translateY(0) scale(0.985);
 }
 
 .eyebrow {

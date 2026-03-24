@@ -7,6 +7,7 @@ import FeatureGate from './components/FeatureGate';
 import { ROUTES } from './src/constants/routes';
 import { initTrackingDeferred } from './src/analytics';
 import { usePageTracking } from './src/analytics/router';
+import { getMobileChromeConfig } from './src/utils/mobileChrome';
 
 const Home = lazy(() => import('./pages/Home'));
 const HscMathsTutoring = lazy(() => import('./pages/HscMathsTutoring'));
@@ -109,6 +110,7 @@ const AppContent: React.FC = () => {
   const isMathsLanding = location.pathname.toLowerCase() === ROUTES.MATHS_TUTORING;
   const isProgramLanding = programLandingPaths.includes(location.pathname.toLowerCase() as any);
   const isLanding = isProgramLanding || isMathsLanding;
+  const mobileChrome = getMobileChromeConfig(location.pathname);
 
   const shouldShowStarfield =
     location.pathname === '/login' ||
@@ -124,6 +126,28 @@ const AppContent: React.FC = () => {
       : isHome
         ? 'bg-[#171d28] md:bg-[var(--bg)]'
         : 'bg-[var(--bg)]';
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    const applyThemeColor = () => {
+      if (!themeColorMeta) return;
+      themeColorMeta.setAttribute('content', window.innerWidth >= 768 ? '#171d28' : mobileChrome.themeColor);
+    };
+
+    root.style.setProperty('--ryze-mobile-chrome-top', mobileChrome.top);
+    root.style.setProperty('--ryze-mobile-chrome-bottom', mobileChrome.bottom);
+    root.style.setProperty('--ryze-mobile-chrome-solid', mobileChrome.solid);
+    root.dataset.ryzeMobileChromeTone = mobileChrome.tone;
+
+    applyThemeColor();
+    window.addEventListener('resize', applyThemeColor);
+
+    return () => {
+      window.removeEventListener('resize', applyThemeColor);
+    };
+  }, [mobileChrome.bottom, mobileChrome.solid, mobileChrome.themeColor, mobileChrome.tone, mobileChrome.top]);
 
   return (
     <div className={`ryze-marketing-shell relative flex min-h-screen min-h-[100dvh] flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>

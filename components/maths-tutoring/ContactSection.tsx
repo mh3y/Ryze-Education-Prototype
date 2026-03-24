@@ -93,7 +93,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
 
                 {/* Card 2: Message Us */}
                 <div className="flex h-full flex-col items-center rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] border border-white/14 bg-[rgba(17,21,29,0.72)] p-6 sm:p-8 md:p-12 text-center shadow-xl backdrop-blur-md transition-transform duration-300 group hover:-translate-y-2">
-                  <div className="mb-5 sm:mb-6 md:mb-8 flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-[rgba(243,231,201,0.92)] text-[var(--accent)] transition-colors group-hover:bg-white">
+                  <div className="mb-5 sm:mb-6 md:mb-8 flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-[rgba(243,231,201,0.92)] text-[var(--accent)] transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[rgba(255,176,0,0.18)] group-hover:text-[#fff5db] group-hover:scale-105">
                     <Send size={24} className="sm:hidden" />
                     <Send size={32} className="hidden sm:block" />
                   </div>
