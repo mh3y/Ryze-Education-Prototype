@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Menu, X, Zap } from 'lucide-react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronDown, Menu, X, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import PrimaryCTA from './PrimaryCTA';
 import { trackPrimaryCtaClick } from '../src/analytics';
@@ -18,6 +18,9 @@ const DARK_TOP_NAV_ROUTES = new Set<string>([
   ROUTES.CONTACT,
 ]);
 
+const EXPANDED_NAV_OFFSET = 'calc(env(safe-area-inset-top, 0px) + 6.15rem)';
+const COMPACT_NAV_OFFSET = 'calc(env(safe-area-inset-top, 0px) + 5.3rem)';
+
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,10 +33,10 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const normalizedPathname = pathname.replace(/\/+$/, '') || ROUTES.HOME;
+  const menuPanelId = 'ryze-mobile-nav-panel';
   const brandLogoUrl =
     'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
   const bookConsultationLabel = 'Book Consultation';
-  const enrolNowLabel = 'Enrol Now';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: ROUTES.HOW_IT_WORKS, desc: 'Our process explained.' },
@@ -47,19 +50,47 @@ const Navbar: React.FC = () => {
   ];
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    setIsOpen(false);
+    setAboutDropdownOpen(false);
+    setProgramsDropdownOpen(false);
+    setMobileAboutOpen(false);
+    setMobileProgramsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setMobileAboutOpen(false);
+      setMobileProgramsOpen(false);
+    }
   }, [isOpen]);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768 && isOpen) setIsOpen(false);
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+        setMobileAboutOpen(false);
+        setMobileProgramsOpen(false);
+      }
     };
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setAboutDropdownOpen(false);
+        setProgramsDropdownOpen(false);
+        setMobileAboutOpen(false);
+        setMobileProgramsOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const readScrollTop = () => {
@@ -99,17 +130,35 @@ const Navbar: React.FC = () => {
     };
   }, [pathname]);
 
-  const isSolidNav = isScrolled || isOpen;
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--ryze-nav-offset',
+      isScrolled && !isOpen ? COMPACT_NAV_OFFSET : EXPANDED_NAV_OFFSET,
+    );
+
+    return () => {
+      document.documentElement.style.setProperty('--ryze-nav-offset', EXPANDED_NAV_OFFSET);
+    };
+  }, [isScrolled, isOpen]);
+
+  const isSolidNav = isScrolled || isOpen || aboutDropdownOpen || programsDropdownOpen;
   const useInverseRestState = !isSolidNav && DARK_TOP_NAV_ROUTES.has(normalizedPathname);
   const useLightTopText = useInverseRestState;
-  const navClasses = 'fixed top-0 left-0 z-[70] w-full px-3 sm:px-4 pt-[max(env(safe-area-inset-top),0.35rem)]';
-  const navShellClasses = 'relative rounded-[1.2rem] px-4 py-1.5 sm:px-5 sm:py-2 lg:px-6';
+  const textClass = useLightTopText ? 'text-white' : 'text-[#171d28]';
+  const activeTextClass = 'text-[#8f6517]';
+  const focusRingClass =
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+  const navClasses =
+    'fixed top-0 left-0 z-[70] w-full px-3 sm:px-4 pt-[max(env(safe-area-inset-top),0.35rem)]';
+  const navShellClasses = `relative rounded-[1.2rem] px-4 transition-[padding] duration-300 sm:px-5 lg:px-6 ${
+    isScrolled && !isOpen ? 'py-1.5 sm:py-2' : 'py-2 sm:py-2.5'
+  }`;
   const navSurfaceClasses = `pointer-events-none absolute inset-0 overflow-hidden rounded-[1.2rem] border transition-[background,border-color,box-shadow,transform] duration-500 ease-out ${
     isSolidNav
-      ? 'rounded-[1.2rem] border-[rgba(255,255,255,0.82)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(250,247,243,0.94)_100%)] shadow-[0_18px_42px_-30px_rgba(17,21,29,0.18)] backdrop-blur-xl'
+      ? 'border-[rgba(255,255,255,0.82)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(250,247,243,0.94)_100%)] shadow-[0_18px_42px_-30px_rgba(17,21,29,0.18)] backdrop-blur-xl'
       : useInverseRestState
-        ? 'rounded-[1.2rem] border-white/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.04)_100%)] shadow-[0_16px_36px_-28px_rgba(0,0,0,0.34)] backdrop-blur-[14px]'
-        : 'rounded-[1.2rem] border-[rgba(23,29,40,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.82)_0%,rgba(248,243,234,0.72)_100%)] shadow-[0_16px_36px_-30px_rgba(17,21,29,0.14)] backdrop-blur-[18px]'
+        ? 'border-white/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.04)_100%)] shadow-[0_16px_36px_-28px_rgba(0,0,0,0.34)] backdrop-blur-[14px]'
+        : 'border-[rgba(23,29,40,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.82)_0%,rgba(248,243,234,0.72)_100%)] shadow-[0_16px_36px_-30px_rgba(17,21,29,0.14)] backdrop-blur-[18px]'
   }`;
   const navHighlightClasses = `pointer-events-none absolute inset-[1px] rounded-[calc(1.2rem-1px)] transition-opacity duration-500 ${
     isSolidNav
@@ -121,27 +170,20 @@ const Navbar: React.FC = () => {
   const logoClasses = `relative top-[2px] h-7 w-auto transition duration-200 group-hover:opacity-90 md:top-[3px] md:h-10 ${
     useLightTopText ? 'brightness-0 invert' : ''
   }`;
-  const textClass = useLightTopText ? 'text-white' : 'text-[#171d28]';
-  const activeTextClass = 'text-[#8f6517]';
   const linkClass = (isActive: boolean) =>
-    `${isActive ? activeTextClass : `${textClass} hover:text-[#b87400]`} text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300`;
+    `${isActive ? activeTextClass : `${textClass} hover:text-[#b87400]`} ${focusRingClass} rounded-full px-1 py-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300`;
   const dropdownWrapperClass = (isOpenState: boolean, widthClass: string) =>
     `absolute top-full left-1/2 z-[90] ${widthClass} -translate-x-1/2 pt-5 transition-[opacity,transform] duration-200 ${
       isOpenState ? 'visible scale-100 opacity-100' : 'invisible scale-95 opacity-0'
     }`;
   const dropdownPanelClass =
     'overflow-hidden rounded-[1.2rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(248,245,240,0.88)_100%)] p-2 shadow-[0_26px_60px_-36px_rgba(17,21,29,0.24)] backdrop-blur-2xl';
-
-  const aboutButtonClass = () => {
-    const isActive = ['/the-ryze-truth', ROUTES.HOW_IT_WORKS].includes(normalizedPathname);
-    return isActive ? activeTextClass : `${textClass} hover:text-[#b87400]`;
-  };
-
-  const programsButtonClass = () => {
-    const isActive = programSubLinks.some((item) => item.path === normalizedPathname);
-    return isActive ? activeTextClass : `${textClass} hover:text-[#b87400]`;
-  };
-
+  const aboutButtonClass = ['/the-ryze-truth', ROUTES.HOW_IT_WORKS].includes(normalizedPathname)
+    ? activeTextClass
+    : `${textClass} hover:text-[#b87400]`;
+  const programsButtonClass = programSubLinks.some((item) => item.path === normalizedPathname)
+    ? activeTextClass
+    : `${textClass} hover:text-[#b87400]`;
   const navDividerClass = `mx-3 h-6 w-px ${
     isSolidNav ? 'bg-[rgba(23,29,40,0.12)]' : useInverseRestState ? 'bg-white/18' : 'bg-[rgba(23,29,40,0.12)]'
   }`;
@@ -150,39 +192,58 @@ const Navbar: React.FC = () => {
     : useInverseRestState
       ? '!min-h-[2.1rem] !rounded-full !border !border-white/24 !bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_100%)] !px-4 !py-1.5 !text-sm !font-semibold !tracking-[0.01em] !text-white !shadow-[0_10px_22px_-18px_rgba(0,0,0,0.34)] !backdrop-blur-xl hover:!bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.1)_100%)]'
       : '!min-h-[2.1rem] !rounded-full !border !border-[#171d28]/10 !bg-[rgba(23,29,40,0.92)] !px-4 !py-1.5 !text-sm !font-semibold !tracking-[0.01em] !text-[#f8f3ea] !shadow-[0_14px_28px_-22px_rgba(17,21,29,0.22)] hover:!bg-[#11151d]';
-  const mobileInlineCtaClass = `inline-flex h-10 items-center justify-center rounded-full border px-4 text-sm font-semibold tracking-[0.02em] transition-all duration-200 ${
+  const mobileControlShellClass = `flex items-center gap-1 rounded-full border p-1 transition-[background,border-color,box-shadow] duration-300 ${
     isSolidNav
-      ? 'border-[#171d28]/8 bg-[#171d28] text-[#f8f3ea] shadow-[0_14px_26px_-18px_rgba(17,21,29,0.34)] hover:bg-[#11151d]'
-      : 'border-white/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_100%)] text-white shadow-[0_12px_22px_-18px_rgba(0,0,0,0.3)] backdrop-blur-xl hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.1)_100%)]'
-  }`;
-  const mobileMenuToggleClass = `rounded-full border p-2 transition-all duration-300 ${
-    isSolidNav
-      ? 'border-[#171d28]/8 bg-white/72 text-[#171d28] shadow-[0_10px_22px_-18px_rgba(17,21,29,0.2)] hover:bg-white/88'
+      ? 'border-[rgba(23,29,40,0.1)] bg-white/78 shadow-[0_12px_28px_-20px_rgba(17,21,29,0.22)] backdrop-blur-xl'
       : useInverseRestState
-        ? 'border-white/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_100%)] text-white shadow-[0_10px_22px_-18px_rgba(0,0,0,0.28)] backdrop-blur-xl hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.1)_100%)]'
-        : 'border-[#171d28]/10 bg-white/72 text-[#171d28] shadow-[0_10px_22px_-18px_rgba(17,21,29,0.16)] backdrop-blur-xl hover:bg-white/88'
+        ? 'border-white/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_100%)] shadow-[0_10px_22px_-18px_rgba(0,0,0,0.3)] backdrop-blur-xl'
+        : 'border-[rgba(23,29,40,0.1)] bg-white/74 shadow-[0_12px_28px_-20px_rgba(17,21,29,0.18)] backdrop-blur-xl'
   }`;
+  const mobileBookClass = `inline-flex min-h-10 items-center justify-center rounded-full px-3.5 text-[0.82rem] font-semibold tracking-[0.03em] transition-colors ${
+    isSolidNav
+      ? 'bg-[#171d28] text-[#f8f3ea] hover:bg-[#11151d]'
+      : useInverseRestState
+        ? 'bg-white/10 text-white hover:bg-white/16'
+        : 'bg-[#171d28] text-[#f8f3ea] hover:bg-[#11151d]'
+  }`;
+  const mobileMenuButtonClass = `inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+    isSolidNav
+      ? 'text-[#171d28] hover:bg-[#171d28]/6'
+      : useInverseRestState
+        ? 'text-white hover:bg-white/10'
+        : 'text-[#171d28] hover:bg-[#171d28]/6'
+  }`;
+  const mobilePanelShellClass = `md:hidden transition-[max-height,opacity,transform,margin] duration-300 ease-out ${
+    isOpen ? 'pointer-events-auto mt-3 max-h-[36rem] translate-y-0 opacity-100' : 'pointer-events-none mt-0 max-h-0 -translate-y-2 opacity-0'
+  }`;
+  const mobilePanelSurfaceClass =
+    'overflow-hidden rounded-[1.3rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(248,245,240,0.9)_100%)] p-2 shadow-[0_28px_60px_-38px_rgba(17,21,29,0.28)] backdrop-blur-2xl';
+  const mobileSectionButtonClass =
+    'flex w-full items-center justify-between rounded-[1rem] px-4 py-3 text-left text-base font-semibold text-[#171d28] transition-colors hover:bg-[rgba(23,29,40,0.05)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]';
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `block rounded-[1rem] px-4 py-3 text-base font-semibold transition-colors ${
+      isActive ? 'bg-[rgba(184,132,30,0.12)] text-[var(--accent)]' : 'text-[#171d28] hover:bg-[rgba(23,29,40,0.04)]'
+    } ${focusRingClass}`;
 
   const handleContactNavigate = (placement: string) => {
     trackPrimaryCtaClick('nav', placement);
+    setIsOpen(false);
     navigate(ROUTES.CONTACT);
   };
 
   return (
-    <nav className={navClasses}>
+    <nav className={navClasses} aria-label="Primary">
       <div className="relative mx-auto max-w-7xl">
         <div className={navShellClasses}>
           <div aria-hidden="true" className={navSurfaceClasses}>
             <div className={navHighlightClasses} />
           </div>
-          <div className="relative z-10 flex items-center justify-between">
-            <button
-              type="button"
-              className="group z-50 flex-shrink-0 cursor-pointer"
-              onClick={() => {
-                setIsOpen(false);
-                navigate(ROUTES.HOME);
-              }}
+
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            <Link
+              to={ROUTES.HOME}
+              className={`${focusRingClass} group inline-flex shrink-0 rounded-full`}
+              onClick={() => setIsOpen(false)}
             >
               <img
                 src={brandLogoUrl}
@@ -191,11 +252,27 @@ const Navbar: React.FC = () => {
                 height={64}
                 className={logoClasses}
               />
-            </button>
+            </Link>
 
             <div className="hidden items-center gap-5 md:flex lg:gap-9">
-              <div className="relative" onMouseEnter={() => setAboutDropdownOpen(true)} onMouseLeave={() => setAboutDropdownOpen(false)}>
-                <button className={`flex items-center gap-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300 ${aboutButtonClass()}`}>
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  setAboutDropdownOpen(true);
+                  setProgramsDropdownOpen(false);
+                }}
+                onMouseLeave={() => setAboutDropdownOpen(false)}
+              >
+                <button
+                  type="button"
+                  aria-expanded={aboutDropdownOpen}
+                  aria-haspopup="true"
+                  className={`${focusRingClass} ${aboutButtonClass} flex items-center gap-1 rounded-full px-1 py-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300`}
+                  onClick={() => {
+                    setAboutDropdownOpen((current) => !current);
+                    setProgramsDropdownOpen(false);
+                  }}
+                >
                   {t('About')}
                   <ChevronDown size={14} className={`transition-transform duration-300 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -205,9 +282,12 @@ const Navbar: React.FC = () => {
                       <NavLink
                         key={link.name}
                         to={link.path}
-                        className={({ isActive }: any) =>
-                          `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'}`
+                        className={({ isActive }) =>
+                          `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${focusRingClass} ${
+                            isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'
+                          }`
                         }
+                        onClick={() => setAboutDropdownOpen(false)}
                       >
                         <span className="block text-[0.95rem] font-bold ryze-text-primary">{t(link.name)}</span>
                         {language === 'en' && <span className="mt-0.5 block text-[0.82rem] ryze-text-secondary">{t(link.desc)}</span>}
@@ -217,8 +297,24 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
-              <div className="relative" onMouseEnter={() => setProgramsDropdownOpen(true)} onMouseLeave={() => setProgramsDropdownOpen(false)}>
-                <button className={`flex items-center gap-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300 ${programsButtonClass()}`}>
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  setProgramsDropdownOpen(true);
+                  setAboutDropdownOpen(false);
+                }}
+                onMouseLeave={() => setProgramsDropdownOpen(false)}
+              >
+                <button
+                  type="button"
+                  aria-expanded={programsDropdownOpen}
+                  aria-haspopup="true"
+                  className={`${focusRingClass} ${programsButtonClass} flex items-center gap-1 rounded-full px-1 py-1 text-[0.95rem] font-semibold tracking-[-0.01em] transition-colors duration-300`}
+                  onClick={() => {
+                    setProgramsDropdownOpen((current) => !current);
+                    setAboutDropdownOpen(false);
+                  }}
+                >
                   {t('Programs')}
                   <ChevronDown size={14} className={`transition-transform duration-300 ${programsDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -228,9 +324,12 @@ const Navbar: React.FC = () => {
                       <NavLink
                         key={link.name}
                         to={link.path}
-                        className={({ isActive }: any) =>
-                          `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'}`
+                        className={({ isActive }) =>
+                          `block rounded-[1rem] px-4 py-3 transition-colors duration-200 ${focusRingClass} ${
+                            isActive ? 'bg-[rgba(184,132,30,0.12)]' : 'hover:bg-[rgba(23,29,40,0.04)]'
+                          }`
                         }
+                        onClick={() => setProgramsDropdownOpen(false)}
                       >
                         <span className="block text-[0.95rem] font-bold ryze-text-primary">{t(link.name)}</span>
                         {language === 'en' && <span className="mt-0.5 block text-[0.82rem] ryze-text-secondary">{t(link.desc)}</span>}
@@ -240,10 +339,10 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
-              <NavLink to="/meet-the-team" className={({ isActive }: any) => linkClass(isActive)}>
+              <NavLink to="/meet-the-team" className={({ isActive }) => linkClass(isActive)}>
                 {t('Meet Our Team')}
               </NavLink>
-              <NavLink to="/ryze-ai" className={({ isActive }: any) => linkClass(isActive)}>
+              <NavLink to="/ryze-ai" className={({ isActive }) => linkClass(isActive)}>
                 <span className="flex items-center gap-1.5 whitespace-nowrap">
                   {t('Ryze AI')}
                   <span
@@ -255,11 +354,11 @@ const Navbar: React.FC = () => {
                           : 'border border-[#171d28]/10 bg-[#171d28]/6 text-[#171d28]/72'
                     }`}
                   >
-                  <Zap size={10} fill="currentColor" />
+                    <Zap size={10} fill="currentColor" />
                   </span>
                 </span>
               </NavLink>
-              <NavLink to="/learning-style" className={({ isActive }: any) => linkClass(isActive)}>
+              <NavLink to="/learning-style" className={({ isActive }) => linkClass(isActive)}>
                 {t('Learning Style')}
               </NavLink>
               <div className={navDividerClass} aria-hidden="true" />
@@ -273,121 +372,115 @@ const Navbar: React.FC = () => {
               />
             </div>
 
-            <div className="absolute top-1/2 right-0 z-50 flex -translate-y-1/2 items-center gap-2 md:hidden">
-              {isScrolled && !isOpen && (
+            <div className="md:hidden">
+              <div className={mobileControlShellClass}>
                 <button
                   type="button"
-                  onClick={() => handleContactNavigate('nav_mobile_scroll_inline')}
-                  className={mobileInlineCtaClass}
-                  aria-label="Enrol Now"
+                  onClick={() => handleContactNavigate('nav_mobile_banner')}
+                  className={`${focusRingClass} ${mobileBookClass}`}
+                  aria-label={bookConsultationLabel}
                 >
-                  <span>{enrolNowLabel}</span>
+                  Book
                 </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                aria-label={isOpen ? 'Close menu' : 'Open menu'}
-                className={`${mobileMenuToggleClass} ${isOpen ? 'bg-white/90' : ''}`}
-              >
-                {isOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
+                <div
+                  aria-hidden="true"
+                  className={`h-6 w-px ${
+                    isSolidNav ? 'bg-[#171d28]/10' : useInverseRestState ? 'bg-white/20' : 'bg-[#171d28]/10'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsOpen((current) => !current)}
+                  aria-controls={menuPanelId}
+                  aria-expanded={isOpen}
+                  aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                  className={`${focusRingClass} ${mobileMenuButtonClass}`}
+                >
+                  {isOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={mobilePanelShellClass}>
+            <div id={menuPanelId} className={mobilePanelSurfaceClass}>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  className={mobileSectionButtonClass}
+                  aria-expanded={mobileAboutOpen}
+                  onClick={() => {
+                    setMobileAboutOpen((current) => !current);
+                    setMobileProgramsOpen(false);
+                  }}
+                >
+                  <span>{t('About')}</span>
+                  <ChevronDown size={18} className={`transition-transform duration-200 ${mobileAboutOpen ? 'rotate-180 text-[var(--accent)]' : 'text-[#5b5752]'}`} />
+                </button>
+                {mobileAboutOpen && (
+                  <div className="space-y-1 px-1 pb-2">
+                    {aboutSubLinks.map((link) => (
+                      <NavLink key={link.name} to={link.path} className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                        {t(link.name)}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className={mobileSectionButtonClass}
+                  aria-expanded={mobileProgramsOpen}
+                  onClick={() => {
+                    setMobileProgramsOpen((current) => !current);
+                    setMobileAboutOpen(false);
+                  }}
+                >
+                  <span>{t('Programs')}</span>
+                  <ChevronDown size={18} className={`transition-transform duration-200 ${mobileProgramsOpen ? 'rotate-180 text-[var(--accent)]' : 'text-[#5b5752]'}`} />
+                </button>
+                {mobileProgramsOpen && (
+                  <div className="space-y-1 px-1 pb-2">
+                    {programSubLinks.map((link) => (
+                      <NavLink key={link.name} to={link.path} className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                        {t(link.name)}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+
+                <NavLink to="/meet-the-team" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                  {t('Meet Our Team')}
+                </NavLink>
+                <NavLink to="/ryze-ai" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                  <span className="flex items-center justify-between gap-3">
+                    <span>{t('Ryze AI')}</span>
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(184,132,30,0.12)] text-[var(--accent)]">
+                      <Zap size={12} fill="currentColor" />
+                    </span>
+                  </span>
+                </NavLink>
+                <NavLink to="/learning-style" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                  {t('Learning Style')}
+                </NavLink>
+                <NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
+                  {t('Contact')}
+                </NavLink>
+              </div>
+
+              <div className="mt-3 border-t border-[rgba(23,29,40,0.08)] px-2 pt-3">
+                <PrimaryCTA
+                  page="nav"
+                  placement="nav_mobile"
+                  styleVariant="dark"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      {isOpen && (
-        <div className="fixed inset-0 top-0 z-40 h-screen overflow-y-auto ryze-bg-primary transition-transform duration-300 ease-out">
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close menu"
-            className="absolute top-[calc(env(safe-area-inset-top)+1.15rem)] right-6 z-50 rounded-full border border-white/10 bg-[rgba(23,29,40,0.72)] p-2 text-white shadow-[0_20px_40px_-24px_rgba(0,0,0,0.7)] backdrop-blur-md md:hidden"
-          >
-            <X size={22} />
-          </button>
-          <div className="flex min-h-screen flex-col px-6 pt-24 pb-[calc(env(safe-area-inset-bottom)+3rem)]">
-            <div className="flex-grow space-y-6">
-              <div className="border-b ryze-border-subtle pb-4">
-                <button
-                  onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
-                  className="flex w-full items-center justify-between py-2 text-xl font-semibold ryze-text-primary"
-                >
-                  {t('About')}
-                  <ChevronDown size={20} className={`transition-transform duration-300 ${mobileAboutOpen ? 'rotate-180 text-[var(--accent)]' : 'ryze-text-secondary'}`} />
-                </button>
-                {mobileAboutOpen && (
-                  <div className="overflow-hidden">
-                    <div className="space-y-3 pl-4 pt-2">
-                      {aboutSubLinks.map((link) => (
-                        <NavLink
-                          key={link.name}
-                          to={link.path}
-                          onClick={() => setIsOpen(false)}
-                          className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-[var(--accent)]' : 'ryze-text-secondary'}`}
-                        >
-                          {t(link.name)}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="border-b ryze-border-subtle pb-4">
-                <button
-                  onClick={() => setMobileProgramsOpen(!mobileProgramsOpen)}
-                  className="flex w-full items-center justify-between py-2 text-xl font-semibold ryze-text-primary"
-                >
-                  {t('Programs')}
-                  <ChevronDown size={20} className={`transition-transform duration-300 ${mobileProgramsOpen ? 'rotate-180 text-[var(--accent)]' : 'ryze-text-secondary'}`} />
-                </button>
-                {mobileProgramsOpen && (
-                  <div className="overflow-hidden">
-                    <div className="space-y-3 pl-4 pt-2">
-                      {programSubLinks.map((link) => (
-                        <NavLink
-                          key={link.name}
-                          to={link.path}
-                          onClick={() => setIsOpen(false)}
-                          className={({ isActive }: any) => `block text-base font-medium transition-colors ${isActive ? 'text-[var(--accent)]' : 'ryze-text-secondary'}`}
-                        >
-                          {t(link.name)}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <NavLink to="/meet-the-team" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
-                {t('Meet Our Team')}
-              </NavLink>
-              <NavLink to="/ryze-ai" onClick={() => setIsOpen(false)} className="group flex items-center justify-between border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
-                <span className="flex items-center gap-2">{t('Ryze AI')} <Zap size={18} className="text-[var(--accent)]" fill="currentColor" /></span>
-                <ChevronRight size={20} className="ryze-text-secondary group-hover:text-[var(--accent)]" />
-              </NavLink>
-              <NavLink to="/learning-style" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
-                {t('Learning Style')}
-              </NavLink>
-              <NavLink to="/contact" onClick={() => setIsOpen(false)} className="block border-b ryze-border-subtle pb-4 text-xl font-semibold ryze-text-primary">
-                {t('Contact')}
-              </NavLink>
-            </div>
-
-            <div className="mt-8">
-              <PrimaryCTA
-                page="nav"
-                placement="nav_mobile"
-                styleVariant="dark"
-                className="w-full"
-                onClick={() => setIsOpen(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

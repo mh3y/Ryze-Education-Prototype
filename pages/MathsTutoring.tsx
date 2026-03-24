@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { trackPhoneClick } from '../src/lib/tracking';
+import { applySeo } from '../src/utils/seo';
+import { ROUTES } from '../src/constants/routes';
+import { responsiveCloudinaryImage } from '../src/utils/cloudinary';
 
 // Section components
 import SalesBanner from '../components/maths-tutoring/SalesBanner';
@@ -15,12 +18,21 @@ import FAQSection from '../components/maths-tutoring/FAQSection';
 const Footer = React.lazy(() => import('../components/Footer'));
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
 
+const contactBackgroundImage = responsiveCloudinaryImage(
+  'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_fill,g_auto,w_1440/ryze/images/home-background-overlayv2',
+  {
+    widths: [640, 960, 1280, 1440],
+    aspectRatio: [16, 10],
+    sizes: '100vw',
+    crop: 'fill',
+    gravity: 'auto',
+    quality: 'auto:good',
+  },
+);
+
 const MathsTutoring: React.FC = () => {
   // ── Page-level state ───────────────────────────────────────────────────────
 
-  const [bgImage, setBgImage] = useState(
-    'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,w_960/ryze/images/home-background-overlayv2',
-  );
   const [isMobileViewport, setIsMobileViewport] = useState(true);
   const [shouldLoadDeferred, setShouldLoadDeferred] = useState(false);
   const deferredTriggerRef = useRef<HTMLDivElement | null>(null);
@@ -33,61 +45,33 @@ const MathsTutoring: React.FC = () => {
   const scrollToResults = () => {
     const resultsSection = document.getElementById('real-results-section');
     if (resultsSection) {
-      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      resultsSection.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     }
   };
 
   // ── SEO meta ───────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    document.title = 'Ryze Education | Maths Tutoring Sydney';
-
-    let descriptionTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!descriptionTag) {
-      descriptionTag = document.createElement('meta');
-      descriptionTag.name = 'description';
-      document.head.appendChild(descriptionTag);
-    }
-    descriptionTag.content =
-      'Specialist maths tuition in Sydney, delivered through private tutoring and small-group classes from primary foundations through to senior mathematics.';
-
-    let canonicalTag = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonicalTag) {
-      canonicalTag = document.createElement('link');
-      canonicalTag.rel = 'canonical';
-      document.head.appendChild(canonicalTag);
-    }
-    canonicalTag.href = window.location.origin + window.location.pathname;
+    applySeo({
+      title: 'Ryze Education | Maths Tutoring Sydney',
+      description:
+        'Specialist maths tuition in Sydney, delivered through private tutoring and small-group classes from primary foundations through to senior mathematics.',
+      path: ROUTES.MATHS_TUTORING,
+      ogTitle: 'Ryze Education | Maths Tutoring Sydney',
+      ogDescription:
+        'Private and small-group maths tutoring in Sydney across primary, selective, and senior maths pathways.',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'EducationalOrganization',
+        name: 'Ryze Education',
+        areaServed: 'Sydney',
+        url: `${window.location.origin}${ROUTES.MATHS_TUTORING}`,
+      },
+    });
   }, []);
 
   // ── Responsive background image ──────────────────────────────────────────
-
-  useEffect(() => {
-    const getImageUrl = (width: number) => {
-      const baseUrl = 'https://res.cloudinary.com/dsvjhemjd/image/upload';
-      const imageId = 'ryze/images/home-background-overlayv2';
-      let transformations = 'f_auto,q_auto:good';
-
-      if (width < 768) {
-        transformations += ',w_640';
-      } else if (width >= 768 && width < 1280) {
-        transformations += ',w_960';
-      } else {
-        transformations += ',w_1440';
-      }
-
-      return `${baseUrl}/${transformations}/${imageId}`;
-    };
-
-    const handleResize = () => {
-      const screenWidth = window.innerWidth;
-      setBgImage(getImageUrl(screenWidth));
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // ── Mobile viewport detection ────────────────────────────────────────────
 
@@ -218,7 +202,7 @@ const MathsTutoring: React.FC = () => {
 
       <HowItWorks />
 
-      <ContactSection bgImage={bgImage} onPhoneClick={handlePhoneClick} />
+      <ContactSection bgImage={contactBackgroundImage} onPhoneClick={handlePhoneClick} />
 
       <FAQSection onScrollToCta={scrollToResults} />
 

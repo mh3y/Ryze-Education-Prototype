@@ -1,16 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, ArrowRight, CheckCircle2, Loader2, Phone, Send } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Phone, Send } from 'lucide-react';
 import PrimaryCTA from '../PrimaryCTA';
 import { useContactForm } from '../../src/hooks/useContactForm';
 
 type ContactSectionProps = {
-  bgImage: string;
+  bgImage: {
+    src: string;
+    srcSet: string;
+    sizes: string;
+    width: number;
+    height: number;
+  };
   onPhoneClick: () => void;
 };
 
 const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }) => {
-  const { formData, status, errorMessage, handleChange, handleSubmit } = useContactForm({
+  const { formData, status, errorMessage, handleChange, handleSubmit, resetForm } = useContactForm({
     page: 'maths_tutoring',
     subjectPrefix: 'New Enquiry',
   });
@@ -31,9 +37,11 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
         <div className="relative isolate overflow-hidden pt-20">
           {/* Background Image and Overlay Layer */}
           <img
-            src={bgImage}
-            width={1440}
-            height={900}
+            src={bgImage.src}
+            srcSet={bgImage.srcSet}
+            sizes={bgImage.sizes}
+            width={bgImage.width}
+            height={bgImage.height}
             loading="lazy"
             decoding="async"
             fetchPriority="low"
@@ -45,14 +53,14 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
 
           {/* Content Layer */}
           <div className="relative z-20">
-            <div className="ryze-section-padding px-4">
-              <div className="max-w-4xl mx-auto text-center">
-                <h1 className="mb-4 sm:mb-6 ryze-heading-1 ryze-text-inverse">
-                  Ready to see meaningful progress?
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl font-light text-[rgba(248,243,234,0.8)] max-w-2xl mx-auto">
-                  Talk with us about year level, goals, and whether private tutoring or a small-group class is
-                  the right fit.
+              <div className="ryze-section-padding px-4">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h2 className="mb-4 sm:mb-6 ryze-heading-1 ryze-text-inverse">
+                    Ready to see meaningful progress?
+                  </h2>
+                  <p className="text-base sm:text-lg md:text-xl font-light text-[rgba(248,243,234,0.8)] max-w-2xl mx-auto">
+                    Talk with us about year level, goals, and whether private tutoring or a small-group class is
+                    the right fit.
                 </p>
               </div>
             </div>
@@ -126,7 +134,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
                       you shortly.
                     </p>
                     <button
-                      onClick={() => window.location.reload()}
+                      type="button"
+                      onClick={resetForm}
                       className="ryze-cta-dark px-8 py-3"
                     >
                       Send Another Message
@@ -135,7 +144,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
                 ) : (
                   <form onSubmit={handleSubmit} className="relative space-y-6 font-sans">
                     {status === 'error' && (
-                      <div className="bg-[rgba(239,68,68,0.1)] ryze-text-error p-4 rounded-xl flex items-center gap-3 border border-[var(--ryze-error)] mb-6 animate-in fade-in slide-in-from-top-2">
+                      <div role="alert" className="bg-[rgba(239,68,68,0.1)] ryze-text-error p-4 rounded-xl flex items-center gap-3 border border-[var(--ryze-error)] mb-6 animate-in fade-in slide-in-from-top-2">
                         <AlertCircle size={20} className="shrink-0" />
                         <span className="font-medium">
                           {errorMessage || 'Something went wrong. Please try again or call us directly.'}
@@ -168,6 +177,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
                           name="name"
                           required
                           maxLength={100}
+                          autoComplete="name"
                           value={formData.name}
                           onChange={handleChange}
                           disabled={status === 'sending'}
@@ -187,6 +197,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
                           id="email"
                           name="email"
                           required
+                          autoComplete="email"
+                          inputMode="email"
                           value={formData.email}
                           onChange={handleChange}
                           disabled={status === 'sending'}
@@ -207,7 +219,10 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
                         type="tel"
                         id="phone"
                         name="phone"
+                        required
                         maxLength={20}
+                        autoComplete="tel"
+                        inputMode="tel"
                         value={formData.phone}
                         onChange={handleChange}
                         disabled={status === 'sending'}
@@ -246,6 +261,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ bgImage, onPhoneClick }
 
                     <PrimaryCTA
                       variant="button"
+                      buttonType="submit"
                       page="maths_tutoring"
                       placement="contact_form_submit"
                       styleVariant="primary"

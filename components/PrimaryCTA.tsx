@@ -12,6 +12,7 @@ type PrimaryCTAProps = {
   variant?: PrimaryCtaVariant;
   styleVariant?: 'primary' | 'secondary' | 'dark' | 'ghost';
   size?: PrimaryCtaSize;
+  buttonType?: 'button' | 'submit' | 'reset';
   className?: string;
   href?: string;
   onClick?: () => void;
@@ -44,6 +45,7 @@ const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
   variant = 'link',
   styleVariant = 'primary',
   size = 'md',
+  buttonType = 'button',
   className = '',
   href = '/contact',
   onClick,
@@ -71,7 +73,7 @@ const PrimaryCTA: React.FC<PrimaryCTAProps> = ({
 
   if (variant === 'button') {
     return (
-      <button type="button" className={combinedClassName} onClick={handleClick} aria-label={ariaLabel || label}>
+      <button type={buttonType} className={combinedClassName} onClick={handleClick} aria-label={ariaLabel || label}>
         {icon !== 'arrow' && iconMarkup}
         <span>{label}</span>
         {icon === 'arrow' && iconMarkup}

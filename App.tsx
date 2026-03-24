@@ -43,6 +43,9 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollBehavior: ScrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
     if (!hash) {
       window.scrollTo(0, 0);
       return;
@@ -56,7 +59,7 @@ const ScrollToTop = () => {
       attempts++;
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
         return true;
       }
 
@@ -124,6 +127,13 @@ const AppContent: React.FC = () => {
 
   return (
     <div className={`ryze-marketing-shell relative flex min-h-screen min-h-[100dvh] flex-col overflow-x-hidden font-sans transition-colors duration-300 ${bgClass}`}>
+      <a
+        href="#main-content"
+        className="sr-only fixed left-4 top-4 z-[120] rounded-full bg-[#171d28] px-4 py-2 text-sm font-semibold text-[#f8f3ea] shadow-lg focus:not-sr-only"
+      >
+        Skip to main content
+      </a>
+
       {shouldShowStarfield && (
         <Suspense fallback={null}>
           <div className="pointer-events-none fixed inset-0 z-0">
@@ -139,7 +149,7 @@ const AppContent: React.FC = () => {
         </Suspense>
       )}
 
-      <main className="ryze-main-with-sticky relative z-10 flex w-full flex-grow flex-col">
+      <main id="main-content" className="ryze-main-with-sticky relative z-10 flex w-full flex-grow flex-col" tabIndex={-1}>
         <Routes location={location}>
           <Route path={ROUTES.HOME} element={<PageWrapper><Home /></PageWrapper>} />
           <Route path={ROUTES.HSC_MATHS_PROGRAM} element={<HscMathsTutoring />} />

@@ -233,6 +233,8 @@ const Home: React.FC = () => {
             src={HOME_HERO_IMAGE_SRC}
             srcSet={HOME_HERO_IMAGE_SRC_SET}
             sizes="100vw"
+            width={1600}
+            height={960}
             alt="Specialist maths programs in Sydney - Ryze Education"
             fetchPriority="high"
             loading="eager"
@@ -240,9 +242,9 @@ const Home: React.FC = () => {
             className="h-full w-full scale-[1.04] object-cover object-center blur-[2px] sm:scale-100 sm:object-[52%_28%] sm:blur-0 lg:object-[62%_center] xl:object-[68%_center]"
           />
         </picture>
-        <div className="ryze-hero-visual-bleed bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
-        <div className="ryze-hero-visual-bleed bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
-        <div className="ryze-hero-visual-bleed bg-[linear-gradient(180deg,rgba(17,21,29,0.16)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.24)_100%)]"></div>
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[linear-gradient(92deg,rgba(17,21,29,0.96)_0%,rgba(17,21,29,0.88)_34%,rgba(17,21,29,0.62)_62%,rgba(17,21,29,0.78)_100%)]"></div>
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[radial-gradient(circle_at_84%_78%,rgba(200,158,43,0.12),transparent_20%)]"></div>
+        <div aria-hidden="true" className="ryze-hero-visual-bleed bg-[linear-gradient(180deg,rgba(17,21,29,0.16)_0%,rgba(17,21,29,0)_28%,rgba(17,21,29,0.24)_100%)]"></div>
         <div className="relative z-10 mx-auto flex min-h-[calc(100vh-5.75rem)] min-h-[calc(100dvh-5.75rem)] max-w-7xl items-center px-4 sm:min-h-[calc(100vh-6.75rem)] sm:min-h-[calc(100dvh-6.75rem)] sm:px-6 lg:px-8">
           <div className="grid w-full grid-cols-1 items-center gap-8 py-6 sm:gap-12 sm:py-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(320px,0.74fr)] lg:gap-14 lg:py-8 xl:gap-18">
             <div className="max-w-[44rem] text-left lg:text-left">
