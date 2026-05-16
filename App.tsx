@@ -2,6 +2,7 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import FeatureGate from './components/FeatureGate';
 import { ROUTES } from './src/constants/routes';
@@ -26,13 +27,29 @@ const StudentPortal = lazy(() => import('./pages/StudentPortal'));
 const ParentPortal = lazy(() => import('./pages/ParentPortal'));
 const TutorLogin = lazy(() => import('./pages/TutorLogin'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+// New unified auth pages
+const Login = lazy(() => import('./pages/Login'));
+const DiscordCallback = lazy(() => import('./pages/DiscordCallback'));
+const SetPassword = lazy(() => import('./pages/SetPassword'));
 const TheRyzeTruth = lazy(() => import('./pages/TheRyzeTruth'));
 const MeetTheTeam = lazy(() => import('./pages/MeetOurTeam'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const RyzeAI = lazy(() => import('./pages/RyzeAI'));
 const Contact = lazy(() => import('./pages/Contact'));
 const LearningStyle = lazy(() => import('./pages/LearningStyle'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
+// Dashboard layout + page components
+const DashboardLayout     = lazy(() => import('./components/dashboard/DashboardLayout'));
+const OverviewPage        = lazy(() => import('./pages/dashboard/OverviewPage'));
+const PlaceholderPage     = lazy(() => import('./pages/dashboard/PlaceholderPage'));
+// Legacy dashboard admin views (still used until Phase 3 replaces them)
+const BotHealth      = lazy(() => import('./components/dashboard/admin/BotHealth').then(m => ({ default: m.BotHealth })));
+const StudentsView   = lazy(() => import('./components/dashboard/admin/StudentsView').then(m => ({ default: m.StudentsView })));
+const ClassesView    = lazy(() => import('./components/dashboard/admin/ClassesView').then(m => ({ default: m.ClassesView })));
+const LessonsView    = lazy(() => import('./components/dashboard/admin/LessonsView').then(m => ({ default: m.LessonsView })));
+const AttendanceView = lazy(() => import('./components/dashboard/admin/AttendanceView').then(m => ({ default: m.AttendanceView })));
+const RemindersView  = lazy(() => import('./components/dashboard/admin/RemindersView').then(m => ({ default: m.RemindersView })));
+const AiArena        = lazy(() => import('./components/dashboard/AiArena').then(m => ({ default: m.AiArena })));
+const IngestionStudio = lazy(() => import('./components/dashboard/IngestionStudio').then(m => ({ default: m.IngestionStudio })));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
@@ -118,6 +135,7 @@ const AppContent: React.FC = () => {
     location.pathname === '/portal' ||
     location.pathname === '/parent-portal' ||
     location.pathname === '/tutor-portal' ||
+    location.pathname.startsWith('/auth/') ||
     isDashboard;
 
   const bgClass =
@@ -191,27 +209,48 @@ const AppContent: React.FC = () => {
           <Route path={ROUTES.RYZE_AI} element={<PageWrapper><RyzeAI /></PageWrapper>} />
           <Route path={ROUTES.CONTACT} element={<PageWrapper><Contact /></PageWrapper>} />
           <Route path="/learning-style" element={<PageWrapper><LearningStyle /></PageWrapper>} />
+          {/* ── Auth routes (new unified login system) ── */}
           <Route
             path="/login"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
-                <PageWrapper><PortalHome /></PageWrapper>
+                <PageWrapper><Login /></PageWrapper>
               </FeatureGate>
             }
           />
+          {/* /admin is an alias for /login — kept for backward compat */}
           <Route
             path="/admin"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
-                <PageWrapper><AdminLogin /></PageWrapper>
+                <Navigate to="/login" replace />
               </FeatureGate>
             }
           />
+          {/* Discord OAuth2 callback — exchanges code for JWT */}
+          <Route
+            path="/auth/discord/callback"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <DiscordCallback />
+              </FeatureGate>
+            }
+          />
+          {/* Parent invite / set-password flow */}
+          <Route
+            path="/auth/invite"
+            element={
+              <FeatureGate enabled={ENABLE_DASHBOARD}>
+                <PageWrapper><SetPassword /></PageWrapper>
+              </FeatureGate>
+            }
+          />
+          {/* Legacy portal routes — kept for any existing bookmarks */}
           <Route
             path="/portal"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
-                <PageWrapper><StudentPortal /></PageWrapper>
+                <Navigate to="/login" replace />
               </FeatureGate>
             }
           />
@@ -219,7 +258,7 @@ const AppContent: React.FC = () => {
             path="/parent-portal"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
-                <PageWrapper><ParentPortal /></PageWrapper>
+                <Navigate to="/login" replace />
               </FeatureGate>
             }
           />
@@ -227,20 +266,59 @@ const AppContent: React.FC = () => {
             path="/tutor-portal"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
-                <PageWrapper><TutorLogin /></PageWrapper>
+                <Navigate to="/login" replace />
               </FeatureGate>
             }
           />
+          {/* ── Dashboard (nested routes) ─────────────────────────────────── */}
           <Route
-            path="/dashboard/*"
+            path="/dashboard"
             element={
               <FeatureGate enabled={ENABLE_DASHBOARD}>
                 <ProtectedRoute>
-                  <PageWrapper><Dashboard /></PageWrapper>
+                  <DashboardLayout />
                 </ProtectedRoute>
               </FeatureGate>
             }
-          />
+          >
+            {/* Index: redirect to overview */}
+            <Route index element={<Navigate to="overview" replace />} />
+
+            {/* ── LMS routes ── */}
+            <Route path="overview"    element={<OverviewPage />} />
+            <Route path="ryze-ai"     element={<AiArena />} />
+            <Route path="upload"      element={<IngestionStudio />} />
+            <Route path="analytics"   element={<PlaceholderPage title="Analytics" />} />
+            <Route path="courses"     element={<PlaceholderPage title="Courses" />} />
+            <Route path="assignments" element={<PlaceholderPage title="Assignments" />} />
+            <Route path="settings"    element={<PlaceholderPage title="Settings" />} />
+
+            {/* ── Bot / ops routes ── */}
+            <Route path="bot-health"  element={<BotHealth />} />
+            <Route path="members"     element={<StudentsView />} />
+            <Route path="reminders"   element={<RemindersView />} />
+
+            {/* ── Admin routes (Phase 3+) ── */}
+            <Route path="admin">
+              {/* /dashboard/admin → overview (placeholder until Phase 3A) */}
+              <Route index element={<Navigate to="students" replace />} />
+              <Route path="students"        element={<StudentsView />} />
+              <Route path="classes"         element={<ClassesView />} />
+              <Route path="lessons"         element={<LessonsView />} />
+              <Route path="attendance"      element={<AttendanceView />} />
+              <Route path="parents"         element={<PlaceholderPage title="Parents" />} />
+              <Route path="payments"        element={<PlaceholderPage title="Payments" />} />
+              <Route path="tutor-payments"  element={<PlaceholderPage title="Tutor Payments" />} />
+              <Route path="progress-reports" element={<PlaceholderPage title="Progress Reports" />} />
+              <Route path="homework"        element={<PlaceholderPage title="Homework" />} />
+              <Route path="alerts"          element={<PlaceholderPage title="Alerts" />} />
+              <Route path="resources"       element={<PlaceholderPage title="Resources" />} />
+              <Route path="announcements"   element={<PlaceholderPage title="Announcements" />} />
+            </Route>
+
+            {/* Catch-all — redirect unknown paths to overview */}
+            <Route path="*" element={<Navigate to="overview" replace />} />
+          </Route>
           <Route path={ROUTES.TERMS} element={<PageWrapper><Terms /></PageWrapper>} />
           <Route path={ROUTES.PRIVACY} element={<PageWrapper><Privacy /></PageWrapper>} />
           <Route path={ROUTES.SITEMAP} element={<PageWrapper><Sitemap /></PageWrapper>} />
@@ -267,13 +345,15 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <LanguageProvider>
-        <RouteTracking />
-        <ScrollToTop />
-        <Suspense fallback={<PageLoader />}>
-          <AppContent />
-        </Suspense>
-      </LanguageProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <RouteTracking />
+          <ScrollToTop />
+          <Suspense fallback={<PageLoader />}>
+            <AppContent />
+          </Suspense>
+        </LanguageProvider>
+      </AuthProvider>
     </Router>
   );
 };

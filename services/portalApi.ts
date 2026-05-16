@@ -7,7 +7,11 @@
  *   const health = await portalApi.getHealth();
  */
 
+import { getToken } from './auth';
+
 const BASE_URL = (import.meta as any).env?.VITE_PORTAL_API_URL ?? 'http://localhost:8000';
+// Legacy static API key — used for bot-to-api server calls only.
+// Portal user sessions use JWT Bearer tokens instead.
 const API_KEY  = (import.meta as any).env?.VITE_PORTAL_API_KEY  ?? '';
 
 // ---------------------------------------------------------------------------
@@ -106,10 +110,18 @@ async function apiFetch<T>(path: string, params?: Record<string, string | number
     });
   }
 
+  // Prefer JWT Bearer token (portal users); fall back to static API key (bot/server).
+  const jwt = getToken();
+  const authHeader: Record<string, string> = jwt
+    ? { Authorization: `Bearer ${jwt}` }
+    : API_KEY
+    ? { 'X-API-Key': API_KEY }
+    : {};
+
   const res = await fetch(url.toString(), {
     headers: {
-      'X-API-Key': API_KEY,
       'Content-Type': 'application/json',
+      ...authHeader,
     },
   });
 

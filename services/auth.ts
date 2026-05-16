@@ -1,98 +1,218 @@
+/**
+ * Ryze Education Portal — Auth Service
+ *
+ * Two authentication methods:
+ *   1. Discord OAuth2 — students, tutors, admins (they must have Discord for classes)
+ *   2. Email + password — parents only (parents don't need Discord)
+ *
+ * JWT tokens are issued by the FastAPI backend and stored in localStorage.
+ * The backend exposes:
+ *   GET  /auth/discord/url         → Discord OAuth2 redirect URL
+ *   POST /auth/discord/callback    → Exchange code → JWT
+ *   POST /auth/parent/login        → Email + password → JWT
+ *   POST /auth/parent/set-password → Invite token + new password → JWT
+ *   GET  /auth/me                  → Resolve current token → user info
+ *   POST /auth/logout              → Stateless; client discards token
+ */
 
-// Simulated Authentication Service
-// In a real production environment, this would interface with a Node.js/Python backend via REST API.
+const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? 'http://localhost:8000';
+
+const TOKEN_KEY = 'ryze_portal_token';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 export type UserRole = 'student' | 'parent' | 'tutor' | 'admin';
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
+/** The resolved portal user — returned from /auth/me */
+export interface PortalUser {
   role: UserRole;
-  avatar?: string;
+  name: string;
+  email: string | null;
+  userId: number | null;          // users.id (Discord-linked users)
+  parentProfileId: number | null; // parent_profiles.id (parents)
+  discordUserId: number | null;
 }
 
-// Mock Database of Users
-// In production, never store passwords in frontend code. 
-// This simulates a DB response where we verify credentials.
-const MOCK_USERS: Record<string, { profile: User, passwordHash: string }> = {
-  'student@ryze.edu.au': {
-    profile: { id: 'u1', email: 'student@ryze.edu.au', name: 'Alex Student', role: 'student', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
-    passwordHash: 'password123' 
-  },
-  'parent@ryze.edu.au': {
-    profile: { id: 'u2', email: 'parent@ryze.edu.au', name: 'Sarah Parent', role: 'parent' },
-    passwordHash: 'password123'
-  },
-  'tutor@ryze.edu.au': {
-    profile: { id: 'u3', email: 'tutor@ryze.edu.au', name: 'Mike Tutor', role: 'tutor', avatar: 'https://res.cloudinary.com/dsvjhemjd/image/upload/v1769561928/869fcdd5dfa6efd8ee8853d9e0eea053_kiv4v2.jpg' },
-    passwordHash: 'password123'
-  },
-  'admin@ryze.edu.au': {
-    profile: { id: 'u4', email: 'admin@ryze.edu.au', name: 'System Admin', role: 'admin' },
-    passwordHash: 'ryzeedu0411'
-  }
-};
+interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  role: string;
+  name: string;
+  user_id: number | null;
+  parent_profile_id: number | null;
+}
 
-const STORAGE_KEY = 'ryze_auth_session';
+interface MeResponse {
+  role: string;
+  name: string;
+  email: string | null;
+  user_id: number | null;
+  parent_profile_id: number | null;
+  discord_user_id: number | null;
+}
+
+// ---------------------------------------------------------------------------
+// Token storage helpers
+// ---------------------------------------------------------------------------
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function storeToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+// ---------------------------------------------------------------------------
+// HTTP helpers
+// ---------------------------------------------------------------------------
+
+async function authPost<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const data = await res.json();
+      detail = data.detail ?? detail;
+    } catch { /* ignore */ }
+    throw new Error(detail);
+  }
+
+  return res.json() as Promise<T>;
+}
+
+async function authGet<T>(path: string): Promise<T> {
+  const token = getToken();
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const data = await res.json();
+      detail = data.detail ?? detail;
+    } catch { /* ignore */ }
+    throw new Error(detail);
+  }
+
+  return res.json() as Promise<T>;
+}
+
+// ---------------------------------------------------------------------------
+// Auth API
+// ---------------------------------------------------------------------------
+
+function tokenToUser(data: TokenResponse): PortalUser {
+  return {
+    role: data.role as UserRole,
+    name: data.name,
+    email: null,
+    userId: data.user_id ?? null,
+    parentProfileId: data.parent_profile_id ?? null,
+    discordUserId: null,
+  };
+}
+
+function meToUser(data: MeResponse): PortalUser {
+  return {
+    role: data.role as UserRole,
+    name: data.name,
+    email: data.email ?? null,
+    userId: data.user_id ?? null,
+    parentProfileId: data.parent_profile_id ?? null,
+    discordUserId: data.discord_user_id ?? null,
+  };
+}
 
 export const AuthService = {
-  /**
-   * Simulates a secure backend login attempt.
-   */
-  async login(email: string, password: string): Promise<User> {
-    // Simulate network latency
-    await new Promise(resolve => setTimeout(resolve, 800));
+  // ── Discord OAuth ──────────────────────────────────────────────────────── //
 
-    const userRecord = MOCK_USERS[email.toLowerCase()];
-
-    // Validate credentials (in real app, use bcrypt.compare)
-    if (userRecord && userRecord.passwordHash === password) {
-      // Create Session
-      const sessionData = JSON.stringify({
-        user: userRecord.profile,
-        token: 'mock-jwt-token-' + Math.random().toString(36).substr(2),
-        expiry: new Date().getTime() + (24 * 60 * 60 * 1000) // 24 hours
-      });
-      
-      localStorage.setItem(STORAGE_KEY, sessionData);
-      return userRecord.profile;
-    }
-
-    throw new Error('Invalid email or password');
+  /** Fetch the Discord OAuth2 authorise URL from the backend and redirect. */
+  async redirectToDiscord(): Promise<void> {
+    const res = await authGet<{ url: string }>('/auth/discord/url');
+    window.location.href = res.url;
   },
 
   /**
-   * Clears the session.
+   * Exchange a Discord OAuth2 code for a portal JWT.
+   * Called by the /auth/discord/callback route after Discord redirects back.
    */
-  logout() {
-    localStorage.removeItem(STORAGE_KEY);
+  async handleDiscordCallback(code: string): Promise<PortalUser> {
+    const data = await authPost<TokenResponse>('/auth/discord/callback', { code });
+    storeToken(data.access_token);
+    return tokenToUser(data);
+  },
+
+  // ── Parent email / password ────────────────────────────────────────────── //
+
+  /** Email + password login for parents. */
+  async loginParent(email: string, password: string): Promise<PortalUser> {
+    const data = await authPost<TokenResponse>('/auth/parent/login', { email, password });
+    storeToken(data.access_token);
+    return tokenToUser(data);
   },
 
   /**
-   * Retrieves the current authenticated user or null.
+   * Complete the invite flow — set password using the invite token.
+   * Called from the /auth/invite?token=XXX page.
    */
-  getCurrentUser(): User | null {
-    const sessionStr = localStorage.getItem(STORAGE_KEY);
-    if (!sessionStr) return null;
+  async setPassword(inviteToken: string, newPassword: string): Promise<PortalUser> {
+    const data = await authPost<TokenResponse>('/auth/parent/set-password', {
+      invite_token: inviteToken,
+      new_password: newPassword,
+    });
+    storeToken(data.access_token);
+    return tokenToUser(data);
+  },
+
+  // ── Session ───────────────────────────────────────────────────────────── //
+
+  /**
+   * Resolve the current stored JWT to a PortalUser by calling /auth/me.
+   * Returns null if no token or token is invalid/expired.
+   */
+  async getCurrentUser(): Promise<PortalUser | null> {
+    const token = getToken();
+    if (!token) return null;
 
     try {
-      const session = JSON.parse(sessionStr);
-      // Check expiry
-      if (new Date().getTime() > session.expiry) {
-        this.logout();
-        return null;
-      }
-      return session.user;
-    } catch (e) {
+      const data = await authGet<MeResponse>('/auth/me');
+      return meToUser(data);
+    } catch {
+      clearToken();
       return null;
     }
   },
 
-  /**
-   * Checks if the user is authenticated.
-   */
+  /** Returns true if a JWT is stored locally (does not validate it). */
   isAuthenticated(): boolean {
-    return !!this.getCurrentUser();
-  }
+    return !!getToken();
+  },
+
+  /** Clear the stored JWT. The backend is stateless so no server call needed. */
+  logout(): void {
+    clearToken();
+  },
+
+  // ── Legacy compat shim ────────────────────────────────────────────────── //
+  // The old mock AuthService exposed login(email, password) which was used by
+  // legacy portal pages (AdminLogin, TutorLogin, etc.).  Those pages are now
+  // unreachable (replaced by /login), but we keep this shim so the TypeScript
+  // compiler is happy while the legacy files still exist in the project.
+  /** @deprecated Use loginParent() or redirectToDiscord() instead. */
+  async login(email: string, password: string): Promise<PortalUser> {
+    return this.loginParent(email, password);
+  },
 };
