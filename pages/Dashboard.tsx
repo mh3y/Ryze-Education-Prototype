@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Layers, Search, Bell, Settings, User } from 'lucide-react';
+import { Layers, Search, Settings, User } from 'lucide-react';
 
 // Subsystems
 import { BackendService, UserRole as BackendRole, Course, Assignment } from '../services/backend';
@@ -12,13 +12,23 @@ import { AiArena } from '../components/dashboard/AiArena';
 import { IngestionStudio } from '../components/dashboard/IngestionStudio';
 import { CoursesList, AssignmentsList } from '../components/dashboard/LmsViews';
 
+// Admin portal modules (bot management)
+import { BotHealth }      from '../components/dashboard/admin/BotHealth';
+import { StudentsView }   from '../components/dashboard/admin/StudentsView';
+import { ClassesView }    from '../components/dashboard/admin/ClassesView';
+import { LessonsView }    from '../components/dashboard/admin/LessonsView';
+import { AttendanceView } from '../components/dashboard/admin/AttendanceView';
+import { RemindersView }  from '../components/dashboard/admin/RemindersView';
+
+const ADMIN_MODULES: ModuleType[] = ['bot-health', 'members', 'classes', 'lessons', 'attendance', 'reminders'];
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ModuleType>('overview');
-  const [userRole, setUserRole] = useState<BackendRole>('student'); 
+  const [userRole, setUserRole] = useState<BackendRole>('student');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userName, setUserName] = useState('Student');
-  
+
   // Data State
   const [courses, setCourses] = useState<Course[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -30,7 +40,6 @@ const Dashboard: React.FC = () => {
       setUserRole(user.role as BackendRole);
       setUserName(user.name);
     } else {
-      // Fallback or redirect if protected route failed somehow
       navigate('/login');
     }
   }, [navigate]);
@@ -46,130 +55,159 @@ const Dashboard: React.FC = () => {
     navigate('/login');
   };
 
+  // Human-readable tab title
+  const TAB_TITLES: Partial<Record<ModuleType, string>> = {
+    'bot-health': 'Bot Health',
+    'members': 'Members',
+    'classes': 'Class Groups',
+    'lessons': 'Lessons',
+    'attendance': 'Attendance',
+    'reminders': 'Reminder Logs',
+  };
+  const tabTitle = TAB_TITLES[activeTab] ?? activeTab.replace(/-/g, ' ');
+
   return (
-    <div 
+    <div
       className="flex h-screen bg-transparent font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:ryze-text-primary"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      {/* Application UI Layer */}
       <div className="relative z-10 flex h-full w-full">
-        <Sidebar 
+        <Sidebar
           isOpen={isSidebarOpen}
           activeTab={activeTab}
           userRole={userRole}
           onTabChange={setActiveTab}
-          onRoleChange={(role) => setUserRole(role)} // For debug/demo purposes allow switching in UI
+          onRoleChange={(role) => setUserRole(role)}
           onLogout={handleLogout}
           onCloseMobile={() => setIsSidebarOpen(false)}
         />
 
-        {/* Main Content Area */}
+        {/* Main Content */}
         <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">
-          
+
           {/* Header */}
           <header className="h-16 md:h-20 bg-[#050510]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-10">
-             <div className="flex items-center gap-4">
-                <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="ryze-text-muted hover:ryze-text-inverse transition-colors">
-                  <Layers size={20} />
-                </button>
-                <h1 className="text-lg md:text-xl font-bold ryze-text-inverse capitalize tracking-wide truncate">
-                  {activeTab.replace('-', ' ')}
-                </h1>
-             </div>
-             
-             <div className="flex items-center gap-4 md:gap-6">
-                <div className="relative hidden md:block group">
-                   <input 
-                     type="text" 
-                     placeholder="Search..." 
-                     className="pl-10 pr-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-sm focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 outline-none w-64 transition-all ryze-text-inverse placeholder-slate-500"
-                   />
-                   <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 ryze-text-muted group-hover:ryze-text-inverse-muted transition-colors" />
+            <div className="flex items-center gap-4">
+              <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="ryze-text-muted hover:ryze-text-inverse transition-colors">
+                <Layers size={20} />
+              </button>
+              <h1 className="text-lg md:text-xl font-bold ryze-text-inverse capitalize tracking-wide truncate">
+                {tabTitle}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-4 md:gap-6">
+              <div className="relative hidden md:block group">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="pl-10 pr-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-sm focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 outline-none w-64 transition-all ryze-text-inverse placeholder-slate-500"
+                />
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 ryze-text-muted group-hover:ryze-text-inverse-muted transition-colors" />
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right hidden md:block">
+                  <div className="text-sm font-bold ryze-text-inverse">{userName}</div>
+                  <div className="text-xs ryze-text-muted capitalize">{userRole}</div>
                 </div>
-                <div className="flex items-center gap-4">
-                   <div className="text-right hidden md:block">
-                      <div className="text-sm font-bold ryze-text-inverse">{userName}</div>
-                      <div className="text-xs ryze-text-muted capitalize">{userRole}</div>
-                   </div>
-                   <div className="w-8 h-8 rounded-full bg-[#FFB000] flex items-center justify-center text-[#0a0f1e] font-bold">
-                      <User size={16} />
-                   </div>
+                <div className="w-8 h-8 rounded-full bg-[#FFB000] flex items-center justify-center text-[#0a0f1e] font-bold">
+                  <User size={16} />
                 </div>
-             </div>
+              </div>
+            </div>
           </header>
 
-          {/* 3. Subsystem Views */}
+          {/* Content */}
           <div className="flex-1 overflow-y-auto p-4 md:p-8 relative bg-transparent scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent scroll-smooth">
-             {/* Subtle Grid Effect */}
-             <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03] pointer-events-none" />
 
-             <div className="relative z-10 h-full max-w-[1600px] mx-auto pb-20 md:pb-0">
-                {/* LMS OVERVIEW */}
-                {activeTab === 'overview' && (
-                  <div className="space-y-10">
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-6 md:p-10 ryze-text-inverse relative overflow-hidden border border-white/5 shadow-2xl group"
-                      >
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-700"></div>
-                        <div className="relative z-10">
-                            <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, {userName.split(' ')[0]}.</h2>
-                            <p className="ryze-text-muted mb-8 max-w-xl text-base md:text-lg leading-relaxed">
-                              {userRole === 'student' ? "Ryze AI has analysed your last assignment. Focus on Quadratic Equations this week." : "You have 4 assignments pending review."}
-                            </p>
-                            <button onClick={() => setActiveTab('ryze-ai')} className="px-8 py-3.5 bg-[#FFB000] text-[#050510] font-bold rounded-xl hover:bg-[#ffc133] transition-all shadow-[0_0_20px_rgba(255,176,0,0.2)] hover:shadow-[0_0_30px_rgba(255,176,0,0.4)]">
-                              Launch AI Arena
-                            </button>
-                        </div>
-                      </motion.div>
-                      
-                      <div>
-                        <h3 className="font-bold text-2xl ryze-text-inverse mb-6">Your Courses</h3>
-                        <CoursesList courses={courses} />
-                      </div>
-                  </div>
-                )}
+            <div className="relative z-10 h-full max-w-[1600px] mx-auto pb-20 md:pb-0">
 
-                {/* LMS COURSES */}
-                {activeTab === 'courses' && (
-                    <div>
-                      <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Active Enrolments</h2>
-                      <CoursesList courses={courses} />
-                    </div>
-                )}
-
-                {/* LMS ASSIGNMENTS */}
-                {activeTab === 'assignments' && (
-                    <div>
-                      <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Assignments</h2>
-                      <AssignmentsList assignments={assignments} />
-                    </div>
-                )}
-
-                {/* RYZE AI ENGINE */}
-                {activeTab === 'ryze-ai' && <AiArena />}
-
-                {/* CONTENT INGESTION */}
-                {activeTab === 'upload' && <IngestionStudio />}
-
-                {/* PLACEHOLDERS */}
-                {['analytics', 'users', 'settings'].includes(activeTab) && (
-                    <div className="h-full flex flex-col items-center justify-center text-center">
-                      <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center ryze-text-muted mb-6 border border-white/5">
-                          <Settings size={40} />
-                      </div>
-                      <h2 className="text-3xl font-bold ryze-text-inverse mb-3">Module Under Construction</h2>
-                      <p className="ryze-text-muted max-w-md mb-8 leading-relaxed">
-                          The <strong>{activeTab}</strong> module is defined in the architecture but not yet implemented in this preview.
+              {/* ── LMS OVERVIEW ── */}
+              {activeTab === 'overview' && (
+                <div className="space-y-10">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-gradient-to-r from-[#0a0f1e] to-[#111827] rounded-[2rem] p-6 md:p-10 ryze-text-inverse relative overflow-hidden border border-white/5 shadow-2xl group"
+                  >
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFB000] rounded-full blur-[150px] opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-700" />
+                    <div className="relative z-10">
+                      <h2 className="text-2xl md:text-4xl font-bold mb-4">Welcome Back, {userName.split(' ')[0]}.</h2>
+                      <p className="ryze-text-muted mb-8 max-w-xl text-base md:text-lg leading-relaxed">
+                        {userRole === 'student'
+                          ? 'Ryze AI has analysed your last assignment. Focus on Quadratic Equations this week.'
+                          : userRole === 'admin'
+                          ? 'Manage your classes, students, and bot operations from the admin portal below.'
+                          : 'You have 4 assignments pending review.'}
                       </p>
-                      <button onClick={() => setActiveTab('overview')} className="px-8 py-3 bg-white/10 hover:bg-white/20 ryze-text-inverse font-bold rounded-xl transition-all border border-white/5">
-                          Return to Dashboard
-                      </button>
+                      <div className="flex flex-wrap gap-3">
+                        <button onClick={() => setActiveTab('ryze-ai')} className="px-8 py-3.5 bg-[#FFB000] text-[#050510] font-bold rounded-xl hover:bg-[#ffc133] transition-all shadow-[0_0_20px_rgba(255,176,0,0.2)] hover:shadow-[0_0_30px_rgba(255,176,0,0.4)]">
+                          Launch AI Arena
+                        </button>
+                        {userRole === 'admin' && (
+                          <button onClick={() => setActiveTab('bot-health')} className="px-8 py-3.5 bg-white/10 text-slate-200 font-bold rounded-xl hover:bg-white/20 transition-all border border-white/10">
+                            Bot Status
+                          </button>
+                        )}
+                      </div>
                     </div>
-                )}
-             </div>
+                  </motion.div>
 
+                  <div>
+                    <h3 className="font-bold text-2xl ryze-text-inverse mb-6">Your Courses</h3>
+                    <CoursesList courses={courses} />
+                  </div>
+                </div>
+              )}
+
+              {/* ── LMS COURSES ── */}
+              {activeTab === 'courses' && (
+                <div>
+                  <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Active Enrolments</h2>
+                  <CoursesList courses={courses} />
+                </div>
+              )}
+
+              {/* ── LMS ASSIGNMENTS ── */}
+              {activeTab === 'assignments' && (
+                <div>
+                  <h2 className="text-3xl font-bold ryze-text-inverse mb-8">Assignments</h2>
+                  <AssignmentsList assignments={assignments} />
+                </div>
+              )}
+
+              {/* ── RYZE AI ── */}
+              {activeTab === 'ryze-ai' && <AiArena />}
+
+              {/* ── INGESTION STUDIO ── */}
+              {activeTab === 'upload' && <IngestionStudio />}
+
+              {/* ── ANALYTICS / SETTINGS (placeholder) ── */}
+              {['analytics', 'settings'].includes(activeTab) && (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center ryze-text-muted mb-6 border border-white/5">
+                    <Settings size={40} />
+                  </div>
+                  <h2 className="text-3xl font-bold ryze-text-inverse mb-3">Module Under Construction</h2>
+                  <p className="ryze-text-muted max-w-md mb-8 leading-relaxed">
+                    The <strong>{activeTab}</strong> module is defined in the architecture but not yet implemented.
+                  </p>
+                  <button onClick={() => setActiveTab('overview')} className="px-8 py-3 bg-white/10 hover:bg-white/20 ryze-text-inverse font-bold rounded-xl transition-all border border-white/5">
+                    Return to Dashboard
+                  </button>
+                </div>
+              )}
+
+              {/* ── ADMIN PORTAL MODULES ── */}
+              {activeTab === 'bot-health'  && <BotHealth />}
+              {activeTab === 'members'     && <StudentsView />}
+              {activeTab === 'classes'     && <ClassesView />}
+              {activeTab === 'lessons'     && <LessonsView />}
+              {activeTab === 'attendance'  && <AttendanceView />}
+              {activeTab === 'reminders'   && <RemindersView />}
+
+            </div>
           </div>
         </main>
       </div>
