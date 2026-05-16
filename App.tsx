@@ -50,6 +50,8 @@ const AttendanceView = lazy(() => import('./components/dashboard/admin/Attendanc
 const RemindersView  = lazy(() => import('./components/dashboard/admin/RemindersView').then(m => ({ default: m.RemindersView })));
 const AiArena        = lazy(() => import('./components/dashboard/AiArena').then(m => ({ default: m.AiArena })));
 const IngestionStudio = lazy(() => import('./components/dashboard/IngestionStudio').then(m => ({ default: m.IngestionStudio })));
+// Phase 3 admin pages
+const AdminOverview  = lazy(() => import('./pages/dashboard/admin/AdminOverview'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
@@ -300,8 +302,8 @@ const AppContent: React.FC = () => {
 
             {/* ── Admin routes (Phase 3+) ── */}
             <Route path="admin">
-              {/* /dashboard/admin → overview (placeholder until Phase 3A) */}
-              <Route index element={<Navigate to="students" replace />} />
+              {/* /dashboard/admin → admin overview */}
+              <Route index element={<AdminOverview />} />
               <Route path="students"        element={<StudentsView />} />
               <Route path="classes"         element={<ClassesView />} />
               <Route path="lessons"         element={<LessonsView />} />

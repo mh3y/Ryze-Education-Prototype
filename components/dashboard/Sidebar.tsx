@@ -45,16 +45,17 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
   { path: 'settings',    label: 'Settings',         icon: Settings,        roles: ['student', 'tutor', 'admin'], group: 'lms' },
 
   // ── Admin portal ─────────────────────────────────────────────────────────
-  { path: 'bot-health',  label: 'Bot Health',       icon: Activity,        roles: ['admin'], group: 'admin' },
-  { path: 'admin/students',   label: 'Students',    icon: Users,           roles: ['admin'], group: 'admin' },
-  { path: 'admin/parents',    label: 'Parents',     icon: Home,            roles: ['admin'], group: 'admin' },
-  { path: 'admin/classes',    label: 'Classes',     icon: BookOpen,        roles: ['admin'], group: 'admin' },
-  { path: 'admin/lessons',    label: 'Lessons',     icon: CalendarDays,    roles: ['admin'], group: 'admin' },
-  { path: 'admin/attendance', label: 'Attendance',  icon: ClipboardList,   roles: ['admin', 'tutor'], group: 'admin' },
-  { path: 'admin/payments',   label: 'Payments',    icon: CreditCard,      roles: ['admin'], group: 'admin' },
+  { path: 'admin',            label: 'Overview',         icon: LayoutDashboard, roles: ['admin'], group: 'admin' },
+  { path: 'bot-health',       label: 'Bot Health',       icon: Activity,        roles: ['admin'], group: 'admin' },
+  { path: 'admin/students',   label: 'Students',         icon: Users,           roles: ['admin'], group: 'admin' },
+  { path: 'admin/parents',    label: 'Parents',          icon: Home,            roles: ['admin'], group: 'admin' },
+  { path: 'admin/classes',    label: 'Classes',          icon: BookOpen,        roles: ['admin'], group: 'admin' },
+  { path: 'admin/lessons',    label: 'Lessons',          icon: CalendarDays,    roles: ['admin'], group: 'admin' },
+  { path: 'admin/attendance', label: 'Attendance',       icon: ClipboardList,   roles: ['admin', 'tutor'], group: 'admin' },
+  { path: 'admin/payments',   label: 'Payments',         icon: CreditCard,      roles: ['admin'], group: 'admin' },
   { path: 'admin/progress-reports', label: 'Progress Reports', icon: ClipboardCheck, roles: ['admin', 'tutor'], group: 'admin' },
-  { path: 'admin/alerts',     label: 'Alerts',      icon: ShieldAlert,     roles: ['admin'], group: 'admin' },
-  { path: 'reminders',        label: 'Reminder Logs', icon: Bell,          roles: ['admin'], group: 'admin' },
+  { path: 'admin/alerts',     label: 'Alerts',           icon: ShieldAlert,     roles: ['admin'], group: 'admin' },
+  { path: 'reminders',        label: 'Reminder Logs',    icon: Bell,            roles: ['admin'], group: 'admin' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -90,7 +91,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   /** True when the current URL matches this nav item's path. */
   const isActive = (item: SidebarItem): boolean => {
     const fullPath = `/dashboard/${item.path}`;
-    // Use startsWith so /dashboard/admin/students matches 'admin/students'
+    // For 'admin' (the overview), only match the exact path — not sub-routes.
+    if (item.path === 'admin') {
+      return location.pathname === fullPath;
+    }
+    // For all others, startsWith matches sub-routes too.
     return location.pathname === fullPath || location.pathname.startsWith(fullPath + '/');
   };
 
