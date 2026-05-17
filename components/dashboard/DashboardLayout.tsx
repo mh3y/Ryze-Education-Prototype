@@ -13,6 +13,10 @@ import {
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  PortalSettingsProvider,
+  usePortalSettings,
+} from '../../contexts/PortalSettingsContext';
 
 // ---------------------------------------------------------------------------
 // Breadcrumb helpers
@@ -72,10 +76,12 @@ function getInitials(name: string): string {
 // Layout
 // ---------------------------------------------------------------------------
 
-const DashboardLayout: React.FC = () => {
+const DashboardLayoutInner: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate          = useNavigate();
   const location          = useLocation();
+  // Ensure the context is mounted in this subtree (DOM attrs applied by context's own useEffect)
+  usePortalSettings();
 
   const mobileQuery = '(max-width: 767px)';
   const [isMobile, setIsMobile] = useState(
@@ -89,9 +95,20 @@ const DashboardLayout: React.FC = () => {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(
-    () => !window.matchMedia(mobileQuery).matches,
-  );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const mobileNow = window.matchMedia(mobileQuery).matches;
+    if (mobileNow) return false;
+    // Respect sidebarBehavior from persisted settings
+    const raw = localStorage.getItem('ryze_portal_settings');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { sidebarBehavior?: string };
+        if (parsed.sidebarBehavior === 'always-rail') return false;
+        if (parsed.sidebarBehavior === 'always-open') return true;
+      } catch { /* ignore */ }
+    }
+    return true;
+  });
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
@@ -114,16 +131,13 @@ const DashboardLayout: React.FC = () => {
   return (
     <div
       className="ryze-portal"
-      data-theme="dark"
-      data-density="balanced"
-      data-font="editorial"
       style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : `${isSidebarOpen ? '248px' : '72px'} 1fr`,
         minHeight: '100vh',
         transition: 'grid-template-columns 220ms ease',
         background: 'var(--bg-app)',
-        fontFamily: '"Manrope", system-ui, sans-serif',
+        fontFamily: 'var(--font-sans, "Manrope", system-ui, sans-serif)',
       }}
     >
       {/* ── Sidebar ─────────────────────────────────────────────── */}
@@ -345,19 +359,35 @@ const DashboardLayout: React.FC = () => {
             scrollbarColor: 'var(--border-strong) transparent',
           }}
         >
-          <div style={{
-            padding: 'var(--pad-page-y) var(--pad-page-x)',
-            maxWidth: 1480,
-            margin: '0 auto',
-            paddingBottom: 48,
-          }}>
-            <Outlet />
-          </div>
+          <React.Suspense
+            fallback={
+              <div style={{ flex: 1, background: 'var(--bg-app)', minHeight: '60vh' }} />
+            }
+          >
+            <div
+              key={location.pathname}
+              className="page-enter"
+              style={{
+                padding: 'var(--pad-page-y) var(--pad-page-x)',
+                maxWidth: 1480,
+                margin: '0 auto',
+                paddingBottom: 48,
+              }}
+            >
+              <Outlet />
+            </div>
+          </React.Suspense>
         </div>
 
       </div>
     </div>
   );
 };
+
+const DashboardLayout: React.FC = () => (
+  <PortalSettingsProvider>
+    <DashboardLayoutInner />
+  </PortalSettingsProvider>
+);
 
 export default DashboardLayout;

@@ -166,7 +166,9 @@ body {
   padding: 0;
   height: 100%;
 }
-body {
+
+/* Scoped to .ryze-portal so these don't bleed into the marketing site */
+.ryze-portal {
   font-family: var(--font-sans);
   background: var(--bg-app);
   color: var(--fg-default);
@@ -176,7 +178,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button {
+.ryze-portal button {
   font-family: inherit;
   cursor: pointer;
   border: 0;
@@ -184,15 +186,15 @@ button {
   color: inherit;
 }
 
-input,
-select,
-textarea {
+.ryze-portal input,
+.ryze-portal select,
+.ryze-portal textarea {
   font-family: inherit;
   color: inherit;
 }
 
 /* ─── Display type ──────────────────────────────────────────── */
-.display {
+.ryze-portal .display {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -200,7 +202,7 @@ textarea {
   line-height: 1.05;
 }
 
-.eyebrow {
+.ryze-portal .eyebrow {
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 700;
@@ -209,26 +211,26 @@ textarea {
   color: var(--fg-muted);
 }
 
-.mono {
+.ryze-portal .mono {
   font-family: var(--font-mono);
 }
 
 /* ─── Utility helpers (a small set, used across pages) ──────── */
-.surface {
+.ryze-portal .surface {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
 }
 
-.divider {
+.ryze-portal .divider {
   height: 1px;
   background: var(--border-faint);
   border: 0;
   margin: 0;
 }
 
-.kbd {
+.ryze-portal .kbd {
   font-family: var(--font-mono);
   font-size: 10.5px;
   padding: 2px 6px;
@@ -238,7 +240,7 @@ textarea {
   color: var(--fg-muted);
 }
 
-.tag {
+.ryze-portal .tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -251,33 +253,33 @@ textarea {
   border: 1px solid var(--border-soft);
   color: var(--fg-default);
 }
-.tag--ok {
+.ryze-portal .tag--ok {
   color: var(--ok);
   background: color-mix(in oklab, var(--ok) 12%, transparent);
   border-color: color-mix(in oklab, var(--ok) 26%, transparent);
 }
-.tag--warn {
+.ryze-portal .tag--warn {
   color: var(--warn);
   background: color-mix(in oklab, var(--warn) 12%, transparent);
   border-color: color-mix(in oklab, var(--warn) 26%, transparent);
 }
-.tag--danger {
+.ryze-portal .tag--danger {
   color: var(--danger);
   background: color-mix(in oklab, var(--danger) 12%, transparent);
   border-color: color-mix(in oklab, var(--danger) 26%, transparent);
 }
-.tag--info {
+.ryze-portal .tag--info {
   color: var(--info);
   background: color-mix(in oklab, var(--info) 14%, transparent);
   border-color: color-mix(in oklab, var(--info) 28%, transparent);
 }
-.tag--accent {
+.ryze-portal .tag--accent {
   color: var(--accent);
   background: var(--accent-soft);
   border-color: color-mix(in oklab, var(--accent) 26%, transparent);
 }
 
-.dot {
+.ryze-portal .dot {
   width: 7px;
   height: 7px;
   border-radius: 999px;
@@ -285,30 +287,30 @@ textarea {
 }
 
 /* ─── Scrollbars ───────────────────────────────────────────── */
-.scroll-thin::-webkit-scrollbar {
+.ryze-portal .scroll-thin::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-.scroll-thin::-webkit-scrollbar-track {
+.ryze-portal .scroll-thin::-webkit-scrollbar-track {
   background: transparent;
 }
-.scroll-thin::-webkit-scrollbar-thumb {
+.ryze-portal .scroll-thin::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   border-radius: 999px;
 }
-.scroll-thin::-webkit-scrollbar-thumb:hover {
+.ryze-portal .scroll-thin::-webkit-scrollbar-thumb:hover {
   background: var(--fg-faint);
 }
 
 /* ─── Focus ─────────────────────────────────────────────────── */
-:focus-visible {
+.ryze-portal :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
 /* Hide focus on the tweaks-panel chrome where it looks bad */
-.ryze-tweaks :focus-visible {
+.ryze-portal .ryze-tweaks :focus-visible {
   outline: none;
 }
 
@@ -316,17 +318,17 @@ textarea {
    SHELL — sidebar + topbar + app frame
    ============================================================ */
 
-.app {
+.ryze-portal .app {
   display: grid;
   grid-template-columns: var(--side-w, 248px) 1fr;
   min-height: 100vh;
   transition: grid-template-columns 220ms ease;
 }
-.app[data-sidebar="rail"] { --side-w: 72px; }
-.app[data-sidebar="expanded"], .app[data-sidebar="grouped"] { --side-w: 248px; }
+.ryze-portal .app[data-sidebar="rail"] { --side-w: 72px; }
+.ryze-portal .app[data-sidebar="expanded"], .ryze-portal .app[data-sidebar="grouped"] { --side-w: 248px; }
 
 /* ── Sidebar ─────────────────────────────────────────────── */
-.side {
+.ryze-portal .side {
   position: sticky;
   top: 0;
   height: 100vh;
@@ -338,7 +340,7 @@ textarea {
   font-family: var(--font-sans);
 }
 
-.brand {
+.ryze-portal .brand {
   height: 64px;
   display: flex;
   align-items: center;
@@ -346,7 +348,7 @@ textarea {
   padding: 0 18px;
   border-bottom: 1px solid var(--side-border);
 }
-.brand__mark {
+.ryze-portal .brand__mark {
   width: 32px;
   height: 32px;
   border-radius: 9px;
@@ -361,8 +363,8 @@ textarea {
   line-height: 1;
   letter-spacing: -0.02em;
 }
-.brand__word { line-height: 1.1; }
-.brand__name {
+.ryze-portal .brand__word { line-height: 1.1; }
+.ryze-portal .brand__name {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -370,7 +372,7 @@ textarea {
   letter-spacing: -0.01em;
   color: var(--side-fg);
 }
-.brand__sub {
+.ryze-portal .brand__sub {
   font-size: 10.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -378,28 +380,28 @@ textarea {
   margin-top: 2px;
   font-weight: 600;
 }
-.side--rail .brand { justify-content: center; padding: 0; }
+.ryze-portal .side--rail .brand { justify-content: center; padding: 0; }
 
-.side__scroll {
+.ryze-portal .side__scroll {
   flex: 1;
   overflow-y: auto;
   padding: 18px 12px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
 }
-.side__scroll::-webkit-scrollbar { width: 6px; }
-.side__scroll::-webkit-scrollbar-track { background: transparent; }
-.side__scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
-.side--rail .side__scroll { padding: 14px 10px; }
+.ryze-portal .side__scroll::-webkit-scrollbar { width: 6px; }
+.ryze-portal .side__scroll::-webkit-scrollbar-track { background: transparent; }
+.ryze-portal .side__scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+.ryze-portal .side--rail .side__scroll { padding: 14px 10px; }
 
-.side__group + .side__group { margin-top: 18px; }
-.side--rail .side__group + .side__group {
+.ryze-portal .side__group + .side__group { margin-top: 18px; }
+.ryze-portal .side--rail .side__group + .side__group {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid var(--side-border);
 }
 
-.side__group-label {
+.ryze-portal .side__group-label {
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -408,9 +410,9 @@ textarea {
   padding: 0 12px 8px;
 }
 
-.side__items { display: flex; flex-direction: column; gap: 1px; }
+.ryze-portal .side__items { display: flex; flex-direction: column; gap: 1px; }
 
-.nav-item {
+.ryze-portal .nav-item {
   position: relative;
   display: flex;
   align-items: center;
@@ -425,16 +427,16 @@ textarea {
   width: 100%;
   text-align: left;
 }
-.nav-item:hover {
+.ryze-portal .nav-item:hover {
   background: var(--side-hover);
   color: var(--side-fg);
 }
-.nav-item.is-active {
+.ryze-portal .nav-item.is-active {
   background: var(--side-active-bg);
   color: var(--side-active-fg);
   font-weight: 600;
 }
-.nav-item__rail {
+.ryze-portal .nav-item__rail {
   position: absolute;
   left: -12px;
   top: 7px;
@@ -443,15 +445,15 @@ textarea {
   border-radius: 999px;
   background: transparent;
 }
-.nav-item.is-active .nav-item__rail { background: var(--accent); }
+.ryze-portal .nav-item.is-active .nav-item__rail { background: var(--accent); }
 
-.nav-item.is-collapsed {
+.ryze-portal .nav-item.is-collapsed {
   justify-content: center;
   padding: 10px;
 }
 
-.nav-item__label { flex: 1; }
-.nav-item__badge {
+.ryze-portal .nav-item__label { flex: 1; }
+.ryze-portal .nav-item__badge {
   font-size: 10.5px;
   font-weight: 700;
   background: color-mix(in oklab, var(--danger) 28%, transparent);
@@ -461,7 +463,7 @@ textarea {
   min-width: 20px;
   text-align: center;
 }
-.nav-item__dot {
+.ryze-portal .nav-item__dot {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -471,13 +473,13 @@ textarea {
   background: var(--danger);
 }
 
-.side__foot {
+.ryze-portal .side__foot {
   border-top: 1px solid var(--side-border);
   padding: 14px;
 }
-.side--rail .side__foot { padding: 10px; }
+.ryze-portal .side--rail .side__foot { padding: 10px; }
 
-.side__user {
+.ryze-portal .side__user {
   display: flex;
   align-items: center;
   gap: 11px;
@@ -486,13 +488,13 @@ textarea {
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid var(--side-border);
 }
-.side__user.is-collapsed {
+.ryze-portal .side__user.is-collapsed {
   justify-content: center;
   background: transparent;
   border: 0;
   padding: 0;
 }
-.side__avatar {
+.ryze-portal .side__avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -504,8 +506,8 @@ textarea {
   font-size: 13px;
   flex-shrink: 0;
 }
-.side__user-meta { flex: 1; min-width: 0; }
-.side__user-name {
+.ryze-portal .side__user-meta { flex: 1; min-width: 0; }
+.ryze-portal .side__user-name {
   font-size: 13px;
   font-weight: 600;
   color: var(--side-fg);
@@ -513,14 +515,14 @@ textarea {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.side__user-sub {
+.ryze-portal .side__user-sub {
   font-size: 11px;
   color: var(--side-fg-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.side__user-act {
+.ryze-portal .side__user-act {
   width: 28px;
   height: 28px;
   display: grid;
@@ -528,10 +530,10 @@ textarea {
   border-radius: 7px;
   color: var(--side-fg-muted);
 }
-.side__user-act:hover { background: var(--side-hover); color: var(--side-fg); }
+.ryze-portal .side__user-act:hover { background: var(--side-hover); color: var(--side-fg); }
 
 /* ── Topbar ──────────────────────────────────────────────── */
-.top {
+.ryze-portal .top {
   position: sticky;
   top: 0;
   z-index: 30;
@@ -545,7 +547,7 @@ textarea {
   padding: 0 var(--pad-page-x);
   gap: 20px;
 }
-.top__crumbs {
+.ryze-portal .top__crumbs {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -557,11 +559,11 @@ textarea {
   overflow: hidden;
   white-space: nowrap;
 }
-.top__crumbs-sep { color: var(--fg-faint); }
-.top__crumb { white-space: nowrap; }
-.top__crumb.is-current { color: var(--fg-strong); font-weight: 600; }
+.ryze-portal .top__crumbs-sep { color: var(--fg-faint); }
+.ryze-portal .top__crumb { white-space: nowrap; }
+.ryze-portal .top__crumb.is-current { color: var(--fg-strong); font-weight: 600; }
 
-.top__search {
+.ryze-portal .top__search {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -578,7 +580,7 @@ textarea {
   cursor: text;
   transition: border-color 140ms ease, background 140ms ease;
 }
-.top__search > span:nth-child(2) {
+.ryze-portal .top__search > span:nth-child(2) {
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -586,19 +588,19 @@ textarea {
   text-overflow: ellipsis;
 }
 @media (max-width: 900px) {
-  .top__search > span:nth-child(2), .top__search .kbd { display: none; }
-  .top__search { flex: 0 0 36px; padding: 0; height: 36px; width: 36px; justify-content: center; max-width: 36px; margin: 0; }
+  .ryze-portal .top__search > span:nth-child(2), .ryze-portal .top__search .kbd { display: none; }
+  .ryze-portal .top__search { flex: 0 0 36px; padding: 0; height: 36px; width: 36px; justify-content: center; max-width: 36px; margin: 0; }
 }
-.top__search:hover { border-color: var(--border-strong); }
-.top__search > span:nth-child(2) { flex: 1; }
+.ryze-portal .top__search:hover { border-color: var(--border-strong); }
+.ryze-portal .top__search > span:nth-child(2) { flex: 1; }
 
-.top__right {
+.ryze-portal .top__right {
   display: flex;
   align-items: center;
   gap: 14px;
   flex-shrink: 0;
 }
-.top__icon {
+.ryze-portal .top__icon {
   position: relative;
   width: 36px;
   height: 36px;
@@ -608,8 +610,8 @@ textarea {
   color: var(--fg-muted);
   transition: background 140ms ease, color 140ms ease;
 }
-.top__icon:hover { background: var(--bg-hover); color: var(--fg-strong); }
-.top__icon-dot {
+.ryze-portal .top__icon:hover { background: var(--bg-hover); color: var(--fg-strong); }
+.ryze-portal .top__icon-dot {
   position: absolute;
   top: 9px;
   right: 9px;
@@ -619,20 +621,20 @@ textarea {
   background: var(--accent);
   box-shadow: 0 0 0 2px var(--bg-app);
 }
-.top__divider {
+.ryze-portal .top__divider {
   width: 1px;
   height: 22px;
   background: var(--border-soft);
 }
-.top__me {
+.ryze-portal .top__me {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.top__me-meta { text-align: right; line-height: 1.1; }
-.top__me-name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
-.top__me-role { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
-.top__me-avatar {
+.ryze-portal .top__me-meta { text-align: right; line-height: 1.1; }
+.ryze-portal .top__me-name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .top__me-role { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
+.ryze-portal .top__me-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -645,12 +647,12 @@ textarea {
 }
 
 /* ── Main column ─────────────────────────────────────────── */
-.main {
+.ryze-portal .main {
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
-.main__body {
+.ryze-portal .main__body {
   flex: 1;
   padding: var(--pad-page-y) var(--pad-page-x);
   max-width: 1480px;
@@ -659,7 +661,7 @@ textarea {
 }
 
 /* Subtle grid texture for app bg */
-.bg-grid {
+.ryze-portal .bg-grid {
   background-image:
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
@@ -670,7 +672,7 @@ textarea {
    PAGE — shared building blocks
    ============================================================ */
 
-.page-head {
+.ryze-portal .page-head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -680,8 +682,8 @@ textarea {
   border-bottom: 1px solid var(--border-faint);
   flex-wrap: wrap;
 }
-.page-head > div:first-child { min-width: 0; flex: 1; }
-.page-head__title {
+.ryze-portal .page-head > div:first-child { min-width: 0; flex: 1; }
+.ryze-portal .page-head__title {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -692,14 +694,14 @@ textarea {
   margin: 0;
   text-wrap: balance;
 }
-.page-head__sub {
+.ryze-portal .page-head__sub {
   margin-top: 14px;
   font-size: 14px;
   color: var(--fg-muted);
   max-width: 62ch;
   line-height: 1.55;
 }
-.page-head__eyebrow {
+.ryze-portal .page-head__eyebrow {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -707,14 +709,14 @@ textarea {
   color: var(--accent);
   margin-bottom: 12px;
 }
-.page-head__actions {
+.ryze-portal .page-head__actions {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
 }
 
-.btn {
+.ryze-portal .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -728,34 +730,34 @@ textarea {
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
   white-space: nowrap;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn--primary {
+.ryze-portal .btn:hover { transform: translateY(-1px); }
+.ryze-portal .btn--primary {
   background: var(--accent);
   color: var(--accent-fg);
   box-shadow: 0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent);
 }
-.btn--primary:hover { background: color-mix(in oklab, var(--accent) 88%, #fff); }
-.btn--ghost {
+.ryze-portal .btn--primary:hover { background: color-mix(in oklab, var(--accent) 88%, #fff); }
+.ryze-portal .btn--ghost {
   background: var(--bg-surface);
   color: var(--fg-default);
   border-color: var(--border-soft);
 }
-.btn--ghost:hover { border-color: var(--border-strong); background: var(--bg-surface-2); }
-.btn--quiet {
+.ryze-portal .btn--ghost:hover { border-color: var(--border-strong); background: var(--bg-surface-2); }
+.ryze-portal .btn--quiet {
   color: var(--fg-muted);
 }
-.btn--quiet:hover { color: var(--fg-strong); background: var(--bg-hover); }
+.ryze-portal .btn--quiet:hover { color: var(--fg-strong); background: var(--bg-hover); }
 
-.card {
+.ryze-portal .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
   border-radius: 16px;
   padding: var(--card-pad);
   box-shadow: var(--shadow-card);
 }
-.card--flush { padding: 0; overflow: hidden; }
+.ryze-portal .card--flush { padding: 0; overflow: hidden; }
 
-.card__head {
+.ryze-portal .card__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -763,19 +765,19 @@ textarea {
   padding: 16px 22px;
   border-bottom: 1px solid var(--border-faint);
 }
-.card__title {
+.ryze-portal .card__title {
   font-size: 14px;
   font-weight: 600;
   color: var(--fg-strong);
   letter-spacing: -0.005em;
 }
-.card__sub {
+.ryze-portal .card__sub {
   font-size: 12.5px;
   color: var(--fg-muted);
 }
 
 /* ── Stat tile ──────────────────────────────────────────── */
-.stat {
+.ryze-portal .stat {
   position: relative;
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
@@ -788,15 +790,15 @@ textarea {
   overflow: hidden;
   transition: border-color 160ms ease, transform 160ms ease;
 }
-.stat:hover { border-color: var(--border-strong); }
-.stat__label {
+.ryze-portal .stat:hover { border-color: var(--border-strong); }
+.ryze-portal .stat__label {
   font-size: 12px;
   font-weight: 600;
   color: var(--fg-muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.stat__value {
+.ryze-portal .stat__value {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -805,29 +807,29 @@ textarea {
   color: var(--fg-strong);
   line-height: 1;
 }
-[data-font="modern"] .stat__value {
+.ryze-portal[data-font="modern"] .stat__value {
   font-feature-settings: "tnum" 1;
   letter-spacing: -0.03em;
 }
-.stat__foot {
+.ryze-portal .stat__foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 12px;
   color: var(--fg-muted);
 }
-.stat__delta {
+.ryze-portal .stat__delta {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-weight: 600;
 }
-.stat__delta--up { color: var(--ok); }
-.stat__delta--down { color: var(--danger); }
+.ryze-portal .stat__delta--up { color: var(--ok); }
+.ryze-portal .stat__delta--down { color: var(--danger); }
 
 /* ── Data table ─────────────────────────────────────────── */
-.table { width: 100%; border-collapse: separate; border-spacing: 0; }
-.table thead th {
+.ryze-portal .table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.ryze-portal .table thead th {
   text-align: left;
   font-size: 11px;
   font-weight: 700;
@@ -840,22 +842,22 @@ textarea {
   position: sticky;
   top: 0;
 }
-.table tbody td {
+.ryze-portal .table tbody td {
   padding: 14px 22px;
   border-bottom: 1px solid var(--border-faint);
   font-size: 13.5px;
   color: var(--fg-default);
   vertical-align: middle;
 }
-.table tbody tr:last-child td { border-bottom: 0; }
-.table tbody tr:hover { background: var(--bg-hover); }
+.ryze-portal .table tbody tr:last-child td { border-bottom: 0; }
+.ryze-portal .table tbody tr:hover { background: var(--bg-hover); }
 
-.cell-primary {
+.ryze-portal .cell-primary {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.cell-avatar {
+.ryze-portal .cell-avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -868,17 +870,17 @@ textarea {
   flex-shrink: 0;
   font-family: var(--font-sans);
 }
-.cell-avatar--blue   { background: color-mix(in oklab, var(--info) 22%, var(--bg-surface)); color: var(--info); }
-.cell-avatar--green  { background: color-mix(in oklab, var(--ok) 22%, var(--bg-surface)); color: var(--ok); }
-.cell-avatar--purple { background: color-mix(in oklab, #8669c2 22%, var(--bg-surface)); color: #8669c2; }
-.cell-avatar--rose   { background: color-mix(in oklab, #b56770 22%, var(--bg-surface)); color: #b56770; }
+.ryze-portal .cell-avatar--blue   { background: color-mix(in oklab, var(--info) 22%, var(--bg-surface)); color: var(--info); }
+.ryze-portal .cell-avatar--green  { background: color-mix(in oklab, var(--ok) 22%, var(--bg-surface)); color: var(--ok); }
+.ryze-portal .cell-avatar--purple { background: color-mix(in oklab, #8669c2 22%, var(--bg-surface)); color: #8669c2; }
+.ryze-portal .cell-avatar--rose   { background: color-mix(in oklab, #b56770 22%, var(--bg-surface)); color: #b56770; }
 
-.cell-meta { line-height: 1.25; min-width: 0; }
-.cell-name { font-weight: 600; color: var(--fg-strong); }
-.cell-sub  { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+.ryze-portal .cell-meta { line-height: 1.25; min-width: 0; }
+.ryze-portal .cell-name { font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .cell-sub  { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
 
 /* ── Toolbar above tables ───────────────────────────────── */
-.toolbar {
+.ryze-portal .toolbar {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -886,7 +888,7 @@ textarea {
   border-bottom: 1px solid var(--border-faint);
   flex-wrap: wrap;
 }
-.toolbar__search {
+.ryze-portal .toolbar__search {
   flex: 1;
   min-width: 240px;
   display: flex;
@@ -898,7 +900,7 @@ textarea {
   border-radius: 9px;
   color: var(--fg-muted);
 }
-.toolbar__search input {
+.ryze-portal .toolbar__search input {
   flex: 1;
   background: transparent;
   border: 0;
@@ -906,8 +908,8 @@ textarea {
   font-size: 13px;
   color: var(--fg-default);
 }
-.toolbar__search input::placeholder { color: var(--fg-muted); }
-.toolbar__chip {
+.ryze-portal .toolbar__search input::placeholder { color: var(--fg-muted); }
+.ryze-portal .toolbar__chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -920,34 +922,34 @@ textarea {
   color: var(--fg-default);
   transition: border-color 140ms ease;
 }
-.toolbar__chip:hover { border-color: var(--border-strong); }
-.toolbar__chip.is-active {
+.ryze-portal .toolbar__chip:hover { border-color: var(--border-strong); }
+.ryze-portal .toolbar__chip.is-active {
   background: var(--accent-soft);
   border-color: color-mix(in oklab, var(--accent) 36%, transparent);
   color: var(--accent);
 }
 
 /* ── Two-column grid for content rows ──────────────────── */
-.row { display: grid; gap: var(--gap-md); }
-.row--2 { grid-template-columns: 1fr 1fr; }
-.row--3 { grid-template-columns: repeat(3, 1fr); }
-.row--4 { grid-template-columns: repeat(4, 1fr); }
-.row--12-5 { grid-template-columns: 7fr 5fr; }
-.row--8-4 { grid-template-columns: 8fr 4fr; }
+.ryze-portal .row { display: grid; gap: var(--gap-md); }
+.ryze-portal .row--2 { grid-template-columns: 1fr 1fr; }
+.ryze-portal .row--3 { grid-template-columns: repeat(3, 1fr); }
+.ryze-portal .row--4 { grid-template-columns: repeat(4, 1fr); }
+.ryze-portal .row--12-5 { grid-template-columns: 7fr 5fr; }
+.ryze-portal .row--8-4 { grid-template-columns: 8fr 4fr; }
 @media (max-width: 1100px) {
-  .row--2, .row--3, .row--4, .row--12-5, .row--8-4 { grid-template-columns: 1fr; }
+  .ryze-portal .row--2, .ryze-portal .row--3, .ryze-portal .row--4, .ryze-portal .row--12-5, .ryze-portal .row--8-4 { grid-template-columns: 1fr; }
 }
 
 /* ── Misc ──────────────────────────────────────────────── */
-.muted { color: var(--fg-muted); }
-.strong { color: var(--fg-strong); }
-.tnum { font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
-.accent-text { color: var(--accent); }
+.ryze-portal .muted { color: var(--fg-muted); }
+.ryze-portal .strong { color: var(--fg-strong); }
+.ryze-portal .tnum { font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+.ryze-portal .accent-text { color: var(--accent); }
 
-.section-stack > * + * { margin-top: var(--gap-lg); }
+.ryze-portal .section-stack > * + * { margin-top: var(--gap-lg); }
 
 /* Empty state */
-.empty {
+.ryze-portal .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -956,7 +958,7 @@ textarea {
   color: var(--fg-muted);
   gap: 14px;
 }
-.empty__art {
+.ryze-portal .empty__art {
   width: 64px;
   height: 64px;
   border-radius: 16px;
@@ -966,7 +968,7 @@ textarea {
   place-items: center;
   color: var(--fg-faint);
 }
-.empty__title {
+.ryze-portal .empty__title {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -974,14 +976,14 @@ textarea {
   color: var(--fg-strong);
   letter-spacing: -0.015em;
 }
-.empty__body { max-width: 38ch; font-size: 13.5px; line-height: 1.55; }
+.ryze-portal .empty__body { max-width: 38ch; font-size: 13.5px; line-height: 1.55; }
 
 /* ============================================================
    PAGE COMPONENTS — lesson row, alert row, quick actions, etc
    ============================================================ */
 
 /* ── Lesson row (overview) ────────────────────────────── */
-.lesson-row {
+.ryze-portal .lesson-row {
   display: grid;
   grid-template-columns: 76px 1fr auto;
   align-items: center;
@@ -989,54 +991,54 @@ textarea {
   padding: 16px 22px;
   border-bottom: 1px solid var(--border-faint);
 }
-.lesson-row:last-child { border-bottom: 0; }
-.lesson-row:hover { background: var(--bg-hover); }
-.lesson-row__time { font-family: var(--font-mono); }
-.lesson-row__start { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
-.lesson-row__end   { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
-.lesson-row__title { font-weight: 600; color: var(--fg-strong); }
-.lesson-row__meta  { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; }
+.ryze-portal .lesson-row:last-child { border-bottom: 0; }
+.ryze-portal .lesson-row:hover { background: var(--bg-hover); }
+.ryze-portal .lesson-row__time { font-family: var(--font-mono); }
+.ryze-portal .lesson-row__start { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .lesson-row__end   { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
+.ryze-portal .lesson-row__title { font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .lesson-row__meta  { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; }
 
 /* ── Alert row (overview) ─────────────────────────────── */
-.alert-row {
+.ryze-portal .alert-row {
   display: grid;
   grid-template-columns: 36px 1fr auto;
   gap: 14px;
   padding: 16px 22px;
   border-bottom: 1px solid var(--border-faint);
 }
-.alert-row:last-child { border-bottom: 0; }
-.alert-row__pip {
+.ryze-portal .alert-row:last-child { border-bottom: 0; }
+.ryze-portal .alert-row__pip {
   width: 32px; height: 32px;
   border-radius: 9px;
   display: grid; place-items: center;
 }
-.alert-row__pip--high   { color: var(--danger); background: color-mix(in oklab, var(--danger) 16%, transparent); }
-.alert-row__pip--med    { color: var(--warn);   background: color-mix(in oklab, var(--warn) 16%, transparent); }
-.alert-row__pip--low    { color: var(--info);   background: color-mix(in oklab, var(--info) 16%, transparent); }
-.alert-row__title { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
-.alert-row__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; line-height: 1.4; }
-.alert-row__when  { font-size: 12px; color: var(--fg-faint); font-family: var(--font-mono); }
+.ryze-portal .alert-row__pip--high   { color: var(--danger); background: color-mix(in oklab, var(--danger) 16%, transparent); }
+.ryze-portal .alert-row__pip--med    { color: var(--warn);   background: color-mix(in oklab, var(--warn) 16%, transparent); }
+.ryze-portal .alert-row__pip--low    { color: var(--info);   background: color-mix(in oklab, var(--info) 16%, transparent); }
+.ryze-portal .alert-row__title { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
+.ryze-portal .alert-row__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; line-height: 1.4; }
+.ryze-portal .alert-row__when  { font-size: 12px; color: var(--fg-faint); font-family: var(--font-mono); }
 
 /* ── Quick actions (overview) ─────────────────────────── */
-.quick {
+.ryze-portal .quick {
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 28px;
   align-items: center;
 }
 @media (max-width: 900px) {
-  .quick { grid-template-columns: 1fr; }
+  .ryze-portal .quick { grid-template-columns: 1fr; }
 }
-.quick__label .eyebrow { color: var(--accent); }
-.quick__hint { font-size: 13px; color: var(--fg-muted); margin-top: 6px; line-height: 1.45; }
-.quick__grid {
+.ryze-portal .quick__label .eyebrow { color: var(--accent); }
+.ryze-portal .quick__hint { font-size: 13px; color: var(--fg-muted); margin-top: 6px; line-height: 1.45; }
+.ryze-portal .quick__grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 12px;
 }
-@media (max-width: 1100px) { .quick__grid { grid-template-columns: repeat(3, 1fr); } }
-.quick-btn {
+@media (max-width: 1100px) { .ryze-portal .quick__grid { grid-template-columns: repeat(3, 1fr); } }
+.ryze-portal .quick-btn {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1053,8 +1055,8 @@ textarea {
   text-align: left;
   transition: border-color 140ms ease, transform 140ms ease, background 140ms ease;
 }
-.quick-btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-.quick-btn__icon {
+.ryze-portal .quick-btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.ryze-portal .quick-btn__icon {
   width: 32px; height: 32px;
   border-radius: 8px;
   display: grid; place-items: center;
@@ -1062,12 +1064,12 @@ textarea {
   border: 1px solid var(--border-faint);
   color: var(--fg-default);
 }
-.quick-btn.is-accent { border-color: color-mix(in oklab, var(--accent) 35%, transparent); background: var(--accent-soft-2); }
-.quick-btn.is-accent .quick-btn__icon { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
-.quick-btn.is-accent .quick-btn__label { color: var(--accent); }
+.ryze-portal .quick-btn.is-accent { border-color: color-mix(in oklab, var(--accent) 35%, transparent); background: var(--accent-soft-2); }
+.ryze-portal .quick-btn.is-accent .quick-btn__icon { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+.ryze-portal .quick-btn.is-accent .quick-btn__label { color: var(--accent); }
 
 /* ── Health strip ─────────────────────────────────────── */
-.health {
+.ryze-portal .health {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -1075,13 +1077,13 @@ textarea {
   flex-wrap: wrap;
   padding: 6px 4px;
 }
-.health__item { display: inline-flex; align-items: center; gap: 8px; }
-.health__sep { flex: 1; height: 1px; background: var(--border-faint); min-width: 24px; }
-.health__time { color: var(--fg-muted); font-family: var(--font-mono); font-size: 12px; }
+.ryze-portal .health__item { display: inline-flex; align-items: center; gap: 8px; }
+.ryze-portal .health__sep { flex: 1; height: 1px; background: var(--border-faint); min-width: 24px; }
+.ryze-portal .health__time { color: var(--fg-muted); font-family: var(--font-mono); font-size: 12px; }
 
 /* ── Progress bar ─────────────────────────────────────── */
-.progress { display: flex; align-items: center; gap: 10px; }
-.progress__bar {
+.ryze-portal .progress { display: flex; align-items: center; gap: 10px; }
+.ryze-portal .progress__bar {
   flex: 1;
   height: 6px;
   background: var(--bg-surface-2);
@@ -1089,38 +1091,38 @@ textarea {
   overflow: hidden;
   border: 1px solid var(--border-faint);
 }
-.progress__bar span {
+.ryze-portal .progress__bar span {
   display: block;
   height: 100%;
   background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff));
   border-radius: 999px;
 }
-.progress__pct { font-size: 12.5px; font-weight: 600; color: var(--fg-default); width: 38px; text-align: right; }
+.ryze-portal .progress__pct { font-size: 12.5px; font-weight: 600; color: var(--fg-default); width: 38px; text-align: right; }
 
 /* ── Table footer ─────────────────────────────────────── */
-.table-foot {
+.ryze-portal .table-foot {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 22px; font-size: 13px;
 }
-.pager { display: flex; align-items: center; gap: 12px; }
-.row-act {
+.ryze-portal .pager { display: flex; align-items: center; gap: 12px; }
+.ryze-portal .row-act {
   width: 28px; height: 28px;
   display: grid; place-items: center;
   border-radius: 7px;
   color: var(--fg-muted);
 }
-.row-act:hover { background: var(--bg-hover); color: var(--fg-strong); }
-.muted-contact { display: inline-flex; align-items: center; gap: 4px; }
+.ryze-portal .row-act:hover { background: var(--bg-hover); color: var(--fg-strong); }
+.ryze-portal .muted-contact { display: inline-flex; align-items: center; gap: 4px; }
 
 /* ── Segmented control ────────────────────────────────── */
-.seg {
+.ryze-portal .seg {
   display: inline-flex;
   padding: 3px;
   background: var(--bg-surface-2);
   border: 1px solid var(--border-soft);
   border-radius: 9px;
 }
-.seg__btn {
+.ryze-portal .seg__btn {
   padding: 6px 14px;
   font-size: 12.5px;
   font-weight: 600;
@@ -1128,19 +1130,19 @@ textarea {
   border-radius: 7px;
   transition: background 140ms ease, color 140ms ease;
 }
-.seg__btn.is-active {
+.ryze-portal .seg__btn.is-active {
   background: var(--bg-surface);
   color: var(--fg-strong);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 /* ── Class cards (Classes page) ──────────────────────── */
-.class-grid {
+.ryze-portal .class-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--gap-md);
 }
-.class-card {
+.ryze-portal .class-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
   border-radius: 16px;
@@ -1149,24 +1151,24 @@ textarea {
   display: flex; flex-direction: column;
   transition: border-color 160ms ease, transform 160ms ease;
 }
-.class-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-.class-card__head {
+.ryze-portal .class-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.ryze-portal .class-card__head {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
 }
-.class-card__day {
+.ryze-portal .class-card__day {
   display: flex; align-items: baseline; gap: 8px;
   font-family: var(--font-mono);
 }
-.class-card__dow {
+.ryze-portal .class-card__dow {
   font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--accent);
   padding: 4px 8px;
   border-radius: 6px;
   background: var(--accent-soft);
 }
-.class-card__time { font-size: 13px; color: var(--fg-default); font-weight: 600; }
+.ryze-portal .class-card__time { font-size: 13px; color: var(--fg-default); font-weight: 600; }
 
-.class-card__name {
+.ryze-portal .class-card__name {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -1176,45 +1178,45 @@ textarea {
   margin-top: 14px;
   line-height: 1.1;
 }
-.class-card__level { font-size: 13px; margin-top: 4px; }
-.class-card__divider { height: 1px; background: var(--border-faint); margin: 18px 0; }
-.class-card__meta {
+.ryze-portal .class-card__level { font-size: 13px; margin-top: 4px; }
+.ryze-portal .class-card__divider { height: 1px; background: var(--border-faint); margin: 18px 0; }
+.ryze-portal .class-card__meta {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
-.class-card__meta .eyebrow { font-size: 10px; }
-.class-card__meta .strong { font-size: 13px; margin-top: 4px; display: block; }
-.class-card__foot { margin-top: 18px; display: flex; justify-content: flex-end; }
+.ryze-portal .class-card__meta .eyebrow { font-size: 10px; }
+.ryze-portal .class-card__meta .strong { font-size: 13px; margin-top: 4px; display: block; }
+.ryze-portal .class-card__foot { margin-top: 18px; display: flex; justify-content: flex-end; }
 
 /* ── Schedule timeline (Lessons page) ──────────────────── */
-.schedule {
+.ryze-portal .schedule {
   display: grid;
   grid-template-columns: 180px 1fr;
 }
-.schedule__rooms {
+.ryze-portal .schedule__rooms {
   border-right: 1px solid var(--border-faint);
   padding: 16px 0;
 }
-.schedule__corner { height: 40px; }
-.schedule__room {
+.ryze-portal .schedule__corner { height: 40px; }
+.ryze-portal .schedule__room {
   height: 72px;
   padding: 0 18px;
   display: flex; flex-direction: column; justify-content: center;
   border-top: 1px solid var(--border-faint);
 }
-.schedule__room-name { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
-.schedule__room-sub  { font-size: 11.5px; margin-top: 3px; }
+.ryze-portal .schedule__room-name { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
+.ryze-portal .schedule__room-sub  { font-size: 11.5px; margin-top: 3px; }
 
-.schedule__scroll { overflow-x: auto; padding: 16px 0; }
-.schedule__grid { position: relative; }
-.schedule__hours {
+.ryze-portal .schedule__scroll { overflow-x: auto; padding: 16px 0; }
+.ryze-portal .schedule__grid { position: relative; }
+.ryze-portal .schedule__hours {
   display: flex;
   height: 40px;
   align-items: center;
   border-bottom: 1px solid var(--border-faint);
 }
-.schedule__hour {
+.ryze-portal .schedule__hour {
   font-size: 11px;
   color: var(--fg-muted);
   font-family: var(--font-mono);
@@ -1222,21 +1224,21 @@ textarea {
   border-left: 1px dashed var(--border-faint);
   flex-shrink: 0;
 }
-.schedule__hour:first-child { border-left: 0; }
-.schedule__lane {
+.ryze-portal .schedule__hour:first-child { border-left: 0; }
+.ryze-portal .schedule__lane {
   position: relative;
   display: flex;
   height: 72px;
   border-top: 1px solid var(--border-faint);
 }
-.schedule__cell {
+.ryze-portal .schedule__cell {
   height: 100%;
   border-left: 1px dashed var(--border-faint);
   flex-shrink: 0;
 }
-.schedule__cell:first-child { border-left: 0; }
+.ryze-portal .schedule__cell:first-child { border-left: 0; }
 
-.schedule__block {
+.ryze-portal .schedule__block {
   position: absolute;
   top: 8px;
   height: calc(100% - 16px);
@@ -1250,22 +1252,22 @@ textarea {
   box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.18);
   border: 1px solid;
 }
-.schedule__block-title { font-weight: 600; color: inherit; line-height: 1.2; }
-.schedule__block-meta  { font-size: 11.5px; opacity: 0.85; }
-.schedule__block-state { align-self: flex-start; }
+.ryze-portal .schedule__block-title { font-weight: 600; color: inherit; line-height: 1.2; }
+.ryze-portal .schedule__block-meta  { font-size: 11.5px; opacity: 0.85; }
+.ryze-portal .schedule__block-state { align-self: flex-start; }
 
-.schedule__block--upcoming {
+.ryze-portal .schedule__block--upcoming {
   background: color-mix(in oklab, var(--info) 14%, var(--bg-surface));
   border-color: color-mix(in oklab, var(--info) 28%, transparent);
   color: var(--info);
 }
-.schedule__block--live {
+.ryze-portal .schedule__block--live {
   background: color-mix(in oklab, var(--accent) 18%, var(--bg-surface));
   border-color: color-mix(in oklab, var(--accent) 36%, transparent);
   color: var(--accent);
   animation: pulse-live 2.4s ease-in-out infinite;
 }
-.schedule__block--done {
+.ryze-portal .schedule__block--done {
   background: var(--bg-surface-2);
   border-color: var(--border-soft);
   color: var(--fg-muted);
@@ -1276,28 +1278,28 @@ textarea {
 }
 
 /* ── Bars chart (Payments) ────────────────────────────── */
-.bars {
+.ryze-portal .bars {
   display: flex;
   gap: 8px;
   align-items: flex-end;
   height: 130px;
   padding: 6px 2px;
 }
-.bars__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.bars__bar {
+.ryze-portal .bars__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ryze-portal .bars__bar {
   width: 100%;
   background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 50%, #5b3d10));
   border-radius: 6px 6px 2px 2px;
   min-height: 6px;
 }
-.bars__col:last-child .bars__bar {
+.ryze-portal .bars__col:last-child .bars__bar {
   background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 100%, #fff), var(--accent));
 }
-.bars__label { font-size: 10.5px; color: var(--fg-muted); font-family: var(--font-mono); }
+.ryze-portal .bars__label { font-size: 10.5px; color: var(--fg-muted); font-family: var(--font-mono); }
 
 /* ── Ranks (Payments) ─────────────────────────────────── */
-.ranks { display: flex; flex-direction: column; gap: 4px; }
-.ranks__row {
+.ryze-portal .ranks { display: flex; flex-direction: column; gap: 4px; }
+.ryze-portal .ranks__row {
   display: grid;
   grid-template-columns: 28px 1fr auto;
   align-items: center;
@@ -1306,27 +1308,27 @@ textarea {
   border-bottom: 1px dashed var(--border-faint);
   font-size: 13px;
 }
-.ranks__row:last-child { border-bottom: 0; }
-.ranks__rank { color: var(--fg-faint); font-family: var(--font-mono); font-size: 12px; }
-.ranks__v { color: var(--accent); }
+.ryze-portal .ranks__row:last-child { border-bottom: 0; }
+.ryze-portal .ranks__rank { color: var(--fg-faint); font-family: var(--font-mono); font-size: 12px; }
+.ryze-portal .ranks__v { color: var(--accent); }
 
 /* ============================================================
    SETTINGS — page-internal shell + form primitives
    ============================================================ */
 
-.settings-shell {
+.ryze-portal .settings-shell {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: var(--gap-lg);
   align-items: flex-start;
 }
 @media (max-width: 1100px) {
-  .settings-shell { grid-template-columns: 1fr; }
-  .settings-nav { position: relative !important; top: 0 !important; }
+  .ryze-portal .settings-shell { grid-template-columns: 1fr; }
+  .ryze-portal .settings-nav { position: relative !important; top: 0 !important; }
 }
 
 /* ── Settings nav (left rail inside the page) ─────────── */
-.settings-nav {
+.ryze-portal .settings-nav {
   position: sticky;
   top: calc(64px + 24px);
   display: flex;
@@ -1338,10 +1340,10 @@ textarea {
   padding: 14px;
   box-shadow: var(--shadow-card);
 }
-.settings-nav__head { padding: 4px 8px 6px; }
-.settings-nav__list { display: flex; flex-direction: column; gap: 2px; }
+.ryze-portal .settings-nav__head { padding: 4px 8px 6px; }
+.ryze-portal .settings-nav__list { display: flex; flex-direction: column; gap: 2px; }
 
-.settings-nav__item {
+.ryze-portal .settings-nav__item {
   display: grid;
   grid-template-columns: 18px 1fr 13px;
   align-items: center;
@@ -1352,44 +1354,44 @@ textarea {
   color: var(--fg-default);
   transition: background 140ms ease, color 140ms ease;
 }
-.settings-nav__item:hover { background: var(--bg-hover); }
-.settings-nav__item.is-active {
+.ryze-portal .settings-nav__item:hover { background: var(--bg-hover); }
+.ryze-portal .settings-nav__item.is-active {
   background: var(--accent-soft);
   color: var(--accent);
 }
-.settings-nav__item.is-active .settings-nav__label { color: var(--accent); }
-.settings-nav__item.is-active .settings-nav__desc  { color: color-mix(in oklab, var(--accent) 70%, var(--fg-muted)); }
-.settings-nav__item.is-danger { color: var(--danger); }
-.settings-nav__item.is-danger .settings-nav__label { color: var(--danger); }
-.settings-nav__item.is-danger:hover { background: color-mix(in oklab, var(--danger) 10%, transparent); }
-.settings-nav__item.is-active.is-danger { background: color-mix(in oklab, var(--danger) 14%, transparent); color: var(--danger); }
+.ryze-portal .settings-nav__item.is-active .settings-nav__label { color: var(--accent); }
+.ryze-portal .settings-nav__item.is-active .settings-nav__desc  { color: color-mix(in oklab, var(--accent) 70%, var(--fg-muted)); }
+.ryze-portal .settings-nav__item.is-danger { color: var(--danger); }
+.ryze-portal .settings-nav__item.is-danger .settings-nav__label { color: var(--danger); }
+.ryze-portal .settings-nav__item.is-danger:hover { background: color-mix(in oklab, var(--danger) 10%, transparent); }
+.ryze-portal .settings-nav__item.is-active.is-danger { background: color-mix(in oklab, var(--danger) 14%, transparent); color: var(--danger); }
 
-.settings-nav__meta { line-height: 1.2; min-width: 0; }
-.settings-nav__label { font-size: 13.5px; font-weight: 600; }
-.settings-nav__desc  { font-size: 11.5px; color: var(--fg-muted); margin-top: 3px; }
-.settings-nav__chev  { color: var(--fg-faint); }
-.settings-nav__item:hover .settings-nav__chev { color: var(--fg-muted); }
+.ryze-portal .settings-nav__meta { line-height: 1.2; min-width: 0; }
+.ryze-portal .settings-nav__label { font-size: 13.5px; font-weight: 600; }
+.ryze-portal .settings-nav__desc  { font-size: 11.5px; color: var(--fg-muted); margin-top: 3px; }
+.ryze-portal .settings-nav__chev  { color: var(--fg-faint); }
+.ryze-portal .settings-nav__item:hover .settings-nav__chev { color: var(--fg-muted); }
 
-.settings-nav__foot {
+.ryze-portal .settings-nav__foot {
   margin-top: 8px;
   padding-top: 12px;
   border-top: 1px solid var(--border-faint);
 }
 
 /* ── Settings content (right column) ──────────────────── */
-.settings-content {
+.ryze-portal .settings-content {
   display: flex;
   flex-direction: column;
   gap: var(--gap-lg);
   min-width: 0;
 }
-.s-section { display: flex; flex-direction: column; gap: var(--gap-md); }
-.s-section__head {
+.ryze-portal .s-section { display: flex; flex-direction: column; gap: var(--gap-md); }
+.ryze-portal .s-section__head {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 18px;
   padding-bottom: 6px;
   flex-wrap: wrap;
 }
-.s-section__title {
+.ryze-portal .s-section__title {
   font-family: var(--font-display);
   font-style: var(--font-display-style);
   font-weight: var(--font-display-weight);
@@ -1399,17 +1401,17 @@ textarea {
   margin: 0;
   line-height: 1.05;
 }
-.s-section__sub {
+.ryze-portal .s-section__sub {
   margin-top: 8px;
   font-size: 13.5px;
   color: var(--fg-muted);
   max-width: 64ch;
   line-height: 1.55;
 }
-.s-section__body { display: flex; flex-direction: column; gap: var(--gap-md); }
+.ryze-portal .s-section__body { display: flex; flex-direction: column; gap: var(--gap-md); }
 
 /* ── Settings card (panel within a section) ───────────── */
-.s-card {
+.ryze-portal .s-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
   border-radius: 14px;
@@ -1417,19 +1419,19 @@ textarea {
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }
-.s-card--flush { padding: 0; }
-.s-card__head {
+.ryze-portal .s-card--flush { padding: 0; }
+.ryze-portal .s-card__head {
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   padding: 18px 24px 14px;
   border-bottom: 1px solid var(--border-faint);
   margin: 0 -24px 8px;
 }
-.s-card--flush .s-card__head { margin: 0; padding: 18px 24px; }
-.s-card__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
-.s-card__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 4px; }
+.ryze-portal .s-card--flush .s-card__head { margin: 0; padding: 18px 24px; }
+.ryze-portal .s-card__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .s-card__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 4px; }
 
 /* ── Form row (label / hint left, control right) ──────── */
-.s-row {
+.ryze-portal .s-row {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 32px;
@@ -1437,19 +1439,19 @@ textarea {
   border-bottom: 1px solid var(--border-faint);
   align-items: flex-start;
 }
-.s-row:last-child { border-bottom: 0; }
-.s-row--full { grid-template-columns: 1fr; }
+.ryze-portal .s-row:last-child { border-bottom: 0; }
+.ryze-portal .s-row--full { grid-template-columns: 1fr; }
 @media (max-width: 800px) {
-  .s-row { grid-template-columns: 1fr; gap: 12px; }
+  .ryze-portal .s-row { grid-template-columns: 1fr; gap: 12px; }
 }
 
-.s-row__label { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
-.s-row__hint  { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; max-width: 38ch; }
-.s-row__ctrl  { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
-.row-inline   { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ryze-portal .s-row__label { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .s-row__hint  { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; max-width: 38ch; }
+.ryze-portal .s-row__ctrl  { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.ryze-portal .row-inline   { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 /* ── Input field ──────────────────────────────────────── */
-.field {
+.ryze-portal .field {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1463,8 +1465,8 @@ textarea {
   color: var(--fg-default);
   transition: border-color 140ms ease, background 140ms ease;
 }
-.field:focus-within { border-color: color-mix(in oklab, var(--accent) 48%, transparent); outline: none; }
-.field input, .field select {
+.ryze-portal .field:focus-within { border-color: color-mix(in oklab, var(--accent) 48%, transparent); outline: none; }
+.ryze-portal .field input, .ryze-portal .field select {
   flex: 1;
   border: 0;
   outline: 0;
@@ -1473,25 +1475,25 @@ textarea {
   font-size: 13px;
   min-width: 0;
 }
-.field--mono input { font-family: var(--font-mono); font-size: 12.5px; }
-.field__prefix, .field__suffix {
+.ryze-portal .field--mono input { font-family: var(--font-mono); font-size: 12.5px; }
+.ryze-portal .field__prefix, .ryze-portal .field__suffix {
   color: var(--fg-muted);
   display: inline-flex; align-items: center;
   flex-shrink: 0;
 }
-.field--select { padding-right: 8px; }
-.field--select select { appearance: none; cursor: pointer; padding-right: 18px; background-image: linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%), linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%); background-position: calc(100% - 9px) 50%, calc(100% - 5px) 50%; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
-.field--select select option { background: var(--bg-surface); color: var(--fg-default); }
+.ryze-portal .field--select { padding-right: 8px; }
+.ryze-portal .field--select select { appearance: none; cursor: pointer; padding-right: 18px; background-image: linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%), linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%); background-position: calc(100% - 9px) 50%, calc(100% - 5px) 50%; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+.ryze-portal .field--select select option { background: var(--bg-surface); color: var(--fg-default); }
 
 /* ── Toggle ───────────────────────────────────────────── */
-.tog {
+.ryze-portal .tog {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 4px 6px 4px 0;
   background: transparent;
   color: var(--fg-default);
   font-size: 13px;
 }
-.tog__track {
+.ryze-portal .tog__track {
   width: 36px; height: 20px;
   background: var(--bg-surface-2);
   border: 1px solid var(--border-soft);
@@ -1499,7 +1501,7 @@ textarea {
   position: relative;
   transition: background 160ms ease, border-color 160ms ease;
 }
-.tog__thumb {
+.ryze-portal .tog__thumb {
   position: absolute;
   top: 2px; left: 2px;
   width: 14px; height: 14px;
@@ -1507,19 +1509,19 @@ textarea {
   border-radius: 999px;
   transition: transform 160ms ease, background 160ms ease;
 }
-.tog.is-on .tog__track {
+.ryze-portal .tog.is-on .tog__track {
   background: var(--accent);
   border-color: var(--accent);
 }
-.tog.is-on .tog__thumb {
+.ryze-portal .tog.is-on .tog__thumb {
   transform: translateX(16px);
   background: var(--accent-fg);
 }
-.tog__label { color: var(--fg-default); }
+.ryze-portal .tog__label { color: var(--fg-default); }
 
 /* ── Swatches (accent picker) ─────────────────────────── */
-.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
-.swatch {
+.ryze-portal .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.ryze-portal .swatch {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 14px 8px 8px;
   background: var(--bg-surface-2);
@@ -1527,31 +1529,31 @@ textarea {
   border-radius: 999px;
   transition: border-color 140ms ease, background 140ms ease;
 }
-.swatch:hover { border-color: var(--border-strong); }
-.swatch__chip {
+.ryze-portal .swatch:hover { border-color: var(--border-strong); }
+.ryze-portal .swatch__chip {
   width: 22px; height: 22px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18) inset;
   flex-shrink: 0;
 }
-.swatch__label { font-size: 12.5px; font-weight: 600; color: var(--fg-default); }
-.swatch.is-active {
+.ryze-portal .swatch__label { font-size: 12.5px; font-weight: 600; color: var(--fg-default); }
+.ryze-portal .swatch.is-active {
   background: var(--accent-soft);
   border-color: color-mix(in oklab, var(--accent) 44%, transparent);
 }
-.swatch.is-active .swatch__label { color: var(--accent); }
+.ryze-portal .swatch.is-active .swatch__label { color: var(--accent); }
 
 /* ── Font picker (sample cards) ───────────────────────── */
-.font-grid {
+.ryze-portal .font-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   width: 100%;
   max-width: 560px;
 }
-@media (max-width: 900px) { .font-grid { grid-template-columns: 1fr 1fr; max-width: 100%; } }
-.font-card {
+@media (max-width: 900px) { .ryze-portal .font-grid { grid-template-columns: 1fr 1fr; max-width: 100%; } }
+.ryze-portal .font-card {
   padding: 18px 14px 14px;
   border-radius: 12px;
   background: var(--bg-surface-2);
@@ -1562,31 +1564,31 @@ textarea {
   gap: 8px;
   transition: border-color 140ms ease, transform 140ms ease;
 }
-.font-card:hover { transform: translateY(-1px); border-color: var(--border-strong); }
-.font-card__sample {
+.ryze-portal .font-card:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+.ryze-portal .font-card__sample {
   font-size: 38px;
   line-height: 1;
   color: var(--fg-strong);
   letter-spacing: -0.02em;
 }
-.font-card__name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
-.font-card__caption { font-size: 11.5px; color: var(--fg-muted); font-family: var(--font-mono); }
-.font-card.is-active {
+.ryze-portal .font-card__name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .font-card__caption { font-size: 11.5px; color: var(--fg-muted); font-family: var(--font-mono); }
+.ryze-portal .font-card.is-active {
   border-color: color-mix(in oklab, var(--accent) 44%, transparent);
   background: var(--accent-soft-2);
 }
-.font-card.is-active .font-card__name { color: var(--accent); }
+.ryze-portal .font-card.is-active .font-card__name { color: var(--accent); }
 
 /* ── Notifications matrix ─────────────────────────────── */
-.ntable { padding: 0 8px 8px; }
-.ntable__head, .ntable__row {
+.ryze-portal .ntable { padding: 0 8px 8px; }
+.ryze-portal .ntable__head, .ryze-portal .ntable__row {
   display: grid;
   grid-template-columns: 1fr 100px 100px 100px;
   gap: 12px;
   padding: 14px 16px;
   align-items: center;
 }
-.ntable__head {
+.ryze-portal .ntable__head {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -1594,18 +1596,18 @@ textarea {
   color: var(--fg-muted);
   border-bottom: 1px solid var(--border-faint);
 }
-.ntable__row { border-bottom: 1px solid var(--border-faint); }
-.ntable__row:last-child { border-bottom: 0; }
-.ntable__row:hover { background: var(--bg-hover); }
-.ntable__chan { display: flex; justify-content: center; align-items: center; }
-.ntable__head .ntable__chan { font-size: 11px; }
+.ryze-portal .ntable__row { border-bottom: 1px solid var(--border-faint); }
+.ryze-portal .ntable__row:last-child { border-bottom: 0; }
+.ryze-portal .ntable__row:hover { background: var(--bg-hover); }
+.ryze-portal .ntable__chan { display: flex; justify-content: center; align-items: center; }
+.ryze-portal .ntable__head .ntable__chan { font-size: 11px; }
 @media (max-width: 900px) {
-  .ntable__head, .ntable__row { grid-template-columns: 1fr 60px 60px 60px; padding: 12px; }
+  .ryze-portal .ntable__head, .ryze-portal .ntable__row { grid-template-columns: 1fr 60px 60px 60px; padding: 12px; }
 }
 
 /* ── Profile photo row ────────────────────────────────── */
-.s-photo { display: flex; align-items: center; gap: 18px; }
-.s-photo__avatar {
+.ryze-portal .s-photo { display: flex; align-items: center; gap: 18px; }
+.ryze-portal .s-photo__avatar {
   width: 60px; height: 60px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10));
@@ -1616,10 +1618,10 @@ textarea {
   font-weight: 600;
   font-size: 26px;
 }
-.s-photo__btns { display: flex; gap: 8px; }
+.ryze-portal .s-photo__btns { display: flex; gap: 8px; }
 
 /* ── Save bar (sticky at bottom of section) ───────────── */
-.save-bar {
+.ryze-portal .save-bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
   padding: 14px 22px;
@@ -1631,25 +1633,25 @@ textarea {
   z-index: 5;
   backdrop-filter: blur(8px);
 }
-.save-bar__hint { font-size: 12.5px; }
-.save-bar__btns { display: flex; gap: 8px; }
+.ryze-portal .save-bar__hint { font-size: 12.5px; }
+.ryze-portal .save-bar__btns { display: flex; gap: 8px; }
 
 /* ── Sessions list ────────────────────────────────────── */
-.sess-row {
+.ryze-portal .sess-row {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
   padding: 16px 22px;
   border-bottom: 1px solid var(--border-faint);
 }
-.sess-row:last-child { border-bottom: 0; }
+.ryze-portal .sess-row:last-child { border-bottom: 0; }
 
 /* ── Integrations grid ────────────────────────────────── */
-.integ-grid {
+.ryze-portal .integ-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--gap-md);
 }
-.integ-card {
+.ryze-portal .integ-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
   border-radius: 14px;
@@ -1657,10 +1659,10 @@ textarea {
   display: flex; flex-direction: column; gap: 12px;
   transition: border-color 160ms ease, transform 160ms ease;
 }
-.integ-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
-.integ-card.is-on { border-color: color-mix(in oklab, var(--accent) 22%, var(--border-faint)); }
-.integ-card__head { display: flex; align-items: center; justify-content: space-between; }
-.integ-card__logo {
+.ryze-portal .integ-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+.ryze-portal .integ-card.is-on { border-color: color-mix(in oklab, var(--accent) 22%, var(--border-faint)); }
+.ryze-portal .integ-card__head { display: flex; align-items: center; justify-content: space-between; }
+.ryze-portal .integ-card__logo {
   width: 36px; height: 36px;
   border-radius: 9px;
   display: grid; place-items: center;
@@ -1668,25 +1670,25 @@ textarea {
   font-family: var(--font-display);
   font-style: italic;
 }
-.integ-card__name { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
-.integ-card__desc { font-size: 12.5px; color: var(--fg-default); line-height: 1.5; }
-.integ-card__meta { font-size: 11px; color: var(--fg-muted); margin-top: -4px; }
-.integ-card__foot { margin-top: auto; display: flex; gap: 8px; align-items: center; }
+.ryze-portal .integ-card__name { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .integ-card__desc { font-size: 12.5px; color: var(--fg-default); line-height: 1.5; }
+.ryze-portal .integ-card__meta { font-size: 11px; color: var(--fg-muted); margin-top: -4px; }
+.ryze-portal .integ-card__foot { margin-top: auto; display: flex; gap: 8px; align-items: center; }
 
 /* ── Role permissions cards ──────────────────────────── */
-.role-grid {
+.ryze-portal .role-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 12px;
   margin-top: 18px;
 }
-.role-card {
+.ryze-portal .role-card {
   padding: 14px 16px;
   border: 1px solid var(--border-faint);
   background: var(--bg-surface-2);
   border-radius: 10px;
 }
-.role-card__name {
+.ryze-portal .role-card__name {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
@@ -1694,22 +1696,22 @@ textarea {
   color: var(--fg-strong);
   letter-spacing: -0.01em;
 }
-.role-card__what { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; }
+.ryze-portal .role-card__what { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; }
 
 /* ── Billing ─────────────────────────────────────────── */
-.bill-grid {
+.ryze-portal .bill-grid {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   gap: var(--gap-md);
 }
-@media (max-width: 1000px) { .bill-grid { grid-template-columns: 1fr; } }
-.bill-plan {
+@media (max-width: 1000px) { .ryze-portal .bill-grid { grid-template-columns: 1fr; } }
+.ryze-portal .bill-plan {
   background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 8%, var(--bg-surface)), var(--bg-surface));
   display: flex; flex-direction: column; gap: 8px;
   padding: 28px 24px !important;
 }
-.bill-plan__eyebrow { color: var(--accent); }
-.bill-plan__name {
+.ryze-portal .bill-plan__eyebrow { color: var(--accent); }
+.ryze-portal .bill-plan__name {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
@@ -1719,27 +1721,27 @@ textarea {
   letter-spacing: -0.015em;
   margin-top: 4px;
 }
-.bill-plan__price { display: flex; align-items: baseline; margin-top: 6px; }
-.bill-plan__amt { font-size: 28px; font-weight: 700; color: var(--fg-strong); }
-.bill-plan__notes { margin-top: 6px; font-size: 13px; }
-.bill-plan__seats {
+.ryze-portal .bill-plan__price { display: flex; align-items: baseline; margin-top: 6px; }
+.ryze-portal .bill-plan__amt { font-size: 28px; font-weight: 700; color: var(--fg-strong); }
+.ryze-portal .bill-plan__notes { margin-top: 6px; font-size: 13px; }
+.ryze-portal .bill-plan__seats {
   margin-top: 18px;
   background: var(--bg-surface-2);
   border-radius: 10px;
   padding: 14px 16px;
 }
-.bill-plan__seat-row {
+.ryze-portal .bill-plan__seat-row {
   display: flex; justify-content: space-between;
   padding: 6px 0;
   font-size: 13px;
   border-bottom: 1px dashed var(--border-faint);
 }
-.bill-plan__seat-row:last-child { border-bottom: 0; }
-.bill-plan__seat-row span:first-child { color: var(--fg-default); }
-.bill-plan__seat-row span:last-child  { color: var(--fg-strong); font-weight: 600; }
-.bill-plan__btns { display: flex; gap: 10px; margin-top: 20px; }
+.ryze-portal .bill-plan__seat-row:last-child { border-bottom: 0; }
+.ryze-portal .bill-plan__seat-row span:first-child { color: var(--fg-default); }
+.ryze-portal .bill-plan__seat-row span:last-child  { color: var(--fg-strong); font-weight: 600; }
+.ryze-portal .bill-plan__btns { display: flex; gap: 10px; margin-top: 20px; }
 
-.bill-card {
+.ryze-portal .bill-card {
   position: relative;
   padding: 22px;
   background: linear-gradient(135deg, #0d1119, #1a2030);
@@ -1748,7 +1750,7 @@ textarea {
   border: 1px solid var(--border-soft);
   display: flex; flex-direction: column; gap: 12px;
 }
-.bill-card__brand {
+.ryze-portal .bill-card__brand {
   font-family: var(--font-display);
   font-style: italic;
   font-size: 22px;
@@ -1756,13 +1758,13 @@ textarea {
   color: #fff;
   align-self: flex-start;
 }
-.bill-card__num { font-size: 16px; letter-spacing: 0.08em; }
-.bill-card__exp { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
-.bill-card__edit { position: absolute; top: 14px; right: 14px; color: rgba(255, 255, 255, 0.78); }
-.bill-card__edit:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+.ryze-portal .bill-card__num { font-size: 16px; letter-spacing: 0.08em; }
+.ryze-portal .bill-card__exp { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+.ryze-portal .bill-card__edit { position: absolute; top: 14px; right: 14px; color: rgba(255, 255, 255, 0.78); }
+.ryze-portal .bill-card__edit:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
 
 /* ── Danger zone rows ────────────────────────────────── */
-.danger-row {
+.ryze-portal .danger-row {
   display: flex; align-items: center; justify-content: space-between;
   gap: 24px;
   padding: 20px 24px;
@@ -1770,25 +1772,25 @@ textarea {
   border: 1px solid var(--border-faint);
   border-radius: 14px;
 }
-.danger-row.is-destructive {
+.ryze-portal .danger-row.is-destructive {
   border-color: color-mix(in oklab, var(--danger) 38%, transparent);
   background: color-mix(in oklab, var(--danger) 5%, var(--bg-surface));
 }
-.danger-row__body { min-width: 0; flex: 1; }
-.danger-row__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
-.danger-row__sub { font-size: 12.5px; margin-top: 4px; line-height: 1.55; max-width: 70ch; }
+.ryze-portal .danger-row__body { min-width: 0; flex: 1; }
+.ryze-portal .danger-row__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .danger-row__sub { font-size: 12.5px; margin-top: 4px; line-height: 1.55; max-width: 70ch; }
 
-.btn--danger {
+.ryze-portal .btn--danger {
   background: var(--danger);
   color: #fff;
   box-shadow: 0 6px 18px -10px color-mix(in oklab, var(--danger) 70%, transparent);
 }
-.btn--danger:hover { background: color-mix(in oklab, var(--danger) 88%, #fff); }
+.ryze-portal .btn--danger:hover { background: color-mix(in oklab, var(--danger) 88%, #fff); }
 
 /* ============================================================
    STUDENT PROGRESS — topic mastery bars
    ============================================================ */
-.topic-row {
+.ryze-portal .topic-row {
   display: grid;
   grid-template-columns: 200px 1fr 140px;
   align-items: center;
@@ -1796,9 +1798,9 @@ textarea {
   padding: 12px 0;
   border-bottom: 1px dashed var(--border-faint);
 }
-.topic-row:last-child { border-bottom: 0; }
-.topic-row__name { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
-.topic-row__bar {
+.ryze-portal .topic-row:last-child { border-bottom: 0; }
+.ryze-portal .topic-row__name { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .topic-row__bar {
   position: relative;
   height: 10px;
   background: var(--bg-surface-2);
@@ -1806,23 +1808,34 @@ textarea {
   overflow: hidden;
   border: 1px solid var(--border-faint);
 }
-.topic-row__cls {
+.ryze-portal .topic-row__cls {
   position: absolute; left: 0; top: 0; bottom: 0;
   background: color-mix(in oklab, var(--fg-muted) 28%, transparent);
   border-radius: 999px;
 }
-.topic-row__you {
+.ryze-portal .topic-row__you {
   position: absolute; left: 0; top: 0; bottom: 0;
   background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff));
   border-radius: 999px;
 }
-.topic-row__nums {
+.ryze-portal .topic-row__nums {
   display: flex;
   justify-content: space-between;
   font-size: 12.5px;
 }
 @media (max-width: 800px) {
-  .topic-row { grid-template-columns: 1fr; }
+  .ryze-portal .topic-row { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   PAGE TRANSITIONS
+   ============================================================ */
+.ryze-portal .page-enter {
+  animation: pageFadeIn 180ms ease forwards;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 
