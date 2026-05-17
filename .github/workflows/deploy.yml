@@ -19,8 +19,11 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
+            # Pull latest frontend code
             cd "${{ secrets.VPS_APP_DIR }}"
             git pull origin main
+            # Rebuild the web container (docker-compose lives one level up in ryze-discord-bot)
+            cd "${{ secrets.VPS_COMPOSE_DIR }}"
             docker compose up -d --build web
             docker image prune -f
-            echo "✅ Deployed $(git rev-parse --short HEAD) at $(date)"
+            echo "✅ Deployed $(git -C "${{ secrets.VPS_APP_DIR }}" rev-parse --short HEAD) at $(date)"
