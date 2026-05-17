@@ -1970,3 +1970,47 @@ body {
 .ryze-portal[data-text-size="larger"] { font-size: 16.5px; }
 
 
+
+/* ============================================================
+   MODAL & NOTIFICATION ANIMATIONS
+   ============================================================ */
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+@keyframes notif-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Respect reduced-motion */
+.ryze-portal[data-motion="reduced"] * {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ============================================================
+   MODAL FORM INPUTS — color-scheme for native date/time pickers
+   ============================================================ */
+.ryze-portal select,
+.ryze-portal input[type="date"],
+.ryze-portal input[type="time"] {
+  color-scheme: dark;
+}
+.ryze-portal[data-theme="light"] select,
+.ryze-portal[data-theme="light"] input[type="date"],
+.ryze-portal[data-theme="light"] input[type="time"] {
+  color-scheme: light;
+}

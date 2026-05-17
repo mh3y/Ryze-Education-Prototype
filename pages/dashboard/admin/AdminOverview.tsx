@@ -69,8 +69,8 @@ const MOCK_ALERTS = [
 ];
 
 const QUICK_ACTIONS = [
-  { key: 'add-student',  label: 'Add student',      Icon: Plus,          accent: true,  path: '/dashboard/admin/students' },
-  { key: 'schedule',     label: 'Schedule lesson',  Icon: CalendarDays,  accent: false, path: '/dashboard/admin/lessons' },
+  { key: 'add-student',  label: 'Add student',      Icon: Plus,          accent: true,  path: '/dashboard/admin/students?new=1' },
+  { key: 'schedule',     label: 'Schedule lesson',  Icon: CalendarDays,  accent: false, path: '/dashboard/admin/lessons?new=1' },
   { key: 'invoice',      label: 'Send invoice',     Icon: CreditCard,    accent: false, path: '/dashboard/admin/payments' },
   { key: 'broadcast',    label: 'Announcement',     Icon: Megaphone,     accent: false, path: '/dashboard/admin/announcements' },
   { key: 'report',       label: 'Build report',     Icon: ClipboardList, accent: false, path: '/dashboard/admin/progress-reports' },
@@ -186,8 +186,8 @@ const AdminOverview: React.FC = () => {
           <button className="btn btn--ghost" onClick={load}>
             <RefreshCw size={14} /> Refresh
           </button>
-          <button className="btn btn--primary">
-            <Plus size={14} /> Quick action
+          <button className="btn btn--primary" onClick={() => navigate('/dashboard/admin/students?new=1')}>
+            <Plus size={14} /> Add student
           </button>
         </div>
       </div>

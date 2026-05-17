@@ -6,7 +6,7 @@
  * Mobile: sidebar is a full-height drawer that slides in/out.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   Menu, Search, Bell, ChevronRight,
@@ -17,6 +17,11 @@ import {
   PortalSettingsProvider,
   usePortalSettings,
 } from '../../contexts/PortalSettingsContext';
+import {
+  NotificationsProvider,
+  useNotifications,
+} from '../../contexts/NotificationsContext';
+import NotificationPanel from './NotificationPanel';
 
 // ---------------------------------------------------------------------------
 // Breadcrumb helpers
@@ -82,6 +87,9 @@ const DashboardLayoutInner: React.FC = () => {
   const location          = useLocation();
   // Destructure settings so we can react to sidebarBehavior changes
   const { settings } = usePortalSettings();
+  const { unreadCount }   = useNotifications();
+  const [notifOpen, setNotifOpen] = useState(false);
+  const toggleNotif = useCallback(() => setNotifOpen((v) => !v), []);
 
   const mobileQuery = '(max-width: 767px)';
   const [isMobile, setIsMobile] = useState(
@@ -283,44 +291,60 @@ const DashboardLayoutInner: React.FC = () => {
 
           {/* Right: bell + divider + user */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
-            {/* Bell */}
-            <button
-              aria-label="Notifications"
-              style={{
-                position: 'relative',
-                width: 36,
-                height: 36,
-                borderRadius: 9,
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--fg-muted)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background 140ms ease, color 140ms ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)';
-                (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'transparent';
-                (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)';
-              }}
-            >
-              <Bell size={16} />
-              {/* Gold dot indicator */}
-              <span style={{
-                position: 'absolute',
-                top: 7,
-                right: 7,
-                width: 7,
-                height: 7,
-                borderRadius: 999,
-                background: 'var(--accent)',
-                border: '2px solid var(--bg-app)',
-              }} />
-            </button>
+            {/* Bell — notification trigger */}
+            <div style={{ position: 'relative' }}>
+              <button
+                aria-label="Notifications"
+                onClick={toggleNotif}
+                style={{
+                  position: 'relative',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 9,
+                  display: 'grid',
+                  placeItems: 'center',
+                  color: notifOpen ? 'var(--fg-strong)' : 'var(--fg-muted)',
+                  background: notifOpen ? 'var(--bg-hover)' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 140ms ease, color 140ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)';
+                  (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!notifOpen) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)';
+                  }
+                }}
+              >
+                <Bell size={16} />
+                {/* Unread pip */}
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: 6, right: 6,
+                    minWidth: unreadCount > 9 ? 16 : 8,
+                    height: unreadCount > 9 ? 16 : 8,
+                    borderRadius: 999,
+                    background: 'var(--accent)',
+                    border: '2px solid var(--bg-app)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 9, fontWeight: 700, color: 'var(--accent-fg)',
+                    padding: unreadCount > 9 ? '0 3px' : 0,
+                  }}>
+                    {unreadCount > 9 ? '9+' : ''}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification panel dropdown */}
+              {notifOpen && (
+                <NotificationPanel onClose={() => setNotifOpen(false)} />
+              )}
+            </div>
 
             {/* Divider */}
             <div style={{
@@ -394,7 +418,9 @@ const DashboardLayoutInner: React.FC = () => {
 
 const DashboardLayout: React.FC = () => (
   <PortalSettingsProvider>
-    <DashboardLayoutInner />
+    <NotificationsProvider>
+      <DashboardLayoutInner />
+    </NotificationsProvider>
   </PortalSettingsProvider>
 );
 
