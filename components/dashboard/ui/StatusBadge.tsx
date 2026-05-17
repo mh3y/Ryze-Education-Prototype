@@ -1,95 +1,83 @@
-/**
- * StatusBadge — coloured pill badge for all status/role/type values used
- * across the portal (enrollment, payment, attendance, lesson, user role, etc.)
- */
-
 import React from 'react';
 
-// ---------------------------------------------------------------------------
-// Variant map  (value → [bgClass, textClass, label override])
-// ---------------------------------------------------------------------------
-
-type VariantEntry = { bg: string; text: string; label?: string };
+type VariantEntry = { cls: string; label?: string };
 
 const VARIANTS: Record<string, VariantEntry> = {
   // Enrollment
-  active:       { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  trial:        { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  paused:       { bg: 'bg-amber-500/15',   text: 'text-amber-400' },
-  withdrawn:    { bg: 'bg-red-500/15',     text: 'text-red-400' },
+  active:         { cls: 'tag tag--ok' },
+  trial:          { cls: 'tag tag--info' },
+  paused:         { cls: 'tag' },
+  withdrawn:      { cls: 'tag tag--danger' },
 
   // Payment
-  paid:         { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  pending:      { bg: 'bg-amber-500/15',   text: 'text-amber-400' },
-  overdue:      { bg: 'bg-red-500/15',     text: 'text-red-400' },
-  waived:       { bg: 'bg-slate-500/15',   text: 'text-slate-400' },
-  unpaid:       { bg: 'bg-red-500/15',     text: 'text-red-400' },
+  paid:           { cls: 'tag tag--ok' },
+  pending:        { cls: 'tag tag--warn' },
+  overdue:        { cls: 'tag tag--danger' },
+  waived:         { cls: 'tag' },
+  unpaid:         { cls: 'tag tag--danger' },
+  due:            { cls: 'tag tag--warn' },
 
   // Attendance
-  present:      { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  late:         { bg: 'bg-amber-500/15',   text: 'text-amber-400' },
-  left_early:   { bg: 'bg-orange-500/15',  text: 'text-orange-400', label: 'Left Early' },
-  absent:       { bg: 'bg-red-500/15',     text: 'text-red-400' },
-  excused:      { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  unknown:      { bg: 'bg-slate-500/15',   text: 'text-slate-400' },
+  present:        { cls: 'tag tag--ok' },
+  late:           { cls: 'tag tag--warn' },
+  left_early:     { cls: 'tag tag--warn', label: 'Left Early' },
+  absent:         { cls: 'tag tag--danger' },
+  excused:        { cls: 'tag tag--info' },
+  unknown:        { cls: 'tag' },
 
-  // Discord verification
-  verified:     { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  mismatch:     { bg: 'bg-red-500/15',     text: 'text-red-400' },
-  no_data:      { bg: 'bg-slate-500/15',   text: 'text-slate-400', label: 'No Data' },
-  // 'pending' already mapped above
+  // Discord
+  verified:       { cls: 'tag tag--ok' },
+  mismatch:       { cls: 'tag tag--danger' },
+  no_data:        { cls: 'tag', label: 'No Data' },
 
   // Lesson status
-  scheduled:    { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  // 'active' already mapped
-  completed:    { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  cancelled:    { bg: 'bg-red-500/15',     text: 'text-red-400' },
+  scheduled:      { cls: 'tag tag--info' },
+  completed:      { cls: 'tag tag--ok' },
+  cancelled:      { cls: 'tag tag--danger' },
+  live:           { cls: 'tag tag--accent', label: 'Live now' },
+  upcoming:       { cls: 'tag tag--info' },
 
   // Progress report
-  draft:        { bg: 'bg-slate-500/15',   text: 'text-slate-400' },
-  submitted:    { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  approved:     { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  sent_to_parent: { bg: 'bg-purple-500/15', text: 'text-purple-400', label: 'Sent' },
+  draft:          { cls: 'tag' },
+  submitted:      { cls: 'tag tag--info' },
+  approved:       { cls: 'tag tag--ok' },
+  sent_to_parent: { cls: 'tag tag--accent', label: 'Sent' },
 
   // Alert severity
-  low:          { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  medium:       { bg: 'bg-amber-500/15',   text: 'text-amber-400' },
-  high:         { bg: 'bg-orange-500/15',  text: 'text-orange-400' },
-  critical:     { bg: 'bg-red-500/15',     text: 'text-red-400' },
+  low:            { cls: 'tag tag--info' },
+  medium:         { cls: 'tag tag--warn' },
+  high:           { cls: 'tag tag--danger' },
+  critical:       { cls: 'tag tag--danger' },
 
   // Alert status
-  open:         { bg: 'bg-red-500/15',     text: 'text-red-400' },
-  resolved:     { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
-  dismissed:    { bg: 'bg-slate-500/15',   text: 'text-slate-400' },
+  open:           { cls: 'tag tag--danger' },
+  resolved:       { cls: 'tag tag--ok' },
+  dismissed:      { cls: 'tag' },
 
   // User roles
-  admin:        { bg: 'bg-[#FFB000]/15',   text: 'text-[#FFB000]' },
-  tutor:        { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  student:      { bg: 'bg-purple-500/15',  text: 'text-purple-400' },
-  parent:       { bg: 'bg-teal-500/15',    text: 'text-teal-400' },
+  admin:          { cls: 'tag tag--accent' },
+  tutor:          { cls: 'tag tag--info' },
+  student:        { cls: 'tag tag--info' },
+  parent:         { cls: 'tag tag--info' },
 
-  // Availability / makeup
-  rejected:     { bg: 'bg-red-500/15',     text: 'text-red-400' },
-
-  // Delivery mode
-  online:       { bg: 'bg-blue-500/15',    text: 'text-blue-400' },
-  in_person:    { bg: 'bg-purple-500/15',  text: 'text-purple-400', label: 'In Person' },
-  hybrid:       { bg: 'bg-teal-500/15',    text: 'text-teal-400' },
+  // Misc
+  rejected:       { cls: 'tag tag--danger' },
+  online:         { cls: 'tag tag--info' },
+  in_person:      { cls: 'tag', label: 'In Person' },
+  hybrid:         { cls: 'tag tag--info' },
+  running:        { cls: 'tag tag--ok' },
+  'low-seat':     { cls: 'tag tag--warn', label: 'Low seats' },
+  'at-risk':      { cls: 'tag tag--warn', label: 'At risk' },
 
   // Boolean
-  true:         { bg: 'bg-emerald-500/15', text: 'text-emerald-400', label: 'Yes' },
-  false:        { bg: 'bg-slate-500/15',   text: 'text-slate-400',   label: 'No' },
+  true:           { cls: 'tag tag--ok', label: 'Yes' },
+  false:          { cls: 'tag', label: 'No' },
 };
 
-const FALLBACK: VariantEntry = { bg: 'bg-slate-500/15', text: 'text-slate-400' };
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+const FALLBACK: VariantEntry = { cls: 'tag' };
 
 interface StatusBadgeProps {
   value: string | boolean | null | undefined;
-  /** Override the display label (otherwise derived from value). */
   label?: string;
   className?: string;
 }
@@ -104,9 +92,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ value, label, classNam
     (key ? key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '—');
 
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${variant.bg} ${variant.text} ${className}`}
-    >
+    <span className={`${variant.cls} ${className}`.trim()}>
       {displayLabel}
     </span>
   );

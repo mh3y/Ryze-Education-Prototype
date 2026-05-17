@@ -4,9 +4,10 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, ArrowRight, TrendingUp } from 'lucide-react';
 import { adminApi, LessonListItem } from '../../../services/adminApi';
+import ScheduleLessonModal from '../../../components/dashboard/modals/ScheduleLessonModal';
 
 // ---------------------------------------------------------------------------
 // Types & helpers
@@ -126,9 +127,11 @@ const Seg: React.FC<{ active: string; options: string[]; onChange: (v: string) =
 
 const LessonsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState('Day');
-  const [lessons, setLessons]   = useState<LessonListItem[]>([]);
-  const [loading, setLoading]   = useState(true);
+  const [lessons, setLessons]     = useState<LessonListItem[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [showSchedule, setShowSchedule] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -143,6 +146,14 @@ const LessonsPage: React.FC = () => {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Open modal when navigated here with ?new=1
+  useEffect(() => {
+    if (searchParams.get('new') === '1') {
+      setShowSchedule(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Convert API lessons to schedule blocks if available
   const blocks: ScheduleBlock[] = lessons.length > 0
@@ -213,7 +224,9 @@ const LessonsPage: React.FC = () => {
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <Seg active={view} options={['Day', 'Week', 'Month']} onChange={setView} />
-          <button style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
+          <button
+            onClick={() => setShowSchedule(true)}
+            style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> Schedule
@@ -373,6 +386,13 @@ const LessonsPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Schedule Lesson modal */}
+      {showSchedule && (
+        <ScheduleLessonModal
+          onClose={() => setShowSchedule(false)}
+          onCreated={() => { load(); }}
+        />
+      )}
     </div>
   );
 };

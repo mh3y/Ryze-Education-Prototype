@@ -6,13 +6,22 @@
  * Mobile: sidebar is a full-height drawer that slides in/out.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   Menu, Search, Bell, ChevronRight,
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  PortalSettingsProvider,
+  usePortalSettings,
+} from '../../contexts/PortalSettingsContext';
+import {
+  NotificationsProvider,
+  useNotifications,
+} from '../../contexts/NotificationsContext';
+import NotificationPanel from './NotificationPanel';
 
 // ---------------------------------------------------------------------------
 // Breadcrumb helpers
@@ -72,10 +81,15 @@ function getInitials(name: string): string {
 // Layout
 // ---------------------------------------------------------------------------
 
-const DashboardLayout: React.FC = () => {
+const DashboardLayoutInner: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate          = useNavigate();
   const location          = useLocation();
+  // Destructure settings so we can react to sidebarBehavior changes
+  const { settings } = usePortalSettings();
+  const { unreadCount }   = useNotifications();
+  const [notifOpen, setNotifOpen] = useState(false);
+  const toggleNotif = useCallback(() => setNotifOpen((v) => !v), []);
 
   const mobileQuery = '(max-width: 767px)';
   const [isMobile, setIsMobile] = useState(
@@ -89,14 +103,33 @@ const DashboardLayout: React.FC = () => {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(
-    () => !window.matchMedia(mobileQuery).matches,
-  );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const mobileNow = window.matchMedia(mobileQuery).matches;
+    if (mobileNow) return false;
+    // Respect sidebarBehavior from persisted settings
+    const raw = localStorage.getItem('ryze_portal_settings');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { sidebarBehavior?: string };
+        if (parsed.sidebarBehavior === 'always-rail') return false;
+        if (parsed.sidebarBehavior === 'always-open') return true;
+      } catch { /* ignore */ }
+    }
+    return true;
+  });
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
     if (isMobile) setIsSidebarOpen(false);
   }, [location.pathname, isMobile]);
+
+  // React to sidebarBehavior setting changes from the settings page
+  useEffect(() => {
+    if (isMobile) return; // mobile manages its own open/close state
+    if (settings.sidebarBehavior === 'always-rail') setIsSidebarOpen(false);
+    else if (settings.sidebarBehavior === 'always-open') setIsSidebarOpen(true);
+    // 'auto' = leave as-is; user can toggle manually
+  }, [settings.sidebarBehavior, isMobile]);
 
   const handleLogout = () => {
     logout();
@@ -120,7 +153,7 @@ const DashboardLayout: React.FC = () => {
         minHeight: '100vh',
         transition: 'grid-template-columns 220ms ease',
         background: 'var(--bg-app)',
-        fontFamily: '"Manrope", system-ui, sans-serif',
+        fontFamily: 'var(--font-sans, "Manrope", system-ui, sans-serif)',
       }}
     >
       {/* ── Sidebar ─────────────────────────────────────────────── */}
@@ -258,44 +291,60 @@ const DashboardLayout: React.FC = () => {
 
           {/* Right: bell + divider + user */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
-            {/* Bell */}
-            <button
-              aria-label="Notifications"
-              style={{
-                position: 'relative',
-                width: 36,
-                height: 36,
-                borderRadius: 9,
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--fg-muted)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background 140ms ease, color 140ms ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)';
-                (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'transparent';
-                (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)';
-              }}
-            >
-              <Bell size={16} />
-              {/* Gold dot indicator */}
-              <span style={{
-                position: 'absolute',
-                top: 7,
-                right: 7,
-                width: 7,
-                height: 7,
-                borderRadius: 999,
-                background: 'var(--accent)',
-                border: '2px solid var(--bg-app)',
-              }} />
-            </button>
+            {/* Bell — notification trigger */}
+            <div style={{ position: 'relative' }}>
+              <button
+                aria-label="Notifications"
+                onClick={toggleNotif}
+                style={{
+                  position: 'relative',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 9,
+                  display: 'grid',
+                  placeItems: 'center',
+                  color: notifOpen ? 'var(--fg-strong)' : 'var(--fg-muted)',
+                  background: notifOpen ? 'var(--bg-hover)' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 140ms ease, color 140ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)';
+                  (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!notifOpen) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)';
+                  }
+                }}
+              >
+                <Bell size={16} />
+                {/* Unread pip */}
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: 6, right: 6,
+                    minWidth: unreadCount > 9 ? 16 : 8,
+                    height: unreadCount > 9 ? 16 : 8,
+                    borderRadius: 999,
+                    background: 'var(--accent)',
+                    border: '2px solid var(--bg-app)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 9, fontWeight: 700, color: 'var(--accent-fg)',
+                    padding: unreadCount > 9 ? '0 3px' : 0,
+                  }}>
+                    {unreadCount > 9 ? '9+' : ''}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification panel dropdown */}
+              {notifOpen && (
+                <NotificationPanel onClose={() => setNotifOpen(false)} />
+              )}
+            </div>
 
             {/* Divider */}
             <div style={{
@@ -342,19 +391,37 @@ const DashboardLayout: React.FC = () => {
             scrollbarColor: 'var(--border-strong) transparent',
           }}
         >
-          <div style={{
-            padding: 'var(--pad-page-y) var(--pad-page-x)',
-            maxWidth: 1480,
-            margin: '0 auto',
-            paddingBottom: 48,
-          }}>
-            <Outlet />
-          </div>
+          <React.Suspense
+            fallback={
+              <div style={{ flex: 1, background: 'var(--bg-app)', minHeight: '60vh' }} />
+            }
+          >
+            <div
+              key={location.pathname}
+              className="page-enter"
+              style={{
+                padding: 'var(--pad-page-y) var(--pad-page-x)',
+                maxWidth: 1480,
+                margin: '0 auto',
+                paddingBottom: 48,
+              }}
+            >
+              <Outlet />
+            </div>
+          </React.Suspense>
         </div>
 
       </div>
     </div>
   );
 };
+
+const DashboardLayout: React.FC = () => (
+  <PortalSettingsProvider>
+    <NotificationsProvider>
+      <DashboardLayoutInner />
+    </NotificationsProvider>
+  </PortalSettingsProvider>
+);
 
 export default DashboardLayout;

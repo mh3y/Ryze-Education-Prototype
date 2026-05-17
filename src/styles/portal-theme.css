@@ -1,0 +1,2016 @@
+/* ============================================================
+   Ryze Admin Portal — design tokens
+   Two themes (dark, light) + accent overrides + density + font.
+   The body data-attrs are toggled by the Tweaks panel.
+   ============================================================ */
+
+:root {
+  /* ── Type pairings ────────────────────────────────────────── */
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display-style: italic;
+  --font-display-weight: 500;
+
+  /* ── Density scale ────────────────────────────────────────── */
+  --pad-page-x: 40px;
+  --pad-page-y: 32px;
+  --row-h: 56px;
+  --card-pad: 22px;
+  --gap-md: 20px;
+  --gap-lg: 28px;
+
+  /* ── Accent (default: Ryze Gold) ──────────────────────────── */
+  --accent: #b8841e;
+  --accent-soft: rgba(184, 132, 30, 0.14);
+  --accent-soft-2: rgba(184, 132, 30, 0.08);
+  --accent-fg: #ffffff;
+  --accent-ink: #1a1305;
+
+  /* ── Semantic ─────────────────────────────────────────────── */
+  --ok: #4f9b6a;
+  --warn: #c89e2b;
+  --danger: #c25450;
+  --info: #5e7fb3;
+}
+
+/* ─── Theme: DARK (default) ──────────────────────────────────── */
+[data-theme="dark"] {
+  --bg-app: #0a0e16;
+  --bg-sidebar: #0d1119;
+  --bg-surface: #11151e;
+  --bg-surface-2: #161b26;
+  --bg-elevated: #1b2230;
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --bg-active: rgba(255, 255, 255, 0.06);
+
+  --fg-strong: #f6f4ef;
+  --fg-default: #d8d4cb;
+  --fg-muted: #8a8b8e;
+  --fg-faint: #5a5c61;
+
+  --border-faint: rgba(255, 255, 255, 0.06);
+  --border-soft: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.02) inset, 0 12px 32px -18px rgba(0, 0, 0, 0.6);
+
+  --grid-line: rgba(255, 255, 255, 0.025);
+
+  color-scheme: dark;
+}
+
+/* ─── Theme: LIGHT (matches marketing site) ──────────────────── */
+[data-theme="light"] {
+  --bg-app: #f6f1e8;
+  --bg-sidebar: #11151d;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #fbf7ef;
+  --bg-elevated: #ffffff;
+  --bg-hover: rgba(17, 21, 29, 0.04);
+  --bg-active: rgba(17, 21, 29, 0.06);
+
+  --fg-strong: #11151d;
+  --fg-default: #2a2f3a;
+  --fg-muted: #6b7280;
+  --fg-faint: #9aa0a8;
+
+  --border-faint: rgba(17, 21, 29, 0.06);
+  --border-soft: rgba(17, 21, 29, 0.1);
+  --border-strong: rgba(17, 21, 29, 0.16);
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 18px 40px -28px rgba(17, 21, 29, 0.18), 0 4px 12px -8px rgba(17, 21, 29, 0.08);
+
+  --grid-line: rgba(17, 21, 29, 0.04);
+
+  color-scheme: light;
+}
+
+/* The sidebar in LIGHT mode uses warm-cream tokens to match the light theme. */
+[data-theme="light"] {
+  --side-bg: #f5f0e6;
+  --side-fg: #11151d;
+  --side-fg-muted: rgba(17, 21, 29, 0.52);
+  --side-hover: rgba(17, 21, 29, 0.05);
+  --side-active-bg: var(--accent-soft);
+  --side-active-fg: var(--accent);
+  --side-border: rgba(17, 21, 29, 0.09);
+}
+[data-theme="dark"] {
+  --side-bg: #07090e;
+  --side-fg: #f6f4ef;
+  --side-fg-muted: rgba(246, 244, 239, 0.5);
+  --side-hover: rgba(255, 255, 255, 0.04);
+  --side-active-bg: var(--accent-soft);
+  --side-active-fg: var(--accent);
+  --side-border: rgba(255, 255, 255, 0.07);
+}
+
+/* ─── Density variants ──────────────────────────────────────── */
+[data-density="airy"] {
+  --pad-page-x: 56px;
+  --pad-page-y: 44px;
+  --row-h: 64px;
+  --card-pad: 28px;
+  --gap-md: 24px;
+  --gap-lg: 36px;
+}
+[data-density="balanced"] {
+  --pad-page-x: 40px;
+  --pad-page-y: 32px;
+  --row-h: 56px;
+  --card-pad: 22px;
+  --gap-md: 20px;
+  --gap-lg: 28px;
+}
+[data-density="dense"] {
+  --pad-page-x: 28px;
+  --pad-page-y: 22px;
+  --row-h: 44px;
+  --card-pad: 16px;
+  --gap-md: 14px;
+  --gap-lg: 20px;
+}
+
+/* ─── Font pairings ─────────────────────────────────────────── */
+[data-font="editorial"] {
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-display-style: italic;
+  --font-display-weight: 500;
+}
+[data-font="modern"] {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-display-style: normal;
+  --font-display-weight: 600;
+}
+[data-font="instrument"] {
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+  --font-display-style: normal;
+  --font-display-weight: 400;
+}
+
+/* ─── Base ──────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Scoped to .ryze-portal so these don't bleed into the marketing site */
+.ryze-portal {
+  font-family: var(--font-sans);
+  background: var(--bg-app);
+  color: var(--fg-default);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ryze-portal button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.ryze-portal input,
+.ryze-portal select,
+.ryze-portal textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ─── Display type ──────────────────────────────────────────── */
+.ryze-portal .display {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.ryze-portal .eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ryze-portal .mono {
+  font-family: var(--font-mono);
+}
+
+/* ─── Utility helpers (a small set, used across pages) ──────── */
+.ryze-portal .surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.ryze-portal .divider {
+  height: 1px;
+  background: var(--border-faint);
+  border: 0;
+  margin: 0;
+}
+
+.ryze-portal .kbd {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-soft);
+  color: var(--fg-muted);
+}
+
+.ryze-portal .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-soft);
+  color: var(--fg-default);
+}
+.ryze-portal .tag--ok {
+  color: var(--ok);
+  background: color-mix(in oklab, var(--ok) 12%, transparent);
+  border-color: color-mix(in oklab, var(--ok) 26%, transparent);
+}
+.ryze-portal .tag--warn {
+  color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 12%, transparent);
+  border-color: color-mix(in oklab, var(--warn) 26%, transparent);
+}
+.ryze-portal .tag--danger {
+  color: var(--danger);
+  background: color-mix(in oklab, var(--danger) 12%, transparent);
+  border-color: color-mix(in oklab, var(--danger) 26%, transparent);
+}
+.ryze-portal .tag--info {
+  color: var(--info);
+  background: color-mix(in oklab, var(--info) 14%, transparent);
+  border-color: color-mix(in oklab, var(--info) 28%, transparent);
+}
+.ryze-portal .tag--accent {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: color-mix(in oklab, var(--accent) 26%, transparent);
+}
+
+.ryze-portal .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ok);
+}
+
+/* ─── Scrollbars ───────────────────────────────────────────── */
+.ryze-portal .scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.ryze-portal .scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ryze-portal .scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+.ryze-portal .scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-faint);
+}
+
+/* ─── Focus ─────────────────────────────────────────────────── */
+.ryze-portal :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Hide focus on the tweaks-panel chrome where it looks bad */
+.ryze-portal .ryze-tweaks :focus-visible {
+  outline: none;
+}
+
+/* ============================================================
+   SHELL — sidebar + topbar + app frame
+   ============================================================ */
+
+.ryze-portal .app {
+  display: grid;
+  grid-template-columns: var(--side-w, 248px) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 220ms ease;
+}
+.ryze-portal .app[data-sidebar="rail"] { --side-w: 72px; }
+.ryze-portal .app[data-sidebar="expanded"], .ryze-portal .app[data-sidebar="grouped"] { --side-w: 248px; }
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.ryze-portal .side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--side-bg);
+  color: var(--side-fg);
+  border-right: 1px solid var(--side-border);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+}
+
+.ryze-portal .brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--side-border);
+}
+.ryze-portal .brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.ryze-portal .brand__word { line-height: 1.1; }
+.ryze-portal .brand__name {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--side-fg);
+}
+.ryze-portal .brand__sub {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--side-fg-muted);
+  margin-top: 2px;
+  font-weight: 600;
+}
+.ryze-portal .side--rail .brand { justify-content: center; padding: 0; }
+
+.ryze-portal .side__scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+.ryze-portal .side__scroll::-webkit-scrollbar { width: 6px; }
+.ryze-portal .side__scroll::-webkit-scrollbar-track { background: transparent; }
+.ryze-portal .side__scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+.ryze-portal .side--rail .side__scroll { padding: 14px 10px; }
+
+.ryze-portal .side__group + .side__group { margin-top: 18px; }
+.ryze-portal .side--rail .side__group + .side__group {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--side-border);
+}
+
+.ryze-portal .side__group-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--side-fg-muted);
+  padding: 0 12px 8px;
+}
+
+.ryze-portal .side__items { display: flex; flex-direction: column; gap: 1px; }
+
+.ryze-portal .nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--side-fg-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: background 140ms ease, color 140ms ease;
+  width: 100%;
+  text-align: left;
+}
+.ryze-portal .nav-item:hover {
+  background: var(--side-hover);
+  color: var(--side-fg);
+}
+.ryze-portal .nav-item.is-active {
+  background: var(--side-active-bg);
+  color: var(--side-active-fg);
+  font-weight: 600;
+}
+.ryze-portal .nav-item__rail {
+  position: absolute;
+  left: -12px;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+}
+.ryze-portal .nav-item.is-active .nav-item__rail { background: var(--accent); }
+
+.ryze-portal .nav-item.is-collapsed {
+  justify-content: center;
+  padding: 10px;
+}
+
+.ryze-portal .nav-item__label { flex: 1; }
+.ryze-portal .nav-item__badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: color-mix(in oklab, var(--danger) 28%, transparent);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  min-width: 20px;
+  text-align: center;
+}
+.ryze-portal .nav-item__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--danger);
+}
+
+.ryze-portal .side__foot {
+  border-top: 1px solid var(--side-border);
+  padding: 14px;
+}
+.ryze-portal .side--rail .side__foot { padding: 10px; }
+
+.ryze-portal .side__user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--side-border);
+}
+.ryze-portal .side__user.is-collapsed {
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.ryze-portal .side__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10));
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.ryze-portal .side__user-meta { flex: 1; min-width: 0; }
+.ryze-portal .side__user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--side-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ryze-portal .side__user-sub {
+  font-size: 11px;
+  color: var(--side-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ryze-portal .side__user-act {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: var(--side-fg-muted);
+}
+.ryze-portal .side__user-act:hover { background: var(--side-hover); color: var(--side-fg); }
+
+/* ── Topbar ──────────────────────────────────────────────── */
+.ryze-portal .top {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 64px;
+  background: color-mix(in oklab, var(--bg-app) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-faint);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--pad-page-x);
+  gap: 20px;
+}
+.ryze-portal .top__crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  min-width: 0;
+  flex-shrink: 0;
+  max-width: 40%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ryze-portal .top__crumbs-sep { color: var(--fg-faint); }
+.ryze-portal .top__crumb { white-space: nowrap; }
+.ryze-portal .top__crumb.is-current { color: var(--fg-strong); font-weight: 600; }
+
+.ryze-portal .top__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  max-width: 460px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 8px 12px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  cursor: text;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.ryze-portal .top__search > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .ryze-portal .top__search > span:nth-child(2), .ryze-portal .top__search .kbd { display: none; }
+  .ryze-portal .top__search { flex: 0 0 36px; padding: 0; height: 36px; width: 36px; justify-content: center; max-width: 36px; margin: 0; }
+}
+.ryze-portal .top__search:hover { border-color: var(--border-strong); }
+.ryze-portal .top__search > span:nth-child(2) { flex: 1; }
+
+.ryze-portal .top__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.ryze-portal .top__icon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: var(--fg-muted);
+  transition: background 140ms ease, color 140ms ease;
+}
+.ryze-portal .top__icon:hover { background: var(--bg-hover); color: var(--fg-strong); }
+.ryze-portal .top__icon-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--bg-app);
+}
+.ryze-portal .top__divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border-soft);
+}
+.ryze-portal .top__me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ryze-portal .top__me-meta { text-align: right; line-height: 1.1; }
+.ryze-portal .top__me-name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .top__me-role { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
+.ryze-portal .top__me-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10));
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ── Main column ─────────────────────────────────────────── */
+.ryze-portal .main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ryze-portal .main__body {
+  flex: 1;
+  padding: var(--pad-page-y) var(--pad-page-x);
+  max-width: 1480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Subtle grid texture for app bg */
+.ryze-portal .bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ============================================================
+   PAGE — shared building blocks
+   ============================================================ */
+
+.ryze-portal .page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: var(--gap-lg);
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--border-faint);
+  flex-wrap: wrap;
+}
+.ryze-portal .page-head > div:first-child { min-width: 0; flex: 1; }
+.ryze-portal .page-head__title {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: clamp(38px, 3.5vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  color: var(--fg-strong);
+  margin: 0;
+  text-wrap: balance;
+}
+.ryze-portal .page-head__sub {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--fg-muted);
+  max-width: 62ch;
+  line-height: 1.55;
+}
+.ryze-portal .page-head__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.ryze-portal .page-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.ryze-portal .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+  white-space: nowrap;
+}
+.ryze-portal .btn:hover { transform: translateY(-1px); }
+.ryze-portal .btn--primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  box-shadow: 0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.ryze-portal .btn--primary:hover { background: color-mix(in oklab, var(--accent) 88%, #fff); }
+.ryze-portal .btn--ghost {
+  background: var(--bg-surface);
+  color: var(--fg-default);
+  border-color: var(--border-soft);
+}
+.ryze-portal .btn--ghost:hover { border-color: var(--border-strong); background: var(--bg-surface-2); }
+.ryze-portal .btn--quiet {
+  color: var(--fg-muted);
+}
+.ryze-portal .btn--quiet:hover { color: var(--fg-strong); background: var(--bg-hover); }
+
+.ryze-portal .card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 16px;
+  padding: var(--card-pad);
+  box-shadow: var(--shadow-card);
+}
+.ryze-portal .card--flush { padding: 0; overflow: hidden; }
+
+.ryze-portal .card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-strong);
+  letter-spacing: -0.005em;
+}
+.ryze-portal .card__sub {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+
+/* ── Stat tile ──────────────────────────────────────────── */
+.ryze-portal .stat {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 134px;
+  overflow: hidden;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.ryze-portal .stat:hover { border-color: var(--border-strong); }
+.ryze-portal .stat__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ryze-portal .stat__value {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: 44px;
+  letter-spacing: -0.02em;
+  color: var(--fg-strong);
+  line-height: 1;
+}
+.ryze-portal[data-font="modern"] .stat__value {
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.03em;
+}
+.ryze-portal .stat__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+.ryze-portal .stat__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+.ryze-portal .stat__delta--up { color: var(--ok); }
+.ryze-portal .stat__delta--down { color: var(--danger); }
+
+/* ── Data table ─────────────────────────────────────────── */
+.ryze-portal .table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.ryze-portal .table thead th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: 12px 22px;
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid var(--border-faint);
+  position: sticky;
+  top: 0;
+}
+.ryze-portal .table tbody td {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border-faint);
+  font-size: 13.5px;
+  color: var(--fg-default);
+  vertical-align: middle;
+}
+.ryze-portal .table tbody tr:last-child td { border-bottom: 0; }
+.ryze-portal .table tbody tr:hover { background: var(--bg-hover); }
+
+.ryze-portal .cell-primary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ryze-portal .cell-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--accent-ink);
+  background: color-mix(in oklab, var(--accent) 22%, var(--bg-surface));
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+}
+.ryze-portal .cell-avatar--blue   { background: color-mix(in oklab, var(--info) 22%, var(--bg-surface)); color: var(--info); }
+.ryze-portal .cell-avatar--green  { background: color-mix(in oklab, var(--ok) 22%, var(--bg-surface)); color: var(--ok); }
+.ryze-portal .cell-avatar--purple { background: color-mix(in oklab, #8669c2 22%, var(--bg-surface)); color: #8669c2; }
+.ryze-portal .cell-avatar--rose   { background: color-mix(in oklab, #b56770 22%, var(--bg-surface)); color: #b56770; }
+
+.ryze-portal .cell-meta { line-height: 1.25; min-width: 0; }
+.ryze-portal .cell-name { font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .cell-sub  { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+
+/* ── Toolbar above tables ───────────────────────────────── */
+.ryze-portal .toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border-faint);
+  flex-wrap: wrap;
+}
+.ryze-portal .toolbar__search {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+  color: var(--fg-muted);
+}
+.ryze-portal .toolbar__search input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-size: 13px;
+  color: var(--fg-default);
+}
+.ryze-portal .toolbar__search input::placeholder { color: var(--fg-muted); }
+.ryze-portal .toolbar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fg-default);
+  transition: border-color 140ms ease;
+}
+.ryze-portal .toolbar__chip:hover { border-color: var(--border-strong); }
+.ryze-portal .toolbar__chip.is-active {
+  background: var(--accent-soft);
+  border-color: color-mix(in oklab, var(--accent) 36%, transparent);
+  color: var(--accent);
+}
+
+/* ── Two-column grid for content rows ──────────────────── */
+.ryze-portal .row { display: grid; gap: var(--gap-md); }
+.ryze-portal .row--2 { grid-template-columns: 1fr 1fr; }
+.ryze-portal .row--3 { grid-template-columns: repeat(3, 1fr); }
+.ryze-portal .row--4 { grid-template-columns: repeat(4, 1fr); }
+.ryze-portal .row--12-5 { grid-template-columns: 7fr 5fr; }
+.ryze-portal .row--8-4 { grid-template-columns: 8fr 4fr; }
+@media (max-width: 1100px) {
+  .ryze-portal .row--2, .ryze-portal .row--3, .ryze-portal .row--4, .ryze-portal .row--12-5, .ryze-portal .row--8-4 { grid-template-columns: 1fr; }
+}
+
+/* ── Misc ──────────────────────────────────────────────── */
+.ryze-portal .muted { color: var(--fg-muted); }
+.ryze-portal .strong { color: var(--fg-strong); }
+.ryze-portal .tnum { font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+.ryze-portal .accent-text { color: var(--accent); }
+
+.ryze-portal .section-stack > * + * { margin-top: var(--gap-lg); }
+
+/* Empty state */
+.ryze-portal .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 24px;
+  color: var(--fg-muted);
+  gap: 14px;
+}
+.ryze-portal .empty__art {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-faint);
+  display: grid;
+  place-items: center;
+  color: var(--fg-faint);
+}
+.ryze-portal .empty__title {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: 28px;
+  color: var(--fg-strong);
+  letter-spacing: -0.015em;
+}
+.ryze-portal .empty__body { max-width: 38ch; font-size: 13.5px; line-height: 1.55; }
+
+/* ============================================================
+   PAGE COMPONENTS — lesson row, alert row, quick actions, etc
+   ============================================================ */
+
+/* ── Lesson row (overview) ────────────────────────────── */
+.ryze-portal .lesson-row {
+  display: grid;
+  grid-template-columns: 76px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .lesson-row:last-child { border-bottom: 0; }
+.ryze-portal .lesson-row:hover { background: var(--bg-hover); }
+.ryze-portal .lesson-row__time { font-family: var(--font-mono); }
+.ryze-portal .lesson-row__start { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .lesson-row__end   { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
+.ryze-portal .lesson-row__title { font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .lesson-row__meta  { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; }
+
+/* ── Alert row (overview) ─────────────────────────────── */
+.ryze-portal .alert-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 14px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .alert-row:last-child { border-bottom: 0; }
+.ryze-portal .alert-row__pip {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: grid; place-items: center;
+}
+.ryze-portal .alert-row__pip--high   { color: var(--danger); background: color-mix(in oklab, var(--danger) 16%, transparent); }
+.ryze-portal .alert-row__pip--med    { color: var(--warn);   background: color-mix(in oklab, var(--warn) 16%, transparent); }
+.ryze-portal .alert-row__pip--low    { color: var(--info);   background: color-mix(in oklab, var(--info) 16%, transparent); }
+.ryze-portal .alert-row__title { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
+.ryze-portal .alert-row__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; line-height: 1.4; }
+.ryze-portal .alert-row__when  { font-size: 12px; color: var(--fg-faint); font-family: var(--font-mono); }
+
+/* ── Quick actions (overview) ─────────────────────────── */
+.ryze-portal .quick {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .ryze-portal .quick { grid-template-columns: 1fr; }
+}
+.ryze-portal .quick__label .eyebrow { color: var(--accent); }
+.ryze-portal .quick__hint { font-size: 13px; color: var(--fg-muted); margin-top: 6px; line-height: 1.45; }
+.ryze-portal .quick__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+@media (max-width: 1100px) { .ryze-portal .quick__grid { grid-template-columns: repeat(3, 1fr); } }
+.ryze-portal .quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 14px;
+  height: 96px;
+  border-radius: 12px;
+  border: 1px solid var(--border-faint);
+  background: var(--bg-surface-2);
+  color: var(--fg-default);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  transition: border-color 140ms ease, transform 140ms ease, background 140ms ease;
+}
+.ryze-portal .quick-btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.ryze-portal .quick-btn__icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  color: var(--fg-default);
+}
+.ryze-portal .quick-btn.is-accent { border-color: color-mix(in oklab, var(--accent) 35%, transparent); background: var(--accent-soft-2); }
+.ryze-portal .quick-btn.is-accent .quick-btn__icon { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+.ryze-portal .quick-btn.is-accent .quick-btn__label { color: var(--accent); }
+
+/* ── Health strip ─────────────────────────────────────── */
+.ryze-portal .health {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+  padding: 6px 4px;
+}
+.ryze-portal .health__item { display: inline-flex; align-items: center; gap: 8px; }
+.ryze-portal .health__sep { flex: 1; height: 1px; background: var(--border-faint); min-width: 24px; }
+.ryze-portal .health__time { color: var(--fg-muted); font-family: var(--font-mono); font-size: 12px; }
+
+/* ── Progress bar ─────────────────────────────────────── */
+.ryze-portal .progress { display: flex; align-items: center; gap: 10px; }
+.ryze-portal .progress__bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border-faint);
+}
+.ryze-portal .progress__bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff));
+  border-radius: 999px;
+}
+.ryze-portal .progress__pct { font-size: 12.5px; font-weight: 600; color: var(--fg-default); width: 38px; text-align: right; }
+
+/* ── Table footer ─────────────────────────────────────── */
+.ryze-portal .table-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; font-size: 13px;
+}
+.ryze-portal .pager { display: flex; align-items: center; gap: 12px; }
+.ryze-portal .row-act {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 7px;
+  color: var(--fg-muted);
+}
+.ryze-portal .row-act:hover { background: var(--bg-hover); color: var(--fg-strong); }
+.ryze-portal .muted-contact { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ── Segmented control ────────────────────────────────── */
+.ryze-portal .seg {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+}
+.ryze-portal .seg__btn {
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  border-radius: 7px;
+  transition: background 140ms ease, color 140ms ease;
+}
+.ryze-portal .seg__btn.is-active {
+  background: var(--bg-surface);
+  color: var(--fg-strong);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Class cards (Classes page) ──────────────────────── */
+.ryze-portal .class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--gap-md);
+}
+.ryze-portal .class-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.ryze-portal .class-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.ryze-portal .class-card__head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.ryze-portal .class-card__day {
+  display: flex; align-items: baseline; gap: 8px;
+  font-family: var(--font-mono);
+}
+.ryze-portal .class-card__dow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+}
+.ryze-portal .class-card__time { font-size: 13px; color: var(--fg-default); font-weight: 600; }
+
+.ryze-portal .class-card__name {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: 26px;
+  letter-spacing: -0.015em;
+  color: var(--fg-strong);
+  margin-top: 14px;
+  line-height: 1.1;
+}
+.ryze-portal .class-card__level { font-size: 13px; margin-top: 4px; }
+.ryze-portal .class-card__divider { height: 1px; background: var(--border-faint); margin: 18px 0; }
+.ryze-portal .class-card__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ryze-portal .class-card__meta .eyebrow { font-size: 10px; }
+.ryze-portal .class-card__meta .strong { font-size: 13px; margin-top: 4px; display: block; }
+.ryze-portal .class-card__foot { margin-top: 18px; display: flex; justify-content: flex-end; }
+
+/* ── Schedule timeline (Lessons page) ──────────────────── */
+.ryze-portal .schedule {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+.ryze-portal .schedule__rooms {
+  border-right: 1px solid var(--border-faint);
+  padding: 16px 0;
+}
+.ryze-portal .schedule__corner { height: 40px; }
+.ryze-portal .schedule__room {
+  height: 72px;
+  padding: 0 18px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-top: 1px solid var(--border-faint);
+}
+.ryze-portal .schedule__room-name { font-weight: 600; color: var(--fg-strong); font-size: 13.5px; }
+.ryze-portal .schedule__room-sub  { font-size: 11.5px; margin-top: 3px; }
+
+.ryze-portal .schedule__scroll { overflow-x: auto; padding: 16px 0; }
+.ryze-portal .schedule__grid { position: relative; }
+.ryze-portal .schedule__hours {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .schedule__hour {
+  font-size: 11px;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  padding-left: 8px;
+  border-left: 1px dashed var(--border-faint);
+  flex-shrink: 0;
+}
+.ryze-portal .schedule__hour:first-child { border-left: 0; }
+.ryze-portal .schedule__lane {
+  position: relative;
+  display: flex;
+  height: 72px;
+  border-top: 1px solid var(--border-faint);
+}
+.ryze-portal .schedule__cell {
+  height: 100%;
+  border-left: 1px dashed var(--border-faint);
+  flex-shrink: 0;
+}
+.ryze-portal .schedule__cell:first-child { border-left: 0; }
+
+.ryze-portal .schedule__block {
+  position: absolute;
+  top: 8px;
+  height: calc(100% - 16px);
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 12.5px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.18);
+  border: 1px solid;
+}
+.ryze-portal .schedule__block-title { font-weight: 600; color: inherit; line-height: 1.2; }
+.ryze-portal .schedule__block-meta  { font-size: 11.5px; opacity: 0.85; }
+.ryze-portal .schedule__block-state { align-self: flex-start; }
+
+.ryze-portal .schedule__block--upcoming {
+  background: color-mix(in oklab, var(--info) 14%, var(--bg-surface));
+  border-color: color-mix(in oklab, var(--info) 28%, transparent);
+  color: var(--info);
+}
+.ryze-portal .schedule__block--live {
+  background: color-mix(in oklab, var(--accent) 18%, var(--bg-surface));
+  border-color: color-mix(in oklab, var(--accent) 36%, transparent);
+  color: var(--accent);
+  animation: pulse-live 2.4s ease-in-out infinite;
+}
+.ryze-portal .schedule__block--done {
+  background: var(--bg-surface-2);
+  border-color: var(--border-soft);
+  color: var(--fg-muted);
+}
+@keyframes pulse-live {
+  0%, 100% { box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.18), 0 0 0 0 color-mix(in oklab, var(--accent) 30%, transparent); }
+  50%      { box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.18), 0 0 0 8px color-mix(in oklab, var(--accent) 0%, transparent); }
+}
+
+/* ── Bars chart (Payments) ────────────────────────────── */
+.ryze-portal .bars {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  height: 130px;
+  padding: 6px 2px;
+}
+.ryze-portal .bars__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ryze-portal .bars__bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 50%, #5b3d10));
+  border-radius: 6px 6px 2px 2px;
+  min-height: 6px;
+}
+.ryze-portal .bars__col:last-child .bars__bar {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 100%, #fff), var(--accent));
+}
+.ryze-portal .bars__label { font-size: 10.5px; color: var(--fg-muted); font-family: var(--font-mono); }
+
+/* ── Ranks (Payments) ─────────────────────────────────── */
+.ryze-portal .ranks { display: flex; flex-direction: column; gap: 4px; }
+.ryze-portal .ranks__row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--border-faint);
+  font-size: 13px;
+}
+.ryze-portal .ranks__row:last-child { border-bottom: 0; }
+.ryze-portal .ranks__rank { color: var(--fg-faint); font-family: var(--font-mono); font-size: 12px; }
+.ryze-portal .ranks__v { color: var(--accent); }
+
+/* ============================================================
+   SETTINGS — page-internal shell + form primitives
+   ============================================================ */
+
+.ryze-portal .settings-shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--gap-lg);
+  align-items: flex-start;
+}
+@media (max-width: 1100px) {
+  .ryze-portal .settings-shell { grid-template-columns: 1fr; }
+  .ryze-portal .settings-nav { position: relative !important; top: 0 !important; }
+}
+
+/* ── Settings nav (left rail inside the page) ─────────── */
+.ryze-portal .settings-nav {
+  position: sticky;
+  top: calc(64px + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow-card);
+}
+.ryze-portal .settings-nav__head { padding: 4px 8px 6px; }
+.ryze-portal .settings-nav__list { display: flex; flex-direction: column; gap: 2px; }
+
+.ryze-portal .settings-nav__item {
+  display: grid;
+  grid-template-columns: 18px 1fr 13px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px;
+  border-radius: 9px;
+  text-align: left;
+  color: var(--fg-default);
+  transition: background 140ms ease, color 140ms ease;
+}
+.ryze-portal .settings-nav__item:hover { background: var(--bg-hover); }
+.ryze-portal .settings-nav__item.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.ryze-portal .settings-nav__item.is-active .settings-nav__label { color: var(--accent); }
+.ryze-portal .settings-nav__item.is-active .settings-nav__desc  { color: color-mix(in oklab, var(--accent) 70%, var(--fg-muted)); }
+.ryze-portal .settings-nav__item.is-danger { color: var(--danger); }
+.ryze-portal .settings-nav__item.is-danger .settings-nav__label { color: var(--danger); }
+.ryze-portal .settings-nav__item.is-danger:hover { background: color-mix(in oklab, var(--danger) 10%, transparent); }
+.ryze-portal .settings-nav__item.is-active.is-danger { background: color-mix(in oklab, var(--danger) 14%, transparent); color: var(--danger); }
+
+.ryze-portal .settings-nav__meta { line-height: 1.2; min-width: 0; }
+.ryze-portal .settings-nav__label { font-size: 13.5px; font-weight: 600; }
+.ryze-portal .settings-nav__desc  { font-size: 11.5px; color: var(--fg-muted); margin-top: 3px; }
+.ryze-portal .settings-nav__chev  { color: var(--fg-faint); }
+.ryze-portal .settings-nav__item:hover .settings-nav__chev { color: var(--fg-muted); }
+
+.ryze-portal .settings-nav__foot {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-faint);
+}
+
+/* ── Settings content (right column) ──────────────────── */
+.ryze-portal .settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  min-width: 0;
+}
+.ryze-portal .s-section { display: flex; flex-direction: column; gap: var(--gap-md); }
+.ryze-portal .s-section__head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 18px;
+  padding-bottom: 6px;
+  flex-wrap: wrap;
+}
+.ryze-portal .s-section__title {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+  font-size: 34px;
+  letter-spacing: -0.015em;
+  color: var(--fg-strong);
+  margin: 0;
+  line-height: 1.05;
+}
+.ryze-portal .s-section__sub {
+  margin-top: 8px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  max-width: 64ch;
+  line-height: 1.55;
+}
+.ryze-portal .s-section__body { display: flex; flex-direction: column; gap: var(--gap-md); }
+
+/* ── Settings card (panel within a section) ───────────── */
+.ryze-portal .s-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 14px;
+  padding: 8px 24px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.ryze-portal .s-card--flush { padding: 0; }
+.ryze-portal .s-card__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border-faint);
+  margin: 0 -24px 8px;
+}
+.ryze-portal .s-card--flush .s-card__head { margin: 0; padding: 18px 24px; }
+.ryze-portal .s-card__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .s-card__sub   { font-size: 12.5px; color: var(--fg-muted); margin-top: 4px; }
+
+/* ── Form row (label / hint left, control right) ──────── */
+.ryze-portal .s-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border-faint);
+  align-items: flex-start;
+}
+.ryze-portal .s-row:last-child { border-bottom: 0; }
+.ryze-portal .s-row--full { grid-template-columns: 1fr; }
+@media (max-width: 800px) {
+  .ryze-portal .s-row { grid-template-columns: 1fr; gap: 12px; }
+}
+
+.ryze-portal .s-row__label { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .s-row__hint  { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; max-width: 38ch; }
+.ryze-portal .s-row__ctrl  { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.ryze-portal .row-inline   { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ── Input field ──────────────────────────────────────── */
+.ryze-portal .field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+  padding: 0 12px;
+  height: 38px;
+  min-width: 220px;
+  font-size: 13px;
+  color: var(--fg-default);
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.ryze-portal .field:focus-within { border-color: color-mix(in oklab, var(--accent) 48%, transparent); outline: none; }
+.ryze-portal .field input, .ryze-portal .field select {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--fg-default);
+  font-size: 13px;
+  min-width: 0;
+}
+.ryze-portal .field--mono input { font-family: var(--font-mono); font-size: 12.5px; }
+.ryze-portal .field__prefix, .ryze-portal .field__suffix {
+  color: var(--fg-muted);
+  display: inline-flex; align-items: center;
+  flex-shrink: 0;
+}
+.ryze-portal .field--select { padding-right: 8px; }
+.ryze-portal .field--select select { appearance: none; cursor: pointer; padding-right: 18px; background-image: linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%), linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%); background-position: calc(100% - 9px) 50%, calc(100% - 5px) 50%; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+.ryze-portal .field--select select option { background: var(--bg-surface); color: var(--fg-default); }
+
+/* ── Toggle ───────────────────────────────────────────── */
+.ryze-portal .tog {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 4px 6px 4px 0;
+  background: transparent;
+  color: var(--fg-default);
+  font-size: 13px;
+}
+.ryze-portal .tog__track {
+  width: 36px; height: 20px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  position: relative;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.ryze-portal .tog__thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  background: var(--fg-muted);
+  border-radius: 999px;
+  transition: transform 160ms ease, background 160ms ease;
+}
+.ryze-portal .tog.is-on .tog__track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ryze-portal .tog.is-on .tog__thumb {
+  transform: translateX(16px);
+  background: var(--accent-fg);
+}
+.ryze-portal .tog__label { color: var(--fg-default); }
+
+/* ── Swatches (accent picker) ─────────────────────────── */
+.ryze-portal .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.ryze-portal .swatch {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px 8px 8px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.ryze-portal .swatch:hover { border-color: var(--border-strong); }
+.ryze-portal .swatch__chip {
+  width: 22px; height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18) inset;
+  flex-shrink: 0;
+}
+.ryze-portal .swatch__label { font-size: 12.5px; font-weight: 600; color: var(--fg-default); }
+.ryze-portal .swatch.is-active {
+  background: var(--accent-soft);
+  border-color: color-mix(in oklab, var(--accent) 44%, transparent);
+}
+.ryze-portal .swatch.is-active .swatch__label { color: var(--accent); }
+
+/* ── Font picker (sample cards) ───────────────────────── */
+.ryze-portal .font-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+}
+@media (max-width: 900px) { .ryze-portal .font-grid { grid-template-columns: 1fr 1fr; max-width: 100%; } }
+.ryze-portal .font-card {
+  padding: 18px 14px 14px;
+  border-radius: 12px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-soft);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+.ryze-portal .font-card:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+.ryze-portal .font-card__sample {
+  font-size: 38px;
+  line-height: 1;
+  color: var(--fg-strong);
+  letter-spacing: -0.02em;
+}
+.ryze-portal .font-card__name { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .font-card__caption { font-size: 11.5px; color: var(--fg-muted); font-family: var(--font-mono); }
+.ryze-portal .font-card.is-active {
+  border-color: color-mix(in oklab, var(--accent) 44%, transparent);
+  background: var(--accent-soft-2);
+}
+.ryze-portal .font-card.is-active .font-card__name { color: var(--accent); }
+
+/* ── Notifications matrix ─────────────────────────────── */
+.ryze-portal .ntable { padding: 0 8px 8px; }
+.ryze-portal .ntable__head, .ryze-portal .ntable__row {
+  display: grid;
+  grid-template-columns: 1fr 100px 100px 100px;
+  gap: 12px;
+  padding: 14px 16px;
+  align-items: center;
+}
+.ryze-portal .ntable__head {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .ntable__row { border-bottom: 1px solid var(--border-faint); }
+.ryze-portal .ntable__row:last-child { border-bottom: 0; }
+.ryze-portal .ntable__row:hover { background: var(--bg-hover); }
+.ryze-portal .ntable__chan { display: flex; justify-content: center; align-items: center; }
+.ryze-portal .ntable__head .ntable__chan { font-size: 11px; }
+@media (max-width: 900px) {
+  .ryze-portal .ntable__head, .ryze-portal .ntable__row { grid-template-columns: 1fr 60px 60px 60px; padding: 12px; }
+}
+
+/* ── Profile photo row ────────────────────────────────── */
+.ryze-portal .s-photo { display: flex; align-items: center; gap: 18px; }
+.ryze-portal .s-photo__avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10));
+  color: var(--accent-ink);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 26px;
+}
+.ryze-portal .s-photo__btns { display: flex; gap: 8px; }
+
+/* ── Save bar (sticky at bottom of section) ───────────── */
+.ryze-portal .save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px;
+  background: color-mix(in oklab, var(--accent) 6%, var(--bg-surface));
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--border-faint));
+  border-radius: 12px;
+  position: sticky;
+  bottom: 18px;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+}
+.ryze-portal .save-bar__hint { font-size: 12.5px; }
+.ryze-portal .save-bar__btns { display: flex; gap: 8px; }
+
+/* ── Sessions list ────────────────────────────────────── */
+.ryze-portal .sess-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-faint);
+}
+.ryze-portal .sess-row:last-child { border-bottom: 0; }
+
+/* ── Integrations grid ────────────────────────────────── */
+.ryze-portal .integ-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gap-md);
+}
+.ryze-portal .integ-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.ryze-portal .integ-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+.ryze-portal .integ-card.is-on { border-color: color-mix(in oklab, var(--accent) 22%, var(--border-faint)); }
+.ryze-portal .integ-card__head { display: flex; align-items: center; justify-content: space-between; }
+.ryze-portal .integ-card__logo {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 16px;
+  font-family: var(--font-display);
+  font-style: italic;
+}
+.ryze-portal .integ-card__name { font-size: 15px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .integ-card__desc { font-size: 12.5px; color: var(--fg-default); line-height: 1.5; }
+.ryze-portal .integ-card__meta { font-size: 11px; color: var(--fg-muted); margin-top: -4px; }
+.ryze-portal .integ-card__foot { margin-top: auto; display: flex; gap: 8px; align-items: center; }
+
+/* ── Role permissions cards ──────────────────────────── */
+.ryze-portal .role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.ryze-portal .role-card {
+  padding: 14px 16px;
+  border: 1px solid var(--border-faint);
+  background: var(--bg-surface-2);
+  border-radius: 10px;
+}
+.ryze-portal .role-card__name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--fg-strong);
+  letter-spacing: -0.01em;
+}
+.ryze-portal .role-card__what { font-size: 12.5px; color: var(--fg-muted); margin-top: 6px; line-height: 1.5; }
+
+/* ── Billing ─────────────────────────────────────────── */
+.ryze-portal .bill-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: var(--gap-md);
+}
+@media (max-width: 1000px) { .ryze-portal .bill-grid { grid-template-columns: 1fr; } }
+.ryze-portal .bill-plan {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 8%, var(--bg-surface)), var(--bg-surface));
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 28px 24px !important;
+}
+.ryze-portal .bill-plan__eyebrow { color: var(--accent); }
+.ryze-portal .bill-plan__name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 42px;
+  color: var(--fg-strong);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-top: 4px;
+}
+.ryze-portal .bill-plan__price { display: flex; align-items: baseline; margin-top: 6px; }
+.ryze-portal .bill-plan__amt { font-size: 28px; font-weight: 700; color: var(--fg-strong); }
+.ryze-portal .bill-plan__notes { margin-top: 6px; font-size: 13px; }
+.ryze-portal .bill-plan__seats {
+  margin-top: 18px;
+  background: var(--bg-surface-2);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ryze-portal .bill-plan__seat-row {
+  display: flex; justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--border-faint);
+}
+.ryze-portal .bill-plan__seat-row:last-child { border-bottom: 0; }
+.ryze-portal .bill-plan__seat-row span:first-child { color: var(--fg-default); }
+.ryze-portal .bill-plan__seat-row span:last-child  { color: var(--fg-strong); font-weight: 600; }
+.ryze-portal .bill-plan__btns { display: flex; gap: 10px; margin-top: 20px; }
+
+.ryze-portal .bill-card {
+  position: relative;
+  padding: 22px;
+  background: linear-gradient(135deg, #0d1119, #1a2030);
+  color: #f6f4ef;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ryze-portal .bill-card__brand {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  align-self: flex-start;
+}
+.ryze-portal .bill-card__num { font-size: 16px; letter-spacing: 0.08em; }
+.ryze-portal .bill-card__exp { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+.ryze-portal .bill-card__edit { position: absolute; top: 14px; right: 14px; color: rgba(255, 255, 255, 0.78); }
+.ryze-portal .bill-card__edit:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+
+/* ── Danger zone rows ────────────────────────────────── */
+.ryze-portal .danger-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-faint);
+  border-radius: 14px;
+}
+.ryze-portal .danger-row.is-destructive {
+  border-color: color-mix(in oklab, var(--danger) 38%, transparent);
+  background: color-mix(in oklab, var(--danger) 5%, var(--bg-surface));
+}
+.ryze-portal .danger-row__body { min-width: 0; flex: 1; }
+.ryze-portal .danger-row__title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .danger-row__sub { font-size: 12.5px; margin-top: 4px; line-height: 1.55; max-width: 70ch; }
+
+.ryze-portal .btn--danger {
+  background: var(--danger);
+  color: #fff;
+  box-shadow: 0 6px 18px -10px color-mix(in oklab, var(--danger) 70%, transparent);
+}
+.ryze-portal .btn--danger:hover { background: color-mix(in oklab, var(--danger) 88%, #fff); }
+
+/* ============================================================
+   STUDENT PROGRESS — topic mastery bars
+   ============================================================ */
+.ryze-portal .topic-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 140px;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border-faint);
+}
+.ryze-portal .topic-row:last-child { border-bottom: 0; }
+.ryze-portal .topic-row__name { font-size: 13.5px; font-weight: 600; color: var(--fg-strong); }
+.ryze-portal .topic-row__bar {
+  position: relative;
+  height: 10px;
+  background: var(--bg-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border-faint);
+}
+.ryze-portal .topic-row__cls {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: color-mix(in oklab, var(--fg-muted) 28%, transparent);
+  border-radius: 999px;
+}
+.ryze-portal .topic-row__you {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff));
+  border-radius: 999px;
+}
+.ryze-portal .topic-row__nums {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+@media (max-width: 800px) {
+  .ryze-portal .topic-row { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   PAGE TRANSITIONS
+   ============================================================ */
+.ryze-portal .page-enter {
+  animation: pageFadeIn 180ms ease forwards;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   LIGHT THEME — override hardcoded-dark Tailwind classes
+   ============================================================ */
+
+/* Common hardcoded dark background classes used across dashboard pages */
+.ryze-portal[data-theme="light"] .bg-\[#0a0f1e\],
+.ryze-portal[data-theme="light"] .bg-\[#0a0e16\],
+.ryze-portal[data-theme="light"] .bg-\[#11151e\],
+.ryze-portal[data-theme="light"] .bg-\[#161b26\],
+.ryze-portal[data-theme="light"] .bg-\[#0d1119\],
+.ryze-portal[data-theme="light"] .bg-\[#0d1017\],
+.ryze-portal[data-theme="light"] .bg-\[#16202e\],
+.ryze-portal[data-theme="light"] .bg-\[#1b2230\] {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Hardcoded white-alpha borders → semantic border token */
+.ryze-portal[data-theme="light"] .border-white\/10,
+.ryze-portal[data-theme="light"] .border-white\/5,
+.ryze-portal[data-theme="light"] .border-white\/\[0\.08\],
+.ryze-portal[data-theme="light"] .border-white\/\[0\.06\] {
+  border-color: var(--border-soft) !important;
+}
+
+/* Hardcoded white-alpha text → semantic foreground tokens */
+.ryze-portal[data-theme="light"] .text-white\/70,
+.ryze-portal[data-theme="light"] .text-white\/60,
+.ryze-portal[data-theme="light"] .text-white\/50 {
+  color: var(--fg-muted) !important;
+}
+.ryze-portal[data-theme="light"] .text-white {
+  color: var(--fg-strong) !important;
+}
+
+/* Hardcoded white-alpha backgrounds (subtle hover/card tints) */
+.ryze-portal[data-theme="light"] .bg-white\/\[0\.03\],
+.ryze-portal[data-theme="light"] .bg-white\/\[0\.04\],
+.ryze-portal[data-theme="light"] .bg-white\/\[0\.05\],
+.ryze-portal[data-theme="light"] .bg-white\/\[0\.06\] {
+  background-color: var(--bg-hover) !important;
+}
+
+/* ============================================================
+   ACCENT — remap every hardcoded #FFB000 Tailwind class to
+   var(--accent) so the accent colour setting works everywhere.
+   CSS escaping: [ → \[  ] → \]  # → \#  / → \/
+   ============================================================ */
+
+/* text-[#FFB000] */
+.ryze-portal .text-\[#FFB000\] { color: var(--accent) !important; }
+
+/* bg-[#FFB000] solid */
+.ryze-portal .bg-\[#FFB000\] { background-color: var(--accent) !important; }
+
+/* bg-[#FFB000]/{opacity} */
+.ryze-portal .bg-\[#FFB000\]\/5  { background-color: color-mix(in oklab, var(--accent)  5%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/8  { background-color: color-mix(in oklab, var(--accent)  8%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/10 { background-color: color-mix(in oklab, var(--accent) 10%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/12 { background-color: color-mix(in oklab, var(--accent) 12%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/15 { background-color: color-mix(in oklab, var(--accent) 15%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/20 { background-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/25 { background-color: color-mix(in oklab, var(--accent) 25%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/30 { background-color: color-mix(in oklab, var(--accent) 30%, transparent) !important; }
+
+/* border-[#FFB000]/{opacity} */
+.ryze-portal .border-\[#FFB000\]     { border-color: var(--accent) !important; }
+.ryze-portal .border-\[#FFB000\]\/10 { border-color: color-mix(in oklab, var(--accent) 10%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/20 { border-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/25 { border-color: color-mix(in oklab, var(--accent) 25%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/30 { border-color: color-mix(in oklab, var(--accent) 30%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/40 { border-color: color-mix(in oklab, var(--accent) 40%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/50 { border-color: color-mix(in oklab, var(--accent) 50%, transparent) !important; }
+
+/* ring-[#FFB000]/{opacity} */
+.ryze-portal .ring-\[#FFB000\]     { --tw-ring-color: var(--accent) !important; }
+.ryze-portal .ring-\[#FFB000\]\/20 { --tw-ring-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+
+/* focus: variants */
+.ryze-portal .focus\:border-\[#FFB000\]\/40:focus { border-color: color-mix(in oklab, var(--accent) 40%, transparent) !important; }
+.ryze-portal .focus\:ring-\[#FFB000\]\/20:focus   { --tw-ring-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+
+/* hover: variants */
+.ryze-portal .hover\:bg-\[#FFB000\]\/20:hover { background-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .hover\:text-\[#FFB000\]:hover   { color: var(--accent) !important; }
+.ryze-portal .hover\:bg-\[#FFB000\]:hover     { background-color: var(--accent) !important; }
+
+/* group-hover: variants */
+.ryze-portal .group:hover .group-hover\:text-\[#FFB000\] { color: var(--accent) !important; }
+
+/* Also cover #b8841e (portal-theme gold variant) */
+.ryze-portal .text-\[#b8841e\]   { color: var(--accent) !important; }
+.ryze-portal .bg-\[#b8841e\]     { background-color: var(--accent) !important; }
+.ryze-portal .border-\[#b8841e\] { border-color: var(--accent) !important; }
+
+/* ============================================================
+   MOTION — reduce-motion support
+   ============================================================ */
+.ryze-portal[data-motion="reduced"] *,
+.ryze-portal[data-motion="reduced"] *::before,
+.ryze-portal[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+.ryze-portal[data-motion="reduced"] .page-enter {
+  animation: none !important;
+}
+
+/* ============================================================
+   HIGH CONTRAST
+   ============================================================ */
+.ryze-portal[data-contrast="high"][data-theme="dark"] {
+  --fg-strong:    #ffffff;
+  --fg-default:   #e8e8e8;
+  --fg-muted:     #aaaaaa;
+  --border-soft:  rgba(255, 255, 255, 0.25);
+  --border-strong: rgba(255, 255, 255, 0.4);
+}
+.ryze-portal[data-contrast="high"][data-theme="light"] {
+  --fg-strong:    #000000;
+  --fg-default:   #111111;
+  --fg-muted:     #444444;
+  --border-soft:  rgba(0, 0, 0, 0.25);
+  --border-strong: rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================
+   TEXT SIZE
+   ============================================================ */
+.ryze-portal[data-text-size="large"]  { font-size: 15px; }
+.ryze-portal[data-text-size="larger"] { font-size: 16.5px; }
+
+
+
+/* ============================================================
+   MODAL & NOTIFICATION ANIMATIONS
+   ============================================================ */
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+@keyframes notif-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Respect reduced-motion */
+.ryze-portal[data-motion="reduced"] * {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ============================================================
+   MODAL FORM INPUTS — color-scheme for native date/time pickers
+   ============================================================ */
+.ryze-portal select,
+.ryze-portal input[type="date"],
+.ryze-portal input[type="time"] {
+  color-scheme: dark;
+}
+.ryze-portal[data-theme="light"] select,
+.ryze-portal[data-theme="light"] input[type="date"],
+.ryze-portal[data-theme="light"] input[type="time"] {
+  color-scheme: light;
+}

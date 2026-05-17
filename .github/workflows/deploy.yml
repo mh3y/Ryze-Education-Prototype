@@ -1,0 +1,29 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: SSH & rebuild on VPS
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            # Pull latest frontend code
+            cd "${{ secrets.VPS_APP_DIR }}"
+            git pull origin main
+            # Rebuild the web container (docker-compose lives one level up in ryze-discord-bot)
+            cd "${{ secrets.VPS_COMPOSE_DIR }}"
+            docker compose up -d --build web
+            docker image prune -f
+            echo "✅ Deployed $(git -C "${{ secrets.VPS_APP_DIR }}" rev-parse --short HEAD) at $(date)"

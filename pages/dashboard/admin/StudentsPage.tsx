@@ -4,12 +4,13 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail,
   TrendingDown,
 } from 'lucide-react';
 import { adminApi, StudentListItem } from '../../../services/adminApi';
+import AddStudentModal from '../../../components/dashboard/modals/AddStudentModal';
 
 // ---------------------------------------------------------------------------
 // Helpers & types
@@ -129,14 +130,48 @@ const MOCK_STUDENTS = [
 // Component
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Export CSV helper
+// ---------------------------------------------------------------------------
+
+function exportToCSV(
+  rows: { id: number | string; name: string; year: string; class: string; parent: string; status: string; last: string }[],
+  filename = 'ryze-students.csv',
+) {
+  const headers = ['ID', 'Name', 'Year & Class', 'Parent', 'Status', 'Last Seen'];
+  const escape  = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+  const lines   = [
+    headers.join(','),
+    ...rows.map((r) => [
+      escape(String(r.id)),
+      escape(r.name),
+      escape([r.year, r.class].filter(Boolean).join(' — ')),
+      escape(r.parent),
+      escape(r.status),
+      escape(r.last),
+    ].join(',')),
+  ];
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 const StudentsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [students, setStudents]           = useState<StudentListItem[]>([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState<string | null>(null);
   const [searchQuery, setSearchQuery]     = useState('');
   const [activeFilter, setActiveFilter]   = useState<StatusFilter>('All');
+  const [showAddModal, setShowAddModal]   = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -153,6 +188,15 @@ const StudentsPage: React.FC = () => {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Open modal when navigated here with ?new=1
+  useEffect(() => {
+    if (searchParams.get('new') === '1') {
+      setShowAddModal(true);
+      // Remove the query param without a navigation push
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Use API data if available, otherwise use mock
   const displayStudents = students.length > 0
@@ -214,13 +258,15 @@ const StudentsPage: React.FC = () => {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
+          <button
+            onClick={() => exportToCSV(filtered)}
+            style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Download size={14} /> Export
           </button>
           <button
-            onClick={() => navigate('/dashboard/admin/students')}
+            onClick={() => setShowAddModal(true)}
             style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
@@ -474,6 +520,13 @@ const StudentsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Add Student modal */}
+      {showAddModal && (
+        <AddStudentModal
+          onClose={() => setShowAddModal(false)}
+          onCreated={() => { load(); }}
+        />
+      )}
     </div>
   );
 };

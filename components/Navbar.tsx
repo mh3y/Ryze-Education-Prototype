@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Menu, X, Zap } from 'lucide-react';
+import { ChevronDown, LogIn, Menu, X, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import PrimaryCTA from './PrimaryCTA';
 import { trackPrimaryCtaClick } from '../src/analytics';
@@ -391,6 +391,15 @@ const Navbar: React.FC = () => {
                 >
                   Call +61 413 885 839
                 </a>
+                {/* Portal Sign In */}
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#5865F2]/30 bg-[#5865F2]/12 px-5 py-3 text-[0.9rem] font-semibold text-[#7b8ef7] transition-colors hover:bg-[#5865F2]/20 hover:text-[#9aa4f9]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <LogIn size={15} />
+                  Sign In to Portal
+                </Link>
                 <PrimaryCTA
                   page="nav"
                   placement="nav_mobile"
@@ -535,6 +544,20 @@ const Navbar: React.FC = () => {
                   {t('Learning Style')}
                 </NavLink>
                 <div className={navDividerClass} aria-hidden="true" />
+                {/* Portal Sign In */}
+                <Link
+                  to="/login"
+                  className={`${focusRingClass} inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[0.85rem] font-semibold tracking-[0.01em] transition-all duration-300 ${
+                    isSolidNav
+                      ? 'border-[#5865F2]/25 bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2]/18'
+                      : useInverseRestState
+                        ? 'border-white/20 bg-white/10 text-white/90 hover:bg-white/18'
+                        : 'border-[#5865F2]/25 bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2]/18'
+                  }`}
+                >
+                  <LogIn size={13} />
+                  Sign In
+                </Link>
                 <PrimaryCTA
                   page="nav"
                   placement="nav_desktop"
