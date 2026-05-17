@@ -73,15 +73,27 @@ const DashboardLayout: React.FC = () => {
   const navigate          = useNavigate();
   const location          = useLocation();
 
-  // Start expanded on desktop, closed on mobile
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768);
+  // Use matchMedia to reliably detect mobile — window.innerWidth is affected
+  // by browser zoom and device pixel ratio, matchMedia mirrors CSS breakpoints exactly.
+  const mobileQuery = '(max-width: 767px)';
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia(mobileQuery).matches,
+  );
 
-  // Close sidebar on mobile when route changes (navigation happened)
   useEffect(() => {
-    if (window.innerWidth < 768) {
-      setIsSidebarOpen(false);
-    }
-  }, [location.pathname]);
+    const mq = window.matchMedia(mobileQuery);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  // Sidebar: open by default on desktop, closed on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => !window.matchMedia(mobileQuery).matches);
+
+  // Close sidebar on mobile when the route changes
+  useEffect(() => {
+    if (isMobile) setIsSidebarOpen(false);
+  }, [location.pathname, isMobile]);
 
   const handleLogout = () => {
     logout();
@@ -104,7 +116,7 @@ const DashboardLayout: React.FC = () => {
           userRole={user?.role ?? 'student'}
           userName={user?.name ?? 'User'}
           onLogout={handleLogout}
-          onCloseMobile={() => { if (window.innerWidth < 768) setIsSidebarOpen(false); }}
+          onCloseMobile={() => { if (isMobile) setIsSidebarOpen(false); }}
         />
 
         {/* ── Main column ─────────────────────────────────────────── */}
