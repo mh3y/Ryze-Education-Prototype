@@ -19,7 +19,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            cd ${{ secrets.VPS_APP_DIR }}
+            cd "${{ secrets.VPS_APP_DIR }}"
             git pull origin main
             docker compose up -d --build web
             docker image prune -f
