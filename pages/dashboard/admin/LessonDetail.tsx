@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, CalendarDays, Clock, MapPin, Video,
   CheckCircle, XCircle, AlertTriangle, MinusCircle,
-  Users, ExternalLink, BookOpen, User,
+  Users, ExternalLink, BookOpen, User, Edit2, Trash2,
 } from 'lucide-react';
 import { adminApi, LessonDetail, AttendanceRecord } from '../../../services/adminApi';
 import {
@@ -74,6 +74,60 @@ const LessonDetailPage: React.FC = () => {
   const [markTarget, setMarkTarget] = useState<{ userId: number; name: string } | null>(null);
   const [markStatus, setMarkStatus] = useState('present');
   const [markSaving, setMarkSaving] = useState(false);
+
+  // Edit lesson state
+  const [showEdit, setShowEdit] = useState(false);
+  const [editForm, setEditForm]   = useState({ title: '', location: '', meet_link: '', description: '' });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError]   = useState<string | null>(null);
+
+  // Cancel lesson state
+  const [cancelConfirm, setCancelConfirm] = useState(false);
+  const [cancelling, setCancelling]       = useState(false);
+
+  const handleEditOpen = () => {
+    if (!lesson) return;
+    setEditForm({
+      title: lesson.title,
+      location: lesson.location ?? '',
+      meet_link: lesson.meet_link ?? '',
+      description: lesson.description ?? '',
+    });
+    setEditError(null);
+    setShowEdit(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!id) return;
+    setEditSaving(true);
+    setEditError(null);
+    try {
+      await adminApi.updateLesson(Number(id), {
+        title:       editForm.title || undefined,
+        location:    editForm.location || undefined,
+        meet_link:   editForm.meet_link || undefined,
+        description: editForm.description || undefined,
+      });
+      setShowEdit(false);
+      await loadLesson();
+    } catch (e: any) {
+      setEditError(e?.message ?? 'Failed to update lesson.');
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  const handleCancelLesson = async () => {
+    if (!id) return;
+    setCancelling(true);
+    try {
+      await adminApi.cancelLesson(Number(id));
+      setCancelConfirm(false);
+      await loadLesson();
+    } catch {
+      setCancelling(false);
+    }
+  };
 
   // ---------------------------------------------------------------------------
   // Fetch lesson detail
@@ -211,7 +265,7 @@ const LessonDetailPage: React.FC = () => {
             )}
           </div>
 
-          {/* Right column: ID + meet link */}
+          {/* Right column: ID + meet link + actions */}
           <div className="shrink-0 text-right space-y-2">
             <div>
               <div className="text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-0.5">Lesson ID</div>
@@ -226,6 +280,22 @@ const LessonDetailPage: React.FC = () => {
               >
                 <Video size={12} /> Join Meeting <ExternalLink size={10} />
               </a>
+            )}
+            {lesson.status !== 'cancelled' && (
+              <div className="flex gap-2 justify-end pt-1">
+                <button
+                  onClick={handleEditOpen}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 ryze-text-muted hover:ryze-text-inverse hover:bg-white/10 transition-all"
+                >
+                  <Edit2 size={11} /> Edit
+                </button>
+                <button
+                  onClick={() => setCancelConfirm(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all"
+                >
+                  <Trash2 size={11} /> Cancel
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -384,6 +454,95 @@ const LessonDetailPage: React.FC = () => {
                   ? <div className="w-4 h-4 border-2 border-[#050510]/30 border-t-[#050510] rounded-full animate-spin" />
                   : <CheckCircle size={14} />}
                 Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit lesson modal */}
+      {showEdit && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowEdit(false)} />
+          <div className="relative z-10 bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl max-w-lg w-full p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold ryze-text-inverse text-lg">Edit Lesson</h3>
+              <button onClick={() => setShowEdit(false)} className="ryze-text-muted hover:ryze-text-inverse transition-colors">
+                <XCircle size={20} />
+              </button>
+            </div>
+            {editError && (
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+                <AlertTriangle size={14} className="shrink-0" /> {editError}
+              </div>
+            )}
+            <div className="space-y-4">
+              {[
+                { label: 'Title', key: 'title', type: 'text', placeholder: 'Lesson title' },
+                { label: 'Location / Room', key: 'location', type: 'text', placeholder: 'e.g. Studio A' },
+                { label: 'Meet Link', key: 'meet_link', type: 'url', placeholder: 'https://meet.google.com/...' },
+              ].map(({ label, key, type, placeholder }) => (
+                <div key={key}>
+                  <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1.5">{label}</label>
+                  <input
+                    type={type}
+                    className="w-full px-4 py-2.5 bg-[#050510] border border-white/10 rounded-xl text-sm ryze-text-inverse focus:outline-none focus:border-[#FFB000]/40 transition-all placeholder-slate-600"
+                    value={(editForm as any)[key]}
+                    onChange={(e) => setEditForm((f) => ({ ...f, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                  />
+                </div>
+              ))}
+              <div>
+                <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1.5">Description</label>
+                <textarea
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-[#050510] border border-white/10 rounded-xl text-sm ryze-text-inverse focus:outline-none focus:border-[#FFB000]/40 transition-all placeholder-slate-600 resize-none"
+                  value={editForm.description}
+                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                  placeholder="Optional notes about this lesson…"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowEdit(false)}
+                  className="flex-1 py-2.5 bg-white/5 border border-white/10 ryze-text-inverse font-semibold rounded-xl hover:bg-white/10 transition-all text-sm">
+                  Cancel
+                </button>
+                <button onClick={handleEditSave} disabled={editSaving}
+                  className="flex-1 py-2.5 bg-[#FFB000] text-[#050510] font-bold rounded-xl hover:bg-[#ffc133] transition-all disabled:opacity-60 text-sm flex items-center justify-center gap-2">
+                  {editSaving
+                    ? <div className="w-4 h-4 border-2 border-[#050510]/30 border-t-[#050510] rounded-full animate-spin" />
+                    : <CheckCircle size={14} />}
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel lesson confirmation */}
+      {cancelConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setCancelConfirm(false)} />
+          <div className="relative z-10 bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+              <Trash2 size={22} className="text-red-400" />
+            </div>
+            <h3 className="font-bold ryze-text-inverse text-base mb-2">Cancel this lesson?</h3>
+            <p className="text-sm ryze-text-muted mb-6">
+              This will mark the lesson as cancelled and update the Google Calendar event. Students will not be auto-notified.
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setCancelConfirm(false)}
+                className="flex-1 py-2.5 bg-white/5 border border-white/10 ryze-text-inverse font-semibold rounded-xl hover:bg-white/10 transition-all text-sm">
+                Keep lesson
+              </button>
+              <button onClick={handleCancelLesson} disabled={cancelling}
+                className="flex-1 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60 text-sm flex items-center justify-center gap-2">
+                {cancelling
+                  ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  : 'Yes, cancel it'}
               </button>
             </div>
           </div>

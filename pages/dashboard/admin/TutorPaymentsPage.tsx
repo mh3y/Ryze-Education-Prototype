@@ -235,8 +235,17 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
 
 const CreatePayPeriodModal: React.FC<{ onClose: () => void; onCreated: () => void }> = ({ onClose, onCreated }) => {
   const [form, setForm] = useState({ tutor_user_id: '', pay_period_start: '', pay_period_end: '', notes: '' });
-  const [saving, setSaving] = useState(false);
-  const [error, setError]   = useState<string | null>(null);
+  const [saving, setSaving]     = useState(false);
+  const [error, setError]       = useState<string | null>(null);
+  const [tutors, setTutors]     = useState<StudentListItem[]>([]);
+  const [loadingTutors, setLoadingTutors] = useState(true);
+
+  useEffect(() => {
+    adminApi.getStudents({ role: 'tutor', limit: 200, active: true })
+      .then(({ items }) => setTutors(items))
+      .catch(() => {/* non-fatal */})
+      .finally(() => setLoadingTutors(false));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,10 +286,19 @@ const CreatePayPeriodModal: React.FC<{ onClose: () => void; onCreated: () => voi
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1.5">Tutor User ID *</label>
-            <input required type="number" className={inputCls} value={form.tutor_user_id}
+            <label className="block text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1.5">Tutor *</label>
+            <select
+              required
+              className={inputCls}
+              value={form.tutor_user_id}
               onChange={(e) => setForm((f) => ({ ...f, tutor_user_id: e.target.value }))}
-              placeholder="Find on the Students page (Tutors tab)" />
+              disabled={loadingTutors}
+            >
+              <option value="">{loadingTutors ? 'Loading tutors…' : 'Select tutor…'}</option>
+              {tutors.map((t) => (
+                <option key={t.id} value={t.id}>{t.full_name}</option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

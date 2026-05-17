@@ -5,7 +5,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Plus, ArrowUpRight } from 'lucide-react';
+import { CalendarDays, Plus, ArrowUpRight, X, AlertCircle } from 'lucide-react';
 import { adminApi, ClassGroupListItem } from '../../../services/adminApi';
 
 // ---------------------------------------------------------------------------
@@ -50,15 +50,175 @@ const MOCK_CLASSES = [
 ];
 
 // ---------------------------------------------------------------------------
+// Create class modal
+// ---------------------------------------------------------------------------
+
+const SUBJECTS = [
+  'Maths Extension 2', 'Maths Extension 1', 'Maths Advanced',
+  'Standard Maths', 'Foundations', 'Selective Prep', 'OC Prep', 'General Maths',
+];
+
+const YEAR_LEVELS = [
+  'Year 5', 'Year 6', 'Year 7', 'Year 8', 'Year 9',
+  'Year 10', 'Year 11', 'Year 12 — HSC',
+];
+
+interface CreateClassModalProps {
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+const CreateClassModal: React.FC<CreateClassModalProps> = ({ onClose, onSaved }) => {
+  const [saving, setSaving]     = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    name: '',
+    subject: SUBJECTS[2],
+    year_level: YEAR_LEVELS[5],
+    max_capacity: '10',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim()) { setFormError('Class name is required.'); return; }
+    setSaving(true);
+    setFormError(null);
+    try {
+      await adminApi.createClass({
+        name: form.name.trim(),
+        subject: form.subject || undefined,
+        year_level: form.year_level || undefined,
+        max_capacity: form.max_capacity ? Number(form.max_capacity) : undefined,
+        active: true,
+      });
+      onSaved();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to create class.';
+      setFormError(msg);
+      setSaving(false);
+    }
+  };
+
+  const inp: React.CSSProperties = {
+    width: '100%', padding: '10px 16px',
+    background: 'var(--bg-surface-2)',
+    border: '1px solid var(--border-soft)',
+    borderRadius: 9, fontSize: 13,
+    color: 'var(--fg-default)', outline: 'none',
+    fontFamily: '"Manrope", system-ui, sans-serif',
+    boxSizing: 'border-box',
+  };
+  const lbl: React.CSSProperties = {
+    display: 'block', fontSize: 10, fontWeight: 700,
+    letterSpacing: '0.12em', textTransform: 'uppercase',
+    color: 'var(--fg-muted)', marginBottom: 6,
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
+      <div style={{
+        position: 'relative', zIndex: 10,
+        background: 'var(--bg-surface)', border: '1px solid var(--border-soft)',
+        borderRadius: 16, boxShadow: '0 32px 64px -24px rgba(0,0,0,0.6)',
+        maxWidth: 460, width: '100%', padding: 24,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--fg-strong)' }}>New Class</div>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--fg-muted)' }}>
+            <X size={20} />
+          </button>
+        </div>
+
+        {formError && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)', borderRadius: 9, padding: 12, marginBottom: 16 }}>
+            <AlertCircle size={14} /> {formError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <label style={lbl}>Class name</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
+              placeholder="e.g. Maths Ext 1 — Tuesday 5pm"
+              style={inp}
+              autoFocus
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={lbl}>Subject</label>
+              <select
+                value={form.subject}
+                onChange={(e) => setForm(f => ({ ...f, subject: e.target.value }))}
+                style={inp}
+              >
+                {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={lbl}>Year level</label>
+              <select
+                value={form.year_level}
+                onChange={(e) => setForm(f => ({ ...f, year_level: e.target.value }))}
+                style={inp}
+              >
+                {YEAR_LEVELS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style={lbl}>Max capacity</label>
+            <input
+              type="number" min="1" max="50"
+              value={form.max_capacity}
+              onChange={(e) => setForm(f => ({ ...f, max_capacity: e.target.value }))}
+              placeholder="e.g. 10"
+              style={inp}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+            <button type="button" onClick={onClose} style={{
+              height: 38, padding: '0 20px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              background: 'var(--bg-surface-2)', color: 'var(--fg-default)',
+              border: '1px solid var(--border-soft)', cursor: 'pointer',
+            }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={saving} style={{
+              height: 38, padding: '0 20px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              background: 'var(--accent)', color: 'var(--accent-fg)',
+              border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.7 : 1,
+            }}>
+              {saving ? 'Creating…' : 'Create class'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
 const ClassesPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [items, setItems]     = useState<ClassGroupListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [items, setItems]       = useState<ClassGroupListItem[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -127,7 +287,9 @@ const ClassesPage: React.FC = () => {
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <CalendarDays size={14} /> Week view
           </button>
-          <button style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
+          <button
+            onClick={() => setShowCreate(true)}
+            style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> New class
@@ -267,6 +429,14 @@ const ClassesPage: React.FC = () => {
             );
           })}
         </div>
+      )}
+
+      {/* Create class modal */}
+      {showCreate && (
+        <CreateClassModal
+          onClose={() => setShowCreate(false)}
+          onSaved={() => { setShowCreate(false); load(); }}
+        />
       )}
     </div>
   );

@@ -59,6 +59,7 @@ const AlertsPage: React.FC = () => {
   const [resolveTarget, setResolveTarget]   = useState<SystemAlert | null>(null);
   const [dismissTarget, setDismissTarget]   = useState<SystemAlert | null>(null);
   const [actionLoading, setActionLoading]   = useState(false);
+  const [actionError, setActionError]       = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -100,23 +101,27 @@ const AlertsPage: React.FC = () => {
   const handleResolve = async () => {
     if (!resolveTarget) return;
     setActionLoading(true);
+    setActionError(null);
     try {
       await adminApi.resolveAlert(resolveTarget.id);
       setResolveTarget(null);
       load();
-    } catch { /* swallow */ }
-    finally { setActionLoading(false); }
+    } catch (e: any) {
+      setActionError(e?.message ?? 'Failed to resolve alert.');
+    } finally { setActionLoading(false); }
   };
 
   const handleDismiss = async () => {
     if (!dismissTarget) return;
     setActionLoading(true);
+    setActionError(null);
     try {
       await adminApi.dismissAlert(dismissTarget.id);
       setDismissTarget(null);
       load();
-    } catch { /* swallow */ }
-    finally { setActionLoading(false); }
+    } catch (e: any) {
+      setActionError(e?.message ?? 'Failed to dismiss alert.');
+    } finally { setActionLoading(false); }
   };
 
   // ---------------------------------------------------------------------------
@@ -297,6 +302,16 @@ const AlertsPage: React.FC = () => {
         />
       )}
 
+      {/* Action error toast */}
+      {actionError && !resolveTarget && !dismissTarget && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/20 backdrop-blur-sm"
+          style={{ maxWidth: 440 }}>
+          <span className="shrink-0">⚠</span>
+          {actionError}
+          <button onClick={() => setActionError(null)} className="ml-2 opacity-60 hover:opacity-100 transition-opacity">✕</button>
+        </div>
+      )}
+
       {/* Resolve confirm */}
       <ConfirmDialog
         open={!!resolveTarget}
@@ -305,7 +320,7 @@ const AlertsPage: React.FC = () => {
         confirmLabel="Resolve"
         loading={actionLoading}
         onConfirm={handleResolve}
-        onCancel={() => setResolveTarget(null)}
+        onCancel={() => { setResolveTarget(null); setActionError(null); }}
       />
 
       {/* Dismiss confirm */}
@@ -316,7 +331,7 @@ const AlertsPage: React.FC = () => {
         confirmLabel="Dismiss"
         loading={actionLoading}
         onConfirm={handleDismiss}
-        onCancel={() => setDismissTarget(null)}
+        onCancel={() => { setDismissTarget(null); setActionError(null); }}
       />
     </div>
   );
