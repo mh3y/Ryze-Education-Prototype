@@ -53,7 +53,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 
   // ── Admin portal ──────────────────────────────────────────────────────────
   { path: 'admin',                  label: 'Overview',          icon: LayoutDashboard, roles: ['admin'],           group: 'admin' },
-  { path: 'bot-health',             label: 'Bot Health',        icon: Activity,        roles: ['admin'],           group: 'admin' },
+  { path: 'admin/bot-health',        label: 'Bot Health',        icon: Activity,        roles: ['admin'],           group: 'admin' },
   { path: 'admin/students',         label: 'Students',          icon: Users,           roles: ['admin'],           group: 'admin' },
   { path: 'admin/parents',          label: 'Parents',           icon: Home,            roles: ['admin'],           group: 'admin' },
   { path: 'admin/classes',          label: 'Classes',           icon: BookOpen,        roles: ['admin'],           group: 'admin' },
@@ -66,7 +66,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
   { path: 'admin/alerts',           label: 'Alerts',            icon: ShieldAlert,     roles: ['admin'],           group: 'admin' },
   { path: 'admin/resources',        label: 'Resources',         icon: FolderOpen,      roles: ['admin', 'tutor'],  group: 'admin' },
   { path: 'admin/announcements',    label: 'Announcements',     icon: Megaphone,       roles: ['admin'],           group: 'admin' },
-  { path: 'reminders',              label: 'Reminder Logs',     icon: Bell,            roles: ['admin'],           group: 'admin' },
+  { path: 'admin/reminders',         label: 'Reminder Logs',     icon: Bell,            roles: ['admin'],           group: 'admin' },
 ];
 
 // ---------------------------------------------------------------------------
