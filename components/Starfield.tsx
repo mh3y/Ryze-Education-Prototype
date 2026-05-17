@@ -6,38 +6,46 @@ export const Starfield: React.FC = memo(() => {
   const workerRef = useRef<Worker>();
 
   useEffect(() => {
-    if (canvasRef.current) {
-      // Ensure we only create the worker once
-      if (!workerRef.current) {
-        const worker = new Worker('/starfield.worker.ts', { type: 'module' });
-        workerRef.current = worker;
+    if (!canvasRef.current || workerRef.current) return;
 
-        const offscreenCanvas = canvasRef.current.transferControlToOffscreen();
-        
-        worker.postMessage({ 
-          canvas: offscreenCanvas,
-          devicePixelRatio: window.devicePixelRatio 
-        }, [offscreenCanvas]);
+    // Guard: OffscreenCanvas may be unavailable in some environments
+    if (typeof OffscreenCanvas === 'undefined') return;
 
-        const handleResize = () => {
-          worker.postMessage({
-            type: 'resize',
-            width: window.innerWidth,
-            height: window.innerHeight,
-            devicePixelRatio: window.devicePixelRatio
-          });
-        };
+    let worker: Worker | undefined;
+    let handleResize: (() => void) | undefined;
 
-        window.addEventListener('resize', handleResize);
+    try {
+      worker = new Worker('/starfield.worker.ts', { type: 'module' });
+      workerRef.current = worker;
 
-        // Cleanup function
-        return () => {
-          window.removeEventListener('resize', handleResize);
-          worker.terminate();
-          workerRef.current = undefined;
-        };
-      }
+      const offscreenCanvas = canvasRef.current.transferControlToOffscreen();
+
+      worker.postMessage({
+        canvas: offscreenCanvas,
+        devicePixelRatio: window.devicePixelRatio,
+      }, [offscreenCanvas]);
+
+      handleResize = () => {
+        worker?.postMessage({
+          type: 'resize',
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        });
+      };
+
+      window.addEventListener('resize', handleResize);
+    } catch {
+      // OffscreenCanvas or Worker not supported — silently skip the starfield
+      worker?.terminate();
+      workerRef.current = undefined;
     }
+
+    return () => {
+      if (handleResize) window.removeEventListener('resize', handleResize);
+      worker?.terminate();
+      workerRef.current = undefined;
+    };
   }, []);
 
   return (
