@@ -32,6 +32,9 @@ export interface PortalSettings {
   density: 'airy' | 'balanced' | 'dense';
   font: 'editorial' | 'modern' | 'instrument';
   sidebarBehavior: 'auto' | 'always-open' | 'always-rail';
+  motion: 'full' | 'reduced';
+  contrast: 'normal' | 'high';
+  textSize: 'default' | 'large' | 'larger';
 }
 
 interface PortalSettingsContextValue {
@@ -51,6 +54,9 @@ const DEFAULTS: PortalSettings = {
   density:         'balanced',
   font:            'editorial',
   sidebarBehavior: 'auto',
+  motion:          'full',
+  contrast:        'normal',
+  textSize:        'default',
 };
 
 function loadSettings(): PortalSettings {
@@ -84,12 +90,18 @@ function applyToDOM(settings: PortalSettings): void {
   const el = document.querySelector<HTMLElement>('.ryze-portal');
   if (!el) return;
 
-  el.dataset.theme   = settings.theme;
-  el.dataset.density = settings.density;
-  el.dataset.font    = settings.font;
+  el.dataset.theme    = settings.theme;
+  el.dataset.density  = settings.density;
+  el.dataset.font     = settings.font;
+  el.dataset.motion   = settings.motion;
+  el.dataset.contrast = settings.contrast;
+  // data-text-size uses a hyphenated attribute name
+  el.dataset.textSize = settings.textSize;
 
-  el.style.setProperty('--accent',      settings.accent);
-  el.style.setProperty('--accent-soft', hexWithOpacity(settings.accent, 0.14));
+  el.style.setProperty('--accent',       settings.accent);
+  el.style.setProperty('--accent-soft',  hexWithOpacity(settings.accent, 0.14));
+  el.style.setProperty('--accent-soft-2', hexWithOpacity(settings.accent, 0.08));
+  el.style.setProperty('--accent-ink',   '#1a1305');
 }
 
 // ---------------------------------------------------------------------------
