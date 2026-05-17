@@ -123,7 +123,7 @@ const FontPicker: React.FC<{ value: string; onChange: (v: string) => void }> = (
   const options = [
     { value: 'editorial',  name: 'Editorial',   family: '"Cormorant Garamond", serif',    italic: true,  caption: 'Cormorant + Manrope' },
     { value: 'instrument', name: 'Literary',    family: '"Instrument Serif", serif',      italic: false, caption: 'Instrument + Manrope' },
-    { value: 'modern',     name: 'Modern SaaS', family: '"Geist", "Manrope", sans-serif', italic: false, caption: 'Geist all-sans' },
+    { value: 'modern',     name: 'Modern SaaS', family: '"Inter", system-ui, sans-serif', italic: false, caption: 'Inter all-sans' },
   ];
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
@@ -177,10 +177,8 @@ const SaveBar: React.FC = () => (
 const AppearanceSection: React.FC = () => {
   const { settings, updateSettings } = usePortalSettings();
 
-  // Local-only UI prefs (not persisted to portal settings)
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
-  const [tnum, setTnum]                 = useState(false);
+  // Local-only UI pref (not yet persisted to portal settings)
+  const [tnum, setTnum] = useState(false);
 
   // Map sidebarBehavior to segment value and back
   const sidebarSegValue =
@@ -245,12 +243,30 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Reduce motion" hint="Disables decorative animation like the live-lesson pulse.">
-          <Toggle value={reduceMotion} onChange={setReduceMotion} />
+          <Toggle
+            value={settings.motion === 'reduced'}
+            onChange={(v) => updateSettings({ motion: v ? 'reduced' : 'full' })}
+          />
         </Row>
         <Row label="High contrast" hint="Bumps body text and borders for clearer separation.">
-          <Toggle value={highContrast} onChange={setHighContrast} />
+          <Toggle
+            value={settings.contrast === 'high'}
+            onChange={(v) => updateSettings({ contrast: v ? 'high' : 'normal' })}
+          />
+        </Row>
+        <Row label="Text size" hint="Scales the base font size across the portal.">
+          <Segment
+            value={settings.textSize}
+            options={[
+              { value: 'default', label: 'Default' },
+              { value: 'large',   label: 'Large' },
+              { value: 'larger',  label: 'Larger' },
+            ]}
+            onChange={(v) => updateSettings({ textSize: v as 'default' | 'large' | 'larger' })}
+          />
         </Row>
         <Row label="Tabular numerals everywhere" hint="Align numbers across columns automatically.">
+          {/* TODO: wire to a persisted setting when tnum CSS feature is added */}
           <Toggle value={tnum} onChange={setTnum} />
         </Row>
       </div>

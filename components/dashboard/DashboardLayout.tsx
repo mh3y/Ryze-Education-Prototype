@@ -80,8 +80,8 @@ const DashboardLayoutInner: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate          = useNavigate();
   const location          = useLocation();
-  // Ensure the context is mounted in this subtree (DOM attrs applied by context's own useEffect)
-  usePortalSettings();
+  // Destructure settings so we can react to sidebarBehavior changes
+  const { settings } = usePortalSettings();
 
   const mobileQuery = '(max-width: 767px)';
   const [isMobile, setIsMobile] = useState(
@@ -114,6 +114,14 @@ const DashboardLayoutInner: React.FC = () => {
   useEffect(() => {
     if (isMobile) setIsSidebarOpen(false);
   }, [location.pathname, isMobile]);
+
+  // React to sidebarBehavior setting changes from the settings page
+  useEffect(() => {
+    if (isMobile) return; // mobile manages its own open/close state
+    if (settings.sidebarBehavior === 'always-rail') setIsSidebarOpen(false);
+    else if (settings.sidebarBehavior === 'always-open') setIsSidebarOpen(true);
+    // 'auto' = leave as-is; user can toggle manually
+  }, [settings.sidebarBehavior, isMobile]);
 
   const handleLogout = () => {
     logout();
