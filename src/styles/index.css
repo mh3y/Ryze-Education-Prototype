@@ -437,6 +437,63 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
   @apply border-[var(--color-ryze)] bg-black/30 ring-2 ring-[rgba(255,176,0,0.16)];
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Portal design tokens — scoped to .ryze-portal so they only apply inside
+ * the dashboard and never bleed into the marketing site.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+.ryze-portal {
+  /* Dark theme (default for portal) */
+  --bg-app: #0a0e16;
+  --bg-sidebar: #0d1119;
+  --bg-surface: #11151e;
+  --bg-surface-2: #161b26;
+  --bg-elevated: #1b2230;
+  --bg-hover: rgba(255,255,255,0.04);
+  --bg-active: rgba(255,255,255,0.06);
+  --fg-strong: #f6f4ef;
+  --fg-default: #d8d4cb;
+  --fg-muted: #8a8b8e;
+  --fg-faint: #5a5c61;
+  --border-faint: rgba(255,255,255,0.06);
+  --border-soft: rgba(255,255,255,0.09);
+  --border-strong: rgba(255,255,255,0.14);
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.02) inset, 0 12px 32px -18px rgba(0,0,0,0.6);
+  --side-bg: #07090e;
+  --side-fg: #f6f4ef;
+  --side-fg-muted: rgba(246,244,239,0.5);
+  --side-hover: rgba(255,255,255,0.04);
+  --side-active-bg: rgba(184,132,30,0.14);
+  --side-active-fg: #b8841e;
+  --side-border: rgba(255,255,255,0.07);
+  --accent: #b8841e;
+  --accent-soft: rgba(184,132,30,0.14);
+  --accent-soft-2: rgba(184,132,30,0.08);
+  --accent-fg: #ffffff;
+  --accent-ink: #1a1305;
+  --ok: #4f9b6a;
+  --warn: #c89e2b;
+  --danger: #c25450;
+  --info: #5e7fb3;
+  --pad-page-x: 40px;
+  --pad-page-y: 32px;
+  --card-pad: 22px;
+  --gap-md: 20px;
+  --gap-lg: 28px;
+  --row-h: 56px;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Live lesson pulse animation */
+@keyframes portalPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184,132,30,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(184,132,30,0); }
+}
+
+.portal-pulse {
+  animation: portalPulse 2.4s ease-in-out infinite;
+}
+
 .ryze-cta-primary {
   @apply inline-flex items-center justify-center min-h-[48px] px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all shadow-lg select-none outline-none;
   background-color: var(--ryze-cta-primary);

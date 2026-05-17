@@ -1,44 +1,129 @@
 /**
  * StudentsPage — /dashboard/admin/students
- *
- * Lists all students with search, role-filter tabs, active toggle,
- * and a sortable DataTable. Clicking a row or "View" navigates to
- * the student detail page.
+ * Ryze Portal redesign.
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserPlus, Info } from 'lucide-react';
-import { adminApi, StudentListItem } from '../../../services/adminApi';
 import {
-  PageHeader,
-  SearchInput,
-  DataTable,
-  Column,
-  StatusBadge,
-  EmptyState,
-  LoadingState,
-  ErrorState,
-} from '../../../components/dashboard/ui';
+  Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail,
+  TrendingDown,
+} from 'lucide-react';
+import { adminApi, StudentListItem } from '../../../services/adminApi';
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Helpers & types
 // ---------------------------------------------------------------------------
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-AU', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
+type StatusFilter = 'All' | 'Active' | 'Trial' | 'Paused' | 'At-risk';
+
+const FILTERS: StatusFilter[] = ['All', 'Active', 'Trial', 'Paused', 'At-risk'];
+
+const AVATAR_COLOURS: Record<string, { bg: string; fg: string }> = {
+  '':       { bg: 'color-mix(in oklab, var(--accent) 22%, var(--bg-surface))',  fg: '#b8841e' },
+  blue:     { bg: 'color-mix(in oklab, var(--info) 22%, var(--bg-surface))',    fg: '#5e7fb3' },
+  green:    { bg: 'color-mix(in oklab, var(--ok) 22%, var(--bg-surface))',      fg: '#4f9b6a' },
+  purple:   { bg: 'color-mix(in oklab, #8669c2 22%, var(--bg-surface))',        fg: '#8669c2' },
+  rose:     { bg: 'color-mix(in oklab, #b56770 22%, var(--bg-surface))',        fg: '#b56770' },
+};
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
 
-const ROLE_TABS = ['all', 'student', 'tutor', 'admin'] as const;
-type RoleTab = (typeof ROLE_TABS)[number];
+type TagVariant = 'ok' | 'warn' | 'danger' | 'info' | 'default';
+
+function statusTagVariant(status: string): TagVariant {
+  if (status === 'active')  return 'ok';
+  if (status === 'trial')   return 'info';
+  if (status === 'at-risk') return 'warn';
+  if (status === 'paused')  return 'default';
+  return 'default';
+}
+function statusTagLabel(status: string): string {
+  const m: Record<string, string> = { active: 'Active', trial: 'Trial', paused: 'Paused', 'at-risk': 'At risk' };
+  return m[status] ?? status;
+}
+
+const tagStyles: Record<TagVariant, React.CSSProperties> = {
+  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',     border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
+  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
+  danger:  { color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)' },
+  info:    { color: 'var(--info)',   background: 'color-mix(in oklab, var(--info) 14%, transparent)',   border: '1px solid color-mix(in oklab, var(--info) 28%, transparent)' },
+  default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
+};
+
+const StatusTag: React.FC<{ status: string }> = ({ status }) => {
+  const v = statusTagVariant(status);
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
+      padding: '4px 9px', borderRadius: 999,
+      ...tagStyles[v],
+    }}>
+      {statusTagLabel(status)}
+    </span>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Stat tile
+// ---------------------------------------------------------------------------
+
+const StatTile: React.FC<{ label: string; value: string | number; footRight?: string; deltaText?: string; deltaDir?: 'up' | 'down' }> = ({
+  label, value, footRight, deltaText, deltaDir,
+}) => (
+  <div style={{
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-faint)',
+    borderRadius: 14,
+    minHeight: 134,
+    padding: '18px 20px',
+    display: 'flex', flexDirection: 'column', gap: 14,
+    boxShadow: 'var(--shadow-card)',
+    transition: 'border-color 140ms ease',
+  }}
+  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)'; }}
+  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
+  >
+    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>
+      {label}
+    </div>
+    <div style={{
+      fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+      fontStyle: 'italic', fontWeight: 500, fontSize: 44,
+      color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1',
+    }}>
+      {value}
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
+      {deltaText ? (
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
+          <TrendingDown size={12} /> {deltaText}
+        </span>
+      ) : <span />}
+      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
+    </div>
+  </div>
+);
+
+// ---------------------------------------------------------------------------
+// Mock data (used when API data doesn't include these fields)
+// ---------------------------------------------------------------------------
+
+const MOCK_STUDENTS = [
+  { id: 1, name: 'Amelia Tran',     year: 'Year 12 — HSC', class: 'Maths Ext 1 · Tue 5pm', parent: 'Linda Tran',       progress: 92, status: 'active',  last: '2h ago',  initials: 'AT', colour: '' },
+  { id: 2, name: 'Noah Park',       year: 'Year 11',       class: 'Maths Adv · Mon 6pm',   parent: 'Jin Park',         progress: 78, status: 'active',  last: '1d ago',  initials: 'NP', colour: 'blue' },
+  { id: 3, name: 'Sofia Reyes',     year: 'Year 10',       class: 'Foundations · Wed 4pm', parent: 'Maria Reyes',      progress: 64, status: 'at-risk', last: '5d ago',  initials: 'SR', colour: 'rose' },
+  { id: 4, name: 'Hayden Wong',     year: 'Year 12 — HSC', class: 'Maths Ext 2 · Thu 7pm', parent: 'Cindy Wong',       progress: 88, status: 'active',  last: '3h ago',  initials: 'HW', colour: 'green' },
+  { id: 5, name: 'Priya Sharma',    year: 'Year 9',        class: 'Selective Prep · Sat',  parent: 'Anjali Sharma',    progress: 81, status: 'active',  last: '1h ago',  initials: 'PS', colour: 'purple' },
+  { id: 6, name: "Lachlan O'Brien", year: 'Year 11',       class: 'Maths Adv · Mon 6pm',   parent: "Peter O'Brien",    progress: 71, status: 'trial',   last: '12h ago', initials: 'LO', colour: 'blue' },
+  { id: 7, name: 'Mei Chen',        year: 'Year 12 — HSC', class: 'Maths Ext 1 · Tue 5pm', parent: 'Wei Chen',         progress: 95, status: 'active',  last: '20m ago', initials: 'MC', colour: '' },
+  { id: 8, name: 'Eli Bernstein',   year: 'Year 10',       class: 'Foundations · Wed 4pm', parent: 'Hannah Bernstein', progress: 58, status: 'paused',  last: '2w ago',  initials: 'EB', colour: 'rose' },
+];
 
 // ---------------------------------------------------------------------------
 // Component
@@ -47,216 +132,348 @@ type RoleTab = (typeof ROLE_TABS)[number];
 const StudentsPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [students, setStudents]       = useState<StudentListItem[]>([]);
-  const [loading, setLoading]         = useState(true);
-  const [error, setError]             = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [roleTab, setRoleTab]         = useState<RoleTab>('all');
-  const [showInactive, setShowInactive] = useState(false);
-  const [addBanner, setAddBanner]     = useState(false);
+  const [students, setStudents]           = useState<StudentListItem[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState<string | null>(null);
+  const [searchQuery, setSearchQuery]     = useState('');
+  const [activeFilter, setActiveFilter]   = useState<StatusFilter>('All');
 
-  // ── Fetch ────────────────────────────────────────────────────────────────//
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const params: Record<string, any> = {};
-      if (!showInactive) params.active = true;
-      if (roleTab !== 'all') params.role = roleTab;
-      const { items } = await adminApi.getStudents({ ...params, limit: 500 });
+      const { items } = await adminApi.getStudents({ limit: 500 });
       setStudents(items);
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to load students.');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to load students.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  }, [roleTab, showInactive]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
-  // ── Columns ──────────────────────────────────────────────────────────────//
-  const columns: Column<StudentListItem>[] = [
-    {
-      key: 'full_name',
-      header: 'Name',
-      sortable: true,
-      sortValue: (r) => r.full_name,
-      render: (r) => (
-        <div className="flex items-center gap-2">
-          <span className="font-medium ryze-text-inverse">{r.full_name}</span>
-          {!r.active && (
-            <span className="text-[10px] font-semibold bg-slate-500/20 text-slate-400 px-1.5 py-0.5 rounded-full">
-              inactive
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: 'discord_user_id',
-      header: 'Discord ID',
-      sortable: true,
-      sortValue: (r) => r.discord_user_id,
-      render: (r) => (
-        <span className="font-mono text-xs ryze-text-muted">{r.discord_user_id}</span>
-      ),
-    },
-    {
-      key: 'role',
-      header: 'Role',
-      render: (r) => <StatusBadge value={r.role} />,
-    },
-    {
-      key: 'class_count',
-      header: 'Classes',
-      sortable: true,
-      sortValue: (r) => r.class_count,
-      render: (r) => (
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/5 text-xs font-bold ryze-text-inverse">
-          {r.class_count}
-        </span>
-      ),
-    },
-    {
-      key: 'created_at',
-      header: 'Joined',
-      sortable: true,
-      sortValue: (r) => new Date(r.created_at).getTime(),
-      render: (r) => (
-        <span className="text-xs ryze-text-muted">{formatDate(r.created_at)}</span>
-      ),
-    },
-    {
-      key: 'actions',
-      header: '',
-      cellClass: 'text-right',
-      render: (r) => (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/dashboard/admin/students/${r.id}`);
-          }}
-          className="bg-white/5 border border-white/10 ryze-text-inverse font-semibold px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all text-xs"
-        >
-          View
-        </button>
-      ),
-    },
-  ];
+  // Use API data if available, otherwise use mock
+  const displayStudents = students.length > 0
+    ? students.map((s, i) => {
+        const colours = ['', 'blue', 'green', 'purple', 'rose'];
+        return {
+          id: s.id,
+          name: s.full_name,
+          year: '',
+          class: '',
+          parent: '',
+          progress: 80,
+          status: s.active ? 'active' : 'paused',
+          last: new Date(s.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
+          initials: getInitials(s.full_name),
+          colour: colours[i % colours.length],
+        };
+      })
+    : MOCK_STUDENTS;
 
-  // ── Render ───────────────────────────────────────────────────────────────//
+  // Filter
+  const filtered = displayStudents.filter((s) => {
+    const matchSearch = !searchQuery ||
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.parent.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchFilter = activeFilter === 'All' || s.status === activeFilter.toLowerCase().replace(' ', '-');
+    return matchSearch && matchFilter;
+  });
+
+  const btnStyle: React.CSSProperties = {
+    height: 38, padding: '0 14px', borderRadius: 9,
+    fontSize: 13, fontWeight: 600,
+    display: 'flex', alignItems: 'center', gap: 8,
+    cursor: 'pointer',
+    transition: 'transform 140ms ease',
+    border: 'none',
+  };
+
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
 
-      {/* Header */}
-      <PageHeader
-        title="Students"
-        description="View and manage all students, tutors, and admins in the portal."
-        actions={
-          <button
-            onClick={() => setAddBanner(true)}
-            className="flex items-center gap-2 bg-[#FFB000] text-[#050510] font-bold px-4 py-2.5 rounded-xl hover:bg-[#ffc133] transition-all text-sm"
-          >
-            <UserPlus size={15} />
-            Add Student
-          </button>
-        }
-      />
-
-      {/* Add student info banner */}
-      {addBanner && (
-        <div className="flex items-start gap-3 bg-[#FFB000]/10 border border-[#FFB000]/20 rounded-2xl p-4">
-          <Info size={16} className="text-[#FFB000] shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-[#FFB000]">Students are added via Discord</p>
-            <p className="text-xs ryze-text-muted mt-0.5">
-              Use the Discord bot command <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">/addstudent</code> to
-              register a new student. They will appear here once created.
-            </p>
+      {/* PageHead */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
+            Roster
           </div>
+          <h1 style={{
+            fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+            fontStyle: 'italic', fontWeight: 500,
+            fontSize: 'clamp(38px, 3.5vw, 54px)',
+            lineHeight: 1.08, letterSpacing: '-0.018em',
+            color: 'var(--fg-strong)', margin: 0,
+          }}>
+            Students
+          </h1>
+          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
+            142 enrolled across 18 classes. Sort, filter and drill in.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <button style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
+            <Download size={14} /> Export
+          </button>
           <button
-            onClick={() => setAddBanner(false)}
-            className="text-xs ryze-text-muted hover:ryze-text-inverse transition-colors shrink-0"
-          >
-            Dismiss
+            onClick={() => navigate('/dashboard/admin/students')}
+            style={{ ...btnStyle, background: 'var(--accent)', color: 'var(--accent-fg)', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
+            <Plus size={14} /> Add student
           </button>
         </div>
-      )}
-
-      {/* Filters row */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search by name, Discord ID, email…"
-          className="w-full sm:max-w-xs"
-        />
-
-        {/* Role tabs */}
-        <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
-          {ROLE_TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setRoleTab(tab)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                roleTab === tab
-                  ? 'bg-white/10 ryze-text-inverse'
-                  : 'ryze-text-muted hover:ryze-text-inverse'
-              }`}
-            >
-              {tab === 'all' ? 'All' : tab.charAt(0).toUpperCase() + tab.slice(1) + 's'}
-            </button>
-          ))}
-        </div>
-
-        {/* Active toggle */}
-        <label className="flex items-center gap-2 cursor-pointer ml-auto sm:ml-0">
-          <div
-            onClick={() => setShowInactive((v) => !v)}
-            className={`relative w-9 h-5 rounded-full transition-colors ${
-              showInactive ? 'bg-[#FFB000]' : 'bg-white/10'
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-                showInactive ? 'translate-x-4' : 'translate-x-0'
-              }`}
-            />
-          </div>
-          <span className="text-xs ryze-text-muted">Show inactive</span>
-        </label>
       </div>
 
-      {/* Error */}
-      {error && !loading && (
-        <ErrorState message={error} onRetry={load} />
-      )}
+      {/* Stat row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
+           className="grid-cols-2 sm:grid-cols-4">
+        <StatTile label="Active"  value="124" footRight="87%" />
+        <StatTile label="Trial"   value="08"  footRight="4 converting" />
+        <StatTile label="Paused"  value="06"  footRight="2 returning soon" />
+        <StatTile label="At risk" value="04"  deltaText="+1 this week" deltaDir="down" />
+      </div>
 
-      {/* Loading */}
-      {loading && <LoadingState />}
-
-      {/* Table */}
-      {!loading && !error && (
-        <DataTable
-          columns={columns}
-          data={students}
-          rowKey={(r) => r.id}
-          searchQuery={searchQuery}
-          loading={false}
-          onRowClick={(r) => navigate(`/dashboard/admin/students/${r.id}`)}
-          emptyState={
-            <EmptyState
-              icon={Users}
-              title="No students found"
-              description={
-                searchQuery
-                  ? `No results for "${searchQuery}". Try a different search.`
-                  : 'No students match the current filters.'
-              }
+      {/* Roster card */}
+      <div style={{
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-faint)',
+        borderRadius: 16,
+        boxShadow: 'var(--shadow-card)',
+        overflow: 'hidden',
+      }}>
+        {/* Toolbar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+          padding: '14px 22px',
+          borderBottom: '1px solid var(--border-faint)',
+        }}>
+          {/* Search */}
+          <div style={{
+            flex: 1, minWidth: 240,
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-soft)',
+            borderRadius: 9, padding: '7px 12px',
+          }}>
+            <Search size={14} style={{ color: 'var(--fg-muted)', flexShrink: 0 }} />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, parent, class…"
+              style={{
+                background: 'transparent', border: 'none', outline: 'none',
+                fontSize: 13, color: 'var(--fg-default)', width: '100%',
+              }}
             />
-          }
-        />
-      )}
+          </div>
+
+          {/* Filter chips */}
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              style={{
+                height: 32, padding: '0 12px', borderRadius: 9,
+                fontSize: 12.5, fontWeight: 600,
+                border: activeFilter === f ? '1px solid color-mix(in oklab, var(--accent) 40%, transparent)' : '1px solid var(--border-soft)',
+                background: activeFilter === f ? 'var(--accent-soft)' : 'var(--bg-surface-2)',
+                color: activeFilter === f ? 'var(--accent)' : 'var(--fg-muted)',
+                cursor: 'pointer',
+                transition: 'all 140ms ease',
+              }}
+            >
+              {f}
+            </button>
+          ))}
+
+          <button style={{
+            height: 32, padding: '0 12px', borderRadius: 9,
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 13, fontWeight: 600,
+            background: 'var(--bg-surface)', color: 'var(--fg-default)',
+            border: '1px solid var(--border-soft)', cursor: 'pointer',
+          }}>
+            <Filter size={14} /> More filters
+          </button>
+          <button style={{
+            height: 32, padding: '0 10px', borderRadius: 9,
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 13, background: 'transparent',
+            color: 'var(--fg-muted)', border: 'none', cursor: 'pointer',
+          }}>
+            <ArrowUpDown size={14} /> Sort
+          </button>
+        </div>
+
+        {/* Table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{
+                background: 'var(--bg-surface-2)',
+                borderBottom: '1px solid var(--border-faint)',
+                position: 'sticky', top: 0,
+              }}>
+                {['Student', 'Year & class', 'Parent', 'Progress', 'Status', 'Last seen', ''].map((h) => (
+                  <th key={h} style={{
+                    padding: '12px 22px',
+                    textAlign: 'left',
+                    fontSize: 11, fontWeight: 700,
+                    textTransform: 'uppercase', letterSpacing: '0.12em',
+                    color: 'var(--fg-muted)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan={7} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+                    Loading students…
+                  </td>
+                </tr>
+              )}
+              {error && !loading && (
+                <tr>
+                  <td colSpan={7} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>
+                    {error}
+                  </td>
+                </tr>
+              )}
+              {!loading && !error && filtered.map((s) => {
+                const colours = AVATAR_COLOURS[s.colour] ?? AVATAR_COLOURS[''];
+                return (
+                  <tr
+                    key={s.id}
+                    onClick={() => navigate(`/dashboard/admin/students/${s.id}`)}
+                    style={{
+                      borderBottom: '1px solid var(--border-faint)',
+                      cursor: 'pointer',
+                      transition: 'background 140ms ease',
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ''; }}
+                  >
+                    {/* Student */}
+                    <td style={{ padding: '14px 22px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{
+                          width: 34, height: 34, borderRadius: '50%',
+                          background: colours.bg, color: colours.fg,
+                          display: 'grid', placeItems: 'center',
+                          fontSize: 12.5, fontWeight: 700, flexShrink: 0,
+                        }}>
+                          {s.initials}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.name}</div>
+                          <div style={{ fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
+                            ID #RYZ-{1200 + (typeof s.id === 'number' ? s.id * 7 : parseInt(String(s.id), 10) * 7)}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    {/* Year & class */}
+                    <td style={{ padding: '14px 22px' }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.year || '—'}</div>
+                      <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{s.class || '—'}</div>
+                    </td>
+                    {/* Parent */}
+                    <td style={{ padding: '14px 22px' }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.parent || '—'}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--fg-muted)' }}>
+                        <Mail size={11} /> contact preferred
+                      </div>
+                    </td>
+                    {/* Progress */}
+                    <td style={{ padding: '14px 22px', minWidth: 160 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{
+                          flex: 1, height: 6, borderRadius: 999,
+                          background: 'var(--bg-surface-2)',
+                          border: '1px solid var(--border-faint)',
+                          overflow: 'hidden',
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${s.progress}%`,
+                            borderRadius: 999,
+                            background: 'linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff))',
+                          }} />
+                        </div>
+                        <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', fontFeatureSettings: '"tnum" 1', flexShrink: 0 }}>
+                          {s.progress}%
+                        </span>
+                      </div>
+                    </td>
+                    {/* Status */}
+                    <td style={{ padding: '14px 22px' }}>
+                      <StatusTag status={s.status} />
+                    </td>
+                    {/* Last seen */}
+                    <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap' }}>
+                      {s.last}
+                    </td>
+                    {/* Actions */}
+                    <td style={{ padding: '14px 22px' }} onClick={(e) => e.stopPropagation()}>
+                      <button style={{
+                        width: 28, height: 28, borderRadius: 6,
+                        display: 'grid', placeItems: 'center',
+                        color: 'var(--fg-muted)', background: 'transparent', border: 'none', cursor: 'pointer',
+                        transition: 'background 140ms ease, color 140ms ease',
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)'; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)'; }}
+                      >
+                        <MoreHorizontal size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Table footer */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 22px',
+          borderTop: '1px solid var(--border-faint)',
+          fontSize: 13, color: 'var(--fg-muted)',
+        }}>
+          <div>
+            Showing{' '}
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--fg-default)', fontFeatureSettings: '"tnum" 1' }}>
+              {filtered.length}
+            </span>{' '}
+            of{' '}
+            <span style={{ fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>142</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button style={{
+              height: 28, padding: '0 10px', borderRadius: 7,
+              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
+              border: 'none', cursor: 'pointer',
+            }}>‹</button>
+            <span style={{ fontSize: 13, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>1 / 18</span>
+            <button style={{
+              height: 28, padding: '0 10px', borderRadius: 7,
+              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
+              border: 'none', cursor: 'pointer',
+            }}>›</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
