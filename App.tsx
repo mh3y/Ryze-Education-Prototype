@@ -62,6 +62,20 @@ const AnnouncementsPage   = lazy(() => import('./pages/dashboard/admin/Announcem
 const HomeworkPage        = lazy(() => import('./pages/dashboard/admin/HomeworkPage'));
 const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
 const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
+// Tutor role pages
+const TutorDashboard      = lazy(() => import('./pages/dashboard/TutorDashboard'));
+const TutorClassesPage    = lazy(() => import('./pages/dashboard/TutorDashboard').then(m => ({ default: m.TutorClassesPage })));
+const TutorAttendancePage = lazy(() => import('./pages/dashboard/TutorDashboard').then(m => ({ default: m.TutorAttendancePage })));
+const TutorHomeworkPage   = lazy(() => import('./pages/dashboard/TutorDashboard').then(m => ({ default: m.TutorHomeworkPage })));
+// Student role pages
+const StudentDashboard    = lazy(() => import('./pages/dashboard/StudentDashboard'));
+const StudentCoursesPage  = lazy(() => import('./pages/dashboard/StudentCoursesPage'));
+const StudentHomeworkPage = lazy(() => import('./pages/dashboard/StudentHomeworkPage'));
+const StudentProgressPage = lazy(() => import('./pages/dashboard/StudentProgressPage'));
+// Parent role pages
+const ParentDashboard     = lazy(() => import('./pages/dashboard/ParentDashboard'));
+const ParentReportsPage   = lazy(() => import('./pages/dashboard/ParentReportsPage'));
+const ParentBillingPage   = lazy(() => import('./pages/dashboard/ParentBillingPage'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
@@ -161,6 +175,23 @@ const AdminGuard: React.FC = () => {
     return <Navigate to="/dashboard/overview" replace />;
   }
   return <Outlet />;
+};
+
+/** Renders a different page component based on the authenticated user's role. */
+const RoleSwitch: React.FC<{
+  admin?: React.ReactNode;
+  tutor?: React.ReactNode;
+  student?: React.ReactNode;
+  parent?: React.ReactNode;
+  fallback?: React.ReactNode;
+}> = ({ admin, tutor, student, parent, fallback }) => {
+  const { user } = useAuth();
+  if (!user) return null;
+  if (user.role === 'admin'   && admin)   return <>{admin}</>;
+  if (user.role === 'tutor'   && tutor)   return <>{tutor}</>;
+  if (user.role === 'student' && student) return <>{student}</>;
+  if (user.role === 'parent'  && parent)  return <>{parent}</>;
+  return <>{fallback ?? null}</>;
 };
 
 const AppContent: React.FC = () => {
@@ -338,11 +369,51 @@ const AppContent: React.FC = () => {
             <Route index element={<Navigate to="overview" replace />} />
 
             {/* ── LMS routes ── */}
-            <Route path="overview"    element={<OverviewPage />} />
+            <Route path="overview" element={
+              <RoleSwitch
+                admin={<AdminOverview />}
+                tutor={<TutorDashboard />}
+                student={<StudentDashboard />}
+                parent={<ParentDashboard />}
+                fallback={<OverviewPage />}
+              />
+            } />
+            <Route path="courses" element={
+              <RoleSwitch
+                tutor={<TutorClassesPage />}
+                student={<StudentCoursesPage />}
+                fallback={<PlaceholderPage title="Courses" />}
+              />
+            } />
+            <Route path="homework" element={
+              <RoleSwitch
+                tutor={<TutorHomeworkPage />}
+                student={<StudentHomeworkPage />}
+                fallback={<PlaceholderPage title="Homework" />}
+              />
+            } />
+            <Route path="attendance" element={
+              <RoleSwitch
+                tutor={<TutorAttendancePage />}
+                fallback={<PlaceholderPage title="Attendance" />}
+              />
+            } />
+            <Route path="reports" element={
+              <RoleSwitch
+                student={<StudentProgressPage />}
+                parent={<ParentReportsPage />}
+                fallback={<PlaceholderPage title="Reports" />}
+              />
+            } />
+            <Route path="payments" element={
+              <RoleSwitch
+                parent={<ParentBillingPage />}
+                fallback={<PlaceholderPage title="Payments" />}
+              />
+            } />
             <Route path="ryze-ai"     element={<AiArena />} />
             <Route path="upload"      element={<IngestionStudio />} />
             <Route path="analytics"   element={<PlaceholderPage title="Analytics" />} />
-            <Route path="courses"     element={<PlaceholderPage title="Courses" />} />
             <Route path="assignments" element={<PlaceholderPage title="Assignments" />} />
             <Route path="settings"    element={<SettingsPage />} />
             <Route path="calendar"    element={<CalendarPage />} />

@@ -1,374 +1,227 @@
 /**
- * ParentDashboard — /dashboard/overview (for parent role)
- *
- * Shows each linked child's upcoming lessons, recent attendance,
- * payments, and visible progress reports.
- *
- * Parents log in via email + password (no Discord required).
+ * ParentDashboard — /dashboard/overview for parents.
+ * Redesigned to match design handoff spec.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Home, CalendarDays, ClipboardCheck, CreditCard,
-  Clock, MapPin, Video, CheckCircle, XCircle,
-  AlertTriangle, MinusCircle, Users,
-} from 'lucide-react';
-import { parentApi, ParentPortalPayload, ChildSummary } from '../../services/parentApi';
-import { StatusBadge, LoadingState, ErrorState } from '../../components/dashboard/ui';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CreditCard, Mail, ArrowUpRight, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatDate(iso: string | null | undefined): string {
-  if (!iso) return '—';
-  try {
-    return new Date(iso).toLocaleDateString('en-AU', {
-      day: 'numeric', month: 'short', year: 'numeric',
-    });
-  } catch { return iso; }
+function getFirstName(name: string): string {
+  return name.trim().split(/\s+/)[0] ?? name;
 }
 
-function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return '—';
-  try {
-    return new Date(iso).toLocaleString('en-AU', {
-      weekday: 'short', day: 'numeric', month: 'short',
-      hour: '2-digit', minute: '2-digit',
-    });
-  } catch { return iso; }
-}
+type TagVariant = 'ok' | 'warn' | 'info' | 'accent' | 'default';
 
-function formatCurrency(val: string | undefined): string {
-  if (!val) return '—';
-  const n = Number(val);
-  return isNaN(n) ? val : `$${n.toFixed(2)}`;
-}
-
-function AttendanceIcon({ status }: { status: string }) {
-  switch (status) {
-    case 'present':    return <CheckCircle size={14} className="text-emerald-400 shrink-0" />;
-    case 'late':       return <Clock        size={14} className="text-amber-400 shrink-0" />;
-    case 'absent':     return <XCircle      size={14} className="text-red-400 shrink-0" />;
-    case 'left_early': return <MinusCircle  size={14} className="text-orange-400 shrink-0" />;
-    default:           return <AlertTriangle size={14} className="ryze-text-muted shrink-0" />;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Child card component
-// ---------------------------------------------------------------------------
-
-type ChildTab = 'lessons' | 'attendance' | 'payments' | 'reports';
-
-const ChildCard: React.FC<{ child: ChildSummary }> = ({ child }) => {
-  const [tab, setTab] = useState<ChildTab>('lessons');
-
-  const pendingPayments = child.payments.filter(
-    (p) => !['paid', 'waived'].includes(p.status),
-  );
-  const totalOutstanding = pendingPayments.reduce(
-    (s, p) => s + Number(p.amount_remaining), 0,
-  );
-
-  const TABS: { key: ChildTab; label: string; icon: React.ElementType; badge?: string }[] = [
-    {
-      key: 'lessons', label: 'Upcoming',
-      icon: CalendarDays,
-      badge: child.upcoming_lessons.length > 0 ? String(child.upcoming_lessons.length) : undefined,
-    },
-    { key: 'attendance', label: 'Attendance', icon: CheckCircle },
-    {
-      key: 'payments', label: 'Payments',
-      icon: CreditCard,
-      badge: pendingPayments.length > 0 ? String(pendingPayments.length) : undefined,
-    },
-    { key: 'reports', label: 'Reports', icon: ClipboardCheck },
-  ];
-
-  return (
-    <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl overflow-hidden">
-      {/* Child header */}
-      <div className="p-6 border-b border-white/5">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#FFB000]/15 border border-[#FFB000]/20 flex items-center justify-center shrink-0">
-            <span className="text-lg font-bold text-[#FFB000]">
-              {child.student.full_name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h3 className="font-bold ryze-text-inverse text-lg">{child.student.full_name}</h3>
-              {child.is_primary_contact && (
-                <span className="text-[10px] font-bold text-[#FFB000] bg-[#FFB000]/10 px-2 py-0.5 rounded-full">
-                  Primary contact
-                </span>
-              )}
-              {child.relationship && (
-                <span className="text-xs ryze-text-muted">{child.relationship}</span>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
-              {child.classes.map((c) => (
-                <span key={c.id} className="text-xs ryze-text-muted flex items-center gap-1">
-                  <CalendarDays size={10} />
-                  {c.name}
-                </span>
-              ))}
-              {child.classes.length === 0 && (
-                <span className="text-xs ryze-text-muted opacity-60">No active classes</span>
-              )}
-            </div>
-          </div>
-
-          {/* Quick stats */}
-          {totalOutstanding > 0 && (
-            <div className="shrink-0 text-right">
-              <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Outstanding</div>
-              <div className="text-sm font-bold text-amber-400">{formatCurrency(String(totalOutstanding))}</div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex border-b border-white/5 overflow-x-auto">
-        {TABS.map(({ key, label, icon: Icon, badge }) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold transition-all whitespace-nowrap border-b-2 ${
-              tab === key
-                ? 'border-[#FFB000] text-[#FFB000]'
-                : 'border-transparent ryze-text-muted hover:ryze-text-inverse'
-            }`}
-          >
-            <Icon size={13} />
-            {label}
-            {badge && (
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                tab === key ? 'bg-[#FFB000]/20 text-[#FFB000]' : 'bg-white/10 ryze-text-muted'
-              }`}>
-                {badge}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab content */}
-      <div className="p-5">
-
-        {/* ── Upcoming Lessons ── */}
-        {tab === 'lessons' && (
-          child.upcoming_lessons.length === 0 ? (
-            <div className="text-center py-6">
-              <CalendarDays size={24} className="mx-auto ryze-text-muted mb-2 opacity-40" />
-              <p className="text-sm ryze-text-muted">No upcoming lessons in the next 14 days.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {child.upcoming_lessons.map((ls) => (
-                <div key={ls.id} className="bg-white/3 border border-white/5 rounded-xl p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold ryze-text-inverse text-sm">{ls.title}</div>
-                      {ls.class_name && (
-                        <div className="text-xs ryze-text-muted mt-0.5">{ls.class_name}</div>
-                      )}
-                      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs ryze-text-muted">
-                        <span className="flex items-center gap-1">
-                          <CalendarDays size={11} />
-                          {formatDateTime(ls.start_time)}
-                        </span>
-                        {ls.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin size={11} /> {ls.location}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2 shrink-0">
-                      <StatusBadge value={ls.status} />
-                      {ls.meet_link && (
-                        <a
-                          href={ls.meet_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-xs font-semibold text-[#FFB000] hover:text-[#ffc133] transition-colors"
-                        >
-                          <Video size={12} /> Join
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-        )}
-
-        {/* ── Attendance ── */}
-        {tab === 'attendance' && (
-          child.recent_attendance.length === 0 ? (
-            <div className="text-center py-6">
-              <CheckCircle size={24} className="mx-auto ryze-text-muted mb-2 opacity-40" />
-              <p className="text-sm ryze-text-muted">No attendance records in the last 30 days.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {child.recent_attendance.map((ar) => (
-                <div key={ar.id} className="flex items-center gap-3 bg-white/3 border border-white/5 rounded-xl p-3">
-                  <AttendanceIcon status={ar.status} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm ryze-text-inverse truncate">{ar.lesson_title}</div>
-                    {ar.lesson_start && (
-                      <div className="text-xs ryze-text-muted">{formatDate(ar.lesson_start)}</div>
-                    )}
-                  </div>
-                  <StatusBadge value={ar.status} />
-                </div>
-              ))}
-            </div>
-          )
-        )}
-
-        {/* ── Payments ── */}
-        {tab === 'payments' && (
-          child.payments.length === 0 ? (
-            <div className="text-center py-6">
-              <CreditCard size={24} className="mx-auto ryze-text-muted mb-2 opacity-40" />
-              <p className="text-sm ryze-text-muted">No payment records found.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {child.payments.map((p) => (
-                <div key={p.id} className="bg-white/3 border border-white/5 rounded-xl p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="font-semibold ryze-text-inverse text-sm">{p.term}</div>
-                      <div className="text-xs ryze-text-muted mt-0.5">
-                        Due: {formatDate(p.due_date)}
-                        {p.paid_at && ` · Paid: ${formatDate(p.paid_at)}`}
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <StatusBadge value={p.status} />
-                      </div>
-                      <div className="text-xs ryze-text-muted">
-                        {formatCurrency(p.amount_paid)} / {formatCurrency(p.amount_due)}
-                      </div>
-                      {Number(p.amount_remaining) > 0 && !['paid', 'waived'].includes(p.status) && (
-                        <div className="text-xs font-semibold text-amber-400 mt-0.5">
-                          {formatCurrency(p.amount_remaining)} remaining
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-        )}
-
-        {/* ── Progress Reports ── */}
-        {tab === 'reports' && (
-          child.progress_reports.length === 0 ? (
-            <div className="text-center py-6">
-              <ClipboardCheck size={24} className="mx-auto ryze-text-muted mb-2 opacity-40" />
-              <p className="text-sm ryze-text-muted">No progress reports available yet.</p>
-              <p className="text-xs ryze-text-muted mt-1 opacity-60">
-                Reports are written by tutors after sessions and shared here when approved.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {child.progress_reports.map((r) => (
-                <div key={r.id} className="bg-white/3 border border-white/5 rounded-xl p-4">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div>
-                      {r.class_name && (
-                        <div className="text-xs ryze-text-muted mb-1">{r.class_name}</div>
-                      )}
-                      <div className="text-sm ryze-text-muted">
-                        By {r.tutor_name ?? 'Tutor'} · {formatDate(r.submitted_at)}
-                      </div>
-                    </div>
-                    <StatusBadge value={r.status} />
-                  </div>
-                  {r.summary ? (
-                    <p className="text-sm ryze-text-inverse leading-relaxed">{r.summary}</p>
-                  ) : (
-                    <p className="text-sm ryze-text-muted italic">No summary written.</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )
-        )}
-      </div>
-    </div>
-  );
+const tagStyles: Record<TagVariant, React.CSSProperties> = {
+  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
+  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
+  info:    { color: 'var(--info)',   background: 'color-mix(in oklab, var(--info) 14%, transparent)', border: '1px solid color-mix(in oklab, var(--info) 28%, transparent)' },
+  accent:  { color: 'var(--accent)', background: 'var(--accent-soft)', border: '1px solid color-mix(in oklab, var(--accent) 26%, transparent)' },
+  default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
 };
 
-// ---------------------------------------------------------------------------
-// Main parent dashboard
-// ---------------------------------------------------------------------------
+const Tag: React.FC<{ variant: TagVariant; children: React.ReactNode }> = ({ variant, children }) => (
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', padding: '4px 9px', borderRadius: 999, ...tagStyles[variant] }}>
+    {children}
+  </span>
+);
+
+const StatTile: React.FC<{ label: string; value: string; deltaText?: string; deltaDir?: 'up' | 'down'; footRight?: string }> = ({ label, value, deltaText, deltaDir, footRight }) => (
+  <div
+    style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 14, minHeight: 134, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card)', transition: 'border-color 140ms ease', cursor: 'default' }}
+    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)'; }}
+    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
+  >
+    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
+    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>{value}</div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
+      {deltaText ? (
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
+          {deltaDir === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />} {deltaText}
+        </span>
+      ) : <span />}
+      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
+    </div>
+  </div>
+);
+
+const btnPrimary: React.CSSProperties = { height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: 'var(--accent-fg)', border: 'none', cursor: 'pointer', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)', transition: 'transform 140ms ease' };
+const btnGhost: React.CSSProperties  = { height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)', cursor: 'pointer', transition: 'transform 140ms ease' };
+const btnQuiet: React.CSSProperties  = { height: 34, padding: '0 10px', borderRadius: 8, fontSize: 12, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', color: 'var(--fg-muted)', border: 'none', cursor: 'pointer', transition: 'color 140ms ease' };
+
+const AVATAR_COLOURS: Record<string, { bg: string; fg: string }> = {
+  '':     { bg: 'color-mix(in oklab, var(--accent) 22%, var(--bg-surface))', fg: '#b8841e' },
+  blue:   { bg: 'color-mix(in oklab, var(--info) 22%, var(--bg-surface))',   fg: '#5e7fb3' },
+};
+
+const KIDS = [
+  { id: 1, name: 'Amelia Tran', year: 'Year 12 — HSC', initials: 'AT', colour: '',     course: 'Maths Extension 1', next: 'Tue 5:00pm with Daniel Kwok', avg: 86, attend: 100, recent: 'Scored 10/10 on HW-309' },
+  { id: 2, name: 'Liam Tran',   year: 'Year 9',        initials: 'LT', colour: 'blue', course: 'Selective Prep',    next: 'Sat 9:00am with Priya Aiyar',  avg: 74, attend: 92,  recent: 'Missed one practice paper' },
+];
+
+const SCHEDULE = [
+  { day: 'Mon 13', time: '—',    title: 'No lessons today',             kid: '—',      type: 'free' },
+  { day: 'Tue 14', time: '17:00',title: 'Maths Extension 1',            kid: 'Amelia', type: 'lesson' },
+  { day: 'Wed 15', time: '—',    title: 'Progress check-in (online)',   kid: 'Amelia', type: 'checkin' },
+  { day: 'Thu 16', time: '—',    title: 'No lessons today',             kid: '—',      type: 'free' },
+  { day: 'Fri 17', time: '—',    title: 'Selective Prep — homework due',kid: 'Liam',   type: 'due' },
+  { day: 'Sat 18', time: '09:00',title: 'Selective Prep',               kid: 'Liam',   type: 'lesson' },
+  { day: 'Sun 19', time: '—',    title: 'Free',                         kid: '—',      type: 'free' },
+];
+
+const INVOICES_DUE = [
+  { id: 'INV-2840', kid: 'Amelia Tran', amount: 540, due: 'Tomorrow',  period: 'May 2026' },
+  { id: 'INV-2841', kid: 'Liam Tran',   amount: 320, due: 'In 3 days', period: 'May 2026' },
+];
 
 const ParentDashboard: React.FC = () => {
-  const [data, setData]     = useState<ParentPortalPayload | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await parentApi.getPortal();
-      setData(result);
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to load your portal data.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { load(); }, [load]);
-
-  if (loading) return <LoadingState />;
-  if (error || !data) return <ErrorState message={error ?? 'Failed to load.'} onRetry={load} />;
+  const { user } = useAuth();
+  const navigate  = useNavigate();
+  const firstName = getFirstName(user?.name ?? 'there');
 
   return (
-    <div className="space-y-6">
-
-      {/* Welcome header */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+      {/* PageHead */}
       <div>
-        <h1 className="text-2xl font-bold ryze-text-inverse">
-          Welcome, {data.parent.full_name.split(' ')[0]}
-        </h1>
-        <p className="text-sm ryze-text-muted mt-1">
-          {data.children.length === 0
-            ? 'No children linked to your account yet. Contact your admin.'
-            : `You have ${data.children.length} child${data.children.length !== 1 ? 'ren' : ''} linked to your portal.`}
-        </p>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Family overview</div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>
+              Welcome, <span style={{ color: 'var(--accent)' }}>{firstName}</span>.
+            </h1>
+            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0', lineHeight: 1.55 }}>
+              Two children enrolled, three lessons this week, and one invoice due tomorrow. Everything else is on track.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+            <button style={btnGhost} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }} onClick={() => navigate('/dashboard/payments')}>
+              <CreditCard size={14} /> Pay $860 due
+            </button>
+            <button style={btnPrimary} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
+              <Mail size={14} /> Message tutor
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* No children state */}
-      {data.children.length === 0 && (
-        <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-12 text-center">
-          <Users size={40} className="mx-auto ryze-text-muted mb-4 opacity-40" />
-          <h3 className="font-bold ryze-text-inverse mb-2">No Children Linked</h3>
-          <p className="text-sm ryze-text-muted max-w-md mx-auto">
-            Your account hasn't been linked to any students yet. Please contact your tutor or administrator to get this set up.
-          </p>
-        </div>
-      )}
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
+        <StatTile label="Children enrolled" value="02" footRight="Amelia · Liam" />
+        <StatTile label="Lessons this week" value="03" footRight="next: Tue 5pm" />
+        <StatTile label="Term average"      value="80%" deltaText="across both" deltaDir="up" />
+        <StatTile label="Outstanding"       value="$860" deltaText="2 invoices" deltaDir="down" />
+      </div>
 
-      {/* Child cards */}
-      {data.children.map((child) => (
-        <ChildCard key={child.link_id} child={child} />
-      ))}
+      {/* Kid cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gap-md)' }}>
+        {KIDS.map((k) => {
+          const av = AVATAR_COLOURS[k.colour] || AVATAR_COLOURS[''];
+          return (
+            <div key={k.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, padding: 'var(--card-pad)', boxShadow: 'var(--shadow-card)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: av.bg, color: av.fg, display: 'grid', placeItems: 'center', fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{k.initials}</div>
+                  <div>
+                    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 22, color: 'var(--fg-strong)', lineHeight: 1.1 }}>{k.name}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginTop: 2 }}>{k.year}</div>
+                  </div>
+                </div>
+                <button style={btnQuiet}>Open profile <ArrowUpRight size={13} /></button>
+              </div>
+
+              <div style={{ height: 1, background: 'var(--border-faint)', margin: '18px 0' }} />
+
+              {[['Currently enrolled in', k.course], ['Next lesson', k.next]].map(([label, val]) => (
+                <div key={label as string} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontSize: 12.5, color: 'var(--fg-muted)' }}>{label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-strong)' }}>{val}</span>
+                </div>
+              ))}
+
+              <div style={{ height: 1, background: 'var(--border-faint)', margin: '16px 0' }} />
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+                {[['Term avg', `${k.avg}%`], ['Attendance', `${k.attend}%`]].map(([label, val]) => (
+                  <div key={label as string}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 6 }}>{label}</div>
+                    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 32, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>{val}</div>
+                  </div>
+                ))}
+              </div>
+
+              <Tag variant="ok">{k.recent}</Tag>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Schedule + outstanding: 8-4 */}
+      <div style={{ display: 'grid', gridTemplateColumns: '8fr 4fr', gap: 'var(--gap-md)' }}>
+        {/* Schedule card */}
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--shadow-card)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 22px', borderBottom: '1px solid var(--border-faint)' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>This week's schedule</div>
+              <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginTop: 2 }}>Across both children — Mon to Sun.</div>
+            </div>
+            <button style={btnQuiet}>Calendar view <ArrowRight size={13} /></button>
+          </div>
+          {SCHEDULE.map((s, i) => (
+            <div key={i}
+              style={{ display: 'grid', gridTemplateColumns: '76px 1fr auto', alignItems: 'center', gap: 16, padding: '14px 22px', borderBottom: i < SCHEDULE.length - 1 ? '1px solid var(--border-faint)' : undefined, transition: 'background 140ms ease' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+            >
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-strong)' }}>{s.day}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>{s.time}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 500, color: s.type === 'free' ? 'var(--fg-muted)' : 'var(--fg-strong)' }}>{s.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>{s.kid !== '—' ? s.kid : '—'}</div>
+              </div>
+              <div>
+                {s.type === 'lesson'  && <Tag variant="info">Upcoming</Tag>}
+                {s.type === 'due'     && <Tag variant="warn">Due</Tag>}
+                {s.type === 'checkin' && <Tag variant="accent">Trial</Tag>}
+                {s.type === 'free'    && <Tag variant="default">Free</Tag>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Outstanding card */}
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, padding: 'var(--card-pad)', boxShadow: 'var(--shadow-card)' }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 4 }}>Outstanding</div>
+          <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginBottom: 18 }}>2 invoices to settle</div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {INVOICES_DUE.map((iv) => (
+              <div key={iv.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'var(--bg-surface-2)', borderRadius: 10, border: '1px solid var(--border-faint)' }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>{iv.kid}</div>
+                  <div style={{ fontSize: 11.5, color: 'var(--fg-muted)', marginTop: 2 }}>{iv.period} · due {iv.due.toLowerCase()}</div>
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1', fontFamily: 'var(--font-mono)' }}>${iv.amount}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0' }} />
+
+          <button
+            style={{ ...btnPrimary, width: '100%', justifyContent: 'center', height: 42 }}
+            onClick={() => navigate('/dashboard/payments')}
+          >
+            <CreditCard size={14} /> Pay all $860
+          </button>
+          <button style={{ ...btnQuiet, width: '100%', justifyContent: 'center', marginTop: 8 }}>
+            Update payment method
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
