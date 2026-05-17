@@ -1,94 +1,56 @@
-/**
- * StatCard — metric card for the dashboard overview.
- * Shows a label, a large value, an optional change/trend indicator,
- * and an optional icon.
- */
-
 import React from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatCardProps {
   label: string;
   value: string | number;
-  /** Sub-label / description shown below the value. */
   sub?: string;
-  /** Icon component from lucide-react. */
   icon?: React.ElementType;
-  /** Accent colour class (e.g. 'text-[#FFB000]'). Defaults to amber. */
   accentClass?: string;
-  /** Positive = green, negative = red, 0/undefined = no indicator. */
   trend?: number;
-  /** Loading skeleton state. */
   loading?: boolean;
   onClick?: () => void;
+  deltaText?: string;
+  deltaDir?: 'up' | 'down';
+  footRight?: string;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
   sub,
-  icon: Icon,
-  accentClass = 'text-[#FFB000]',
   trend,
   loading = false,
   onClick,
+  deltaText,
+  deltaDir,
+  footRight,
 }) => {
-  const TrendIcon =
-    trend === undefined || trend === null
-      ? null
-      : trend > 0
-      ? TrendingUp
-      : trend < 0
-      ? TrendingDown
-      : Minus;
-
-  const trendColour =
-    !trend ? 'ryze-text-muted' : trend > 0 ? 'text-emerald-400' : 'text-red-400';
-
   if (loading) {
     return (
-      <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-6 animate-pulse">
-        <div className="h-3 w-24 bg-white/10 rounded mb-4" />
-        <div className="h-8 w-16 bg-white/10 rounded" />
+      <div className="stat" style={{ opacity: 0.5 }}>
+        <div className="stat__label" style={{ background: 'var(--bg-surface-2)', height: 12, width: 80, borderRadius: 4 }} />
+        <div className="stat__value" style={{ background: 'var(--bg-surface-2)', height: 44, width: 64, borderRadius: 6 }} />
       </div>
     );
   }
 
+  const resolvedDeltaDir = deltaDir ?? (trend !== undefined ? (trend >= 0 ? 'up' : 'down') : undefined);
+  const resolvedDeltaText = deltaText ?? (trend !== undefined ? `${Math.abs(trend)}%` : undefined);
+
   return (
-    <div
-      onClick={onClick}
-      className={`bg-[#0a0f1e] border border-white/10 rounded-2xl p-6 flex flex-col gap-3 relative overflow-hidden group transition-all ${
-        onClick ? 'cursor-pointer hover:border-white/20 hover:bg-white/[0.02]' : ''
-      }`}
-    >
-      {/* Subtle glow */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFB000] rounded-full blur-[80px] opacity-0 group-hover:opacity-[0.04] transition-opacity pointer-events-none" />
-
-      {/* Top row */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold ryze-text-muted uppercase tracking-widest">{label}</span>
-        {Icon && (
-          <div className={`w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center ${accentClass}`}>
-            <Icon size={18} />
-          </div>
-        )}
+    <div className="stat" onClick={onClick} style={onClick ? { cursor: 'pointer' } : undefined}>
+      <div className="stat__label">{label}</div>
+      <div className="stat__value tnum">{value}</div>
+      <div className="stat__foot">
+        {resolvedDeltaText ? (
+          <span className={`stat__delta stat__delta--${resolvedDeltaDir ?? 'up'}`}>
+            {resolvedDeltaDir === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+            {resolvedDeltaText}
+          </span>
+        ) : <span />}
+        {(footRight || sub) && <span>{footRight ?? sub}</span>}
       </div>
-
-      {/* Value */}
-      <div className="flex items-end gap-3">
-        <span className="text-3xl font-bold ryze-text-inverse tabular-nums leading-none">
-          {value}
-        </span>
-        {TrendIcon && (
-          <div className={`flex items-center gap-1 text-xs font-semibold pb-0.5 ${trendColour}`}>
-            <TrendIcon size={14} />
-            <span>{Math.abs(trend!)}%</span>
-          </div>
-        )}
-      </div>
-
-      {/* Sub-label */}
-      {sub && <p className="text-xs ryze-text-muted leading-relaxed">{sub}</p>}
     </div>
   );
 };

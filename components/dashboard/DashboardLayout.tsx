@@ -114,6 +114,9 @@ const DashboardLayout: React.FC = () => {
   return (
     <div
       className="ryze-portal"
+      data-theme="dark"
+      data-density="balanced"
+      data-font="editorial"
       style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : `${isSidebarOpen ? '248px' : '72px'} 1fr`,
