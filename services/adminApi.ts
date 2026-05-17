@@ -425,6 +425,16 @@ export const adminApi = {
     return get(`/students/${id}`);
   },
 
+  createStudent(body: {
+    full_name: string;
+    email?: string;
+    year_level?: string;
+    school?: string;
+    notes?: string;
+  }): Promise<{ id: number; full_name: string }> {
+    return post('/students', body);
+  },
+
   updateStudentProfile(userId: number, body: Partial<{
     preferred_name: string; school: string; year_level: string; notes: string;
   }>): Promise<{ updated: boolean }> {
@@ -465,6 +475,18 @@ export const adminApi = {
 
   getLesson(id: number): Promise<LessonDetail> {
     return get(`/lessons/${id}`);
+  },
+
+  createLesson(body: {
+    title: string;
+    class_group_id: number;
+    start_time: string;
+    end_time?: string;
+    location?: string;
+    meet_link?: string;
+    description?: string;
+  }): Promise<{ id: number; title: string }> {
+    return post('/lessons', body);
   },
 
   // ── Attendance ──────────────────────────────────────────────────────── //
