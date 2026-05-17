@@ -1,8 +1,8 @@
 
-import React, { useEffect, Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useEffect, Suspense, lazy, Component } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import FeatureGate from './components/FeatureGate';
 import { ROUTES } from './src/constants/routes';
@@ -22,12 +22,7 @@ const Starfield = lazy(() =>
   import('./components/Starfield').then((module) => ({ default: module.Starfield })),
 );
 const MathsTutoring = lazy(() => import('./pages/MathsTutoring'));
-const PortalHome = lazy(() => import('./pages/PortalHome'));
-const StudentPortal = lazy(() => import('./pages/StudentPortal'));
-const ParentPortal = lazy(() => import('./pages/ParentPortal'));
-const TutorLogin = lazy(() => import('./pages/TutorLogin'));
-const AdminLogin = lazy(() => import('./pages/AdminLogin'));
-// New unified auth pages
+// Auth pages
 const Login = lazy(() => import('./pages/Login'));
 const DiscordCallback = lazy(() => import('./pages/DiscordCallback'));
 const SetPassword = lazy(() => import('./pages/SetPassword'));
@@ -41,23 +36,64 @@ const LearningStyle = lazy(() => import('./pages/LearningStyle'));
 const DashboardLayout     = lazy(() => import('./components/dashboard/DashboardLayout'));
 const OverviewPage        = lazy(() => import('./pages/dashboard/OverviewPage'));
 const PlaceholderPage     = lazy(() => import('./pages/dashboard/PlaceholderPage'));
-// Legacy dashboard admin views (still used until Phase 3 replaces them)
+// Legacy dashboard admin views (kept for bot/ops routes not yet replaced)
 const BotHealth      = lazy(() => import('./components/dashboard/admin/BotHealth').then(m => ({ default: m.BotHealth })));
 const StudentsView   = lazy(() => import('./components/dashboard/admin/StudentsView').then(m => ({ default: m.StudentsView })));
-const ClassesView    = lazy(() => import('./components/dashboard/admin/ClassesView').then(m => ({ default: m.ClassesView })));
-const LessonsView    = lazy(() => import('./components/dashboard/admin/LessonsView').then(m => ({ default: m.LessonsView })));
 const AttendanceView = lazy(() => import('./components/dashboard/admin/AttendanceView').then(m => ({ default: m.AttendanceView })));
 const RemindersView  = lazy(() => import('./components/dashboard/admin/RemindersView').then(m => ({ default: m.RemindersView })));
 const AiArena        = lazy(() => import('./components/dashboard/AiArena').then(m => ({ default: m.AiArena })));
 const IngestionStudio = lazy(() => import('./components/dashboard/IngestionStudio').then(m => ({ default: m.IngestionStudio })));
 // Phase 3 admin pages
-const AdminOverview  = lazy(() => import('./pages/dashboard/admin/AdminOverview'));
+const AdminOverview   = lazy(() => import('./pages/dashboard/admin/AdminOverview'));
+const StudentsPage    = lazy(() => import('./pages/dashboard/admin/StudentsPage'));
+const StudentDetail   = lazy(() => import('./pages/dashboard/admin/StudentDetail'));
+const ParentsPage     = lazy(() => import('./pages/dashboard/admin/ParentsPage'));
+const ParentDetail    = lazy(() => import('./pages/dashboard/admin/ParentDetail'));
+const ClassesPage     = lazy(() => import('./pages/dashboard/admin/ClassesPage'));
+const ClassDetail     = lazy(() => import('./pages/dashboard/admin/ClassDetail'));
+const LessonsPage     = lazy(() => import('./pages/dashboard/admin/LessonsPage'));
+const PaymentsPage    = lazy(() => import('./pages/dashboard/admin/PaymentsPage'));
+const AlertsPage      = lazy(() => import('./pages/dashboard/admin/AlertsPage'));
+const ProgressReportsPage = lazy(() => import('./pages/dashboard/admin/ProgressReportsPage'));
+const LessonDetail        = lazy(() => import('./pages/dashboard/admin/LessonDetail'));
+const TutorPaymentsPage   = lazy(() => import('./pages/dashboard/admin/TutorPaymentsPage'));
+const ResourcesPage       = lazy(() => import('./pages/dashboard/admin/ResourcesPage'));
+const AnnouncementsPage   = lazy(() => import('./pages/dashboard/admin/AnnouncementsPage'));
+const HomeworkPage        = lazy(() => import('./pages/dashboard/admin/HomeworkPage'));
+const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
+const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Sitemap = lazy(() => import('./pages/Sitemap'));
 
 const ENABLE_DASHBOARD =
   String((import.meta as any).env?.VITE_ENABLE_DASHBOARD || '').toLowerCase() === 'true';
+
+/**
+ * Catches Starfield render errors so a WebGL/worker failure doesn't blank the entire page.
+ * Falls back to the solid #050510 background that is already in the DOM behind the canvas.
+ */
+class StarfieldErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      // Degrade gracefully — solid dark background is shown by the div beneath Starfield
+      return (
+        <div className="pointer-events-none fixed inset-0 z-0 bg-[#050510]" />
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -112,6 +148,19 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const RouteTracking = () => {
   usePageTracking();
   return null;
+};
+
+/**
+ * AdminGuard — layout route that restricts /dashboard/admin/* to admin and tutor roles.
+ * Renders <Outlet /> when authorised, redirects to /dashboard otherwise.
+ */
+const AdminGuard: React.FC = () => {
+  const { user } = useAuth();
+  if (!user) return null; // ProtectedRoute above already handles unauthenticated
+  if (user.role !== 'admin' && user.role !== 'tutor') {
+    return <Navigate to="/dashboard/overview" replace />;
+  }
+  return <Outlet />;
 };
 
 const AppContent: React.FC = () => {
@@ -179,12 +228,14 @@ const AppContent: React.FC = () => {
       </a>
 
       {shouldShowStarfield && (
-        <Suspense fallback={null}>
-          <div className="pointer-events-none fixed inset-0 z-0">
-            <div className="absolute inset-0 bg-[#050510]"></div>
-            <Starfield />
-          </div>
-        </Suspense>
+        <StarfieldErrorBoundary>
+          <Suspense fallback={<div className="pointer-events-none fixed inset-0 z-0 bg-[#050510]" />}>
+            <div className="pointer-events-none fixed inset-0 z-0">
+              <div className="absolute inset-0 bg-[#050510]"></div>
+              <Starfield />
+            </div>
+          </Suspense>
+        </StarfieldErrorBoundary>
       )}
 
       {!isDashboard && !shouldShowStarfield && (
@@ -293,29 +344,34 @@ const AppContent: React.FC = () => {
             <Route path="analytics"   element={<PlaceholderPage title="Analytics" />} />
             <Route path="courses"     element={<PlaceholderPage title="Courses" />} />
             <Route path="assignments" element={<PlaceholderPage title="Assignments" />} />
-            <Route path="settings"    element={<PlaceholderPage title="Settings" />} />
+            <Route path="settings"    element={<SettingsPage />} />
+            <Route path="calendar"    element={<CalendarPage />} />
 
             {/* ── Bot / ops routes ── */}
             <Route path="bot-health"  element={<BotHealth />} />
             <Route path="members"     element={<StudentsView />} />
             <Route path="reminders"   element={<RemindersView />} />
 
-            {/* ── Admin routes (Phase 3+) ── */}
-            <Route path="admin">
+            {/* ── Admin routes (Phase 3+) — guarded to admin + tutor roles ── */}
+            <Route path="admin" element={<AdminGuard />}>
               {/* /dashboard/admin → admin overview */}
               <Route index element={<AdminOverview />} />
-              <Route path="students"        element={<StudentsView />} />
-              <Route path="classes"         element={<ClassesView />} />
-              <Route path="lessons"         element={<LessonsView />} />
+              <Route path="students"        element={<StudentsPage />} />
+              <Route path="students/:id"    element={<StudentDetail />} />
+              <Route path="classes"         element={<ClassesPage />} />
+              <Route path="classes/:id"    element={<ClassDetail />} />
+              <Route path="lessons"         element={<LessonsPage />} />
+              <Route path="lessons/:id"    element={<LessonDetail />} />
               <Route path="attendance"      element={<AttendanceView />} />
-              <Route path="parents"         element={<PlaceholderPage title="Parents" />} />
-              <Route path="payments"        element={<PlaceholderPage title="Payments" />} />
-              <Route path="tutor-payments"  element={<PlaceholderPage title="Tutor Payments" />} />
-              <Route path="progress-reports" element={<PlaceholderPage title="Progress Reports" />} />
-              <Route path="homework"        element={<PlaceholderPage title="Homework" />} />
-              <Route path="alerts"          element={<PlaceholderPage title="Alerts" />} />
-              <Route path="resources"       element={<PlaceholderPage title="Resources" />} />
-              <Route path="announcements"   element={<PlaceholderPage title="Announcements" />} />
+              <Route path="parents"         element={<ParentsPage />} />
+              <Route path="parents/:id"    element={<ParentDetail />} />
+              <Route path="payments"        element={<PaymentsPage />} />
+              <Route path="tutor-payments"  element={<TutorPaymentsPage />} />
+              <Route path="progress-reports" element={<ProgressReportsPage />} />
+              <Route path="homework"        element={<HomeworkPage />} />
+              <Route path="alerts"          element={<AlertsPage />} />
+              <Route path="resources"       element={<ResourcesPage />} />
+              <Route path="announcements"   element={<AnnouncementsPage />} />
             </Route>
 
             {/* Catch-all — redirect unknown paths to overview */}

@@ -47,7 +47,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 
   if (loading) {
     return (
-      <div className="bg-[#0a0f1e] border border-white/5 rounded-2xl p-6 animate-pulse">
+      <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-6 animate-pulse">
         <div className="h-3 w-24 bg-white/10 rounded mb-4" />
         <div className="h-8 w-16 bg-white/10 rounded" />
       </div>
@@ -57,8 +57,8 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-[#0a0f1e] border border-white/5 rounded-2xl p-6 flex flex-col gap-3 relative overflow-hidden group transition-all ${
-        onClick ? 'cursor-pointer hover:border-white/15 hover:bg-white/[0.03]' : ''
+      className={`bg-[#0a0f1e] border border-white/10 rounded-2xl p-6 flex flex-col gap-3 relative overflow-hidden group transition-all ${
+        onClick ? 'cursor-pointer hover:border-white/20 hover:bg-white/[0.02]' : ''
       }`}
     >
       {/* Subtle glow */}

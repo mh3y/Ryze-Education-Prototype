@@ -7,11 +7,11 @@
  *
  * JWT tokens are issued by the FastAPI backend and stored in localStorage.
  * The backend exposes:
- *   GET  /auth/discord/url         → Discord OAuth2 redirect URL
- *   POST /auth/discord/callback    → Exchange code → JWT
- *   POST /auth/parent/login        → Email + password → JWT
- *   POST /auth/parent/set-password → Invite token + new password → JWT
- *   GET  /auth/me                  → Resolve current token → user info
+ *   GET  /api/auth/discord/url         → Discord OAuth2 redirect URL
+ *   POST /api/auth/discord/callback    → Exchange code → JWT
+ *   POST /api/auth/parent/login        → Email + password → JWT
+ *   POST /api/auth/parent/set-password → Invite token + new password → JWT
+ *   GET  /api/auth/me                  → Resolve current token → user info
  *   POST /auth/logout              → Stateless; client discards token
  */
 
@@ -25,7 +25,7 @@ const TOKEN_KEY = 'ryze_portal_token';
 
 export type UserRole = 'student' | 'parent' | 'tutor' | 'admin';
 
-/** The resolved portal user — returned from /auth/me */
+/** The resolved portal user — returned from /api/auth/me */
 export interface PortalUser {
   role: UserRole;
   name: string;
@@ -141,16 +141,16 @@ export const AuthService = {
 
   /** Fetch the Discord OAuth2 authorise URL from the backend and redirect. */
   async redirectToDiscord(): Promise<void> {
-    const res = await authGet<{ url: string }>('/auth/discord/url');
+    const res = await authGet<{ url: string }>('/api/auth/discord/url');
     window.location.href = res.url;
   },
 
   /**
    * Exchange a Discord OAuth2 code for a portal JWT.
-   * Called by the /auth/discord/callback route after Discord redirects back.
+   * Called by the /api/auth/discord/callback route after Discord redirects back.
    */
   async handleDiscordCallback(code: string): Promise<PortalUser> {
-    const data = await authPost<TokenResponse>('/auth/discord/callback', { code });
+    const data = await authPost<TokenResponse>('/api/auth/discord/callback', { code });
     storeToken(data.access_token);
     return tokenToUser(data);
   },
@@ -159,7 +159,7 @@ export const AuthService = {
 
   /** Email + password login for parents. */
   async loginParent(email: string, password: string): Promise<PortalUser> {
-    const data = await authPost<TokenResponse>('/auth/parent/login', { email, password });
+    const data = await authPost<TokenResponse>('/api/auth/parent/login', { email, password });
     storeToken(data.access_token);
     return tokenToUser(data);
   },
@@ -169,7 +169,7 @@ export const AuthService = {
    * Called from the /auth/invite?token=XXX page.
    */
   async setPassword(inviteToken: string, newPassword: string): Promise<PortalUser> {
-    const data = await authPost<TokenResponse>('/auth/parent/set-password', {
+    const data = await authPost<TokenResponse>('/api/auth/parent/set-password', {
       invite_token: inviteToken,
       new_password: newPassword,
     });
@@ -180,7 +180,7 @@ export const AuthService = {
   // ── Session ───────────────────────────────────────────────────────────── //
 
   /**
-   * Resolve the current stored JWT to a PortalUser by calling /auth/me.
+   * Resolve the current stored JWT to a PortalUser by calling /api/auth/me.
    * Returns null if no token or token is invalid/expired.
    */
   async getCurrentUser(): Promise<PortalUser | null> {
@@ -188,7 +188,7 @@ export const AuthService = {
     if (!token) return null;
 
     try {
-      const data = await authGet<MeResponse>('/auth/me');
+      const data = await authGet<MeResponse>('/api/auth/me');
       return meToUser(data);
     } catch {
       clearToken();

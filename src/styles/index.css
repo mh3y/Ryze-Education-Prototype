@@ -294,6 +294,72 @@ li {
   font-family: var(--font-sans);
 }
 
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Dashboard design-system overrides
+ * Applied via the .ryze-dashboard class on DashboardLayout's root element.
+ * Scoped so they don't leak into marketing pages.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* 1. Use the sans (Manrope) font for ALL headings inside the dashboard.
+      The global rule above sets h1-h4 to the display/serif font, which is
+      correct for marketing pages but wrong for the UI-dense dashboard. */
+.ryze-dashboard h1,
+.ryze-dashboard h2,
+.ryze-dashboard h3,
+.ryze-dashboard h4,
+.ryze-dashboard h5,
+.ryze-dashboard h6 {
+  font-family: var(--font-sans);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+/* 2. Ensure form elements also pick up Manrope (browsers default to system font). */
+.ryze-dashboard input,
+.ryze-dashboard textarea,
+.ryze-dashboard select,
+.ryze-dashboard button {
+  font-family: var(--font-sans);
+}
+
+/* 3. Shared input field style — used across every admin page and dialog.
+      Apply with class="ds-input" so the string isn't duplicated in 15 JSX files. */
+.ds-input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #050510;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  color: var(--ryze-text-inverse);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ds-input::placeholder {
+  color: #475569; /* slate-600 */
+}
+
+.ds-input:focus {
+  border-color: rgba(255, 176, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 176, 0, 0.1);
+}
+
+.ds-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 4. Dashboard card surface — standardise the primary card background. */
+.ds-card {
+  background-color: #0a0f1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+}
+
 body.ryze-sticky-cta-active .ryze-main-with-sticky {
   padding-bottom: calc(var(--ryze-sticky-cta-height) + env(safe-area-inset-bottom));
 }

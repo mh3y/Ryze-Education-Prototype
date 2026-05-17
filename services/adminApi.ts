@@ -7,7 +7,7 @@
 
 import { getToken } from './auth';
 
-const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? 'http://localhost:8000';
+const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
 
 // ---------------------------------------------------------------------------
 // Internal fetch helpers
@@ -18,7 +18,7 @@ async function adminFetch<T>(
   options: RequestInit = {},
   params?: Record<string, string | number | boolean | undefined>,
 ): Promise<T> {
-  const url = new URL(`${BASE_URL}/api/admin${path}`);
+  const url = new URL(`${BASE_URL}/api/admin${path}`, window.location.origin);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
@@ -43,6 +43,10 @@ async function adminFetch<T>(
     } catch { /* ignore */ }
     throw new Error(detail);
   }
+
+  // 204 No Content (e.g. DELETE endpoints) — return undefined rather than
+  // calling res.json() on an empty body, which would throw a parse error.
+  if (res.status === 204) return undefined as unknown as T;
 
   return res.json() as Promise<T>;
 }
@@ -198,6 +202,59 @@ export interface SystemAlert {
   resolved_at: string | null;
 }
 
+// Classes (admin view)
+export interface ClassGroupListItem {
+  id: number;
+  name: string;
+  year_level: string | null;
+  subject: string | null;
+  active: boolean;
+  created_at: string;
+  tutor: { id: number; full_name: string; discord_user_id: number } | null;
+  member_count: number;
+}
+
+export interface ClassGroupDetail extends ClassGroupListItem {
+  roster: {
+    membership_id: number;
+    user_id: number;
+    student_name: string;
+    enrollment_status: string;
+    start_date: string | null;
+    end_date: string | null;
+  }[];
+}
+
+// Lessons (admin view)
+export interface LessonListItem {
+  id: number;
+  class_group_id: number;
+  class_group_name: string | null;
+  title: string;
+  description: string | null;
+  start_time: string;
+  end_time: string | null;
+  location: string | null;
+  meet_link: string | null;
+  status: string;
+}
+
+export interface LessonDetail extends LessonListItem {
+  tutor_name: string | null;
+  tutor_user_id: number | null;
+  created_at: string;
+  updated_at: string;
+  attendance_summary: {
+    present: number;
+    late: number;
+    left_early: number;
+    absent: number;
+    unknown: number;
+    [key: string]: number;
+  };
+  attendance_total: number;
+}
+
 // Attendance (admin view)
 export interface AttendanceRecord {
   id: number;
@@ -242,6 +299,42 @@ export interface Resource {
   created_by: number;
   active: boolean;
   created_at: string;
+}
+
+// Homework
+export interface HomeworkTask {
+  id: number;
+  title: string;
+  description: string | null;
+  class_group_id: number;
+  class_group_name: string | null;
+  lesson_id: number | null;
+  due_at: string;
+  created_by: number;
+  created_at: string;
+  submission_summary: {
+    submitted: number;
+    late: number;
+    missing: number;
+    reviewed: number;
+  };
+  submission_total: number;
+}
+
+export interface HomeworkSubmission {
+  id: number;
+  student_user_id: number;
+  student_name: string | null;
+  status: 'submitted' | 'late' | 'missing' | 'reviewed';
+  submitted_at: string | null;
+  attachment_url: string | null;
+  tutor_feedback: string | null;
+  created_at: string;
+}
+
+export interface HomeworkTaskDetail extends HomeworkTask {
+  creator_name: string | null;
+  submissions: HomeworkSubmission[];
 }
 
 // Overview stats
@@ -348,6 +441,30 @@ export const adminApi = {
     enrollment_status: string; end_date: string;
   }>): Promise<{ updated: boolean }> {
     return patch(`/students/${userId}/enrollment/${classGroupId}`, body);
+  },
+
+  // ── Classes ─────────────────────────────────────────────────────────── //
+
+  getClasses(params?: { skip?: number; limit?: number; active?: boolean }):
+    Promise<Paginated<ClassGroupListItem>> {
+    return get('/classes', params);
+  },
+
+  getClass(id: number): Promise<ClassGroupDetail> {
+    return get(`/classes/${id}`);
+  },
+
+  // ── Lessons ─────────────────────────────────────────────────────────── //
+
+  getLessons(params?: {
+    class_group_id?: number; status?: string; upcoming_only?: boolean;
+    skip?: number; limit?: number;
+  }): Promise<Paginated<LessonListItem>> {
+    return get('/lessons', params);
+  },
+
+  getLesson(id: number): Promise<LessonDetail> {
+    return get(`/lessons/${id}`);
   },
 
   // ── Attendance ──────────────────────────────────────────────────────── //
@@ -462,12 +579,12 @@ export const adminApi = {
     return post('/announcements', body);
   },
 
-  publishAnnouncement(id: number): Promise<{ published: boolean }> {
-    return patch(`/announcements/${id}/publish`, {});
+  publishAnnouncement(id: number): Promise<{ id: number }> {
+    return patch(`/announcements/${id}`, { status: 'published' });
   },
 
-  archiveAnnouncement(id: number): Promise<{ archived: boolean }> {
-    return patch(`/announcements/${id}/archive`, {});
+  archiveAnnouncement(id: number): Promise<{ id: number }> {
+    return patch(`/announcements/${id}`, { status: 'archived' });
   },
 
   // ── Resources ───────────────────────────────────────────────────────── //
@@ -488,5 +605,40 @@ export const adminApi = {
 
   deleteResource(id: number): Promise<{ deleted: boolean }> {
     return del(`/resources/${id}`);
+  },
+
+  // ── Homework ─────────────────────────────────────────────────────────── //
+
+  getHomework(params?: {
+    class_group_id?: number; overdue_only?: boolean; skip?: number; limit?: number;
+  }): Promise<Paginated<HomeworkTask>> {
+    return get('/homework', params);
+  },
+
+  getHomeworkTask(id: number): Promise<HomeworkTaskDetail> {
+    return get(`/homework/${id}`);
+  },
+
+  createHomework(body: {
+    title: string; class_group_id: number; due_at: string;
+    description?: string; lesson_id?: number;
+  }): Promise<HomeworkTask> {
+    return post('/homework', body);
+  },
+
+  updateHomework(id: number, body: {
+    title?: string; description?: string; due_at?: string; lesson_id?: number;
+  }): Promise<{ id: number; title: string; due_at: string }> {
+    return patch(`/homework/${id}`, body);
+  },
+
+  deleteHomework(id: number): Promise<void> {
+    return del(`/homework/${id}`);
+  },
+
+  updateSubmission(taskId: number, submissionId: number, body: {
+    status?: string; tutor_feedback?: string;
+  }): Promise<{ id: number; status: string; tutor_feedback: string | null }> {
+    return patch(`/homework/${taskId}/submissions/${submissionId}`, body);
   },
 };

@@ -1,145 +1,206 @@
 /**
  * DashboardLayout.tsx
  *
- * The persistent shell (sidebar + top header) for all dashboard pages.
+ * Persistent shell (sidebar + top header) for all dashboard pages.
  * Uses React Router <Outlet /> so nested routes render inside the content area.
  *
  * Route tree (App.tsx):
- *   /dashboard                → DashboardLayout (this file)
- *     index                  → redirect to /dashboard/overview
- *     overview               → OverviewPage
- *     ryze-ai                → AiArena
- *     upload                 → IngestionStudio
- *     bot-health             → BotHealth
- *     members                → StudentsView
- *     classes                → ClassesView
- *     lessons                → LessonsView
- *     attendance             → AttendanceView
- *     reminders              → RemindersView
- *     admin/*                → admin sub-routes (Phase 3+)
+ *   /dashboard              → DashboardLayout (this file)
+ *     index                → redirect to /dashboard/overview
+ *     overview             → OverviewPage
+ *     calendar             → CalendarPage
+ *     ryze-ai              → AiArena
+ *     upload               → IngestionStudio
+ *     bot-health           → BotHealth
+ *     members              → StudentsView
+ *     reminders            → RemindersView
+ *     admin/*              → admin sub-routes (Phase 3+)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Layers, Search, User } from 'lucide-react';
+import { Menu, Search, Bell } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Map URL segments to human-readable titles
+// ---------------------------------------------------------------------------
+// Path → human-readable title
+// ---------------------------------------------------------------------------
+
 const PATH_TITLES: Record<string, string> = {
-  overview:   'Dashboard',
-  courses:    'Courses',
-  assignments: 'Assignments',
-  'ryze-ai':  'Ryze AI Arena',
-  upload:     'Ingestion Studio',
-  analytics:  'Analytics',
-  settings:   'Settings',
-  'bot-health': 'Bot Health',
-  members:    'Members',
-  classes:    'Class Groups',
-  lessons:    'Lessons',
-  attendance: 'Attendance',
-  reminders:  'Reminder Logs',
-  // Admin sub-sections
-  admin:      'Admin Portal',
-  students:   'Students',
-  parents:    'Parents',
-  tutors:     'Tutors',
-  payments:   'Payments',
-  'tutor-payments': 'Tutor Payments',
-  'progress-reports': 'Progress Reports',
-  homework:   'Homework',
-  alerts:     'Alerts',
-  resources:  'Resources',
-  announcements: 'Announcements',
+  overview:             'Dashboard',
+  courses:              'Courses',
+  assignments:          'Assignments',
+  'ryze-ai':            'Ryze AI Arena',
+  calendar:             'Calendar',
+  upload:               'Ingestion Studio',
+  analytics:            'Analytics',
+  settings:             'Settings',
+  'bot-health':         'Bot Health',
+  members:              'Members',
+  classes:              'Class Groups',
+  lessons:              'Lessons',
+  attendance:           'Attendance',
+  reminders:            'Reminder Logs',
+  admin:                'Admin Portal',
+  students:             'Students',
+  parents:              'Parents',
+  tutors:               'Tutors',
+  payments:             'Payments',
+  'tutor-payments':     'Tutor Payments',
+  'progress-reports':   'Progress Reports',
+  homework:             'Homework',
+  alerts:               'Alerts',
+  resources:            'Resources',
+  announcements:        'Announcements',
 };
 
 function getTitle(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
-  // Use the last meaningful segment for the title
   for (let i = segments.length - 1; i >= 0; i--) {
-    const title = PATH_TITLES[segments[i]];
-    if (title) return title;
+    const t = PATH_TITLES[segments[i]];
+    if (t) return t;
   }
   return 'Dashboard';
 }
 
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+
 const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate          = useNavigate();
+  const location          = useLocation();
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Start expanded on desktop, closed on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768);
+
+  // Close sidebar on mobile when route changes (navigation happened)
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const title = getTitle(location.pathname);
+  const toggleSidebar = () => setIsSidebarOpen((v) => !v);
+
+  const title    = getTitle(location.pathname);
+  const initials = (user?.name ?? 'U').trim().charAt(0).toUpperCase();
 
   return (
-    <div
-      className="flex h-screen bg-transparent font-sans overflow-hidden text-slate-200 relative selection:bg-[#FFB000] selection:ryze-text-primary"
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
+    <div className="ryze-dashboard flex h-screen bg-transparent overflow-hidden relative">
+      {/* Z-layer background (Starfield renders beneath this via App.tsx) */}
       <div className="relative z-10 flex h-full w-full">
-        {/* Sidebar */}
+
+        {/* ── Sidebar ─────────────────────────────────────────────── */}
         <Sidebar
           isOpen={isSidebarOpen}
           userRole={user?.role ?? 'student'}
           userName={user?.name ?? 'User'}
           onLogout={handleLogout}
-          onCloseMobile={() => setIsSidebarOpen(false)}
+          onCloseMobile={() => { if (window.innerWidth < 768) setIsSidebarOpen(false); }}
         />
 
-        {/* Main content area */}
+        {/* ── Main column ─────────────────────────────────────────── */}
+        {/*
+            On desktop the sidebar is in-flow (relative), so flex-1 here
+            expands to fill the remaining space.  The transition-[margin]
+            is NOT needed because the sidebar width itself animates and
+            the browser reflows automatically — adding transition here
+            would cause double-animation. The content just follows naturally.
+        */}
         <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">
 
-          {/* Top header */}
-          <header className="h-16 md:h-20 bg-[#050510]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-10">
-            <div className="flex items-center gap-4">
+          {/* ── Top header ─────────────────────────────────────────── */}
+          <header className="h-[60px] md:h-[64px] bg-[#07090f]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-20">
+
+            {/* Left: toggle + page title */}
+            <div className="flex items-center gap-3 min-w-0">
               <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="ryze-text-muted hover:ryze-text-inverse transition-colors"
-                aria-label="Toggle sidebar"
+                onClick={toggleSidebar}
+                aria-label="Toggle navigation"
+                className={[
+                  'flex items-center justify-center w-9 h-9 rounded-xl',
+                  'ryze-text-muted hover:ryze-text-inverse hover:bg-white/5',
+                  'transition-all duration-200 flex-shrink-0',
+                  isSidebarOpen ? 'bg-white/5' : '',
+                ].join(' ')}
               >
-                <Layers size={20} />
+                <Menu size={18} />
               </button>
-              <h1 className="text-lg md:text-xl font-bold ryze-text-inverse capitalize tracking-wide truncate">
+
+              {/* Breadcrumb divider */}
+              <span className="text-white/10 select-none hidden md:block">{'/'}</span>
+
+              <h1 className="text-[15px] md:text-[16px] font-semibold ryze-text-inverse truncate hidden md:block">
                 {title}
               </h1>
             </div>
 
-            <div className="flex items-center gap-4 md:gap-6">
-              <div className="relative hidden md:block group">
+            {/* Right: search + bell + user avatar */}
+            <div className="flex items-center gap-2 md:gap-3">
+
+              {/* Search — desktop only */}
+              <div className="relative hidden md:block">
                 <input
                   type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-sm focus:border-[#FFB000]/50 focus:ring-1 focus:ring-[#FFB000]/50 outline-none w-64 transition-all ryze-text-inverse placeholder-slate-500"
+                  placeholder="Search…"
+                  className={[
+                    'pl-9 pr-4 py-2 rounded-xl text-[13px]',
+                    'bg-white/5 border border-white/10',
+                    'ryze-text-inverse placeholder-slate-600',
+                    'focus:outline-none focus:border-[#FFB000]/40 focus:bg-white/5',
+                    'transition-all duration-200 w-52',
+                  ].join(' ')}
                 />
                 <Search
-                  size={16}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 ryze-text-muted"
+                  size={14}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 ryze-text-muted pointer-events-none"
                 />
               </div>
 
-              <div className="flex items-center gap-4">
+              {/* Notification bell */}
+              <button
+                aria-label="Notifications"
+                className="flex items-center justify-center w-9 h-9 rounded-xl ryze-text-muted hover:ryze-text-inverse hover:bg-white/5 transition-all duration-200 relative"
+              >
+                <Bell size={17} />
+                {/* Unread indicator dot */}
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#FFB000]" />
+              </button>
+
+              {/* User avatar + name (desktop) */}
+              <div className="flex items-center gap-2.5 pl-1">
                 <div className="text-right hidden md:block">
-                  <div className="text-sm font-bold ryze-text-inverse">{user?.name}</div>
-                  <div className="text-xs ryze-text-muted capitalize">{user?.role}</div>
+                  <p className="text-[13px] font-semibold ryze-text-inverse leading-tight">
+                    {user?.name}
+                  </p>
+                  <p className="text-[11px] ryze-text-muted capitalize leading-tight">
+                    {user?.role}
+                  </p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-[#FFB000] flex items-center justify-center text-[#0a0f1e] font-bold">
-                  <User size={16} />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFB000] to-[#d4890a] flex items-center justify-center text-[#07090f] font-black text-[13px] select-none flex-shrink-0">
+                  {initials}
                 </div>
               </div>
+
             </div>
           </header>
 
-          {/* Route content */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-8 relative bg-transparent scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent scroll-smooth">
-            <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03] pointer-events-none" />
-            <div className="relative z-10 h-full max-w-[1600px] mx-auto pb-20 md:pb-0">
+          {/* ── Page content ────────────────────────────────────────── */}
+          <div className="flex-1 overflow-y-auto relative bg-transparent scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            {/* Subtle dot-grid texture */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:36px_36px] opacity-[0.025] pointer-events-none"
+            />
+            <div className="relative z-10 min-h-full p-4 md:p-7 max-w-[1600px] mx-auto pb-24 md:pb-8">
               <Outlet />
             </div>
           </div>

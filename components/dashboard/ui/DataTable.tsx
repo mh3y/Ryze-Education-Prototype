@@ -66,7 +66,7 @@ interface DataTableProps<T> {
 // ---------------------------------------------------------------------------
 
 const SkeletonRow: React.FC<{ cols: number }> = ({ cols }) => (
-  <tr className="border-b border-white/5">
+  <tr className="border-b border-white/10">
     {Array.from({ length: cols }).map((_, i) => (
       <td key={i} className="px-4 py-3">
         <div className="h-4 bg-white/5 rounded animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
@@ -151,10 +151,10 @@ export function DataTable<T>({
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#0a0f1e]">
+      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0a0f1e]">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/5">
+            <tr className="border-b border-white/10">
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -198,7 +198,7 @@ export function DataTable<T>({
                 <tr
                   key={rowKey(row)}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`border-b border-white/5 last:border-0 transition-colors ${
+                  className={`border-b border-white/10 last:border-0 transition-colors ${
                     onRowClick
                       ? 'cursor-pointer hover:bg-white/[0.03]'
                       : ''

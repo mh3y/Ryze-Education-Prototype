@@ -1,17 +1,14 @@
 /**
  * ConfirmDialog — modal confirmation dialog.
  *
- * Usage:
- *   const [open, setOpen] = useState(false);
- *   <ConfirmDialog
- *     open={open}
- *     title="Remove student?"
- *     description="This will mark the student as inactive."
- *     confirmLabel="Remove"
- *     variant="danger"
- *     onConfirm={async () => { await doDelete(); setOpen(false); }}
- *     onCancel={() => setOpen(false)}
- *   />
+ * Accepts both the original variant-based API and the convenience boolean API
+ * used by many admin pages so either form compiles cleanly:
+ *
+ *   // variant form
+ *   <ConfirmDialog variant="danger" description="..." ... />
+ *
+ *   // boolean shorthand (used in most admin pages)
+ *   <ConfirmDialog danger message="..." loading={deleting} ... />
  */
 
 import React, { useState } from 'react';
@@ -20,11 +17,18 @@ import { AlertTriangle, Info } from 'lucide-react';
 interface ConfirmDialogProps {
   open: boolean;
   title: string;
+  /** Body text — alias: message */
   description?: string;
+  /** Alias for description (used by admin pages) */
+  message?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   /** 'danger' shows a red confirm button; 'default' uses amber. */
   variant?: 'danger' | 'default';
+  /** Boolean shorthand for variant="danger" */
+  danger?: boolean;
+  /** External loading state — disables the confirm button while true. */
+  loading?: boolean;
   /** If provided, the confirm button is disabled until the user types this. */
   confirmText?: string;
   /** Called when the user confirms. Can be async — button shows spinner while pending. */
@@ -36,9 +40,12 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
   title,
   description,
+  message,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
-  variant = 'default',
+  variant,
+  danger = false,
+  loading = false,
   confirmText,
   onConfirm,
   onCancel,
@@ -48,7 +55,13 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   if (!open) return null;
 
+  // Resolve variant from both props
+  const isDanger = variant === 'danger' || danger;
+  // Resolve body text from both props
+  const bodyText = description ?? message;
+
   const canConfirm = !confirmText || typed === confirmText;
+  const isDisabled = busy || loading || !canConfirm;
 
   const handleConfirm = async () => {
     setBusy(true);
@@ -60,10 +73,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     }
   };
 
-  const btnClass =
-    variant === 'danger'
-      ? 'bg-red-500 hover:bg-red-600 text-white'
-      : 'bg-[#FFB000] hover:bg-[#ffc133] text-[#050510]';
+  const btnClass = isDanger
+    ? 'bg-red-500 hover:bg-red-600 text-white'
+    : 'bg-[#FFB000] hover:bg-[#ffc133] text-[#050510]';
 
   return (
     <div
@@ -83,17 +95,17 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         <div className="flex items-start gap-4 mb-4">
           <div
             className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-              variant === 'danger' ? 'bg-red-500/10 text-red-400' : 'bg-[#FFB000]/10 text-[#FFB000]'
+              isDanger ? 'bg-red-500/10 text-red-400' : 'bg-[#FFB000]/10 text-[#FFB000]'
             }`}
           >
-            {variant === 'danger' ? <AlertTriangle size={20} /> : <Info size={20} />}
+            {isDanger ? <AlertTriangle size={20} /> : <Info size={20} />}
           </div>
           <div>
             <h3 id="confirm-dialog-title" className="font-bold ryze-text-inverse mb-1">
               {title}
             </h3>
-            {description && (
-              <p className="text-sm ryze-text-muted leading-relaxed">{description}</p>
+            {bodyText && (
+              <p className="text-sm ryze-text-muted leading-relaxed">{bodyText}</p>
             )}
           </div>
         </div>
@@ -119,16 +131,17 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         <div className="flex gap-3 justify-end mt-6">
           <button
             onClick={onCancel}
-            className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 ryze-text-inverse font-semibold text-sm border border-white/5 transition-colors"
+            disabled={busy || loading}
+            className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 ryze-text-inverse font-semibold text-sm border border-white/5 transition-colors disabled:opacity-60"
           >
             {cancelLabel}
           </button>
           <button
             onClick={handleConfirm}
-            disabled={busy || !canConfirm}
+            disabled={isDisabled}
             className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${btnClass}`}
           >
-            {busy && (
+            {(busy || loading) && (
               <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
             )}
             {confirmLabel}
