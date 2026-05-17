@@ -347,12 +347,7 @@ const AppContent: React.FC = () => {
             <Route path="settings"    element={<SettingsPage />} />
             <Route path="calendar"    element={<CalendarPage />} />
 
-            {/* ── Bot / ops routes ── */}
-            <Route path="bot-health"  element={<BotHealth />} />
-            <Route path="members"     element={<StudentsView />} />
-            <Route path="reminders"   element={<RemindersView />} />
-
-            {/* ── Admin routes (Phase 3+) — guarded to admin + tutor roles ── */}
+            {/* ── Admin + ops routes — guarded to admin + tutor roles ── */}
             <Route path="admin" element={<AdminGuard />}>
               {/* /dashboard/admin → admin overview */}
               <Route index element={<AdminOverview />} />
@@ -372,6 +367,10 @@ const AppContent: React.FC = () => {
               <Route path="alerts"          element={<AlertsPage />} />
               <Route path="resources"       element={<ResourcesPage />} />
               <Route path="announcements"   element={<AnnouncementsPage />} />
+              {/* Bot / ops routes — admin + tutor only */}
+              <Route path="bot-health"  element={<BotHealth />} />
+              <Route path="members"     element={<StudentsView />} />
+              <Route path="reminders"   element={<RemindersView />} />
             </Route>
 
             {/* Catch-all — redirect unknown paths to overview */}
