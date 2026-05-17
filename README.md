@@ -1,3 +1,69 @@
+# Ryze Education — Portal & Dashboard
+
+A full-stack tutoring management system. The marketing site + dashboard portal live in this repo; the FastAPI backend lives in `ryze-discord-bot`.
+
+## Dashboard Portal
+
+Enable the dashboard by setting `VITE_ENABLE_DASHBOARD=true`.
+
+### Routes
+
+| Route | Component | Roles |
+|---|---|---|
+| `/dashboard/overview` | Role-aware dashboard | all |
+| `/dashboard/settings` | Settings + sign-out | all |
+| `/dashboard/ryze-ai` | AI Arena | student, tutor |
+| `/dashboard/admin` | Admin overview | admin |
+| `/dashboard/admin/students` | Student list | admin |
+| `/dashboard/admin/students/:id` | Student detail | admin |
+| `/dashboard/admin/parents` | Parent list | admin |
+| `/dashboard/admin/parents/:id` | Parent detail | admin |
+| `/dashboard/admin/classes` | Class list | admin |
+| `/dashboard/admin/classes/:id` | Class detail + roster | admin |
+| `/dashboard/admin/lessons` | Lesson list | admin |
+| `/dashboard/admin/lessons/:id` | Lesson detail + attendance | admin |
+| `/dashboard/admin/attendance` | Attendance marking | admin, tutor |
+| `/dashboard/admin/payments` | Student payments | admin |
+| `/dashboard/admin/tutor-payments` | Tutor pay periods | admin |
+| `/dashboard/admin/progress-reports` | Progress reports | admin, tutor |
+| `/dashboard/admin/alerts` | System alerts | admin |
+| `/dashboard/admin/resources` | Resources / links | admin, tutor |
+| `/dashboard/admin/announcements` | Announcements | admin |
+
+### Role-specific dashboards
+
+- **Admin** → `AdminOverview` (stats, today's classes, open alerts)
+- **Tutor** → `TutorDashboard` (classes, upcoming lessons, quick links)
+- **Student** → `StudentDashboard` (upcoming lessons, resources, AI Arena CTA)
+- **Parent** → `ParentDashboard` (child cards: lessons / attendance / payments / reports)
+
+### Auth
+
+- **Students / Tutors / Admins**: Discord OAuth2 → `GET /auth/discord/callback`
+- **Parents**: Email + password → `POST /auth/parent/login`; invited via `GET /auth/invite?token=…`
+
+### Known gaps / placeholders
+
+- `/dashboard/courses` — placeholder (LMS feature, deferred to a later phase)
+- `/dashboard/assignments` — placeholder (LMS feature, deferred)
+- `/dashboard/analytics` — placeholder (LMS feature, deferred)
+
+### Demo seed data (backend)
+
+```bash
+cd ryze-discord-bot
+python seed_demo_data.py
+```
+
+Creates 8 students, 2 tutors, 1 admin, 3 classes, 15 lessons, attendance records, payments, progress reports, alerts, resources, announcements, and 3 parent accounts.
+
+Demo credentials:
+- **Parent**: jennifer.wilson@example.com / parent1pass
+- **Student**: Discord ID 100000000000000010 (Emma Wilson)
+- **Admin**: Discord ID 100000000000000001 (Michael Chen)
+
+---
+
 ## Image Pipeline: Cloudinary
 
 This repo supports a repeatable migration workflow from local/GitHub image references to Cloudinary URLs.

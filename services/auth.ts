@@ -16,6 +16,7 @@
  */
 
 const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? 'http://localhost:8000';
+const MOCK_AUTH: boolean = String((import.meta as any).env?.VITE_MOCK_AUTH ?? '').toLowerCase() === 'true';
 
 const TOKEN_KEY = 'ryze_portal_token';
 
@@ -51,6 +52,35 @@ interface MeResponse {
   user_id: number | null;
   parent_profile_id: number | null;
   discord_user_id: number | null;
+}
+
+// ---------------------------------------------------------------------------
+// Dev mock helpers (used when VITE_MOCK_AUTH=true)
+// ---------------------------------------------------------------------------
+
+const MOCK_USERS: Record<string, PortalUser> = {
+  admin:   { role: 'admin',   name: 'Michael Hayes', email: 'admin@ryze.edu.au',   userId: 1, parentProfileId: null, discordUserId: null },
+  tutor:   { role: 'tutor',   name: 'Daniel Kwok',   email: 'tutor@ryze.edu.au',   userId: 2, parentProfileId: null, discordUserId: null },
+  student: { role: 'student', name: 'Amelia Tran',   email: 'student@ryze.edu.au', userId: 3, parentProfileId: null, discordUserId: null },
+  parent:  { role: 'parent',  name: 'Sarah Tran',    email: 'parent@ryze.edu.au',  userId: null, parentProfileId: 1, discordUserId: null },
+};
+
+function mockRoleFromEmail(email: string): string {
+  const e = email.toLowerCase();
+  if (e.includes('admin'))   return 'admin';
+  if (e.includes('tutor'))   return 'tutor';
+  if (e.includes('student')) return 'student';
+  return 'parent';
+}
+
+function storeMockToken(role: string): void {
+  localStorage.setItem(TOKEN_KEY, `mock:${role}`);
+}
+
+function parseMockToken(token: string): PortalUser | null {
+  if (!token.startsWith('mock:')) return null;
+  const role = token.slice(5);
+  return MOCK_USERS[role] ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,6 +171,12 @@ export const AuthService = {
 
   /** Fetch the Discord OAuth2 authorise URL from the backend and redirect. */
   async redirectToDiscord(): Promise<void> {
+    if (MOCK_AUTH) {
+      // In mock mode, skip Discord and go straight to callback with a mock admin code.
+      // To log in as a different Discord role, visit /auth/discord/callback?code=mock_tutor etc.
+      window.location.href = '/auth/discord/callback?code=mock_admin';
+      return;
+    }
     const res = await authGet<{ url: string }>('/api/auth/discord/url');
     window.location.href = res.url;
   },
@@ -150,6 +186,12 @@ export const AuthService = {
    * Called by the /api/auth/discord/callback route after Discord redirects back.
    */
   async handleDiscordCallback(code: string): Promise<PortalUser> {
+    if (MOCK_AUTH) {
+      // code is "mock_admin", "mock_tutor", "mock_student", etc.
+      const role = code.startsWith('mock_') ? code.slice(5) : 'admin';
+      storeMockToken(role);
+      return MOCK_USERS[role] ?? MOCK_USERS.admin;
+    }
     const data = await authPost<TokenResponse>('/api/auth/discord/callback', { code });
     storeToken(data.access_token);
     return tokenToUser(data);
@@ -159,6 +201,14 @@ export const AuthService = {
 
   /** Email + password login for parents. */
   async loginParent(email: string, password: string): Promise<PortalUser> {
+    if (MOCK_AUTH) {
+      // Any password accepted. Role is inferred from the email address:
+      //   admin@...  → admin   |  tutor@...  → tutor
+      //   student@... → student  |  anything else → parent
+      const role = mockRoleFromEmail(email);
+      storeMockToken(role);
+      return { ...MOCK_USERS[role], email };
+    }
     const data = await authPost<TokenResponse>('/api/auth/parent/login', { email, password });
     storeToken(data.access_token);
     return tokenToUser(data);
@@ -169,6 +219,10 @@ export const AuthService = {
    * Called from the /auth/invite?token=XXX page.
    */
   async setPassword(inviteToken: string, newPassword: string): Promise<PortalUser> {
+    if (MOCK_AUTH) {
+      storeMockToken('parent');
+      return MOCK_USERS.parent;
+    }
     const data = await authPost<TokenResponse>('/api/auth/parent/set-password', {
       invite_token: inviteToken,
       new_password: newPassword,
@@ -186,6 +240,10 @@ export const AuthService = {
   async getCurrentUser(): Promise<PortalUser | null> {
     const token = getToken();
     if (!token) return null;
+
+    if (MOCK_AUTH) {
+      return parseMockToken(token);
+    }
 
     try {
       const data = await authGet<MeResponse>('/api/auth/me');
