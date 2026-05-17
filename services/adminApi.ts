@@ -485,8 +485,36 @@ export const adminApi = {
     location?: string;
     meet_link?: string;
     description?: string;
-  }): Promise<{ id: number; title: string }> {
+  }): Promise<{ id: number; title: string; google_event_id?: string }> {
     return post('/lessons', body);
+  },
+
+  updateLesson(id: number, body: Partial<{
+    title: string;
+    start_time: string;
+    end_time: string;
+    location: string;
+    meet_link: string;
+    description: string;
+    status: string;
+  }>): Promise<{ id: number; title: string; google_event_id?: string }> {
+    return patch(`/lessons/${id}`, body);
+  },
+
+  cancelLesson(id: number): Promise<void> {
+    return del(`/lessons/${id}`);
+  },
+
+  getCalendarEvents(start: string, end: string): Promise<Array<{
+    google_event_id: string;
+    title: string;
+    start: string;
+    end: string;
+    location?: string;
+    description?: string;
+    html_link?: string;
+  }>> {
+    return get('/calendar/events', { start, end });
   },
 
   // ── Attendance ──────────────────────────────────────────────────────── //
