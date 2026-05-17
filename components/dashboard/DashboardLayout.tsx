@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Menu, Search, Bell, ChevronRight,
+  Menu, Search, Bell, ChevronRight, Pencil,
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,6 +22,12 @@ import {
   useNotifications,
 } from '../../contexts/NotificationsContext';
 import NotificationPanel from './NotificationPanel';
+import {
+  DashboardCustomizationProvider,
+  useDashboardCustomization,
+} from '../../contexts/DashboardCustomizationContext';
+import { EditModeBar } from './EditModeBar';
+import { EditModePanel } from './EditModePanel';
 
 // ---------------------------------------------------------------------------
 // Breadcrumb helpers
@@ -90,6 +96,11 @@ const DashboardLayoutInner: React.FC = () => {
   const { unreadCount }   = useNotifications();
   const [notifOpen, setNotifOpen] = useState(false);
   const toggleNotif = useCallback(() => setNotifOpen((v) => !v), []);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  // Customization context (admin only)
+  const { isEditMode, toggleEditMode } = useDashboardCustomization();
+  const isAdmin = user?.role === 'admin';
 
   const mobileQuery = '(max-width: 767px)';
   const [isMobile, setIsMobile] = useState(
@@ -141,8 +152,6 @@ const DashboardLayoutInner: React.FC = () => {
   const crumbs  = buildCrumbs(location.pathname);
   const initials = getInitials(user?.name ?? 'U');
 
-  // sidebar width for grid column
-  const sideW = isMobile ? '0px' : (isSidebarOpen ? '248px' : '72px');
 
   return (
     <div
@@ -289,8 +298,44 @@ const DashboardLayoutInner: React.FC = () => {
             </span>
           </div>
 
-          {/* Right: bell + divider + user */}
+          {/* Right: bell + customize (admin) + divider + user */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
+            {/* Admin: Customize button */}
+            {isAdmin && (
+              <button
+                aria-label="Toggle edit mode"
+                onClick={toggleEditMode}
+                title={isEditMode ? 'Exit edit mode' : 'Customize dashboard'}
+                style={{
+                  width: 36, height: 36, borderRadius: 9,
+                  display: 'grid', placeItems: 'center',
+                  color: isEditMode ? '#f59e0b' : 'var(--fg-muted)',
+                  background: isEditMode
+                    ? 'rgba(245,158,11,0.12)'
+                    : 'transparent',
+                  border: isEditMode
+                    ? '1px solid rgba(245,158,11,0.4)'
+                    : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 140ms ease',
+                  boxShadow: isEditMode ? '0 0 10px rgba(245,158,11,0.25)' : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isEditMode) {
+                    (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isEditMode) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)';
+                  }
+                }}
+              >
+                <Pencil size={16} />
+              </button>
+            )}
             {/* Bell — notification trigger */}
             <div style={{ position: 'relative' }}>
               <button
@@ -412,6 +457,16 @@ const DashboardLayoutInner: React.FC = () => {
         </div>
 
       </div>
+
+      {/* ── Edit mode bar (admin only) ────────────────────────────── */}
+      {isAdmin && isEditMode && (
+        <EditModeBar isPanelOpen={isPanelOpen} setIsPanelOpen={setIsPanelOpen} />
+      )}
+
+      {/* ── Edit mode panel (admin only) ─────────────────────────── */}
+      {isAdmin && (
+        <EditModePanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} />
+      )}
     </div>
   );
 };
@@ -419,7 +474,9 @@ const DashboardLayoutInner: React.FC = () => {
 const DashboardLayout: React.FC = () => (
   <PortalSettingsProvider>
     <NotificationsProvider>
-      <DashboardLayoutInner />
+      <DashboardCustomizationProvider>
+        <DashboardLayoutInner />
+      </DashboardCustomizationProvider>
     </NotificationsProvider>
   </PortalSettingsProvider>
 );

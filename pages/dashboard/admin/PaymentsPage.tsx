@@ -487,32 +487,38 @@ const PaymentsPage: React.FC = () => {
   const [editTarget, setEditTarget]   = useState<StudentPayment | null>(null);
   const [showCreate, setShowCreate]   = useState(false);
 
-  const exportXero = () => {
-    // Xero-compatible invoice CSV format
-    const rows = payments.length > 0 ? payments : [];
-    if (rows.length === 0) { alert('No payment data to export.'); return; }
+  const exportCsv = () => {
+    const rows = payments.length > 0 ? payments : MOCK_PAYMENTS.map((p) => ({
+      id: p.id.replace('INV-', ''),
+      student_name: p.student,
+      term: 'Term 2 2025',
+      amount_due: p.amount,
+      amount_paid: p.state === 'paid' ? p.amount : 0,
+      status: p.state,
+      due_date: null as string | null,
+      payment_method: p.method,
+    }));
     const escape = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const headers = ['ContactName', 'EmailAddress', 'InvoiceNumber', 'InvoiceDate', 'DueDate', 'Description', 'Quantity', 'UnitAmount', 'AccountCode', 'TaxType', 'CurrencyCode'];
+    const headers = ['Invoice ID', 'Student', 'Term', 'Amount Due', 'Amount Paid', 'Status', 'Due Date', 'Payment Method'];
     const lines = [
       headers.join(','),
       ...rows.map((p) => [
-        escape(p.student_name),
-        escape(''),
-        escape(`RYZE-${p.id}`),
-        escape(p.due_date ? new Date(p.due_date).toLocaleDateString('en-AU') : ''),
-        escape(p.due_date ? new Date(p.due_date).toLocaleDateString('en-AU') : ''),
-        escape(`Tuition — ${p.term}`),
-        escape(1),
-        escape(p.amount_due),
-        escape('200'),
-        escape('GST on Income'),
-        escape('AUD'),
+        escape('id' in p && typeof (p as { id: string | number }).id !== 'undefined' ? `INV-${(p as { id: string | number }).id}` : ''),
+        escape((p as { student_name?: string; student?: string }).student_name ?? ''),
+        escape((p as { term?: string }).term ?? ''),
+        escape((p as { amount_due?: number | string }).amount_due ?? ''),
+        escape((p as { amount_paid?: number | string }).amount_paid ?? 0),
+        escape((p as { status?: string }).status ?? ''),
+        escape((p as { due_date?: string | null }).due_date
+          ? new Date((p as { due_date: string }).due_date).toLocaleDateString('en-AU')
+          : ''),
+        escape((p as { payment_method?: string }).payment_method ?? ''),
       ].join(',')),
     ];
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url;
-    a.download = `ryze-xero-export-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `ryze-payments-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click(); URL.revokeObjectURL(url);
   };
 
@@ -569,18 +575,18 @@ const PaymentsPage: React.FC = () => {
             Payments
           </h1>
           <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            Invoices, direct debits and outstanding balances. Run a chase, mark paid, or export to Xero.
+            Invoices, direct debits and outstanding balances. Run a chase, mark paid, or export to CSV.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <button
-            onClick={exportXero}
+            onClick={exportCsv}
             style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}
-            title="Export payment data as Xero-compatible CSV"
+            title="Export payment data as CSV"
           >
-            <Download size={14} /> Export to Xero
+            <Download size={14} /> Export CSV
           </button>
           <button
             onClick={() => setShowCreate(true)}
