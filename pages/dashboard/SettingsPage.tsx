@@ -9,7 +9,6 @@ import {
   AlertTriangle, ChevronRight, Mail, Phone, Download, LogOut,
   RefreshCw, Check, X, Link, type LucideIcon,
 } from 'lucide-react';
-import { usePortalSettings } from '../../contexts/PortalSettingsContext';
 
 /* ── Types ──────────────────────────────────────────────────── */
 
@@ -123,7 +122,7 @@ const FontPicker: React.FC<{ value: string; onChange: (v: string) => void }> = (
   const options = [
     { value: 'editorial',  name: 'Editorial',   family: '"Cormorant Garamond", serif',    italic: true,  caption: 'Cormorant + Manrope' },
     { value: 'instrument', name: 'Literary',    family: '"Instrument Serif", serif',      italic: false, caption: 'Instrument + Manrope' },
-    { value: 'modern',     name: 'Modern SaaS', family: '"Inter", system-ui, sans-serif', italic: false, caption: 'Inter all-sans' },
+    { value: 'modern',     name: 'Modern SaaS', family: '"Geist", "Manrope", sans-serif', italic: false, caption: 'Geist all-sans' },
   ];
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
@@ -175,20 +174,14 @@ const SaveBar: React.FC = () => (
 /* ── Appearance ─────────────────────────────────────────────── */
 
 const AppearanceSection: React.FC = () => {
-  const { settings, updateSettings } = usePortalSettings();
-
-  // Local-only UI pref (not yet persisted to portal settings)
-  const [tnum, setTnum] = useState(false);
-
-  // Map sidebarBehavior to segment value and back
-  const sidebarSegValue =
-    settings.sidebarBehavior === 'always-rail' ? 'rail' : 'expanded';
-
-  const handleSidebarChange = (v: string) => {
-    updateSettings({
-      sidebarBehavior: v === 'rail' ? 'always-rail' : 'always-open',
-    });
-  };
+  const [theme, setTheme]     = useState('dark');
+  const [accent, setAccent]   = useState('#b8841e');
+  const [sidebar, setSidebar] = useState('expanded');
+  const [density, setDensity] = useState('balanced');
+  const [font, setFont]       = useState('editorial');
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [tnum, setTnum]       = useState(false);
 
   return (
     <SectionShell title="Appearance" sub="Set how the Ryze console looks for you. Changes apply instantly across the portal.">
@@ -200,38 +193,19 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Theme" hint="The marketing site is warm-white; the console defaults to dark for long sessions.">
-          <Segment
-            value={settings.theme}
-            options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]}
-            onChange={(v) => updateSettings({ theme: v as 'dark' | 'light' })}
-          />
+          <Segment value={theme} options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]} onChange={setTheme} />
         </Row>
         <Row label="Accent colour" hint="Used for active states, primary actions, and brand moments.">
-          <Swatches
-            value={settings.accent}
-            options={ACCENT_SWATCHES}
-            onChange={(v) => updateSettings({ accent: v })}
-          />
+          <Swatches value={accent} options={ACCENT_SWATCHES} onChange={setAccent} />
         </Row>
         <Row label="Sidebar" hint="Wide labels for discovery; rail for power-users on smaller screens.">
-          <Segment
-            value={sidebarSegValue}
-            options={[{ value: 'expanded', label: 'Expanded' }, { value: 'rail', label: 'Icon rail' }]}
-            onChange={handleSidebarChange}
-          />
+          <Segment value={sidebar} options={[{ value: 'expanded', label: 'Expanded' }, { value: 'rail', label: 'Icon rail' }]} onChange={setSidebar} />
         </Row>
         <Row label="Density" hint="Affects row heights, card padding, and the page gutter.">
-          <Segment
-            value={settings.density}
-            options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]}
-            onChange={(v) => updateSettings({ density: v as 'airy' | 'balanced' | 'dense' })}
-          />
+          <Segment value={density} options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]} onChange={setDensity} />
         </Row>
-        <Row label="Typography" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
-          <FontPicker
-            value={settings.font}
-            onChange={(v) => updateSettings({ font: v as 'editorial' | 'modern' | 'instrument' })}
-          />
+        <Row label="Type pairing" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
+          <FontPicker value={font} onChange={setFont} />
         </Row>
       </div>
 
@@ -243,30 +217,12 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Reduce motion" hint="Disables decorative animation like the live-lesson pulse.">
-          <Toggle
-            value={settings.motion === 'reduced'}
-            onChange={(v) => updateSettings({ motion: v ? 'reduced' : 'full' })}
-          />
+          <Toggle value={reduceMotion} onChange={setReduceMotion} />
         </Row>
         <Row label="High contrast" hint="Bumps body text and borders for clearer separation.">
-          <Toggle
-            value={settings.contrast === 'high'}
-            onChange={(v) => updateSettings({ contrast: v ? 'high' : 'normal' })}
-          />
-        </Row>
-        <Row label="Text size" hint="Scales the base font size across the portal.">
-          <Segment
-            value={settings.textSize}
-            options={[
-              { value: 'default', label: 'Default' },
-              { value: 'large',   label: 'Large' },
-              { value: 'larger',  label: 'Larger' },
-            ]}
-            onChange={(v) => updateSettings({ textSize: v as 'default' | 'large' | 'larger' })}
-          />
+          <Toggle value={highContrast} onChange={setHighContrast} />
         </Row>
         <Row label="Tabular numerals everywhere" hint="Align numbers across columns automatically.">
-          {/* TODO: wire to a persisted setting when tnum CSS feature is added */}
           <Toggle value={tnum} onChange={setTnum} />
         </Row>
       </div>
