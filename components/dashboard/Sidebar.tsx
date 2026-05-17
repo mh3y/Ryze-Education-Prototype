@@ -225,7 +225,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar */}
       <aside
         className={[
-          'ryze-portal',
           'fixed md:sticky top-0 z-50 flex flex-col flex-shrink-0 h-screen',
           'transition-[width,transform] duration-300 ease-in-out',
           // Mobile: always 248px wide, translates off-screen when closed
@@ -238,7 +237,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           background: 'var(--side-bg)',
           borderRight: '1px solid var(--side-border)',
           color: 'var(--side-fg)',
-          fontFamily: '"Manrope", system-ui, sans-serif',
+          fontFamily: 'var(--font-sans)',
         }}
       >
 
@@ -379,7 +378,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         borderRadius: 8,
                         color: active ? 'var(--side-active-fg)' : 'var(--side-fg-muted)',
                         background: active ? 'var(--side-active-bg)' : 'transparent',
-                        fontFamily: '"Manrope", system-ui, sans-serif',
+                        fontFamily: 'var(--font-sans)',
                         fontSize: 13.5,
                         fontWeight: active ? 600 : 500,
                         letterSpacing: '-0.005em',

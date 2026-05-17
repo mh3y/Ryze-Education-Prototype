@@ -87,16 +87,15 @@
   color-scheme: light;
 }
 
-/* The sidebar in LIGHT mode stays dark for contrast and brand consistency,
-   but its tokens are different — overriding here keeps it self-contained. */
+/* The sidebar in LIGHT mode uses warm-cream tokens to match the light theme. */
 [data-theme="light"] {
-  --side-bg: #11151d;
-  --side-fg: #f6f4ef;
-  --side-fg-muted: rgba(246, 244, 239, 0.55);
-  --side-hover: rgba(255, 255, 255, 0.05);
+  --side-bg: #f5f0e6;
+  --side-fg: #11151d;
+  --side-fg-muted: rgba(17, 21, 29, 0.52);
+  --side-hover: rgba(17, 21, 29, 0.05);
   --side-active-bg: var(--accent-soft);
   --side-active-fg: var(--accent);
-  --side-border: rgba(255, 255, 255, 0.08);
+  --side-border: rgba(17, 21, 29, 0.09);
 }
 [data-theme="dark"] {
   --side-bg: #07090e;
@@ -1881,20 +1880,56 @@ body {
 }
 
 /* ============================================================
-   ACCENT — override hardcoded gold Tailwind classes
+   ACCENT — remap every hardcoded #FFB000 Tailwind class to
+   var(--accent) so the accent colour setting works everywhere.
+   CSS escaping: [ → \[  ] → \]  # → \#  / → \/
    ============================================================ */
-.ryze-portal[data-theme] .text-\[#FFB000\],
-.ryze-portal[data-theme] .text-\[#b8841e\] {
-  color: var(--accent) !important;
-}
-.ryze-portal[data-theme] .bg-\[#FFB000\]\/15,
-.ryze-portal[data-theme] .bg-\[#b8841e\]\/15 {
-  background-color: var(--accent-soft) !important;
-}
-.ryze-portal[data-theme] .border-\[#FFB000\]\/30,
-.ryze-portal[data-theme] .border-\[#b8841e\]\/30 {
-  border-color: color-mix(in oklab, var(--accent) 30%, transparent) !important;
-}
+
+/* text-[#FFB000] */
+.ryze-portal .text-\[#FFB000\] { color: var(--accent) !important; }
+
+/* bg-[#FFB000] solid */
+.ryze-portal .bg-\[#FFB000\] { background-color: var(--accent) !important; }
+
+/* bg-[#FFB000]/{opacity} */
+.ryze-portal .bg-\[#FFB000\]\/5  { background-color: color-mix(in oklab, var(--accent)  5%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/8  { background-color: color-mix(in oklab, var(--accent)  8%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/10 { background-color: color-mix(in oklab, var(--accent) 10%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/12 { background-color: color-mix(in oklab, var(--accent) 12%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/15 { background-color: color-mix(in oklab, var(--accent) 15%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/20 { background-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/25 { background-color: color-mix(in oklab, var(--accent) 25%, transparent) !important; }
+.ryze-portal .bg-\[#FFB000\]\/30 { background-color: color-mix(in oklab, var(--accent) 30%, transparent) !important; }
+
+/* border-[#FFB000]/{opacity} */
+.ryze-portal .border-\[#FFB000\]     { border-color: var(--accent) !important; }
+.ryze-portal .border-\[#FFB000\]\/10 { border-color: color-mix(in oklab, var(--accent) 10%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/20 { border-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/25 { border-color: color-mix(in oklab, var(--accent) 25%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/30 { border-color: color-mix(in oklab, var(--accent) 30%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/40 { border-color: color-mix(in oklab, var(--accent) 40%, transparent) !important; }
+.ryze-portal .border-\[#FFB000\]\/50 { border-color: color-mix(in oklab, var(--accent) 50%, transparent) !important; }
+
+/* ring-[#FFB000]/{opacity} */
+.ryze-portal .ring-\[#FFB000\]     { --tw-ring-color: var(--accent) !important; }
+.ryze-portal .ring-\[#FFB000\]\/20 { --tw-ring-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+
+/* focus: variants */
+.ryze-portal .focus\:border-\[#FFB000\]\/40:focus { border-color: color-mix(in oklab, var(--accent) 40%, transparent) !important; }
+.ryze-portal .focus\:ring-\[#FFB000\]\/20:focus   { --tw-ring-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+
+/* hover: variants */
+.ryze-portal .hover\:bg-\[#FFB000\]\/20:hover { background-color: color-mix(in oklab, var(--accent) 20%, transparent) !important; }
+.ryze-portal .hover\:text-\[#FFB000\]:hover   { color: var(--accent) !important; }
+.ryze-portal .hover\:bg-\[#FFB000\]:hover     { background-color: var(--accent) !important; }
+
+/* group-hover: variants */
+.ryze-portal .group:hover .group-hover\:text-\[#FFB000\] { color: var(--accent) !important; }
+
+/* Also cover #b8841e (portal-theme gold variant) */
+.ryze-portal .text-\[#b8841e\]   { color: var(--accent) !important; }
+.ryze-portal .bg-\[#b8841e\]     { background-color: var(--accent) !important; }
+.ryze-portal .border-\[#b8841e\] { border-color: var(--accent) !important; }
 
 /* ============================================================
    MOTION — reduce-motion support

@@ -227,7 +227,7 @@ const AppearanceSection: React.FC = () => {
             onChange={(v) => updateSettings({ density: v as 'airy' | 'balanced' | 'dense' })}
           />
         </Row>
-        <Row label="Type pairing" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
+        <Row label="Typography" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
           <FontPicker
             value={settings.font}
             onChange={(v) => updateSettings({ font: v as 'editorial' | 'modern' | 'instrument' })}
