@@ -9,6 +9,7 @@ import {
   AlertTriangle, ChevronRight, Mail, Phone, Download, LogOut,
   RefreshCw, Check, X, Link, type LucideIcon,
 } from 'lucide-react';
+import { usePortalSettings } from '../../contexts/PortalSettingsContext';
 
 /* ── Types ──────────────────────────────────────────────────── */
 
@@ -174,14 +175,22 @@ const SaveBar: React.FC = () => (
 /* ── Appearance ─────────────────────────────────────────────── */
 
 const AppearanceSection: React.FC = () => {
-  const [theme, setTheme]     = useState('dark');
-  const [accent, setAccent]   = useState('#b8841e');
-  const [sidebar, setSidebar] = useState('expanded');
-  const [density, setDensity] = useState('balanced');
-  const [font, setFont]       = useState('editorial');
+  const { settings, updateSettings } = usePortalSettings();
+
+  // Local-only UI prefs (not persisted to portal settings)
   const [reduceMotion, setReduceMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
-  const [tnum, setTnum]       = useState(false);
+  const [tnum, setTnum]                 = useState(false);
+
+  // Map sidebarBehavior to segment value and back
+  const sidebarSegValue =
+    settings.sidebarBehavior === 'always-rail' ? 'rail' : 'expanded';
+
+  const handleSidebarChange = (v: string) => {
+    updateSettings({
+      sidebarBehavior: v === 'rail' ? 'always-rail' : 'always-open',
+    });
+  };
 
   return (
     <SectionShell title="Appearance" sub="Set how the Ryze console looks for you. Changes apply instantly across the portal.">
@@ -193,19 +202,38 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Theme" hint="The marketing site is warm-white; the console defaults to dark for long sessions.">
-          <Segment value={theme} options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]} onChange={setTheme} />
+          <Segment
+            value={settings.theme}
+            options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]}
+            onChange={(v) => updateSettings({ theme: v as 'dark' | 'light' })}
+          />
         </Row>
         <Row label="Accent colour" hint="Used for active states, primary actions, and brand moments.">
-          <Swatches value={accent} options={ACCENT_SWATCHES} onChange={setAccent} />
+          <Swatches
+            value={settings.accent}
+            options={ACCENT_SWATCHES}
+            onChange={(v) => updateSettings({ accent: v })}
+          />
         </Row>
         <Row label="Sidebar" hint="Wide labels for discovery; rail for power-users on smaller screens.">
-          <Segment value={sidebar} options={[{ value: 'expanded', label: 'Expanded' }, { value: 'rail', label: 'Icon rail' }]} onChange={setSidebar} />
+          <Segment
+            value={sidebarSegValue}
+            options={[{ value: 'expanded', label: 'Expanded' }, { value: 'rail', label: 'Icon rail' }]}
+            onChange={handleSidebarChange}
+          />
         </Row>
         <Row label="Density" hint="Affects row heights, card padding, and the page gutter.">
-          <Segment value={density} options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]} onChange={setDensity} />
+          <Segment
+            value={settings.density}
+            options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]}
+            onChange={(v) => updateSettings({ density: v as 'airy' | 'balanced' | 'dense' })}
+          />
         </Row>
         <Row label="Type pairing" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
-          <FontPicker value={font} onChange={setFont} />
+          <FontPicker
+            value={settings.font}
+            onChange={(v) => updateSettings({ font: v as 'editorial' | 'modern' | 'instrument' })}
+          />
         </Row>
       </div>
 
