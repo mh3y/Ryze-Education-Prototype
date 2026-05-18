@@ -204,18 +204,19 @@
 .ryze-portal[data-font="modern"] .stat__value,
 .ryze-portal[data-font="modern"] .class-card__name,
 .ryze-portal[data-font="modern"] .empty__title {
-  font-size-adjust: 0.5;
   letter-spacing: -0.04em;
   font-weight: 700;
 }
 
-/* Editorial: generous spacing, elegant large serif headings */
+/* Editorial: elegant serif headings — font personality only, never sizing */
 .ryze-portal[data-font="editorial"] .page-head__title,
 .ryze-portal[data-font="editorial"] .s-section__title,
 .ryze-portal[data-font="editorial"] .stat__value,
 .ryze-portal[data-font="editorial"] .class-card__name,
 .ryze-portal[data-font="editorial"] .empty__title {
-  font-size: calc(var(--page-title-size, 1em) * 1.12);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.015em;
 }
 
 /* Instrument/Literary: readable, warm, slightly loose */
