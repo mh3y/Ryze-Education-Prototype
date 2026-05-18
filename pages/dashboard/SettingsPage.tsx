@@ -147,7 +147,7 @@ const SectionShell: React.FC<{ title: string; sub: string; action?: React.ReactN
   <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, paddingBottom: 20, borderBottom: '1px solid var(--border-faint)' }}>
       <div>
-        <h2 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 34, color: 'var(--fg-strong)', margin: 0, lineHeight: 1.1 }}>{title}</h2>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 34, color: 'var(--fg-strong)', margin: 0, lineHeight: 1.1 }}>{title}</h2>
         <p style={{ fontSize: 13.5, color: 'var(--fg-muted)', margin: '8px 0 0', lineHeight: 1.5 }}>{sub}</p>
       </div>
       {action}
@@ -270,7 +270,7 @@ const ProfileSection: React.FC = () => {
       <div style={cardStyle}>
         <Row label="Profile photo" hint="Square PNG or JPG · 256 × 256 minimum.">
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--accent-soft)', border: '2px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontSize: 22, fontWeight: 500, color: 'var(--accent)' }}>M</div>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--accent-soft)', border: '2px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 22, fontWeight: 'var(--font-display-weight)' as any, color: 'var(--accent)' }}>M</div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button style={btnGhost}>Upload</button>
               <button style={btnQuiet}>Remove</button>
@@ -507,7 +507,7 @@ const TeamSection: React.FC = () => (
             <tr key={m.email} style={{ borderBottom: i < TEAM_MEMBERS.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
               <td style={{ padding: '14px 20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: `${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}20`, border: `1px solid ${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontSize: 16, fontWeight: 500, color: AVATAR_COLOURS[m.avatar] || 'var(--fg-muted)' }}>{m.avatar}</div>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: `${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}20`, border: `1px solid ${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 16, fontWeight: 'var(--font-display-weight)' as any, color: AVATAR_COLOURS[m.avatar] || 'var(--fg-muted)' }}>{m.avatar}</div>
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{m.name}</div>
                     <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{m.email}</div>
@@ -545,7 +545,7 @@ const BillingSection: React.FC = () => (
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fg-muted)', marginBottom: 6 }}>Current plan</div>
-          <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 42, color: 'var(--fg-strong)', lineHeight: 1 }}>Studio Pro</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 42, color: 'var(--fg-strong)', lineHeight: 1 }}>Studio Pro</div>
           <div style={{ fontSize: 13.5, color: 'var(--fg-muted)', marginTop: 8 }}>$240 / month · billed monthly · renews 1 June 2026</div>
         </div>
         <button style={btnGhost}>Manage plan</button>
@@ -559,7 +559,7 @@ const BillingSection: React.FC = () => (
         ].map(s => (
           <div key={s.label} style={{ background: 'var(--bg-surface-2)', borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)', marginBottom: 6 }}>{s.label}</div>
-            <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 28, color: 'var(--fg-strong)', lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 28, color: 'var(--fg-strong)', lineHeight: 1 }}>{s.value}</div>
             <div style={{ fontSize: 11.5, color: 'var(--fg-faint)', marginTop: 4 }}>{s.limit}</div>
           </div>
         ))}
@@ -576,7 +576,7 @@ const BillingSection: React.FC = () => (
       </div>
       <div style={{ padding: 20 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 16, padding: '14px 18px', borderRadius: 12, background: 'linear-gradient(135deg, #0d1119, #1a2030)', color: '#fff' }}>
-          <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontSize: 18, fontWeight: 500 }}>Visa</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 18, fontWeight: 'var(--font-display-weight)' as any }}>Visa</div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, letterSpacing: '0.1em', fontFeatureSettings: '"tnum" 1' }}>•••• 4242</div>
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Exp 08/28</div>
         </div>
@@ -668,7 +668,7 @@ const SettingsPage: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>System</div>
-          <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Settings</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Settings</h1>
           <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Workspace, account and appearance preferences for the Ryze admin console.</p>
         </div>
         <button style={btnGhost}><RefreshCw size={14} /> Restore defaults</button>

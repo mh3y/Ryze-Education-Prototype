@@ -97,7 +97,7 @@ const StatTile: React.FC<{ label: string; value: string | number; footRight?: st
       {label}
     </div>
     <div style={{
-      fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+      fontFamily: 'var(--font-display)',
       fontStyle: 'italic', fontWeight: 500, fontSize: 44,
       color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1',
     }}>
@@ -270,7 +270,7 @@ const StudentsPage: React.FC = () => {
             Roster
           </div>
           <h1 style={{
-            fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+            fontFamily: 'var(--font-display)',
             fontStyle: 'italic', fontWeight: 500,
             fontSize: 'clamp(38px, 3.5vw, 54px)',
             lineHeight: 1.08, letterSpacing: '-0.018em',

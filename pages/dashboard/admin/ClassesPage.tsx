@@ -105,7 +105,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ onClose, onSaved })
     border: '1px solid var(--border-soft)',
     borderRadius: 9, fontSize: 13,
     color: 'var(--fg-default)', outline: 'none',
-    fontFamily: '"Manrope", system-ui, sans-serif',
+    fontFamily: 'var(--font-sans)',
     boxSizing: 'border-box',
   };
   const lbl: React.CSSProperties = {
@@ -269,7 +269,7 @@ const ClassesPage: React.FC = () => {
             Operations
           </div>
           <h1 style={{
-            fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+            fontFamily: 'var(--font-display)',
             fontStyle: 'italic', fontWeight: 500,
             fontSize: 'clamp(38px, 3.5vw, 54px)',
             lineHeight: 1.08, letterSpacing: '-0.018em',
@@ -376,7 +376,7 @@ const ClassesPage: React.FC = () => {
 
                 {/* Class name */}
                 <div style={{
-                  fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+                  fontFamily: 'var(--font-display)',
                   fontStyle: 'italic', fontWeight: 500, fontSize: 26,
                   color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6,
                 }}>

@@ -161,7 +161,9 @@
   --body-letter-spacing: 0em;
   --display-letter-spacing: -0.015em;
   --heading-weight: 500;
-  font-letter-spacing: normal;
+  font-family: var(--font-sans);
+  line-height: var(--body-line-height);
+  letter-spacing: var(--body-letter-spacing);
 }
 .ryze-portal[data-font="modern"] {
   --font-sans: "Inter", system-ui, sans-serif;
@@ -172,7 +174,9 @@
   --body-letter-spacing: -0.01em;
   --display-letter-spacing: -0.04em;
   --heading-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  line-height: var(--body-line-height);
+  letter-spacing: var(--body-letter-spacing);
 }
 .ryze-portal[data-font="instrument"] {
   --font-sans: "Manrope", system-ui, sans-serif;
@@ -183,11 +187,45 @@
   --body-letter-spacing: 0.01em;
   --display-letter-spacing: -0.01em;
   --heading-weight: 400;
-  letter-spacing: 0.01em;
+  font-family: var(--font-sans);
+  line-height: var(--body-line-height);
+  letter-spacing: var(--body-letter-spacing);
+}
+
+/* ── Override the global h1–h4 { !important } rule from index.html ──────────
+   When two !important declarations conflict, the one with higher specificity
+   wins. .ryze-portal h1 (0,1,0,1) beats plain h1 (0,0,0,1), so these win.
+   Without this block, every <h1>/<h2>/<h3>/<h4> inside the portal is locked
+   to Cormorant Garamond regardless of which font preset is selected. */
+.ryze-portal h1,
+.ryze-portal h2,
+.ryze-portal h3,
+.ryze-portal h4,
+.ryze-portal h5,
+.ryze-portal h6 {
+  font-family: var(--font-display) !important;
+  font-style: var(--font-display-style) !important;
+  font-weight: var(--font-display-weight) !important;
 }
 
 /* ── Per-font visual personality ────────────────────────────── */
-/* Modern: geometric, tight, high-weight sans-serif feel */
+/* These rules ensure every display-style surface in the portal responds
+   to the font preset — not just the 5 classes targeted before. */
+
+/* ── ALL display surfaces: font-family, style, weight ── */
+.ryze-portal .page-head__title,
+.ryze-portal .stat__value,
+.ryze-portal .class-card__name,
+.ryze-portal .card__title,
+.ryze-portal .s-card__title,
+.ryze-portal .empty__title,
+.ryze-portal .display {
+  font-family: var(--font-display);
+  font-style: var(--font-display-style);
+  font-weight: var(--font-display-weight);
+}
+
+/* Modern: tight geometric sans — Inter everywhere, rounded off */
 .ryze-portal[data-font="modern"] .card,
 .ryze-portal[data-font="modern"] .s-card {
   border-radius: max(var(--radius-card, 16px) * 0.5, 8px);
@@ -197,35 +235,53 @@
 }
 .ryze-portal[data-font="modern"] .btn {
   border-radius: max(var(--radius-btn, 9px) * 0.5, 5px);
-  letter-spacing: -0.01em;
 }
 .ryze-portal[data-font="modern"] .page-head__title,
-.ryze-portal[data-font="modern"] .s-section__title,
 .ryze-portal[data-font="modern"] .stat__value,
 .ryze-portal[data-font="modern"] .class-card__name,
-.ryze-portal[data-font="modern"] .empty__title {
+.ryze-portal[data-font="modern"] .card__title,
+.ryze-portal[data-font="modern"] .s-card__title,
+.ryze-portal[data-font="modern"] .empty__title,
+.ryze-portal[data-font="modern"] h1,
+.ryze-portal[data-font="modern"] h2,
+.ryze-portal[data-font="modern"] h3 {
   letter-spacing: -0.04em;
   font-weight: 700;
 }
+.ryze-portal[data-font="modern"] .nav__label,
+.ryze-portal[data-font="modern"] .btn,
+.ryze-portal[data-font="modern"] .table thead th {
+  letter-spacing: -0.02em;
+}
 
-/* Editorial: elegant serif headings — font personality only, never sizing */
+/* Editorial: generous, elegant italic serif — Cormorant Garamond */
 .ryze-portal[data-font="editorial"] .page-head__title,
-.ryze-portal[data-font="editorial"] .s-section__title,
 .ryze-portal[data-font="editorial"] .stat__value,
 .ryze-portal[data-font="editorial"] .class-card__name,
-.ryze-portal[data-font="editorial"] .empty__title {
+.ryze-portal[data-font="editorial"] .card__title,
+.ryze-portal[data-font="editorial"] .s-card__title,
+.ryze-portal[data-font="editorial"] .empty__title,
+.ryze-portal[data-font="editorial"] h1,
+.ryze-portal[data-font="editorial"] h2,
+.ryze-portal[data-font="editorial"] h3 {
   font-weight: 500;
   font-style: italic;
   letter-spacing: -0.015em;
 }
 
-/* Instrument/Literary: readable, warm, slightly loose */
+/* Instrument: warm, open serif — Instrument Serif */
 .ryze-portal[data-font="instrument"] .page-head__title,
-.ryze-portal[data-font="instrument"] .s-section__title,
 .ryze-portal[data-font="instrument"] .stat__value,
-.ryze-portal[data-font="instrument"] .class-card__name {
+.ryze-portal[data-font="instrument"] .class-card__name,
+.ryze-portal[data-font="instrument"] .card__title,
+.ryze-portal[data-font="instrument"] .s-card__title,
+.ryze-portal[data-font="instrument"] .empty__title,
+.ryze-portal[data-font="instrument"] h1,
+.ryze-portal[data-font="instrument"] h2,
+.ryze-portal[data-font="instrument"] h3 {
   font-weight: 400;
-  letter-spacing: 0em;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
 }
 
 /* ─── Base ──────────────────────────────────────────────────── */

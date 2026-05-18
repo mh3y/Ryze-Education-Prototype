@@ -82,7 +82,7 @@ const StatTile: React.FC<{
   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
   >
     <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
-    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
+    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
       {value}
     </div>
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
@@ -203,7 +203,7 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
     border: '1px solid var(--border-soft)',
     borderRadius: 9, fontSize: 13,
     color: 'var(--fg-default)', outline: 'none',
-    fontFamily: '"Manrope", system-ui, sans-serif',
+    fontFamily: 'var(--font-sans)',
     transition: 'border-color 140ms ease',
   };
 
@@ -357,7 +357,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
     border: '1px solid var(--border-soft)',
     borderRadius: 9, fontSize: 13,
     color: 'var(--fg-default)', outline: 'none',
-    fontFamily: '"Manrope", system-ui, sans-serif',
+    fontFamily: 'var(--font-sans)',
     boxSizing: 'border-box',
   };
   const lbl: React.CSSProperties = {
@@ -566,7 +566,7 @@ const PaymentsPage: React.FC = () => {
             Finance
           </div>
           <h1 style={{
-            fontFamily: '"Cormorant Garamond","Times New Roman",serif',
+            fontFamily: 'var(--font-display)',
             fontStyle: 'italic', fontWeight: 500,
             fontSize: 'clamp(38px, 3.5vw, 54px)',
             lineHeight: 1.08, letterSpacing: '-0.018em',

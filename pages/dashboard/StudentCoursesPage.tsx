@@ -22,7 +22,7 @@ const StudentCoursesPage: React.FC = () => {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Enrolled</div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Courses</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Courses</h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Your active courses, term progress and the lessons your tutor has planned next.</p>
           </div>
         </div>
@@ -38,7 +38,7 @@ const StudentCoursesPage: React.FC = () => {
               </span>
             </div>
 
-            <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 32, color: 'var(--fg-strong)', marginTop: 10, lineHeight: 1.1 }}>{c.name}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 32, color: 'var(--fg-strong)', marginTop: 10, lineHeight: 1.1 }}>{c.name}</div>
             <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginTop: 6 }}>{c.level}</div>
 
             <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0 16px' }} />
