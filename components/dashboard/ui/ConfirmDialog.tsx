@@ -92,7 +92,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
       {/* Panel */}
       <div className="relative z-10 bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl max-w-md w-full p-6">
-        <div className="flex items-start gap-4 mb-4">
+        <div className={`flex gap-4 mb-4 ${bodyText ? 'items-start' : 'items-center'}`}>
           <div
             className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
               isDanger ? 'bg-red-500/10 text-red-400' : 'bg-[#FFB000]/10 text-[#FFB000]'

@@ -252,7 +252,7 @@ const ResourcesPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((r) => (
               <div key={r.id} className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-5 flex flex-col">
-                <div className="flex items-start gap-3 mb-3">
+                <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <ResourceTypeIcon type={r.resource_type} />
                   </div>

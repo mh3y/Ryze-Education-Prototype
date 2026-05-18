@@ -85,7 +85,7 @@ const ConfirmDeleteModal: React.FC<Props> = ({
           display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
           padding: '22px 24px 0', gap: 16,
         }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
               width: 40, height: 40, borderRadius: 10, flexShrink: 0,
               background: 'color-mix(in oklab, var(--danger) 12%, transparent)',
