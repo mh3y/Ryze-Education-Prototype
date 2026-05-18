@@ -9,7 +9,8 @@ import {
   Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail,
   TrendingDown, Trash2,
 } from 'lucide-react';
-import { adminApi, StudentListItem } from '../../../services/adminApi';
+import { portalApi, UserRecord } from '../../../services/portalApi';
+import { adminApi } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import AddStudentModal from '../../../components/dashboard/modals/AddStudentModal';
@@ -114,20 +115,6 @@ const StatTile: React.FC<{ label: string; value: string | number; footRight?: st
   </div>
 );
 
-// ---------------------------------------------------------------------------
-// Mock data (used when API data doesn't include these fields)
-// ---------------------------------------------------------------------------
-
-const MOCK_STUDENTS = [
-  { id: 1, name: 'Amelia Tran',     year: 'Year 12 — HSC', class: 'Maths Ext 1 · Tue 5pm', parent: 'Linda Tran',       progress: 92, status: 'active',  last: '2h ago',  initials: 'AT', colour: '' },
-  { id: 2, name: 'Noah Park',       year: 'Year 11',       class: 'Maths Adv · Mon 6pm',   parent: 'Jin Park',         progress: 78, status: 'active',  last: '1d ago',  initials: 'NP', colour: 'blue' },
-  { id: 3, name: 'Sofia Reyes',     year: 'Year 10',       class: 'Foundations · Wed 4pm', parent: 'Maria Reyes',      progress: 64, status: 'at-risk', last: '5d ago',  initials: 'SR', colour: 'rose' },
-  { id: 4, name: 'Hayden Wong',     year: 'Year 12 — HSC', class: 'Maths Ext 2 · Thu 7pm', parent: 'Cindy Wong',       progress: 88, status: 'active',  last: '3h ago',  initials: 'HW', colour: 'green' },
-  { id: 5, name: 'Priya Sharma',    year: 'Year 9',        class: 'Selective Prep · Sat',  parent: 'Anjali Sharma',    progress: 81, status: 'active',  last: '1h ago',  initials: 'PS', colour: 'purple' },
-  { id: 6, name: "Lachlan O'Brien", year: 'Year 11',       class: 'Maths Adv · Mon 6pm',   parent: "Peter O'Brien",    progress: 71, status: 'trial',   last: '12h ago', initials: 'LO', colour: 'blue' },
-  { id: 7, name: 'Mei Chen',        year: 'Year 12 — HSC', class: 'Maths Ext 1 · Tue 5pm', parent: 'Wei Chen',         progress: 95, status: 'active',  last: '20m ago', initials: 'MC', colour: '' },
-  { id: 8, name: 'Eli Bernstein',   year: 'Year 10',       class: 'Foundations · Wed 4pm', parent: 'Hannah Bernstein', progress: 58, status: 'paused',  last: '2w ago',  initials: 'EB', colour: 'rose' },
-];
 
 // ---------------------------------------------------------------------------
 // Component
@@ -170,7 +157,7 @@ const StudentsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
 
-  const [students, setStudents]           = useState<StudentListItem[]>([]);
+  const [students, setStudents]           = useState<UserRecord[]>([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState<string | null>(null);
   const [searchQuery, setSearchQuery]     = useState('');
@@ -186,7 +173,7 @@ const StudentsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const { items } = await adminApi.getStudents({ limit: 500 });
+      const { items } = await portalApi.getStudents({ role: 'student', limit: 500 });
       setStudents(items);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load students.';
@@ -231,24 +218,22 @@ const StudentsPage: React.FC = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Use API data if available, otherwise use mock
-  const displayStudents = students.length > 0
-    ? students.map((s, i) => {
-        const colours = ['', 'blue', 'green', 'purple', 'rose'];
-        return {
-          id: s.id,
-          name: s.full_name,
-          year: '',
-          class: '',
-          parent: '',
-          progress: 80,
-          status: s.active ? 'active' : 'paused',
-          last: new Date(s.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
-          initials: getInitials(s.full_name),
-          colour: colours[i % colours.length],
-        };
-      })
-    : MOCK_STUDENTS;
+  // Map API records to display shape
+  const displayStudents = students.map((s, i) => {
+    const colours = ['', 'blue', 'green', 'purple', 'rose'];
+    return {
+      id: s.id,
+      name: s.full_name,
+      year: '',
+      class: '',
+      parent: '',
+      progress: 80,
+      status: s.active ? 'active' : 'paused',
+      last: new Date(s.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
+      initials: getInitials(s.full_name),
+      colour: colours[i % colours.length],
+    };
+  });
 
   // Filter
   const filtered = displayStudents.filter((s) => {
@@ -258,6 +243,10 @@ const StudentsPage: React.FC = () => {
     const matchFilter = activeFilter === 'All' || s.status === activeFilter.toLowerCase().replace(' ', '-');
     return matchSearch && matchFilter;
   });
+
+  // Computed stats from live API data
+  const activeCount   = students.filter((s) => s.active).length;
+  const inactiveCount = students.filter((s) => !s.active).length;
 
   const btnStyle: React.CSSProperties = {
     height: 38, padding: '0 14px', borderRadius: 9,
@@ -287,7 +276,7 @@ const StudentsPage: React.FC = () => {
             Students
           </h1>
           <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            142 enrolled across 18 classes. Sort, filter and drill in.
+            {loading ? 'Loading…' : `${students.length} enrolled student${students.length !== 1 ? 's' : ''}. Sort, filter and drill in.`}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -311,10 +300,10 @@ const StudentsPage: React.FC = () => {
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="Active"  value="124" footRight="87%" />
-        <StatTile label="Trial"   value="08"  footRight="4 converting" />
-        <StatTile label="Paused"  value="06"  footRight="2 returning soon" />
-        <StatTile label="At risk" value="04"  deltaText="+1 this week" deltaDir="down" />
+        <StatTile label="Total"    value={loading ? '—' : students.length} footRight="enrolled" />
+        <StatTile label="Active"   value={loading ? '—' : activeCount}   footRight={loading ? '' : `${students.length > 0 ? Math.round((activeCount / students.length) * 100) : 0}%`} />
+        <StatTile label="Inactive" value={loading ? '—' : inactiveCount} />
+        <StatTile label="At risk"  value="—" />
       </div>
 
       {/* Roster card */}
@@ -552,20 +541,7 @@ const StudentsPage: React.FC = () => {
               {filtered.length}
             </span>{' '}
             of{' '}
-            <span style={{ fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>142</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button style={{
-              height: 28, padding: '0 10px', borderRadius: 7,
-              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
-              border: 'none', cursor: 'pointer',
-            }}>‹</button>
-            <span style={{ fontSize: 13, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>1 / 18</span>
-            <button style={{
-              height: 28, padding: '0 10px', borderRadius: 7,
-              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
-              border: 'none', cursor: 'pointer',
-            }}>›</button>
+            <span style={{ fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>{students.length}</span>
           </div>
         </div>
       </div>

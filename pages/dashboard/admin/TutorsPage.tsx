@@ -5,7 +5,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Plus, Search, Trash2, GraduationCap } from 'lucide-react';
-import { adminApi, StudentListItem } from '../../../services/adminApi';
+import { portalApi, UserRecord } from '../../../services/portalApi';
+import { adminApi } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDeleteModal';
@@ -27,13 +28,13 @@ function getInitials(name: string): string {
 const TutorsPage: React.FC = () => {
   const { user } = useAuth();
 
-  const [tutors, setTutors]           = useState<StudentListItem[]>([]);
+  const [tutors, setTutors]           = useState<UserRecord[]>([]);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Delete state
-  const [deleteTarget, setDeleteTarget] = useState<StudentListItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<UserRecord | null>(null);
   const [deleting, setDeleting]         = useState(false);
   const [deleteError, setDeleteError]   = useState<string | null>(null);
 
@@ -41,7 +42,10 @@ const TutorsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const { items } = await adminApi.getStudents({ limit: 500, role: 'tutor' });
+      // Use the confirmed-working /api/students endpoint with role=tutor filter.
+      // The /api/admin/students endpoint does not reliably filter by role on the
+      // production server — portalApi hits the original Discord bot API directly.
+      const { items } = await portalApi.getStudents({ role: 'tutor', limit: 500 });
       setTutors(items);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load tutors.';
@@ -67,7 +71,7 @@ const TutorsPage: React.FC = () => {
       }
     }
 
-    auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name, adminName, 'Tutor account deleted');
+    auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name ?? deleteTarget.email ?? String(deleteTarget.id), adminName, 'Tutor account deleted');
     setTutors((prev) => prev.filter((t) => t.id !== deleteTarget.id));
     setDeleteTarget(null);
     setDeleting(false);
@@ -160,7 +164,7 @@ const TutorsPage: React.FC = () => {
                 borderBottom: '1px solid var(--border-faint)',
                 position: 'sticky', top: 0,
               }}>
-                {['Tutor', 'Email', 'Classes', 'Status', ''].map((h) => (
+                {['Tutor', 'Email', 'Discord ID', 'Status', ''].map((h) => (
                   <th key={h} style={{
                     padding: 'var(--table-cell-pad, 12px 22px)',
                     textAlign: 'left',
@@ -234,9 +238,9 @@ const TutorsPage: React.FC = () => {
                   <td style={{ padding: 'var(--table-cell-pad, 14px 22px)', fontSize: 13, color: 'var(--fg-muted)' }}>
                     {t.email ?? '—'}
                   </td>
-                  {/* Classes */}
-                  <td style={{ padding: 'var(--table-cell-pad, 14px 22px)', fontSize: 13, color: 'var(--fg-default)' }}>
-                    {t.class_count}
+                  {/* Discord ID */}
+                  <td style={{ padding: 'var(--table-cell-pad, 14px 22px)', fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>
+                    {t.discord_user_id ?? '—'}
                   </td>
                   {/* Status */}
                   <td style={{ padding: 'var(--table-cell-pad, 14px 22px)' }}>
