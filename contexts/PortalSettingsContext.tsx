@@ -35,6 +35,7 @@ export interface PortalSettings {
   motion: 'full' | 'reduced';
   contrast: 'normal' | 'high';
   textSize: 'default' | 'large' | 'larger';
+  tnum: boolean;
 }
 
 interface PortalSettingsContextValue {
@@ -57,6 +58,7 @@ const DEFAULTS: PortalSettings = {
   motion:          'full',
   contrast:        'normal',
   textSize:        'default',
+  tnum:            false,
 };
 
 function loadSettings(): PortalSettings {
@@ -97,6 +99,7 @@ function applyToDOM(settings: PortalSettings): void {
   el.dataset.contrast = settings.contrast;
   // data-text-size uses a hyphenated attribute name
   el.dataset.textSize = settings.textSize;
+  el.dataset.tnum = String(settings.tnum);
 
   el.style.setProperty('--accent',       settings.accent);
   el.style.setProperty('--accent-soft',  hexWithOpacity(settings.accent, 0.14));

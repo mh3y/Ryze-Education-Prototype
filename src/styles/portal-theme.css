@@ -108,49 +108,123 @@
 }
 
 /* ─── Density variants ──────────────────────────────────────── */
-[data-density="airy"] {
-  --pad-page-x: 56px;
-  --pad-page-y: 44px;
-  --row-h: 64px;
-  --card-pad: 28px;
-  --gap-md: 24px;
-  --gap-lg: 36px;
+.ryze-portal[data-density="airy"] {
+  --pad-page-x: 72px;
+  --pad-page-y: 56px;
+  --row-h: 72px;
+  --card-pad: 32px;
+  --gap-md: 28px;
+  --gap-lg: 44px;
+  --radius-card: 20px;
+  --radius-inner: 14px;
+  --radius-btn: 12px;
+  --table-cell-pad: 18px 26px;
+  font-size: 15px;
+  line-height: 1.6;
 }
-[data-density="balanced"] {
+.ryze-portal[data-density="balanced"] {
   --pad-page-x: 40px;
   --pad-page-y: 32px;
   --row-h: 56px;
   --card-pad: 22px;
   --gap-md: 20px;
   --gap-lg: 28px;
+  --radius-card: 16px;
+  --radius-inner: 10px;
+  --radius-btn: 9px;
+  --table-cell-pad: 14px 22px;
+  font-size: 14px;
+  line-height: 1.5;
 }
-[data-density="dense"] {
-  --pad-page-x: 28px;
-  --pad-page-y: 22px;
-  --row-h: 44px;
-  --card-pad: 16px;
-  --gap-md: 14px;
-  --gap-lg: 20px;
+.ryze-portal[data-density="dense"] {
+  --pad-page-x: 20px;
+  --pad-page-y: 16px;
+  --row-h: 40px;
+  --card-pad: 12px;
+  --gap-md: 10px;
+  --gap-lg: 14px;
+  --radius-card: 10px;
+  --radius-inner: 6px;
+  --radius-btn: 6px;
+  --table-cell-pad: 9px 16px;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 /* ─── Font pairings ─────────────────────────────────────────── */
-[data-font="editorial"] {
+.ryze-portal[data-font="editorial"] {
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
   --font-display-style: italic;
   --font-display-weight: 500;
+  --body-line-height: 1.6;
+  --body-letter-spacing: 0em;
+  --display-letter-spacing: -0.015em;
+  --heading-weight: 500;
+  font-letter-spacing: normal;
 }
-[data-font="modern"] {
+.ryze-portal[data-font="modern"] {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Inter", system-ui, sans-serif;
   --font-display-style: normal;
-  --font-display-weight: 600;
+  --font-display-weight: 700;
+  --body-line-height: 1.45;
+  --body-letter-spacing: -0.01em;
+  --display-letter-spacing: -0.04em;
+  --heading-weight: 700;
+  letter-spacing: -0.01em;
 }
-[data-font="instrument"] {
+.ryze-portal[data-font="instrument"] {
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-display: "Instrument Serif", "Times New Roman", serif;
   --font-display-style: normal;
   --font-display-weight: 400;
+  --body-line-height: 1.65;
+  --body-letter-spacing: 0.01em;
+  --display-letter-spacing: -0.01em;
+  --heading-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* ── Per-font visual personality ────────────────────────────── */
+/* Modern: geometric, tight, high-weight sans-serif feel */
+.ryze-portal[data-font="modern"] .card,
+.ryze-portal[data-font="modern"] .s-card {
+  border-radius: max(var(--radius-card, 16px) * 0.5, 8px);
+}
+.ryze-portal[data-font="modern"] .stat {
+  border-radius: max(var(--radius-card, 14px) * 0.5, 8px);
+}
+.ryze-portal[data-font="modern"] .btn {
+  border-radius: max(var(--radius-btn, 9px) * 0.5, 5px);
+  letter-spacing: -0.01em;
+}
+.ryze-portal[data-font="modern"] .page-head__title,
+.ryze-portal[data-font="modern"] .s-section__title,
+.ryze-portal[data-font="modern"] .stat__value,
+.ryze-portal[data-font="modern"] .class-card__name,
+.ryze-portal[data-font="modern"] .empty__title {
+  font-size-adjust: 0.5;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+/* Editorial: generous spacing, elegant large serif headings */
+.ryze-portal[data-font="editorial"] .page-head__title,
+.ryze-portal[data-font="editorial"] .s-section__title,
+.ryze-portal[data-font="editorial"] .stat__value,
+.ryze-portal[data-font="editorial"] .class-card__name,
+.ryze-portal[data-font="editorial"] .empty__title {
+  font-size: calc(var(--page-title-size, 1em) * 1.12);
+}
+
+/* Instrument/Literary: readable, warm, slightly loose */
+.ryze-portal[data-font="instrument"] .page-head__title,
+.ryze-portal[data-font="instrument"] .s-section__title,
+.ryze-portal[data-font="instrument"] .stat__value,
+.ryze-portal[data-font="instrument"] .class-card__name {
+  font-weight: 400;
+  letter-spacing: 0em;
 }
 
 /* ─── Base ──────────────────────────────────────────────────── */
@@ -173,6 +247,7 @@ body {
   color: var(--fg-default);
   font-size: 14px;
   line-height: 1.45;
+  letter-spacing: var(--body-letter-spacing, 0);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -721,7 +796,7 @@ body {
   gap: 8px;
   height: 38px;
   padding: 0 14px;
-  border-radius: 9px;
+  border-radius: var(--radius-btn, 9px);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.005em;
@@ -750,18 +825,18 @@ body {
 .ryze-portal .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
-  border-radius: 16px;
+  border-radius: var(--radius-card, 16px);
   padding: var(--card-pad);
   box-shadow: var(--shadow-card);
 }
-.ryze-portal .card--flush { padding: 0; overflow: hidden; }
+.ryze-portal .card--flush { border-radius: var(--radius-card, 16px); padding: 0; overflow: hidden; }
 
 .ryze-portal .card__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 22px;
+  padding: var(--card-pad, 22px);
   border-bottom: 1px solid var(--border-faint);
 }
 .ryze-portal .card__title {
@@ -780,7 +855,7 @@ body {
   position: relative;
   background: var(--bg-surface);
   border: 1px solid var(--border-faint);
-  border-radius: 14px;
+  border-radius: var(--radius-card, 14px);
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
@@ -835,14 +910,14 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  padding: 12px 22px;
+  padding: var(--table-cell-pad, 14px 22px);
   background: var(--bg-surface-2);
   border-bottom: 1px solid var(--border-faint);
   position: sticky;
   top: 0;
 }
 .ryze-portal .table tbody td {
-  padding: 14px 22px;
+  padding: var(--table-cell-pad, 14px 22px);
   border-bottom: 1px solid var(--border-faint);
   font-size: 13.5px;
   color: var(--fg-default);
@@ -1949,18 +2024,34 @@ body {
    HIGH CONTRAST
    ============================================================ */
 .ryze-portal[data-contrast="high"][data-theme="dark"] {
-  --fg-strong:    #ffffff;
-  --fg-default:   #e8e8e8;
-  --fg-muted:     #aaaaaa;
-  --border-soft:  rgba(255, 255, 255, 0.25);
-  --border-strong: rgba(255, 255, 255, 0.4);
+  --fg-strong:     #ffffff;
+  --fg-default:    #efefef;
+  --fg-muted:      #c0c0c0;
+  --fg-faint:      #909090;
+  --border-faint:  rgba(255, 255, 255, 0.18);
+  --border-soft:   rgba(255, 255, 255, 0.32);
+  --border-strong: rgba(255, 255, 255, 0.52);
+  --bg-surface:    #14192a;
+  --bg-surface-2:  #1c2336;
+  --bg-elevated:   #222c42;
 }
 .ryze-portal[data-contrast="high"][data-theme="light"] {
-  --fg-strong:    #000000;
-  --fg-default:   #111111;
-  --fg-muted:     #444444;
-  --border-soft:  rgba(0, 0, 0, 0.25);
-  --border-strong: rgba(0, 0, 0, 0.4);
+  --fg-strong:     #000000;
+  --fg-default:    #0d0d0d;
+  --fg-muted:      #3a3a3a;
+  --fg-faint:      #606060;
+  --border-faint:  rgba(0, 0, 0, 0.18);
+  --border-soft:   rgba(0, 0, 0, 0.32);
+  --border-strong: rgba(0, 0, 0, 0.52);
+}
+/* High contrast also boosts body font weight for legibility */
+.ryze-portal[data-contrast="high"] {
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+.ryze-portal[data-contrast="high"] .ryze-text-muted,
+.ryze-portal[data-contrast="high"] [class*="text-muted"],
+.ryze-portal[data-contrast="high"] [style*="var(--fg-muted)"] {
+  font-weight: 500;
 }
 
 /* ============================================================
@@ -2013,4 +2104,12 @@ body {
 .ryze-portal[data-theme="light"] input[type="date"],
 .ryze-portal[data-theme="light"] input[type="time"] {
   color-scheme: light;
+}
+
+/* ============================================================
+   TABULAR NUMERALS — global number alignment
+   ============================================================ */
+.ryze-portal[data-tnum="true"] {
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
 }
