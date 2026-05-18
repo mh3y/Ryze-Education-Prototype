@@ -157,7 +157,7 @@ const LessonsPage: React.FC = () => {
 
   // Convert API lessons to schedule blocks if available
   const blocks: ScheduleBlock[] = lessons.length > 0
-    ? lessons.slice(0, 6).map((l, i) => {
+    ? lessons.map((l, i) => {
         const rooms = ['Studio A', 'Studio B', 'Studio C'];
         const startDate = l.start_time ? new Date(l.start_time) : new Date();
         const endDate   = l.end_time   ? new Date(l.end_time)   : new Date(startDate.getTime() + 90 * 60_000);
@@ -263,7 +263,7 @@ const LessonsPage: React.FC = () => {
             </div>
           </div>
           <button
-            onClick={() => navigate('/dashboard/admin/lessons')}
+            onClick={() => window.print()}
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               fontSize: 13, color: 'var(--fg-muted)',
@@ -358,7 +358,7 @@ const LessonsPage: React.FC = () => {
                             transition: 'opacity 140ms ease',
                             ...blockStyle,
                           }}
-                          onClick={() => navigate('/dashboard/admin/lessons')}
+                          onClick={() => navigate(`/dashboard/admin/lessons/${b.id}`)}
                         >
                           <div style={{ fontSize: 12.5, fontWeight: 600, color: blockTitleColor(b.state), lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {b.title}

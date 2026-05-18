@@ -56,6 +56,8 @@ const StudentDetail: React.FC = () => {
 
   // Withdraw confirm dialog
   const [withdrawTarget, setWithdrawTarget] = useState<{ classGroupId: number; className: string } | null>(null);
+  const [withdrawing, setWithdrawing]       = useState(false);
+  const [withdrawError, setWithdrawError]   = useState<string | null>(null);
 
   // ── Load student ─────────────────────────────────────────────────────── //
   const load = useCallback(async () => {
@@ -129,13 +131,21 @@ const StudentDetail: React.FC = () => {
   // ── Withdraw from class ──────────────────────────────────────────────── //
   const handleWithdraw = async () => {
     if (!student || !withdrawTarget) return;
-    const today = new Date().toISOString().split('T')[0];
-    await adminApi.updateEnrollment(student.id, withdrawTarget.classGroupId, {
-      enrollment_status: 'withdrawn',
-      end_date: today,
-    });
-    setWithdrawTarget(null);
-    load();
+    setWithdrawing(true);
+    setWithdrawError(null);
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      await adminApi.updateEnrollment(student.id, withdrawTarget.classGroupId, {
+        enrollment_status: 'withdrawn',
+        end_date: today,
+      });
+      setWithdrawTarget(null);
+      load();
+    } catch (e: any) {
+      setWithdrawError(e?.message ?? 'Failed to withdraw student.');
+    } finally {
+      setWithdrawing(false);
+    }
   };
 
   // ── Render ───────────────────────────────────────────────────────────── //
@@ -431,6 +441,13 @@ const StudentDetail: React.FC = () => {
         </div>
       )}
 
+      {/* Withdraw error banner */}
+      {withdrawError && (
+        <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <AlertCircle size={14} /> {withdrawError}
+        </div>
+      )}
+
       {/* Withdraw confirm dialog */}
       <ConfirmDialog
         open={!!withdrawTarget}
@@ -438,8 +455,9 @@ const StudentDetail: React.FC = () => {
         description="This will mark the student's enrolment as withdrawn. You can re-enrol them at any time."
         confirmLabel="Withdraw"
         variant="danger"
+        loading={withdrawing}
         onConfirm={handleWithdraw}
-        onCancel={() => setWithdrawTarget(null)}
+        onCancel={() => { setWithdrawTarget(null); setWithdrawError(null); }}
       />
     </div>
   );

@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { EyeOff } from 'lucide-react';
 import {
   LayoutDashboard, CalendarDays, ShieldAlert,
   Users, Home, GraduationCap,
@@ -17,6 +18,8 @@ import {
   Megaphone, Activity, Settings,
   LogOut,
 } from 'lucide-react';
+
+import { useDashboardCustomization } from '../../contexts/DashboardCustomizationContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -199,6 +202,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const initials = getInitials(userName);
   const roleLabel = getRoleLabel(userRole);
 
+  // Customization — safe to call unconditionally; returns no-ops when not admin
+  const { isEditMode, isNavHidden, toggleNavItem } = useDashboardCustomization();
+
   const isActive = (item: NavItem): boolean => {
     if (item.path === '/dashboard/admin') {
       return location.pathname === '/dashboard/admin';
@@ -359,14 +365,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               {/* Items */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {group.items.map((item) => {
+                {group.items
+                  .filter((item) => isEditMode || !isNavHidden(item.path))
+                  .map((item) => {
                   const active = isActive(item);
                   const Icon = item.icon;
+                  const hidden = isNavHidden(item.path);
                   return (
                     <Link
                       key={item.path}
-                      to={item.path}
-                      onClick={onCloseMobile}
+                      to={isEditMode ? '#' : item.path}
+                      onClick={(e) => {
+                        if (isEditMode) {
+                          e.preventDefault();
+                          toggleNavItem(item.path);
+                        } else {
+                          onCloseMobile();
+                        }
+                      }}
                       title={!isOpen ? item.label : undefined}
                       className="group relative"
                       style={{
@@ -385,6 +401,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         textDecoration: 'none',
                         transition: 'background 140ms ease, color 140ms ease',
                         position: 'relative',
+                        opacity: isEditMode && hidden ? 0.35 : 1,
+                        cursor: isEditMode ? 'pointer' : undefined,
                       }}
                       onMouseEnter={(e) => {
                         if (!active) {
@@ -430,8 +448,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         {item.label}
                       </span>
 
+                      {/* Edit mode hidden indicator */}
+                      {isEditMode && hidden && isOpen && (
+                        <span style={{
+                          display: 'flex', alignItems: 'center',
+                          color: 'var(--danger)', flexShrink: 0,
+                        }}>
+                          <EyeOff size={11} />
+                        </span>
+                      )}
+
                       {/* Badge — pill in expanded, dot in rail */}
-                      {item.badge ? (
+                      {!isEditMode && item.badge ? (
                         isOpen ? (
                           <span style={{
                             fontSize: 10.5,

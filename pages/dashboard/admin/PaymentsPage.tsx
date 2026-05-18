@@ -253,6 +253,17 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
             <input type="number" min="0" step="0.01" style={inp} value={form.amount_paid}
               onChange={(e) => setForm(f => ({ ...f, amount_paid: e.target.value }))} />
           </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 6 }}>Payment method</label>
+            <select value={form.payment_method} onChange={(e) => setForm(f => ({ ...f, payment_method: e.target.value }))} style={inp}>
+              <option value="">— Select method —</option>
+              <option value="direct_debit">Direct debit</option>
+              <option value="card">Card</option>
+              <option value="bpay">BPAY</option>
+              <option value="bank_transfer">Bank transfer</option>
+              <option value="cash">Cash</option>
+            </select>
+          </div>
           <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
             <button type="button" onClick={onClose} style={{
               flex: 1, height: 38, borderRadius: 9, fontSize: 13, fontWeight: 600,
@@ -279,6 +290,191 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
 };
 
 // ---------------------------------------------------------------------------
+// Create invoice modal
+// ---------------------------------------------------------------------------
+
+const TERM_OPTIONS = (() => {
+  const year = new Date().getFullYear();
+  const terms: string[] = [];
+  for (const y of [year - 1, year, year + 1]) {
+    for (let t = 1; t <= 4; t++) terms.push(`Term ${t} ${y}`);
+  }
+  return terms;
+})();
+
+interface CreateInvoiceModalProps {
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSaved }) => {
+  const [students, setStudents] = useState<{ id: number; full_name: string }[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [saving, setSaving]   = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const defaultTerm = TERM_OPTIONS.find(t => t.includes(String(new Date().getFullYear()))) ?? TERM_OPTIONS[4];
+  const [form, setForm] = useState({
+    student_user_id: '',
+    term: defaultTerm,
+    amount_due: '',
+    due_date: '',
+    notes: '',
+  });
+
+  useEffect(() => {
+    adminApi.getStudents({ limit: 500, active: true })
+      .then(({ items }) => setStudents(items))
+      .catch(() => {/* non-fatal */})
+      .finally(() => setLoadingStudents(false));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.student_user_id) { setFormError('Please select a student.'); return; }
+    if (!form.amount_due || Number(form.amount_due) <= 0) { setFormError('Please enter a valid amount.'); return; }
+    setSaving(true);
+    setFormError(null);
+    try {
+      await adminApi.createStudentPayment({
+        student_user_id: Number(form.student_user_id),
+        term: form.term,
+        amount_due: Number(form.amount_due),
+        due_date: form.due_date || undefined,
+        notes: form.notes || undefined,
+      });
+      onSaved();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to create invoice.';
+      setFormError(msg);
+      setSaving(false);
+    }
+  };
+
+  const inp: React.CSSProperties = {
+    width: '100%', padding: '10px 16px',
+    background: 'var(--bg-surface-2)',
+    border: '1px solid var(--border-soft)',
+    borderRadius: 9, fontSize: 13,
+    color: 'var(--fg-default)', outline: 'none',
+    fontFamily: '"Manrope", system-ui, sans-serif',
+    boxSizing: 'border-box',
+  };
+  const lbl: React.CSSProperties = {
+    display: 'block', fontSize: 10, fontWeight: 700,
+    letterSpacing: '0.12em', textTransform: 'uppercase',
+    color: 'var(--fg-muted)', marginBottom: 6,
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
+      <div style={{
+        position: 'relative', zIndex: 10,
+        background: 'var(--bg-surface)', border: '1px solid var(--border-soft)',
+        borderRadius: 16, boxShadow: '0 32px 64px -24px rgba(0,0,0,0.6)',
+        maxWidth: 460, width: '100%', padding: 24,
+        maxHeight: '90vh', overflowY: 'auto',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--fg-strong)' }}>New Invoice</div>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--fg-muted)' }}>
+            <X size={20} />
+          </button>
+        </div>
+
+        {formError && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)', borderRadius: 9, padding: 12, marginBottom: 16 }}>
+            <AlertCircle size={14} /> {formError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <label style={lbl}>Student</label>
+            <select
+              value={form.student_user_id}
+              onChange={(e) => setForm(f => ({ ...f, student_user_id: e.target.value }))}
+              style={inp}
+              disabled={loadingStudents}
+            >
+              <option value="">{loadingStudents ? 'Loading students…' : 'Select student…'}</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>{s.full_name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={lbl}>Term</label>
+            <select
+              value={form.term}
+              onChange={(e) => setForm(f => ({ ...f, term: e.target.value }))}
+              style={inp}
+            >
+              {TERM_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={lbl}>Amount Due ($)</label>
+              <input
+                type="number" min="0" step="0.01"
+                value={form.amount_due}
+                onChange={(e) => setForm(f => ({ ...f, amount_due: e.target.value }))}
+                placeholder="e.g. 480.00"
+                style={inp}
+              />
+            </div>
+            <div>
+              <label style={lbl}>Due Date</label>
+              <input
+                type="date"
+                value={form.due_date}
+                onChange={(e) => setForm(f => ({ ...f, due_date: e.target.value }))}
+                style={inp}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={lbl}>Notes (optional)</label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))}
+              placeholder="e.g. Term 2 group tuition — Maths Ext 1"
+              rows={3}
+              style={{ ...inp, resize: 'vertical' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+            <button type="button" onClick={onClose} style={{
+              height: 38, padding: '0 20px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              background: 'var(--bg-surface-2)', color: 'var(--fg-default)',
+              border: '1px solid var(--border-soft)', cursor: 'pointer',
+            }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={saving} style={{
+              height: 38, padding: '0 20px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              background: 'var(--accent)', color: 'var(--accent-fg)',
+              border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.7 : 1,
+            }}>
+              {saving ? 'Creating…' : 'Create invoice'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -290,6 +486,41 @@ const PaymentsPage: React.FC = () => {
   const [filter, setFilter]           = useState<PayStatusFilter>('All');
   const [editTarget, setEditTarget]   = useState<StudentPayment | null>(null);
   const [showCreate, setShowCreate]   = useState(false);
+
+  const exportCsv = () => {
+    const rows = payments.length > 0 ? payments : MOCK_PAYMENTS.map((p) => ({
+      id: p.id.replace('INV-', ''),
+      student_name: p.student,
+      term: 'Term 2 2025',
+      amount_due: p.amount,
+      amount_paid: p.state === 'paid' ? p.amount : 0,
+      status: p.state,
+      due_date: null as string | null,
+      payment_method: p.method,
+    }));
+    const escape = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const headers = ['Invoice ID', 'Student', 'Term', 'Amount Due', 'Amount Paid', 'Status', 'Due Date', 'Payment Method'];
+    const lines = [
+      headers.join(','),
+      ...rows.map((p) => [
+        escape('id' in p && typeof (p as { id: string | number }).id !== 'undefined' ? `INV-${(p as { id: string | number }).id}` : ''),
+        escape((p as { student_name?: string; student?: string }).student_name ?? ''),
+        escape((p as { term?: string }).term ?? ''),
+        escape((p as { amount_due?: number | string }).amount_due ?? ''),
+        escape((p as { amount_paid?: number | string }).amount_paid ?? 0),
+        escape((p as { status?: string }).status ?? ''),
+        escape((p as { due_date?: string | null }).due_date
+          ? new Date((p as { due_date: string }).due_date).toLocaleDateString('en-AU')
+          : ''),
+        escape((p as { payment_method?: string }).payment_method ?? ''),
+      ].join(',')),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = `ryze-payments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -344,14 +575,18 @@ const PaymentsPage: React.FC = () => {
             Payments
           </h1>
           <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            Invoices, direct debits and outstanding balances. Run a chase, mark paid, or export to Xero.
+            Invoices, direct debits and outstanding balances. Run a chase, mark paid, or export to CSV.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
+          <button
+            onClick={exportCsv}
+            style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
-            <Download size={14} /> Export to Xero
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}
+            title="Export payment data as CSV"
+          >
+            <Download size={14} /> Export CSV
           </button>
           <button
             onClick={() => setShowCreate(true)}
@@ -535,31 +770,12 @@ const PaymentsPage: React.FC = () => {
         />
       )}
 
-      {/* Create modal placeholder */}
+      {/* Create invoice modal */}
       {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowCreate(false)} />
-          <div style={{
-            position: 'relative', zIndex: 10,
-            background: 'var(--bg-surface)', border: '1px solid var(--border-soft)',
-            borderRadius: 16, padding: 24, maxWidth: 440, width: '100%',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--fg-strong)' }}>New Invoice</div>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--fg-muted)' }}>
-                <X size={20} />
-              </button>
-            </div>
-            <p style={{ fontSize: 14, color: 'var(--fg-muted)' }}>Invoice creation form — coming in next iteration.</p>
-            <button onClick={() => setShowCreate(false)} style={{
-              marginTop: 16, height: 38, padding: '0 20px', borderRadius: 9,
-              fontSize: 13, fontWeight: 600,
-              background: 'var(--accent)', color: 'var(--accent-fg)', border: 'none', cursor: 'pointer',
-            }}>
-              Close
-            </button>
-          </div>
-        </div>
+        <CreateInvoiceModal
+          onClose={() => setShowCreate(false)}
+          onSaved={() => { setShowCreate(false); load(); }}
+        />
       )}
     </div>
   );

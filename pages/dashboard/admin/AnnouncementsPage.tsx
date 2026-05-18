@@ -210,10 +210,11 @@ interface PreviewDrawerProps {
   onArchive: () => void;
   publishing: boolean;
   archiving: boolean;
+  publishError?: string | null;
 }
 
 const PreviewDrawer: React.FC<PreviewDrawerProps> = ({
-  announcement: a, classMap, onClose, onPublish, onArchive, publishing, archiving,
+  announcement: a, classMap, onClose, onPublish, onArchive, publishing, archiving, publishError,
 }) => {
   const target = a.target_role
     ? a.target_role.charAt(0).toUpperCase() + a.target_role.slice(1) + 's'
@@ -259,7 +260,13 @@ const PreviewDrawer: React.FC<PreviewDrawerProps> = ({
 
         {/* Actions */}
         {a.status !== 'archived' && (
-          <div className="p-6 border-t border-white/5 flex gap-3">
+          <div className="p-6 border-t border-white/5 space-y-3">
+            {publishError && (
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                <span className="shrink-0">⚠</span> {publishError}
+              </div>
+            )}
+            <div className="flex gap-3">
             {a.status === 'draft' && (
               <button
                 onClick={onPublish}
@@ -282,6 +289,7 @@ const PreviewDrawer: React.FC<PreviewDrawerProps> = ({
                 : <Archive size={14} />}
               Archive
             </button>
+            </div>
           </div>
         )}
       </div>
@@ -303,7 +311,9 @@ const AnnouncementsPage: React.FC = () => {
   const [showCreate, setShowCreate]       = useState(false);
   const [preview, setPreview]             = useState<Announcement | null>(null);
   const [publishing, setPublishing]       = useState(false);
+  const [publishError, setPublishError]   = useState<string | null>(null);
   const [archiving, setArchiving]         = useState(false);
+  const [archiveError, setArchiveError]   = useState<string | null>(null);
   const [archiveTarget, setArchiveTarget] = useState<Announcement | null>(null);
 
   useEffect(() => {
@@ -329,24 +339,28 @@ const AnnouncementsPage: React.FC = () => {
   const handlePublish = async () => {
     if (!preview) return;
     setPublishing(true);
+    setPublishError(null);
     try {
       await adminApi.publishAnnouncement(preview.id);
       setPreview(null);
       load();
-    } catch { /* swallow */ }
-    finally { setPublishing(false); }
+    } catch (e: any) {
+      setPublishError(e?.message ?? 'Failed to publish announcement.');
+    } finally { setPublishing(false); }
   };
 
   const handleArchive = async () => {
     if (!archiveTarget) return;
     setArchiving(true);
+    setArchiveError(null);
     try {
       await adminApi.archiveAnnouncement(archiveTarget.id);
       setArchiveTarget(null);
       setPreview(null);
       load();
-    } catch { /* swallow */ }
-    finally { setArchiving(false); }
+    } catch (e: any) {
+      setArchiveError(e?.message ?? 'Failed to archive announcement.');
+    } finally { setArchiving(false); }
   };
 
   const classMap = new Map(classes.map((c) => [c.id, c.name]));
@@ -486,12 +500,22 @@ const AnnouncementsPage: React.FC = () => {
         <PreviewDrawer
           announcement={preview}
           classMap={classMap}
-          onClose={() => setPreview(null)}
+          onClose={() => { setPreview(null); setPublishError(null); }}
           onPublish={handlePublish}
           onArchive={() => { setArchiveTarget(preview); }}
           publishing={publishing}
           archiving={archiving}
+          publishError={publishError}
         />
+      )}
+
+      {archiveError && !archiveTarget && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/20 backdrop-blur-sm"
+          style={{ maxWidth: 440 }}>
+          <span className="shrink-0">⚠</span>
+          {archiveError}
+          <button onClick={() => setArchiveError(null)} className="ml-2 opacity-60 hover:opacity-100 transition-opacity">✕</button>
+        </div>
       )}
 
       <ConfirmDialog
@@ -502,7 +526,7 @@ const AnnouncementsPage: React.FC = () => {
         danger={false}
         loading={archiving}
         onConfirm={handleArchive}
-        onCancel={() => setArchiveTarget(null)}
+        onCancel={() => { setArchiveTarget(null); setArchiveError(null); }}
       />
     </div>
   );

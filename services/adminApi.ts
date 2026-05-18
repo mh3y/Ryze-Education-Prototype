@@ -464,6 +464,17 @@ export const adminApi = {
     return get(`/classes/${id}`);
   },
 
+  createClass(body: {
+    name: string;
+    subject?: string;
+    year_level?: string;
+    tutor_user_id?: number;
+    max_capacity?: number;
+    active?: boolean;
+  }): Promise<{ id: number; name: string }> {
+    return post('/classes', body);
+  },
+
   // ── Lessons ─────────────────────────────────────────────────────────── //
 
   getLessons(params?: {
