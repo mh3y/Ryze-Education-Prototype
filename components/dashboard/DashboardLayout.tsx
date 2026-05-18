@@ -60,6 +60,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   alerts:             'Alerts',
   resources:          'Resources',
   announcements:      'Announcements',
+  'audit-log':        'Audit Log',
 };
 
 interface Crumb { label: string; }
@@ -161,6 +162,7 @@ const DashboardLayoutInner: React.FC = () => {
       data-font={settings.font}
       data-motion={settings.motion}
       data-contrast={settings.contrast}
+      data-tnum={String(settings.tnum)}
       style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : `${isSidebarOpen ? '248px' : '72px'} 1fr`,

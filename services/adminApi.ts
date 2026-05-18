@@ -404,6 +404,14 @@ export const adminApi = {
     return post(`/parents/${id}/resend-invite`, {});
   },
 
+  deleteParent(id: number): Promise<void> {
+    return del(`/parents/${id}`);
+  },
+
+  deactivateParent(id: number): Promise<{ id: number; updated: boolean }> {
+    return patch(`/parents/${id}`, { active: false });
+  },
+
   linkStudentToParent(parentId: number, body: {
     student_user_id: number; relationship?: string; is_primary_contact?: boolean;
   }): Promise<{ link_id: number }> {
@@ -439,6 +447,14 @@ export const adminApi = {
     preferred_name: string; school: string; year_level: string; notes: string;
   }>): Promise<{ updated: boolean }> {
     return patch(`/students/${userId}/profile`, body);
+  },
+
+  deactivateStudent(id: number): Promise<{ updated: boolean }> {
+    return patch(`/students/${id}/deactivate`, { active: false });
+  },
+
+  deleteStudent(id: number): Promise<void> {
+    return del(`/students/${id}`);
   },
 
   enrollStudent(userId: number, body: {

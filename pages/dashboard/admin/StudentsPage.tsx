@@ -3,14 +3,17 @@
  * Ryze Portal redesign.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail,
-  TrendingDown, X,
+  TrendingDown, Trash2,
 } from 'lucide-react';
 import { adminApi, StudentListItem } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import AddStudentModal from '../../../components/dashboard/modals/AddStudentModal';
+import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDeleteModal';
 
 // ---------------------------------------------------------------------------
 // Helpers & types
@@ -165,6 +168,7 @@ function exportToCSV(
 const StudentsPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useAuth();
 
   const [students, setStudents]           = useState<StudentListItem[]>([]);
   const [loading, setLoading]             = useState(true);
@@ -172,14 +176,11 @@ const StudentsPage: React.FC = () => {
   const [searchQuery, setSearchQuery]     = useState('');
   const [activeFilter, setActiveFilter]   = useState<StatusFilter>('All');
   const [showAddModal, setShowAddModal]   = useState(false);
-  const [showFilters, setShowFilters]     = useState(false);
-  const [sortField, setSortField]         = useState<'name' | 'status' | 'last'>('name');
-  const [sortDir, setSortDir]             = useState<'asc' | 'desc'>('asc');
-  const [filterYear, setFilterYear]       = useState('');
-  const [filterClass, setFilterClass]     = useState('');
-  const [filterStatus, setFilterStatus]   = useState('');
-  const [rowMenuOpen, setRowMenuOpen]     = useState<number | null>(null);
-  const rowMenuRef                        = useRef<HTMLDivElement | null>(null);
+
+  // Delete state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+  const [deleting, setDeleting]         = useState(false);
+  const [deleteError, setDeleteError]   = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -197,16 +198,21 @@ const StudentsPage: React.FC = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  // Close row menu on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (rowMenuRef.current && !rowMenuRef.current.contains(e.target as Node)) {
-        setRowMenuOpen(null);
-      }
-    };
-    if (rowMenuOpen !== null) document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [rowMenuOpen]);
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await adminApi.deleteStudent(deleteTarget.id);
+      auditLog.log('delete', 'student', deleteTarget.id, deleteTarget.name, user?.name ?? 'Admin', 'Student account deleted');
+      setDeleteTarget(null);
+      load();
+    } catch (e: unknown) {
+      setDeleteError(e instanceof Error ? e.message : 'Failed to delete student.');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // Open modal when navigated here with ?new=1
   useEffect(() => {
@@ -217,10 +223,6 @@ const StudentsPage: React.FC = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Compute active/paused counts from real data (with fallback to mock numbers)
-  const activeCount = students.length > 0 ? students.filter(s => s.active).length : 124;
-  const pausedCount = students.length > 0 ? students.filter(s => !s.active).length : 6;
-
   // Use API data if available, otherwise use mock
   const displayStudents = students.length > 0
     ? students.map((s, i) => {
@@ -228,9 +230,9 @@ const StudentsPage: React.FC = () => {
         return {
           id: s.id,
           name: s.full_name,
-          year: (s as any).year_level ?? '',
-          class: (s as any).class_group_name ?? '',
-          parent: (s as any).parent_name ?? '',
+          year: '',
+          class: '',
+          parent: '',
           progress: 80,
           status: s.active ? 'active' : 'paused',
           last: new Date(s.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
@@ -240,38 +242,14 @@ const StudentsPage: React.FC = () => {
       })
     : MOCK_STUDENTS;
 
-  // Sort handler — cycles through fields
-  const handleSort = () => {
-    const fields: Array<'name' | 'status' | 'last'> = ['name', 'status', 'last'];
-    const idx = fields.indexOf(sortField);
-    if (idx === fields.length - 1) {
-      setSortField('name');
-      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(fields[idx + 1]);
-    }
-  };
-
-  // Filter + sort
-  const filtered = displayStudents
-    .filter((s) => {
-      const matchSearch = !searchQuery ||
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.parent.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchFilter = activeFilter === 'All' || s.status === activeFilter.toLowerCase().replace(' ', '-');
-      const matchYear   = !filterYear   || s.year.toLowerCase().includes(filterYear.toLowerCase());
-      const matchClass  = !filterClass  || s.class.toLowerCase().includes(filterClass.toLowerCase());
-      const matchStatus = !filterStatus || s.status === filterStatus;
-      return matchSearch && matchFilter && matchYear && matchClass && matchStatus;
-    })
-    .sort((a, b) => {
-      let av = '', bv = '';
-      if (sortField === 'name')   { av = a.name;   bv = b.name; }
-      if (sortField === 'status') { av = a.status; bv = b.status; }
-      if (sortField === 'last')   { av = a.last;   bv = b.last; }
-      const cmp = av.localeCompare(bv);
-      return sortDir === 'asc' ? cmp : -cmp;
-    });
+  // Filter
+  const filtered = displayStudents.filter((s) => {
+    const matchSearch = !searchQuery ||
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.parent.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchFilter = activeFilter === 'All' || s.status === activeFilter.toLowerCase().replace(' ', '-');
+    return matchSearch && matchFilter;
+  });
 
   const btnStyle: React.CSSProperties = {
     height: 38, padding: '0 14px', borderRadius: 9,
@@ -301,7 +279,7 @@ const StudentsPage: React.FC = () => {
             Students
           </h1>
           <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            {students.length || 142} enrolled. Sort, filter and drill in.
+            142 enrolled across 18 classes. Sort, filter and drill in.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -325,9 +303,9 @@ const StudentsPage: React.FC = () => {
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="Active"  value={String(activeCount)} footRight={`${Math.round(activeCount / Math.max(students.length || 142, 1) * 100)}%`} />
+        <StatTile label="Active"  value="124" footRight="87%" />
         <StatTile label="Trial"   value="08"  footRight="4 converting" />
-        <StatTile label="Paused"  value={String(pausedCount)} footRight="2 returning soon" />
+        <StatTile label="Paused"  value="06"  footRight="2 returning soon" />
         <StatTile label="At risk" value="04"  deltaText="+1 this week" deltaDir="down" />
       </div>
 
@@ -384,88 +362,24 @@ const StudentsPage: React.FC = () => {
             </button>
           ))}
 
-          <button
-            onClick={() => setShowFilters(f => !f)}
-            style={{
-              height: 32, padding: '0 12px', borderRadius: 9,
-              display: 'flex', alignItems: 'center', gap: 6,
-              fontSize: 13, fontWeight: 600,
-              background: showFilters ? 'var(--accent-soft)' : 'var(--bg-surface)',
-              color: showFilters ? 'var(--accent)' : 'var(--fg-default)',
-              border: showFilters ? '1px solid color-mix(in oklab, var(--accent) 40%, transparent)' : '1px solid var(--border-soft)',
-              cursor: 'pointer', transition: 'all 140ms ease',
-            }}>
+          <button style={{
+            height: 32, padding: '0 12px', borderRadius: 9,
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 13, fontWeight: 600,
+            background: 'var(--bg-surface)', color: 'var(--fg-default)',
+            border: '1px solid var(--border-soft)', cursor: 'pointer',
+          }}>
             <Filter size={14} /> More filters
           </button>
-          <button
-            onClick={handleSort}
-            style={{
-              height: 32, padding: '0 10px', borderRadius: 9,
-              display: 'flex', alignItems: 'center', gap: 6,
-              fontSize: 13, background: 'transparent',
-              color: 'var(--fg-muted)', border: 'none', cursor: 'pointer',
-            }}>
-            <ArrowUpDown size={14} /> Sort: {sortField} {sortDir === 'asc' ? '↑' : '↓'}
+          <button style={{
+            height: 32, padding: '0 10px', borderRadius: 9,
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 13, background: 'transparent',
+            color: 'var(--fg-muted)', border: 'none', cursor: 'pointer',
+          }}>
+            <ArrowUpDown size={14} /> Sort
           </button>
         </div>
-
-        {/* Expanded filter row */}
-        {showFilters && (
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: 10, padding: '12px 22px',
-            borderBottom: '1px solid var(--border-faint)',
-            background: 'var(--bg-surface-2)',
-            animation: 'fadeIn 140ms ease',
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>Year level</label>
-              <select
-                value={filterYear}
-                onChange={(e) => setFilterYear(e.target.value)}
-                style={{ height: 32, padding: '0 10px', borderRadius: 8, fontSize: 13, border: '1px solid var(--border-soft)', background: 'var(--bg-surface)', color: 'var(--fg-default)', cursor: 'pointer' }}
-              >
-                <option value="">All years</option>
-                {['Year 3','Year 4','Year 5','Year 6','Year 7','Year 8','Year 9','Year 10','Year 11','Year 12','Year 12+'].map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>Class</label>
-              <input
-                type="text"
-                placeholder="Filter by class…"
-                value={filterClass}
-                onChange={(e) => setFilterClass(e.target.value)}
-                style={{ height: 32, padding: '0 10px', borderRadius: 8, fontSize: 13, border: '1px solid var(--border-soft)', background: 'var(--bg-surface)', color: 'var(--fg-default)', outline: 'none', minWidth: 160 }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>Status</label>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                style={{ height: 32, padding: '0 10px', borderRadius: 8, fontSize: 13, border: '1px solid var(--border-soft)', background: 'var(--bg-surface)', color: 'var(--fg-default)', cursor: 'pointer' }}
-              >
-                <option value="">Any status</option>
-                <option value="active">Active</option>
-                <option value="trial">Trial</option>
-                <option value="paused">Paused</option>
-                <option value="at-risk">At risk</option>
-              </select>
-            </div>
-            {(filterYear || filterClass || filterStatus) && (
-              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <button
-                  onClick={() => { setFilterYear(''); setFilterClass(''); setFilterStatus(''); }}
-                  style={{ height: 32, padding: '0 10px', borderRadius: 8, fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: 'var(--fg-muted)', border: '1px solid var(--border-soft)', cursor: 'pointer' }}
-                >
-                  <X size={12} /> Clear
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Table */}
         <div style={{ overflowX: 'auto' }}>
@@ -476,7 +390,7 @@ const StudentsPage: React.FC = () => {
                 borderBottom: '1px solid var(--border-faint)',
                 position: 'sticky', top: 0,
               }}>
-                {['Student', 'Year & class', 'Parent', 'Progress', 'Status', 'Last seen', ''].map((h) => (
+                {['Student', 'Year & class', 'Parent', 'Progress', 'Status', 'Last seen', '', ''].map((h) => (
                   <th key={h} style={{
                     padding: '12px 22px',
                     textAlign: 'left',
@@ -493,14 +407,14 @@ const StudentsPage: React.FC = () => {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={7} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+                  <td colSpan={8} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
                     Loading students…
                   </td>
                 </tr>
               )}
               {error && !loading && (
                 <tr>
-                  <td colSpan={7} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>
+                  <td colSpan={8} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>
                     {error}
                   </td>
                 </tr>
@@ -593,6 +507,23 @@ const StudentsPage: React.FC = () => {
                         <MoreHorizontal size={16} />
                       </button>
                     </td>
+                    {/* Delete */}
+                    <td style={{ padding: '14px 22px' }} onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => setDeleteTarget({ id: s.id as number, name: s.name })}
+                        title="Delete student"
+                        style={{
+                          width: 28, height: 28, borderRadius: 6,
+                          display: 'grid', placeItems: 'center',
+                          color: 'var(--fg-muted)', background: 'transparent', border: 'none', cursor: 'pointer',
+                          transition: 'background 140ms ease, color 140ms ease',
+                        }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'color-mix(in oklab, var(--danger) 12%, transparent)'; (e.currentTarget as HTMLElement).style.color = 'var(--danger)'; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)'; }}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -613,12 +544,20 @@ const StudentsPage: React.FC = () => {
               {filtered.length}
             </span>{' '}
             of{' '}
-            <span style={{ fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>{displayStudents.length}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>142</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 13, color: 'var(--fg-muted)' }}>
-              {filtered.length} result{filtered.length !== 1 ? 's' : ''}
-            </span>
+            <button style={{
+              height: 28, padding: '0 10px', borderRadius: 7,
+              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
+              border: 'none', cursor: 'pointer',
+            }}>‹</button>
+            <span style={{ fontSize: 13, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>1 / 18</span>
+            <button style={{
+              height: 28, padding: '0 10px', borderRadius: 7,
+              fontSize: 13, background: 'transparent', color: 'var(--fg-muted)',
+              border: 'none', cursor: 'pointer',
+            }}>›</button>
           </div>
         </div>
       </div>
@@ -629,6 +568,28 @@ const StudentsPage: React.FC = () => {
           onClose={() => setShowAddModal(false)}
           onCreated={() => { load(); }}
         />
+      )}
+
+      {/* Delete confirmation modal */}
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete student"
+        description={
+          deleteTarget
+            ? <>Are you sure you want to permanently delete <strong>{deleteTarget.name}</strong>? This will remove their account and all associated records.</>
+            : null
+        }
+        confirmLabel="Delete student"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => { setDeleteTarget(null); setDeleteError(null); }}
+      />
+
+      {/* Inline error after failed delete */}
+      {deleteError && (
+        <div style={{ padding: '12px 16px', borderRadius: 9, background: 'color-mix(in oklab, var(--danger) 10%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)', color: 'var(--danger)', fontSize: 13 }}>
+          {deleteError}
+        </div>
       )}
     </div>
   );

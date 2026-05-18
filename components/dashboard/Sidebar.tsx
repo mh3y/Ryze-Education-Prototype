@@ -16,7 +16,7 @@ import {
   ClipboardList, FolderOpen,
   CreditCard, DollarSign,
   Megaphone, Activity, Settings,
-  LogOut,
+  LogOut, FileText,
 } from 'lucide-react';
 
 import { useDashboardCustomization } from '../../contexts/DashboardCustomizationContext';
@@ -83,6 +83,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
       group: 'System',
       items: [
         { label: 'Announcements',     path: '/dashboard/admin/announcements', icon: Megaphone },
+        { label: 'Audit log',         path: '/dashboard/admin/audit-log',    icon: FileText },
         { label: 'Bot health',        path: '/dashboard/admin/bot-health',   icon: Activity },
         { label: 'Settings',          path: '/dashboard/settings',           icon: Settings },
       ],
