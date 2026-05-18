@@ -85,7 +85,7 @@ const StatTile: React.FC<StatTileProps> = ({ label, value, deltaText, deltaDir, 
     <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>
       {label}
     </div>
-    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
+    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
       {value}
     </div>
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
@@ -207,7 +207,7 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string }> = ({ fi
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>
               Good {getGreeting()}, <span style={{ color: 'var(--accent)' }}>{firstName}</span>.
             </h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0', lineHeight: 1.55 }}>
@@ -348,7 +348,7 @@ const TutorClassesPage: React.FC = () => {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>My teaching</div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Classes</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Classes</h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Three recurring classes this term. Click any class to open the roster, attendance and homework tools.</p>
           </div>
           <button style={btnGhost}><CalendarDays size={14} /> Week view</button>
@@ -370,7 +370,7 @@ const TutorClassesPage: React.FC = () => {
               </div>
               <Tag variant="ok">Running</Tag>
             </div>
-            <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 26, color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6 }}>{c.name}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 26, color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6 }}>{c.name}</div>
             <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 18 }}>{c.level}</div>
             <div style={{ height: 1, background: 'var(--border-faint)', marginBottom: 18 }} />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
@@ -418,7 +418,7 @@ const TutorAttendancePage: React.FC = () => {
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Attendance</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Attendance</h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Foundations · Year 10 — mark who's in the room.</p>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -516,7 +516,7 @@ const TutorHomeworkPage: React.FC = () => {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Across your classes</div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Homework</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Homework</h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Assignments you've set, ordered by due date. Drill in to grade or send a reminder.</p>
           </div>
           <button style={btnPrimary}><Plus size={14} /> New homework</button>

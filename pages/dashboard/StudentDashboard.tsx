@@ -55,7 +55,7 @@ const StatTile: React.FC<StatTileProps> = ({ label, value, deltaText, deltaDir, 
     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
   >
     <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
-    <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>{value}</div>
+    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>{value}</div>
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
       {deltaText ? (
         <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
@@ -108,7 +108,7 @@ const StudentDashboard: React.FC = () => {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Year 12 — HSC</div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div>
-            <h1 style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>
               Hey, <span style={{ color: 'var(--accent)' }}>{firstName}</span>.
             </h1>
             <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0', lineHeight: 1.55 }}>
@@ -131,7 +131,7 @@ const StudentDashboard: React.FC = () => {
         {/* Up next hero card */}
         <div style={{ ...cardStyle, background: 'linear-gradient(135deg, color-mix(in oklab, var(--accent) 8%, var(--bg-surface)), var(--bg-surface))', display: 'flex', flexDirection: 'column', gap: 0 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent)' }}>Up next · in 4h 12m</div>
-          <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 36, color: 'var(--fg-strong)', marginTop: 10, lineHeight: 1.1 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 36, color: 'var(--fg-strong)', marginTop: 10, lineHeight: 1.1 }}>
             Inverse trig differentiation
           </div>
           <div style={{ color: 'var(--fg-muted)', marginTop: 10, fontSize: 14 }}>
@@ -162,7 +162,7 @@ const StudentDashboard: React.FC = () => {
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>{c.tutor}</div>
               <Tag variant="accent">Next · {c.next}</Tag>
             </div>
-            <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 28, color: 'var(--fg-strong)', lineHeight: 1.1, letterSpacing: '-0.015em' }}>{c.name}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 28, color: 'var(--fg-strong)', lineHeight: 1.1, letterSpacing: '-0.015em' }}>{c.name}</div>
             <div style={{ fontSize: 13, color: 'var(--fg-muted)' }}>Currently studying · <strong style={{ color: 'var(--fg-strong)', fontWeight: 600 }}>{c.topic}</strong></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
               <div style={{ flex: 1, height: 6, borderRadius: 999, background: 'var(--bg-surface-2)', border: '1px solid var(--border-faint)', overflow: 'hidden' }}>
@@ -216,7 +216,7 @@ const StudentDashboard: React.FC = () => {
         <div style={cardStyle}>
           <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 4 }}>Streak</div>
           <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginBottom: 16 }}>You're on a 12-week roll. Don't stop now.</div>
-          <div style={{ fontFamily: '"Cormorant Garamond","Times New Roman",serif', fontStyle: 'italic', fontWeight: 500, fontSize: 64, color: 'var(--accent)', letterSpacing: '-0.025em', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>12</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 64, color: 'var(--accent)', letterSpacing: '-0.025em', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>12</div>
           <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginTop: 4 }}>weeks attended in a row</div>
 
           <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0' }} />

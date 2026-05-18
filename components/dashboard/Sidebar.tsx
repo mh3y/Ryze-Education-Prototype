@@ -272,7 +272,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               color: 'var(--accent-ink)',
               display: 'grid',
               placeItems: 'center',
-              fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+              fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontWeight: 700,
               fontSize: 22,
@@ -294,7 +294,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }}
           >
             <div style={{
-              fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
+              fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontWeight: 500,
               fontSize: 22,
