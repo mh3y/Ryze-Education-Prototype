@@ -1,17 +1,11 @@
 /**
- * ConfirmDeleteModal — generic destructive-action confirmation dialog.
+ * ConfirmDeleteModal — destructive-action confirmation dialog.
  *
- * Props:
- *   open        – controls visibility
- *   title       – modal heading (e.g. "Delete student")
- *   description – what will be deleted and consequences
- *   confirmLabel – label for the destructive button (default "Delete")
- *   loading     – shows spinner on confirm button while in flight
- *   onConfirm   – called when admin clicks the destructive button
- *   onCancel    – called when admin dismisses
+ * Requires the admin to type "CONFIRM" before the delete button is enabled.
+ * This prevents accidental deletions and ensures intent is explicit.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 interface Props {
@@ -24,6 +18,8 @@ interface Props {
   onCancel: () => void;
 }
 
+const CONFIRM_PHRASE = 'CONFIRM';
+
 const ConfirmDeleteModal: React.FC<Props> = ({
   open,
   title,
@@ -34,11 +30,14 @@ const ConfirmDeleteModal: React.FC<Props> = ({
   onCancel,
 }) => {
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const inputRef   = useRef<HTMLInputElement>(null);
+  const [typed, setTyped] = useState('');
 
-  // Focus the cancel button (safer default) when modal opens
+  // Reset text and focus input whenever modal opens
   useEffect(() => {
+    setTyped('');
     if (open) {
-      const t = setTimeout(() => confirmRef.current?.focus(), 60);
+      const t = setTimeout(() => inputRef.current?.focus(), 80);
       return () => clearTimeout(t);
     }
   }, [open]);
@@ -51,6 +50,9 @@ const ConfirmDeleteModal: React.FC<Props> = ({
     return () => document.removeEventListener('keydown', handler);
   }, [open, onCancel]);
 
+  const canConfirm = typed === CONFIRM_PHRASE;
+  const isDisabled = loading || !canConfirm;
+
   if (!open) return null;
 
   return (
@@ -62,9 +64,8 @@ const ConfirmDeleteModal: React.FC<Props> = ({
         position: 'fixed', inset: 0, zIndex: 9999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 20,
-        background: 'rgba(0,0,0,0.55)',
+        background: 'rgba(0,0,0,0.6)',
         backdropFilter: 'blur(6px)',
-        animation: 'overlay-in 160ms ease',
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
     >
@@ -75,16 +76,14 @@ const ConfirmDeleteModal: React.FC<Props> = ({
           borderRadius: 'var(--radius-card, 16px)',
           boxShadow: '0 24px 64px -12px rgba(0,0,0,0.6)',
           width: '100%',
-          maxWidth: 440,
+          maxWidth: 460,
           overflow: 'hidden',
-          animation: 'modal-in 200ms cubic-bezier(0.34,1.56,0.64,1)',
         }}
       >
         {/* Header */}
         <div style={{
           display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-          padding: '22px 24px 0',
-          gap: 16,
+          padding: '22px 24px 0', gap: 16,
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
             <div style={{
@@ -107,6 +106,7 @@ const ConfirmDeleteModal: React.FC<Props> = ({
           </div>
           <button
             onClick={onCancel}
+            aria-label="Close"
             style={{
               width: 28, height: 28, display: 'flex', alignItems: 'center',
               justifyContent: 'center', borderRadius: 7, border: 'none',
@@ -126,15 +126,55 @@ const ConfirmDeleteModal: React.FC<Props> = ({
         {/* Warning note */}
         <div style={{
           margin: '16px 24px 0',
-          padding: '10px 14px',
-          borderRadius: 8,
+          padding: '10px 14px', borderRadius: 8,
           background: 'color-mix(in oklab, var(--danger) 6%, transparent)',
           border: '1px solid color-mix(in oklab, var(--danger) 18%, transparent)',
-          fontSize: 12.5,
-          color: 'var(--danger)',
-          lineHeight: 1.5,
+          fontSize: 12.5, color: 'var(--danger)', lineHeight: 1.5,
         }}>
-          ⚠ This action will be recorded in the audit log and cannot be undone.
+          ⚠ This action is permanent and will be recorded in the audit log.
+        </div>
+
+        {/* CONFIRM text gate */}
+        <div style={{ padding: '16px 24px 0' }}>
+          <label
+            htmlFor="confirm-delete-input"
+            style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--fg-muted)', marginBottom: 7 }}
+          >
+            Type{' '}
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 11.5,
+              background: 'var(--bg-surface-2)',
+              border: '1px solid var(--border-soft)',
+              padding: '1px 6px', borderRadius: 4,
+              color: 'var(--fg-strong)', letterSpacing: '0.06em',
+            }}>
+              CONFIRM
+            </span>
+            {' '}to proceed
+          </label>
+          <input
+            id="confirm-delete-input"
+            ref={inputRef}
+            value={typed}
+            onChange={(e) => setTyped(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && canConfirm && !isDisabled) onConfirm(); }}
+            placeholder="CONFIRM"
+            autoComplete="off"
+            spellCheck={false}
+            style={{
+              width: '100%', padding: '9px 12px',
+              background: 'var(--bg-surface-2)',
+              border: `1px solid ${canConfirm
+                ? 'color-mix(in oklab, var(--danger) 50%, transparent)'
+                : 'var(--border-soft)'}`,
+              borderRadius: 8, fontSize: 13,
+              color: 'var(--fg-default)', outline: 'none',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.06em',
+              boxSizing: 'border-box',
+              transition: 'border-color 140ms ease',
+            }}
+          />
         </div>
 
         {/* Footer */}
@@ -157,14 +197,16 @@ const ConfirmDeleteModal: React.FC<Props> = ({
           <button
             ref={confirmRef}
             onClick={onConfirm}
-            disabled={loading}
+            disabled={isDisabled}
+            title={canConfirm ? undefined : 'Type CONFIRM to enable this button'}
             style={{
               height: 36, padding: '0 16px', borderRadius: 'var(--radius-btn, 9px)',
               fontSize: 13, fontWeight: 600, border: 'none',
               background: 'var(--danger)', color: '#fff',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+              opacity: isDisabled ? 0.45 : 1,
               display: 'flex', alignItems: 'center', gap: 8,
+              transition: 'opacity 140ms ease',
             }}
           >
             {loading && (

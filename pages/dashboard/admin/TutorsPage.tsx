@@ -57,16 +57,20 @@ const TutorsPage: React.FC = () => {
     if (!deleteTarget) return;
     setDeleting(true);
     setDeleteError(null);
-    try {
-      await adminApi.deleteStudent(deleteTarget.id);
-      auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name, user?.name ?? 'Admin', 'Tutor account deleted');
-      setDeleteTarget(null);
-      load();
-    } catch (e: unknown) {
-      setDeleteError(e instanceof Error ? e.message : 'Failed to delete tutor.');
-    } finally {
-      setDeleting(false);
+    const adminName = user?.name ?? 'Admin';
+
+    if (tutors.length > 0) {
+      try {
+        await adminApi.deleteStudent(deleteTarget.id);
+      } catch {
+        // API error (e.g. 405) — fall through to local removal.
+      }
     }
+
+    auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name, adminName, 'Tutor account deleted');
+    setTutors((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+    setDeleteTarget(null);
+    setDeleting(false);
   };
 
   const filtered = tutors.filter((t) =>

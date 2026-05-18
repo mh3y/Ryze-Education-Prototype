@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserPlus, Copy, Check, X, AlertCircle } from 'lucide-react';
 import { adminApi, ParentListItem } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   PageHeader, SearchInput, DataTable, Column,
   StatusBadge, EmptyState, LoadingState, ErrorState,
@@ -184,6 +186,7 @@ const InviteBanner: React.FC<{ link: string; name: string; onClose: () => void }
 
 const ParentsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [items, setItems]     = useState<ParentListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -208,6 +211,7 @@ const ParentsPage: React.FC = () => {
   useEffect(() => { load(); }, [load]);
 
   const handleCreated = (inviteLink: string, parentName: string) => {
+    auditLog.log('create', 'parent', 'new', parentName, user?.name ?? 'Admin', 'Parent account created, invite link generated');
     setShowCreate(false);
     setInviteBanner({ link: inviteLink, name: parentName });
     load();

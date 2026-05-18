@@ -34,6 +34,8 @@ const ACTION_COLOUR: Record<AuditAction, string> = {
   withdraw:   '#c89e2b',
   publish:    '#4f9b6a',
   archive:    '#8a8b8e',
+  resolve:    '#4f9b6a',
+  cancel:     '#c25450',
 };
 
 const ACTION_LABEL: Record<AuditAction, string> = {
@@ -45,6 +47,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   withdraw:   'Withdrawn',
   publish:    'Published',
   archive:    'Archived',
+  resolve:    'Resolved',
+  cancel:     'Cancelled',
 };
 
 const ENTITY_LABEL: Record<AuditEntityType, string> = {
@@ -57,6 +61,7 @@ const ENTITY_LABEL: Record<AuditEntityType, string> = {
   announcement: 'Announcement',
   resource:     'Resource',
   homework:     'Homework',
+  alert:        'Alert',
 };
 
 // ---------------------------------------------------------------------------

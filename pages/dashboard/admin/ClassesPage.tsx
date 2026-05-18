@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, Plus, ArrowUpRight, X, AlertCircle } from 'lucide-react';
 import { adminApi, ClassGroupListItem } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -65,7 +67,7 @@ const YEAR_LEVELS = [
 
 interface CreateClassModalProps {
   onClose: () => void;
-  onSaved: () => void;
+  onSaved: (name: string) => void;
 }
 
 const CreateClassModal: React.FC<CreateClassModalProps> = ({ onClose, onSaved }) => {
@@ -91,7 +93,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ onClose, onSaved })
         max_capacity: form.max_capacity ? Number(form.max_capacity) : undefined,
         active: true,
       });
-      onSaved();
+      onSaved(form.name.trim());
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to create class.';
       setFormError(msg);
@@ -214,6 +216,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ onClose, onSaved })
 
 const ClassesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [items, setItems]       = useState<ClassGroupListItem[]>([]);
   const [loading, setLoading]   = useState(true);
@@ -435,7 +438,11 @@ const ClassesPage: React.FC = () => {
       {showCreate && (
         <CreateClassModal
           onClose={() => setShowCreate(false)}
-          onSaved={() => { setShowCreate(false); load(); }}
+          onSaved={(name) => {
+            auditLog.log('create', 'class', 'new', name, user?.name ?? 'Admin', 'Class created');
+            setShowCreate(false);
+            load();
+          }}
         />
       )}
     </div>
