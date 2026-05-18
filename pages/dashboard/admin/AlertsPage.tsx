@@ -11,6 +11,8 @@ import {
   AlertTriangle, Info, Zap,
 } from 'lucide-react';
 import { adminApi, SystemAlert } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   PageHeader, SearchInput, DataTable, Column,
   StatusBadge, EmptyState, LoadingState, ErrorState, ConfirmDialog,
@@ -47,6 +49,7 @@ type AlertStatusFilter = 'open' | 'resolved' | 'dismissed';
 // ---------------------------------------------------------------------------
 
 const AlertsPage: React.FC = () => {
+  const { user } = useAuth();
   const [alerts, setAlerts]           = useState<SystemAlert[]>([]);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
@@ -104,6 +107,7 @@ const AlertsPage: React.FC = () => {
     setActionError(null);
     try {
       await adminApi.resolveAlert(resolveTarget.id);
+      auditLog.log('resolve', 'alert', resolveTarget.id, resolveTarget.title, user?.name ?? 'Admin', 'Alert resolved');
       setResolveTarget(null);
       load();
     } catch (e: any) {
@@ -117,6 +121,7 @@ const AlertsPage: React.FC = () => {
     setActionError(null);
     try {
       await adminApi.dismissAlert(dismissTarget.id);
+      auditLog.log('update', 'alert', dismissTarget.id, dismissTarget.title, user?.name ?? 'Admin', 'Alert dismissed');
       setDismissTarget(null);
       load();
     } catch (e: any) {
@@ -318,6 +323,7 @@ const AlertsPage: React.FC = () => {
         title="Resolve Alert"
         message={`Mark "${resolveTarget?.title}" as resolved? This indicates the underlying issue has been addressed.`}
         confirmLabel="Resolve"
+        confirmText="CONFIRM"
         loading={actionLoading}
         onConfirm={handleResolve}
         onCancel={() => { setResolveTarget(null); setActionError(null); }}
@@ -329,6 +335,7 @@ const AlertsPage: React.FC = () => {
         title="Dismiss Alert"
         message={`Dismiss "${dismissTarget?.title}"? The alert will be hidden but the underlying issue may not be resolved.`}
         confirmLabel="Dismiss"
+        confirmText="CONFIRM"
         loading={actionLoading}
         onConfirm={handleDismiss}
         onCancel={() => { setDismissTarget(null); setActionError(null); }}

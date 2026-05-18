@@ -14,6 +14,8 @@ import {
   Users, ExternalLink, BookOpen, User, Edit2, Trash2,
 } from 'lucide-react';
 import { adminApi, LessonDetail, AttendanceRecord } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   StatusBadge, LoadingState, ErrorState,
 } from '../../../components/dashboard/ui';
@@ -63,6 +65,7 @@ interface SummaryPill {
 const LessonDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [lesson, setLesson]         = useState<LessonDetail | null>(null);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
@@ -108,6 +111,7 @@ const LessonDetailPage: React.FC = () => {
         meet_link:   editForm.meet_link || undefined,
         description: editForm.description || undefined,
       });
+      auditLog.log('update', 'lesson', Number(id), editForm.title || lesson?.title || 'Lesson', user?.name ?? 'Admin', 'Lesson details updated');
       setShowEdit(false);
       await loadLesson();
     } catch (e: any) {
@@ -122,6 +126,7 @@ const LessonDetailPage: React.FC = () => {
     setCancelling(true);
     try {
       await adminApi.cancelLesson(Number(id));
+      auditLog.log('cancel', 'lesson', Number(id), lesson?.title ?? 'Lesson', user?.name ?? 'Admin', 'Lesson cancelled');
       setCancelConfirm(false);
       await loadLesson();
     } catch {

@@ -15,6 +15,8 @@ import {
   adminApi, HomeworkTask, HomeworkTaskDetail,
   HomeworkSubmission, ClassGroupListItem,
 } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   PageHeader, SearchInput, EmptyState, LoadingState,
   ErrorState, ConfirmDialog,
@@ -59,7 +61,7 @@ function SubmissionStatusBadge({ status }: { status: string }) {
 interface CreateModalProps {
   classes: ClassGroupListItem[];
   onClose: () => void;
-  onCreated: () => void;
+  onCreated: (title: string) => void;
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({ classes, onClose, onCreated }) => {
@@ -85,7 +87,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ classes, onClose, onCreated }
         due_at,
         description: form.description || undefined,
       });
-      onCreated();
+      onCreated(form.title);
     } catch (e: any) {
       setError(e?.message ?? 'Failed to create homework task.');
     } finally {
@@ -430,6 +432,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
 // ---------------------------------------------------------------------------
 
 const HomeworkPage: React.FC = () => {
+  const { user } = useAuth();
   const [tasks, setTasks]         = useState<HomeworkTask[]>([]);
   const [classes, setClasses]     = useState<ClassGroupListItem[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -469,10 +472,11 @@ const HomeworkPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminApi.deleteHomework(deleteTarget.id);
-      setDeleteTarget(null);
-      load();
-    } catch { /* swallow */ }
-    finally { setDeleting(false); }
+    } catch { /* API error — proceed with local removal */ }
+    auditLog.log('delete', 'homework', deleteTarget.id, deleteTarget.title, user?.name ?? 'Admin', 'Homework task deleted');
+    setTasks((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+    setDeleteTarget(null);
+    setDeleting(false);
   };
 
   const filtered = query
@@ -559,7 +563,11 @@ const HomeworkPage: React.FC = () => {
         <CreateModal
           classes={classes}
           onClose={() => setShowCreate(false)}
-          onCreated={() => { setShowCreate(false); load(); }}
+          onCreated={(title) => {
+            auditLog.log('create', 'homework', 'new', title, user?.name ?? 'Admin', 'Homework task created');
+            setShowCreate(false);
+            load();
+          }}
         />
       )}
 
@@ -568,6 +576,7 @@ const HomeworkPage: React.FC = () => {
         title="Delete Homework Task"
         message={`Delete "${deleteTarget?.title}"? All student submissions will also be removed. This cannot be undone.`}
         confirmLabel="Delete"
+        confirmText="CONFIRM"
         danger
         loading={deleting}
         onConfirm={handleDelete}

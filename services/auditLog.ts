@@ -13,7 +13,9 @@ export type AuditAction =
   | 'enroll'
   | 'withdraw'
   | 'publish'
-  | 'archive';
+  | 'archive'
+  | 'resolve'
+  | 'cancel';
 
 export type AuditEntityType =
   | 'student'
@@ -24,7 +26,8 @@ export type AuditEntityType =
   | 'payment'
   | 'announcement'
   | 'resource'
-  | 'homework';
+  | 'homework'
+  | 'alert';
 
 export interface AuditEntry {
   id: string;

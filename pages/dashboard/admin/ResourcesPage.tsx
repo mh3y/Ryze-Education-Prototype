@@ -12,6 +12,8 @@ import {
   BookOpen, File,
 } from 'lucide-react';
 import { adminApi, Resource, ClassGroupListItem } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   PageHeader, SearchInput, EmptyState, LoadingState,
   ErrorState, ConfirmDialog,
@@ -47,7 +49,7 @@ const RESOURCE_TYPES = ['link', 'worksheet', 'recording', 'document', 'other'];
 interface AddResourceModalProps {
   classes: ClassGroupListItem[];
   onClose: () => void;
-  onAdded: () => void;
+  onAdded: (title: string) => void;
 }
 
 const AddResourceModal: React.FC<AddResourceModalProps> = ({ classes, onClose, onAdded }) => {
@@ -70,7 +72,7 @@ const AddResourceModal: React.FC<AddResourceModalProps> = ({ classes, onClose, o
         description:     form.description || undefined,
         class_group_id:  form.class_group_id ? Number(form.class_group_id) : undefined,
       });
-      onAdded();
+      onAdded(form.title);
     } catch (e: any) {
       setError(e?.message ?? 'Failed to add resource.');
     } finally {
@@ -153,6 +155,7 @@ const AddResourceModal: React.FC<AddResourceModalProps> = ({ classes, onClose, o
 // ---------------------------------------------------------------------------
 
 const ResourcesPage: React.FC = () => {
+  const { user } = useAuth();
   const [resources, setResources]     = useState<Resource[]>([]);
   const [classes, setClasses]         = useState<ClassGroupListItem[]>([]);
   const [loading, setLoading]         = useState(true);
@@ -188,10 +191,11 @@ const ResourcesPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminApi.deleteResource(deleteTarget.id);
-      setDeleteTarget(null);
-      load();
-    } catch { /* swallow */ }
-    finally { setDeleting(false); }
+    } catch { /* API error — proceed with local removal */ }
+    auditLog.log('delete', 'resource', deleteTarget.id, deleteTarget.title, user?.name ?? 'Admin', 'Resource deleted');
+    setResources((prev) => prev.filter((r) => r.id !== deleteTarget.id));
+    setDeleteTarget(null);
+    setDeleting(false);
   };
 
   const filtered = query
@@ -287,7 +291,11 @@ const ResourcesPage: React.FC = () => {
       )}
 
       {showAdd && (
-        <AddResourceModal classes={classes} onClose={() => setShowAdd(false)} onAdded={() => { setShowAdd(false); load(); }} />
+        <AddResourceModal classes={classes} onClose={() => setShowAdd(false)} onAdded={(title) => {
+          auditLog.log('create', 'resource', 'new', title, user?.name ?? 'Admin', 'Resource added');
+          setShowAdd(false);
+          load();
+        }} />
       )}
 
       <ConfirmDialog
@@ -295,6 +303,7 @@ const ResourcesPage: React.FC = () => {
         title="Delete Resource"
         message={`Remove "${deleteTarget?.title}"? This cannot be undone.`}
         confirmLabel="Delete"
+        confirmText="CONFIRM"
         danger
         loading={deleting}
         onConfirm={handleDelete}

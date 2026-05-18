@@ -11,6 +11,8 @@ import {
   CheckCircle2, Archive, Clock, Eye,
 } from 'lucide-react';
 import { adminApi, Announcement, ClassGroupListItem } from '../../../services/adminApi';
+import { auditLog } from '../../../services/auditLog';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   PageHeader, SearchInput, EmptyState, LoadingState,
   ErrorState, ConfirmDialog,
@@ -59,7 +61,7 @@ function StatusChip({ status }: { status: string }) {
 interface CreateModalProps {
   classes: ClassGroupListItem[];
   onClose: () => void;
-  onCreated: () => void;
+  onCreated: (title: string, published: boolean) => void;
 }
 
 const TARGET_ROLES = ['all', 'student', 'parent', 'tutor', 'admin'];
@@ -94,7 +96,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ classes, onClose, onCreated }
       if (publish) {
         await adminApi.publishAnnouncement(res.id);
       }
-      onCreated();
+      onCreated(form.title, publish);
     } catch (e: any) {
       setError(e?.message ?? 'Failed to create announcement.');
     } finally {
@@ -302,6 +304,7 @@ const PreviewDrawer: React.FC<PreviewDrawerProps> = ({
 // ---------------------------------------------------------------------------
 
 const AnnouncementsPage: React.FC = () => {
+  const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [classes, setClasses]             = useState<ClassGroupListItem[]>([]);
   const [loading, setLoading]             = useState(true);
@@ -342,6 +345,7 @@ const AnnouncementsPage: React.FC = () => {
     setPublishError(null);
     try {
       await adminApi.publishAnnouncement(preview.id);
+      auditLog.log('publish', 'announcement', preview.id, preview.title, user?.name ?? 'Admin', 'Announcement published');
       setPreview(null);
       load();
     } catch (e: any) {
@@ -355,6 +359,7 @@ const AnnouncementsPage: React.FC = () => {
     setArchiveError(null);
     try {
       await adminApi.archiveAnnouncement(archiveTarget.id);
+      auditLog.log('archive', 'announcement', archiveTarget.id, archiveTarget.title, user?.name ?? 'Admin', 'Announcement archived');
       setArchiveTarget(null);
       setPreview(null);
       load();
@@ -492,7 +497,11 @@ const AnnouncementsPage: React.FC = () => {
         <CreateModal
           classes={classes}
           onClose={() => setShowCreate(false)}
-          onCreated={() => { setShowCreate(false); load(); }}
+          onCreated={(title, published) => {
+            auditLog.log(published ? 'publish' : 'create', 'announcement', 'new', title, user?.name ?? 'Admin', published ? 'Announcement created and published' : 'Announcement created as draft');
+            setShowCreate(false);
+            load();
+          }}
         />
       )}
 
