@@ -156,6 +156,11 @@ const DashboardLayoutInner: React.FC = () => {
   return (
     <div
       className="ryze-portal"
+      data-theme={settings.theme}
+      data-density={settings.density}
+      data-font={settings.font}
+      data-motion={settings.motion}
+      data-contrast={settings.contrast}
       style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : `${isSidebarOpen ? '248px' : '72px'} 1fr`,
