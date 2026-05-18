@@ -453,7 +453,7 @@ const IntegrationsSection: React.FC = () => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
       {INTEGRATIONS.map(it => (
         <div key={it.id} style={{ ...cardStyle, padding: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <div style={{ width: 36, height: 36, borderRadius: 9, background: `${it.color}20`, border: `1px solid ${it.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link size={16} style={{ color: it.color }} />
             </div>
