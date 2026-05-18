@@ -175,14 +175,9 @@ const SaveBar: React.FC = () => (
 /* ── Appearance ─────────────────────────────────────────────── */
 
 const AppearanceSection: React.FC = () => {
+  // ALL state is read from PortalSettingsContext and ALL changes call updateSettings().
+  // No isolated useState — that was the root cause of settings being non-functional.
   const { settings, updateSettings } = usePortalSettings();
-  const [theme, setTheme]     = useState('dark');
-  const [accent, setAccent]   = useState('#b8841e');
-  const [sidebar, setSidebar] = useState('expanded');
-  const [density, setDensity] = useState('balanced');
-  const [font, setFont]       = useState('editorial');
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
 
   return (
     <SectionShell title="Appearance" sub="Set how the Ryze console looks for you. Changes apply instantly across the portal.">
@@ -194,19 +189,38 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Theme" hint="The marketing site is warm-white; the console defaults to dark for long sessions.">
-          <Segment value={theme} options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]} onChange={setTheme} />
+          <Segment
+            value={settings.theme}
+            options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]}
+            onChange={(v) => updateSettings({ theme: v as 'dark' | 'light' })}
+          />
         </Row>
         <Row label="Accent colour" hint="Used for active states, primary actions, and brand moments.">
-          <Swatches value={accent} options={ACCENT_SWATCHES} onChange={setAccent} />
+          <Swatches
+            value={settings.accent}
+            options={ACCENT_SWATCHES}
+            onChange={(v) => updateSettings({ accent: v })}
+          />
         </Row>
         <Row label="Sidebar" hint="Wide labels for discovery; rail for power-users on smaller screens.">
-          <Segment value={sidebar} options={[{ value: 'expanded', label: 'Expanded' }, { value: 'rail', label: 'Icon rail' }]} onChange={setSidebar} />
+          <Segment
+            value={settings.sidebarBehavior === 'always-rail' ? 'always-rail' : 'always-open'}
+            options={[{ value: 'always-open', label: 'Expanded' }, { value: 'always-rail', label: 'Icon rail' }]}
+            onChange={(v) => updateSettings({ sidebarBehavior: v as 'always-open' | 'always-rail' })}
+          />
         </Row>
         <Row label="Density" hint="Affects row heights, card padding, and the page gutter.">
-          <Segment value={density} options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]} onChange={setDensity} />
+          <Segment
+            value={settings.density}
+            options={[{ value: 'airy', label: 'Airy' }, { value: 'balanced', label: 'Balanced' }, { value: 'dense', label: 'Dense' }]}
+            onChange={(v) => updateSettings({ density: v as 'airy' | 'balanced' | 'dense' })}
+          />
         </Row>
         <Row label="Typography" hint="Display headings use the chosen serif; body text stays Manrope unless you pick Modern SaaS." full>
-          <FontPicker value={font} onChange={setFont} />
+          <FontPicker
+            value={settings.font}
+            onChange={(v) => updateSettings({ font: v as 'editorial' | 'modern' | 'instrument' })}
+          />
         </Row>
       </div>
 
@@ -218,10 +232,16 @@ const AppearanceSection: React.FC = () => {
           </div>
         </div>
         <Row label="Reduce motion" hint="Disables decorative animation like the live-lesson pulse.">
-          <Toggle value={reduceMotion} onChange={setReduceMotion} />
+          <Toggle
+            value={settings.motion === 'reduced'}
+            onChange={(v) => updateSettings({ motion: v ? 'reduced' : 'full' })}
+          />
         </Row>
         <Row label="High contrast" hint="Bumps body text and borders for clearer separation.">
-          <Toggle value={highContrast} onChange={setHighContrast} />
+          <Toggle
+            value={settings.contrast === 'high'}
+            onChange={(v) => updateSettings({ contrast: v ? 'high' : 'normal' })}
+          />
         </Row>
         <Row label="Tabular numerals everywhere" hint="Align numbers across columns automatically.">
           <Toggle
