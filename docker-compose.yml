@@ -1,0 +1,44 @@
+services:
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: "8000"
+      DATABASE_URL: "file:/data/ryze-portal.db"
+      JWT_SECRET: "${JWT_SECRET:-change-me-in-production}"
+      JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-7d}"
+      PORTAL_BASE_URL: "${PORTAL_BASE_URL:-http://localhost:3000}"
+      CORS_ORIGIN: "${CORS_ORIGIN:-*}"
+      SMTP_HOST: "${SMTP_HOST:-}"
+      SMTP_PORT: "${SMTP_PORT:-587}"
+      SMTP_USER: "${SMTP_USER:-}"
+      SMTP_PASS: "${SMTP_PASS:-}"
+      SMTP_FROM: "${SMTP_FROM:-}"
+      DISCORD_CLIENT_ID: "${DISCORD_CLIENT_ID:-}"
+      DISCORD_CLIENT_SECRET: "${DISCORD_CLIENT_SECRET:-}"
+      DISCORD_REDIRECT_URI: "${DISCORD_REDIRECT_URI:-}"
+    volumes:
+      - api_data:/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_ENABLE_DASHBOARD: "true"
+        VITE_PORTAL_API_URL: ""
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  api_data:
