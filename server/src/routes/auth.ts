@@ -76,22 +76,22 @@ authRouter.post('/discord/callback', async (req, res) => {
     if (!userRes.ok) throw new Error('Discord user fetch failed');
     const du = await userRes.json() as { id: string; username: string; global_name?: string; email?: string };
 
-    let adminUser = await db.adminUser.findUnique({ where: { discord_user_id: du.id } });
-    if (!adminUser) {
-      adminUser = await db.adminUser.create({
+    let user = await db.user.findFirst({ where: { discord_user_id: du.id } });
+    if (!user) {
+      user = await db.user.create({
         data: { discord_user_id: du.id, full_name: du.global_name ?? du.username, email: du.email ?? null, role: 'admin' },
       });
     }
 
     const token = signJwt({
       sub: `discord:${du.id}`,
-      role: adminUser.role as 'admin' | 'tutor',
-      name: adminUser.full_name,
-      email: adminUser.email ?? null,
+      role: user.role as 'admin' | 'tutor' | 'student',
+      name: user.full_name,
+      email: user.email ?? null,
       parent_profile_id: null,
-      user_id: adminUser.id,
+      user_id: user.id,
     });
-    res.json({ access_token: token, token_type: 'bearer', role: adminUser.role, name: adminUser.full_name, user_id: adminUser.id, parent_profile_id: null });
+    res.json({ access_token: token, token_type: 'bearer', role: user.role, name: user.full_name, user_id: user.id, parent_profile_id: null });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'OAuth exchange failed' });
   }
