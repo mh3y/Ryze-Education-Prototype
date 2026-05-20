@@ -200,7 +200,21 @@ const ParentsPage: React.FC = () => {
     setError(null);
     try {
       const data = await adminApi.getParents({ limit: 500 });
-      setItems(data.items);
+      // Defensive filter: the production backend's GET /api/admin/parents
+      // currently returns rows from the generic Discord users table instead of
+      // the parent_profiles table, which means tutors and students can appear
+      // here. Genuine parent records always have `invite_pending` as a boolean
+      // (set when an invite is generated); Discord user records do not. This
+      // guard removes the contaminating rows until the backend is fixed.
+      //
+      // TODO (backend): In bot/api/routes/admin.py, fix the GET /api/admin/parents
+      // route to query the `parent_profiles` table (or equivalent) exclusively,
+      // not the `users`/Discord user table. The query should JOIN or filter so
+      // only users with role='parent' or entries in parent_profiles are returned.
+      const parentRecords = data.items.filter(
+        (item) => typeof item.invite_pending === 'boolean',
+      );
+      setItems(parentRecords);
     } catch (e: any) {
       setError(e?.message ?? 'Failed to load parents.');
     } finally {
