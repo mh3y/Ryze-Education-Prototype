@@ -17,7 +17,7 @@ services:
     rootDir: server
     region: oregon   # Closest free region to AU — Singapore not on free tier
 
-    buildCommand: npm ci && npx prisma generate && npm run build
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
     startCommand: npx prisma db push && node dist/index.js
 
     plan: free
