@@ -73,12 +73,15 @@ progressReportsRouter.get('/:id', async (req, res) => {
 // POST /api/admin/progress-reports
 progressReportsRouter.post('/', async (req, res) => {
   try {
-    const { student_user_id, class_id, period, score, grade, strengths, improvements, notes, status, created_by } = req.body as {
+    const { student_user_id, class_id, period, score, grade, strengths, improvements, notes, status } = req.body as {
       student_user_id?: number; class_id?: number; period?: string; score?: number;
       grade?: string; strengths?: string; improvements?: string; notes?: string;
-      status?: string; created_by?: number;
+      status?: string;
     };
     if (!student_user_id) { res.status(400).json({ detail: 'student_user_id is required' }); return; }
+
+    // Always derive created_by from the JWT — never trust the client to supply this.
+    const created_by = req.jwtPayload!.user_id ?? null;
 
     const report = await db.progressReport.create({
       data: {
@@ -91,7 +94,7 @@ progressReportsRouter.post('/', async (req, res) => {
         improvements: improvements ?? null,
         notes: notes ?? null,
         status: (status as any) ?? 'draft',
-        created_by: created_by ?? null,
+        created_by,
         ...(status === 'published' ? { published_at: new Date() } : {}),
       },
     });

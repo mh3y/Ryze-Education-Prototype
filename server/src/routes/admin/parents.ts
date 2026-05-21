@@ -28,81 +28,93 @@ function makeInviteLink(token: string): string {
 
 // GET /api/admin/parents
 parentsRouter.get('/', async (req, res) => {
-  const limit = Math.min(Number(req.query.limit ?? 100), 500);
-  const skip = Number(req.query.skip ?? 0);
-  const [total, items] = await Promise.all([
-    db.parent.count(),
-    db.parent.findMany({ skip, take: limit, orderBy: { created_at: 'desc' } }),
-  ]);
-  res.json({ total, items: items.map(parentToItem) });
+  try {
+    const limit = Math.min(Number(req.query.limit ?? 100), 500);
+    const skip = Number(req.query.skip ?? 0);
+    const [total, items] = await Promise.all([
+      db.parent.count(),
+      db.parent.findMany({ skip, take: limit, orderBy: { created_at: 'desc' } }),
+    ]);
+    res.json({ total, items: items.map(parentToItem) });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
 });
 
 // POST /api/admin/parents
 parentsRouter.post('/', async (req, res) => {
-  const { first_name, last_name, email, phone, notes } = req.body as {
-    first_name?: string; last_name?: string; email?: string; phone?: string; notes?: string;
-  };
-  if (!first_name || !last_name || !email) {
-    res.status(400).json({ detail: 'first_name, last_name, and email are required' }); return;
+  try {
+    const { first_name, last_name, email, phone, notes } = req.body as {
+      first_name?: string; last_name?: string; email?: string; phone?: string; notes?: string;
+    };
+    if (!first_name || !last_name || !email) {
+      res.status(400).json({ detail: 'first_name, last_name, and email are required' }); return;
+    }
+    const existing = await db.parent.findUnique({ where: { email: email.toLowerCase().trim() } });
+    if (existing) { res.status(409).json({ detail: 'A parent with that email already exists' }); return; }
+
+    const invite_token = randomUUID();
+    const invite_expires_at = new Date(Date.now() + 48 * 60 * 60 * 1000);
+
+    const parent = await db.parent.create({
+      data: {
+        first_name: first_name.trim(),
+        last_name: last_name.trim(),
+        email: email.toLowerCase().trim(),
+        phone: phone?.trim() || null,
+        notes: notes?.trim() || null,
+        invite_token,
+        invite_expires_at,
+        invite_pending: true,
+      },
+    });
+
+    const invite_link = makeInviteLink(invite_token);
+    let email_sent = true;
+    await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link)
+      .catch(() => { email_sent = false; });
+
+    res.status(201).json({
+      id: parent.id,
+      full_name: `${parent.first_name} ${parent.last_name}`,
+      invite_link,
+      invite_expires_at: invite_expires_at.toISOString(),
+      email_sent,
+      // When SMTP is not configured, surface a warning so the admin knows to share the link manually.
+      ...(email_sent ? {} : { email_warning: 'SMTP is not configured — the invite link is included in this response. Copy it and share it with the parent manually.' }),
+    });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }
-  const existing = await db.parent.findUnique({ where: { email: email.toLowerCase().trim() } });
-  if (existing) { res.status(409).json({ detail: 'A parent with that email already exists' }); return; }
-
-  const invite_token = randomUUID();
-  const invite_expires_at = new Date(Date.now() + 48 * 60 * 60 * 1000);
-
-  const parent = await db.parent.create({
-    data: {
-      first_name: first_name.trim(),
-      last_name: last_name.trim(),
-      email: email.toLowerCase().trim(),
-      phone: phone?.trim() || null,
-      notes: notes?.trim() || null,
-      invite_token,
-      invite_expires_at,
-      invite_pending: true,
-    },
-  });
-
-  const invite_link = makeInviteLink(invite_token);
-  let email_sent = true;
-  await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link)
-    .catch(() => { email_sent = false; });
-
-  res.status(201).json({
-    id: parent.id,
-    full_name: `${parent.first_name} ${parent.last_name}`,
-    invite_link,
-    invite_expires_at: invite_expires_at.toISOString(),
-    email_sent,
-    // When SMTP is not configured, surface a warning so the admin knows to share the link manually.
-    ...(email_sent ? {} : { email_warning: 'SMTP is not configured — the invite link is included in this response. Copy it and share it with the parent manually.' }),
-  });
 });
 
 // GET /api/admin/parents/:id
 parentsRouter.get('/:id', async (req, res) => {
-  const id = Number(req.params.id);
-  const parent = await db.parent.findUnique({
-    where: { id },
-    include: { children: { include: { student: true } } },
-  });
-  if (!parent) { res.status(404).json({ detail: 'Parent not found' }); return; }
-  res.json({
-    ...parentToItem(parent),
-    first_name: parent.first_name,
-    last_name: parent.last_name,
-    notes: parent.notes ?? null,
-    updated_at: parent.updated_at instanceof Date ? parent.updated_at.toISOString() : parent.updated_at,
-    last_login_at: parent.last_login_at instanceof Date ? parent.last_login_at.toISOString() : null,
-    students: parent.children.map((c: any) => ({
-      link_id: c.id,
-      student_user_id: c.student_id,
-      student_name: c.student.full_name,
-      relationship: c.relationship,
-      is_primary_contact: c.is_primary_contact,
-    })),
-  });
+  try {
+    const id = Number(req.params.id);
+    const parent = await db.parent.findUnique({
+      where: { id },
+      include: { children: { include: { student: true } } },
+    });
+    if (!parent) { res.status(404).json({ detail: 'Parent not found' }); return; }
+    res.json({
+      ...parentToItem(parent),
+      first_name: parent.first_name,
+      last_name: parent.last_name,
+      notes: parent.notes ?? null,
+      updated_at: parent.updated_at instanceof Date ? parent.updated_at.toISOString() : parent.updated_at,
+      last_login_at: parent.last_login_at instanceof Date ? parent.last_login_at.toISOString() : null,
+      students: parent.children.map((c: any) => ({
+        link_id: c.id,
+        student_user_id: c.student_id,
+        student_name: c.student.full_name,
+        relationship: c.relationship,
+        is_primary_contact: c.is_primary_contact,
+      })),
+    });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
 });
 
 // PATCH /api/admin/parents/:id
@@ -119,7 +131,11 @@ parentsRouter.patch('/:id', async (req, res) => {
   try {
     await db.parent.update({ where: { id }, data });
     res.json({ id, updated: true });
-  } catch { res.status(404).json({ detail: 'Parent not found' }); }
+  } catch (e: any) {
+    if (e?.code === 'P2002') res.status(409).json({ detail: 'Email already in use by another parent' });
+    else if (e?.code === 'P2025') res.status(404).json({ detail: 'Parent not found' });
+    else res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
 });
 
 // DELETE /api/admin/parents/:id
@@ -132,17 +148,21 @@ parentsRouter.delete('/:id', async (req, res) => {
 
 // POST /api/admin/parents/:id/resend-invite
 parentsRouter.post('/:id/resend-invite', async (req, res) => {
-  const id = Number(req.params.id);
-  const parent = await db.parent.findUnique({ where: { id } });
-  if (!parent) { res.status(404).json({ detail: 'Parent not found' }); return; }
+  try {
+    const id = Number(req.params.id);
+    const parent = await db.parent.findUnique({ where: { id } });
+    if (!parent) { res.status(404).json({ detail: 'Parent not found' }); return; }
 
-  const invite_token = randomUUID();
-  const invite_expires_at = new Date(Date.now() + 48 * 60 * 60 * 1000);
-  await db.parent.update({ where: { id }, data: { invite_token, invite_expires_at, invite_pending: true } });
+    const invite_token = randomUUID();
+    const invite_expires_at = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    await db.parent.update({ where: { id }, data: { invite_token, invite_expires_at, invite_pending: true } });
 
-  const invite_link = makeInviteLink(invite_token);
-  await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link).catch(() => {});
-  res.json({ invite_link, invite_expires_at: invite_expires_at.toISOString() });
+    const invite_link = makeInviteLink(invite_token);
+    await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link).catch(() => {});
+    res.json({ invite_link, invite_expires_at: invite_expires_at.toISOString() });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
 });
 
 // POST /api/admin/parents/:id/students

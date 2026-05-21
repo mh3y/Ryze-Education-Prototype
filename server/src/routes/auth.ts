@@ -62,6 +62,12 @@ authRouter.get('/discord/url', (_req, res) => {
   const clientId    = process.env.DISCORD_CLIENT_ID;
   const redirectUri = process.env.DISCORD_REDIRECT_URI ?? 'http://localhost:3000/auth/discord/callback';
   if (!clientId) {
+    // In production DISCORD_CLIENT_ID is required (checked at startup).
+    // Dev stub: return a local callback URL with a fake code for local testing.
+    if (process.env.NODE_ENV === 'production') {
+      res.status(501).json({ detail: 'Discord OAuth not configured. Set DISCORD_CLIENT_ID.' });
+      return;
+    }
     res.json({ url: `${redirectUri}?code=dev_admin` });
     return;
   }

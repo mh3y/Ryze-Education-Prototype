@@ -53,6 +53,7 @@ enum HomeworkStatus {
   submitted
   marked
   late
+  missing
 }
 
 enum PaymentFrequency {

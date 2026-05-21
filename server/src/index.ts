@@ -13,7 +13,16 @@ process.on('unhandledRejection', (reason) => {
 (function validateEnv() {
   const IS_PROD = process.env.NODE_ENV === 'production';
 
-  const REQUIRED_IN_PROD = ['DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGIN', 'PORTAL_BASE_URL'];
+  const REQUIRED_IN_PROD = [
+    'DATABASE_URL',
+    'DATABASE_DIRECT_URL',
+    'JWT_SECRET',
+    'CORS_ORIGIN',
+    'PORTAL_BASE_URL',
+    'DISCORD_CLIENT_ID',
+    'DISCORD_CLIENT_SECRET',
+    'DISCORD_REDIRECT_URI',
+  ];
   const INSECURE_DEFAULTS: Record<string, string> = {
     JWT_SECRET: 'ryze-dev-secret-change-in-production',
   };
