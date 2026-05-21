@@ -1,6 +1,6 @@
 // ============================================================================
 // Ryze Education — Production Database Schema
-// Provider: PostgreSQL (Railway / Supabase)
+// Provider: PostgreSQL (Supabase, ap-southeast-2 Sydney)
 //
 // Architecture: Dashboard is source of truth. Discord is an output layer only.
 // ============================================================================
@@ -12,7 +12,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_DIRECT_URL")  // for migrations; same as DATABASE_URL on Railway
+  directUrl = env("DATABASE_DIRECT_URL")  // direct (non-pooled) connection — required for prisma db push / migrations
 }
 
 // ============================================================================
