@@ -1,11 +1,12 @@
 /**
  * adminApi.ts — typed client for the /api/admin/* endpoints.
  *
- * All requests send the stored JWT as a Bearer token (via getToken()).
- * Mirror the Pydantic schemas in bot/api/routes/admin.py.
+ * Authentication is handled via httpOnly cookies (ryze_token).
+ * The browser sends them automatically; portalFetch adds credentials:'include'
+ * for the dev proxy and handles silent token refresh on 401.
  */
 
-import { getToken } from './auth';
+import { portalFetch } from './auth';
 
 const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
 
@@ -13,48 +14,24 @@ const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
 // Internal fetch helpers
 // ---------------------------------------------------------------------------
 
-async function adminFetch<T>(
-  path: string,
-  options: RequestInit = {},
-  params?: Record<string, string | number | boolean | undefined>,
-): Promise<T> {
+function buildUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
   const url = new URL(`${BASE_URL}/api/admin${path}`, window.location.origin);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
     });
   }
-
-  const token = getToken();
-  const res = await fetch(url.toString(), {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers ?? {}),
-    },
-  });
-
-  if (!res.ok) {
-    let detail = res.statusText;
-    try {
-      const data = await res.json();
-      detail = data.detail ?? detail;
-    } catch { /* ignore */ }
-    throw new Error(detail);
-  }
-
-  // 204 No Content (e.g. DELETE endpoints) — return undefined rather than
-  // calling res.json() on an empty body, which would throw a parse error.
-  if (res.status === 204) return undefined as unknown as T;
-
-  return res.json() as Promise<T>;
+  return url.toString();
 }
 
-const get  = <T>(path: string, params?: Record<string, any>): Promise<T> => adminFetch(path, { method: 'GET' }, params);
-const post = <T>(path: string, body: unknown):  Promise<T> => adminFetch(path, { method: 'POST',  body: JSON.stringify(body) });
-const patch = <T>(path: string, body: unknown): Promise<T> => adminFetch(path, { method: 'PATCH', body: JSON.stringify(body) });
-const del   = <T>(path: string): Promise<T>                 => adminFetch(path, { method: 'DELETE' });
+const get   = <T>(path: string, params?: Record<string, any>): Promise<T> =>
+  portalFetch(buildUrl(path, params), { method: 'GET' });
+const post  = <T>(path: string, body: unknown): Promise<T> =>
+  portalFetch(buildUrl(path), { method: 'POST',   body: JSON.stringify(body) });
+const patch = <T>(path: string, body: unknown): Promise<T> =>
+  portalFetch(buildUrl(path), { method: 'PATCH',  body: JSON.stringify(body) });
+const del   = <T>(path: string): Promise<T> =>
+  portalFetch(buildUrl(path), { method: 'DELETE' });
 
 // ---------------------------------------------------------------------------
 // Types
@@ -89,6 +66,29 @@ export interface ParentDetail extends ParentListItem {
   }[];
 }
 
+// Tutors
+export interface TutorListItem {
+  id: number;
+  discord_user_id: number | null;
+  full_name: string;
+  email: string | null;
+  role: string;
+  active: boolean;
+  created_at: string;
+  class_count: number;
+  subjects: string | null;
+  hourly_rate: number | null;
+  bio: string | null;
+}
+
+export interface TutorDetail extends TutorListItem {
+  classes: {
+    class_id: number;
+    class_name: string;
+    subject: string | null;
+  }[];
+}
+
 // Students
 export interface StudentListItem {
   id: number;
@@ -103,7 +103,7 @@ export interface StudentListItem {
 
 export interface StudentDetail {
   id: number;
-  discord_user_id: number;
+  discord_user_id: string | null;
   full_name: string;
   email: string | null;
   role: string;
@@ -116,18 +116,18 @@ export interface StudentDetail {
     notes: string | null;
   } | null;
   classes: {
-    class_group_id: number;
+    class_id: number;        // ClassEnrollment.class_id
     class_name: string;
-    enrollment_status: string;
-    start_date: string | null;
-    end_date: string | null;
+    is_trial: boolean;
+    active: boolean;
+    enrolled_at: string;
   }[];
   parents: {
     link_id: number;
-    parent_profile_id: number;
+    parent_id: number;
     parent_name: string;
     parent_email: string;
-    relationship: string | null;
+    relationship: string;
     is_primary_contact: boolean;
   }[];
 }
@@ -135,18 +135,24 @@ export interface StudentDetail {
 // Payments
 export interface StudentPayment {
   id: number;
-  student_user_id: number;
+  student_id: number;
   student_name: string;
-  parent_profile_id: number | null;
-  term: string;
-  amount_due: string;
-  amount_paid: string;
-  amount_remaining: string;
+  term: string | null;
+  description: string;
+  frequency: 'yearly' | 'termly' | 'weekly' | 'custom';
+  installment_number: number | null;
+  total_installments: number | null;
+  amount_due: number;        // dollars (converted from cents)
+  amount_paid: number;       // dollars (converted from cents)
+  amount_remaining: number;  // dollars (computed)
   due_date: string | null;
-  status: string;
-  payment_method: string | null;
   paid_at: string | null;
+  payment_method: string | null;
+  received_by: string | null;
+  reference: string | null;
+  status: 'pending' | 'partial' | 'paid' | 'overdue' | 'waived';
   notes: string | null;
+  created_at: string;
 }
 
 export interface TutorPayment {
@@ -172,19 +178,26 @@ export interface TutorPayment {
 // Progress Reports
 export interface ProgressReport {
   id: number;
-  student_user_id: number;
+  student_id: number;
   student_name: string;
-  lesson_id: number | null;
-  tutor_user_id: number;
-  tutor_name: string;
-  class_group_id: number | null;
+  class_id: number | null;
   class_name: string | null;
-  summary: string | null;
-  status: string;
-  visible_to_parent: boolean;
-  visible_to_student: boolean;
-  submitted_at: string | null;
+  created_by: number | null;
+  tutor_name: string | null;
+  period: string | null;
+  score: number | null;
+  grade: string | null;
+  strengths: string | null;
+  improvements: string | null;
+  notes: string | null;
+  status: string;   // 'draft' | 'published' | 'submitted' | 'approved' — kept as string for forward compat
+  published_at: string | null;
   created_at: string;
+  // Visibility controls (future feature — may be absent from older records)
+  visible_to_parent?: boolean;
+  visible_to_student?: boolean;
+  submitted_at?: string | null;
+  summary?: string | null;
 }
 
 // Alerts
@@ -337,6 +350,22 @@ export interface HomeworkTaskDetail extends HomeworkTask {
   submissions: HomeworkSubmission[];
 }
 
+// Audit log
+export interface AuditLogEntry {
+  id: number;
+  actor_id: number | null;
+  actor_type: string;
+  actor_name: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  entity_name: string | null;
+  old_data: any;
+  new_data: any;
+  ip_address: string | null;
+  created_at: string;
+}
+
 // Overview stats
 export interface AdminOverviewStats {
   total_students: number;
@@ -373,6 +402,66 @@ export const adminApi = {
 
   getOverviewStats(): Promise<AdminOverviewStats> {
     return get('/overview-stats');
+  },
+
+  // ── Tutors ──────────────────────────────────────────────────────────── //
+
+  getTutors(params?: { skip?: number; limit?: number }):
+    Promise<Paginated<TutorListItem>> {
+    return get('/tutors', params);
+  },
+
+  getTutor(id: number): Promise<TutorDetail> {
+    return get(`/tutors/${id}`);
+  },
+
+  createTutor(body: {
+    full_name: string;
+    email?: string;
+    bio?: string;
+    subjects?: string;
+    hourly_rate?: number;
+  }): Promise<{ id: number; full_name: string }> {
+    return post('/tutors', body);
+  },
+
+  updateTutorProfile(id: number, body: Partial<{
+    preferred_name: string;
+    bio: string;
+    subjects: string;
+    hourly_rate: number;
+  }>): Promise<{ updated: boolean }> {
+    return patch(`/tutors/${id}/profile`, body);
+  },
+
+  deactivateTutor(id: number): Promise<{ updated: boolean }> {
+    return patch(`/tutors/${id}/deactivate`, {});
+  },
+
+  deleteTutor(id: number): Promise<void> {
+    return del(`/tutors/${id}`);
+  },
+
+  // ── Audit log ───────────────────────────────────────────────────────── //
+
+  getAuditLog(params?: {
+    actor_id?: number; entity_type?: string; action?: string;
+    skip?: number; limit?: number;
+  }): Promise<Paginated<AuditLogEntry>> {
+    return get('/audit-log', params);
+  },
+
+  postAuditLog(body: {
+    action: string;
+    entity_type: string;
+    entity_id?: string | number;
+    entity_name?: string;
+    actor_name?: string;
+    actor_type?: string;
+    old_data?: unknown;
+    new_data?: unknown;
+  }): Promise<{ id: number }> {
+    return post('/audit-log', body);
   },
 
   // ── Parents ─────────────────────────────────────────────────────────── //
@@ -568,17 +657,39 @@ export const adminApi = {
   },
 
   createStudentPayment(body: {
-    student_user_id: number; parent_profile_id?: number; term: string;
-    amount_due: number; due_date?: string; notes?: string;
+    student_id: number;
+    description: string;
+    amount_cents: number;        // total amount due in cents
+    term?: string;
+    frequency?: 'yearly' | 'termly' | 'weekly' | 'custom';
+    installment_number?: number;
+    total_installments?: number;
+    due_date?: string;
+    notes?: string;
   }): Promise<{ id: number }> {
     return post('/student-payments', body);
   },
 
   updateStudentPayment(id: number, body: Partial<{
-    status: string; amount_paid: number; payment_method: string;
-    paid_at: string; notes: string;
+    status: string;
+    amount_paid_cents: number;   // record a payment receipt (in cents)
+    payment_method: string;
+    received_by: string;
+    reference: string;
+    paid_at: string;
+    notes: string;
   }>): Promise<{ updated: boolean }> {
     return patch(`/student-payments/${id}`, body);
+  },
+
+  /** Mark a payment as fully paid in one action. */
+  markPaymentPaid(id: number, body: {
+    payment_method: string;
+    received_by?: string;
+    reference?: string;
+    notes?: string;
+  }): Promise<{ updated: boolean }> {
+    return patch(`/student-payments/${id}/mark-paid`, body);
   },
 
   getTutorPayments(params?: {
@@ -609,17 +720,41 @@ export const adminApi = {
   // ── Progress Reports ────────────────────────────────────────────────── //
 
   getProgressReports(params?: {
-    student_user_id?: number; tutor_user_id?: number; status?: string;
+    student_id?: number; class_id?: number; status?: string;
     skip?: number; limit?: number;
   }): Promise<Paginated<ProgressReport>> {
     return get('/progress-reports', params);
   },
 
+  createProgressReport(body: {
+    student_id: number;
+    class_id?: number;
+    period?: string;
+    score?: number;
+    grade?: string;
+    strengths?: string;
+    improvements?: string;
+    notes?: string;
+  }): Promise<{ id: number }> {
+    return post('/progress-reports', body);
+  },
+
   updateProgressReport(id: number, body: Partial<{
-    summary: string; status: string;
-    visible_to_parent: boolean; visible_to_student: boolean;
+    period: string;
+    score: number;
+    grade: string;
+    strengths: string;
+    improvements: string;
+    visible_to_parent: boolean;
+    visible_to_student: boolean;
+    notes: string;
+    status: 'draft' | 'published';
   }>): Promise<{ updated: boolean }> {
     return patch(`/progress-reports/${id}`, body);
+  },
+
+  publishProgressReport(id: number): Promise<{ updated: boolean }> {
+    return patch(`/progress-reports/${id}`, { status: 'published' });
   },
 
   // ── Alerts ──────────────────────────────────────────────────────────── //

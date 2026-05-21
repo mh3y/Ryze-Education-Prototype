@@ -196,3 +196,99 @@ lessonsRouter.delete('/:id', async (req, res) => {
   }
 });
 
+// POST /api/admin/lessons/generate — create recurring lessons for a class
+// Body: { class_group_id, title_prefix, start_date, end_date, day_of_week (0-6), hour, minute, duration_min, meet_link? }
+// Skips dates where the tutor has an unavailability record.
+lessonsRouter.post('/generate', async (req, res) => {
+  try {
+    const {
+      class_group_id, title_prefix, start_date, end_date,
+      day_of_week, hour, minute, duration_min, meet_link,
+      // utc_offset_hours: the local timezone offset for this school, e.g. 10 for AEST, 11 for AEDT.
+      // The hour/minute params are interpreted as LOCAL time; this offset converts them to UTC
+      // for storage. Defaults to 10 (AEST). Pass 11 during daylight saving (AEDT).
+      utc_offset_hours,
+    } = req.body as {
+      class_group_id?: number; title_prefix?: string;
+      start_date?: string; end_date?: string; day_of_week?: number;
+      hour?: number; minute?: number; duration_min?: number; meet_link?: string;
+      utc_offset_hours?: number;
+    };
+
+    const tzOffset = utc_offset_hours ?? 10; // Default: AEST (UTC+10)
+
+    if (!class_group_id) { res.status(400).json({ detail: 'class_group_id is required' }); return; }
+    if (!title_prefix)   { res.status(400).json({ detail: 'title_prefix is required' }); return; }
+    if (!start_date)     { res.status(400).json({ detail: 'start_date is required' }); return; }
+    if (!end_date)       { res.status(400).json({ detail: 'end_date is required' }); return; }
+    if (day_of_week === undefined) { res.status(400).json({ detail: 'day_of_week is required (0=Sun … 6=Sat)' }); return; }
+    if (hour === undefined)        { res.status(400).json({ detail: 'hour is required (0–23)' }); return; }
+
+    const cls = await db.classGroup.findUnique({
+      where: { id: class_group_id },
+      include: { tutor: { select: { id: true } } },
+    });
+    if (!cls) { res.status(404).json({ detail: 'Class not found' }); return; }
+
+    // Load tutor unavailability dates for the range
+    const blockedDates = new Set<string>();
+    if (cls.tutor_id) {
+      const unavailability = await db.tutorUnavailability.findMany({
+        where: {
+          tutor_id: cls.tutor_id,
+          date: { gte: new Date(start_date), lte: new Date(end_date) },
+        },
+      });
+      unavailability.forEach((u: any) => {
+        const d = u.date instanceof Date ? u.date : new Date(u.date);
+        blockedDates.add(d.toISOString().slice(0, 10)); // YYYY-MM-DD
+      });
+    }
+
+    // Enumerate all matching days in range
+    const mins     = minute ?? 0;
+    const dur      = duration_min ?? cls.duration_min ?? 60;
+    const start    = new Date(start_date);
+    const end      = new Date(end_date);
+    const lessonData: any[] = [];
+    let lessonNum  = 1;
+
+    const cursor = new Date(start);
+    // Advance to the first occurrence of the correct day of week
+    while (cursor.getDay() !== day_of_week) cursor.setDate(cursor.getDate() + 1);
+
+    while (cursor <= end) {
+      const dateStr = cursor.toISOString().slice(0, 10);
+      if (!blockedDates.has(dateStr)) {
+        // Construct lesson time in UTC: localHour - tzOffset = UTC hour.
+        // e.g. 4pm AEST (UTC+10) → hour=16, tzOffset=10 → UTC 06:00
+        const utcHour = hour - tzOffset;
+        const scheduled = new Date(Date.UTC(
+          cursor.getFullYear(), cursor.getMonth(), cursor.getDate(),
+          utcHour, mins, 0, 0,
+        ));
+        lessonData.push({
+          class_id:     class_group_id,
+          title:        `${title_prefix} — Lesson ${lessonNum}`,
+          scheduled_at: scheduled,
+          duration_min: dur,
+          meet_link:    meet_link ?? null,
+          status:       'scheduled',
+        });
+        lessonNum++;
+      }
+      cursor.setDate(cursor.getDate() + 7); // next weekly occurrence
+    }
+
+    if (!lessonData.length) {
+      res.status(400).json({ detail: 'No lessons would be created — check date range and day_of_week' });
+      return;
+    }
+
+    const result = await db.lesson.createMany({ data: lessonData });
+    res.status(201).json({ created: result.count, lesson_count: lessonNum - 1 });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+

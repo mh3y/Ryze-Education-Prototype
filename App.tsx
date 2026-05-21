@@ -62,6 +62,7 @@ const AnnouncementsPage   = lazy(() => import('./pages/dashboard/admin/Announcem
 const HomeworkPage        = lazy(() => import('./pages/dashboard/admin/HomeworkPage'));
 const AuditLogPage        = lazy(() => import('./pages/dashboard/admin/AuditLogPage'));
 const TutorsPage          = lazy(() => import('./pages/dashboard/admin/TutorsPage'));
+const MessagesPage        = lazy(() => import('./pages/dashboard/admin/MessagesPage'));
 const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
 const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
 // Tutor role pages
@@ -167,13 +168,14 @@ const RouteTracking = () => {
 };
 
 /**
- * AdminGuard — layout route that restricts /dashboard/admin/* to admin and tutor roles.
- * Renders <Outlet /> when authorised, redirects to /dashboard otherwise.
+ * AdminGuard — layout route that restricts /dashboard/admin/* to admin role only.
+ * Tutors use their own role-scoped pages at /dashboard/courses, /dashboard/attendance, etc.
+ * Renders <Outlet /> when authorised, redirects to /dashboard/overview otherwise.
  */
 const AdminGuard: React.FC = () => {
   const { user } = useAuth();
   if (!user) return null; // ProtectedRoute above already handles unauthenticated
-  if (user.role !== 'admin' && user.role !== 'tutor') {
+  if (user.role !== 'admin') {
     return <Navigate to="/dashboard/overview" replace />;
   }
   return <Outlet />;
@@ -442,6 +444,7 @@ const AppContent: React.FC = () => {
               <Route path="announcements"   element={<AnnouncementsPage />} />
               <Route path="tutors"          element={<TutorsPage />} />
               <Route path="audit-log"       element={<AuditLogPage />} />
+              <Route path="messages"        element={<MessagesPage />} />
               {/* Bot / ops routes — admin + tutor only */}
               <Route path="bot-health"  element={<BotHealth />} />
               <Route path="members"     element={<StudentsView />} />
@@ -476,7 +479,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <LanguageProvider>
           <RouteTracking />

@@ -56,7 +56,7 @@ export default async function handler(
     if (eventName === 'Contact' && name && email && phone) {
       const firstName = name.split(' ')[0];
       userData.em = [hashValue(email)];
-      userData.ph = [hashValue(phone.replace(/[\s\-\(\)]/g, ''))];
+      userData.ph = [hashValue(phone.replace(/[\s\-()]/g, ''))];
       userData.fn = [hashValue(firstName)];
     }
 

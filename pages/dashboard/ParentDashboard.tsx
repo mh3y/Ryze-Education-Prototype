@@ -174,7 +174,7 @@ const ParentDashboard: React.FC = () => {
 
   const firstName  = getFirstName(data?.parent.full_name ?? user?.name ?? 'there');
   const children   = data?.children ?? [];
-  const totalOutstanding = children.reduce((sum, c) => sum + c.outstanding_payments.reduce((s, p) => s + p.amount, 0), 0);
+  const totalOutstanding = children.reduce((sum, c) => sum + c.outstanding_payments.reduce((s, p) => s + p.amount_due, 0), 0);
   const nextLessonCount  = children.reduce((sum, c) => sum + c.classes.filter((cl) => cl.next_lesson).length, 0);
 
   return (
@@ -267,11 +267,11 @@ const ParentDashboard: React.FC = () => {
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>{c.student_name}</div>
                     <div style={{ fontSize: 11.5, color: 'var(--fg-muted)', marginTop: 2 }}>
-                      {p.description}{p.due_date ? ` · due ${formatDate(p.due_date)}` : ''}
+                      {p.term}{p.due_date ? ` · due ${formatDate(p.due_date)}` : ''}
                     </div>
                   </div>
                   <div style={{ fontSize: 16, fontWeight: 600, color: p.status === 'overdue' ? 'var(--danger)' : 'var(--fg-strong)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
-                    ${p.amount.toFixed(2)}
+                    ${p.amount_due.toFixed(2)}
                   </div>
                 </div>
               ))

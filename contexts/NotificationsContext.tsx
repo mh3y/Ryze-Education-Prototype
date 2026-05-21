@@ -9,7 +9,7 @@
 import React, {
   createContext, useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
-import { getToken } from '../services/auth';
+import { portalFetch } from '../services/auth';
 
 const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
 const STORAGE_KEY = 'ryze_notifications_read';
@@ -147,24 +147,32 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const token = getToken();
-      const url   = `${BASE_URL}/api/notifications`;
-      const res   = await fetch(new URL(url, window.location.origin).toString(), {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (res.status === 404 || res.status === 405) {
-        // Endpoint not implemented yet — use mock data
-        if (isMounted.current) {
-          setNotifications(buildMockNotifications());
-          setLoading(false);
+      const url = new URL(`${BASE_URL}/api/notifications`, window.location.origin).toString();
+      // Backend returns numeric IDs — normalise to strings for consistent Set membership
+      const raw = await portalFetch<any[]>(url);
+      const notifs: Notification[] = raw.map((n: any) => ({
+        id:         String(n.id),
+        type:       (n.type as NotifType) ?? 'system',
+        title:      n.title  ?? '',
+        body:       n.body   ?? '',
+        created_at: n.created_at,
+        href:       (n.data as any)?.href ?? undefined,
+      }));
+      if (isMounted.current) {
+        setNotifications(notifs);
+        // Pre-populate readSet with IDs already marked read on the server
+        const serverRead = raw.filter((n: any) => n.read).map((n: any) => String(n.id));
+        if (serverRead.length) {
+          setReadSet((prev) => {
+            const next = new Set(prev);
+            serverRead.forEach((id) => next.add(id));
+            saveIds(next);
+            return next;
+          });
         }
-        return;
       }
-      if (!res.ok) throw new Error(res.statusText);
-      const data: Notification[] = await res.json();
-      if (isMounted.current) setNotifications(data);
     } catch {
-      // Network error or endpoint missing — fall back to mock
+      // 404/405/network — fall back to synthesised notifications gracefully
       if (isMounted.current) setNotifications(buildMockNotifications());
     } finally {
       if (isMounted.current) setLoading(false);
@@ -179,12 +187,21 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [fetchNotifications]);
 
   const markRead = useCallback((id: string) => {
+    // Update local state immediately so the UI responds instantly
     setReadSet((prev) => {
       const next = new Set(prev);
       next.add(id);
       saveIds(next);
       return next;
     });
+    // Persist to server for real notifications (mock IDs start with 'mock-')
+    if (!id.startsWith('mock-')) {
+      const url = new URL(`${BASE_URL}/api/notifications/${id}/read`, window.location.origin).toString();
+      portalFetch<{ updated: boolean }>(url, {
+        method: 'PATCH',
+        body: JSON.stringify({ read: true }),
+      }).catch(() => { /* non-fatal — local state already updated */ });
+    }
   }, []);
 
   const markAllRead = useCallback(() => {
@@ -194,6 +211,10 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       saveIds(next);
       return next;
     });
+    // Single batch call to mark all as read on the server
+    const url = new URL(`${BASE_URL}/api/notifications/read-all`, window.location.origin).toString();
+    portalFetch<{ updated: number }>(url, { method: 'PATCH' })
+      .catch(() => { /* non-fatal */ });
   }, [notifications]);
 
   const unreadCount = notifications.filter((n) => !readSet.has(n.id)).length;

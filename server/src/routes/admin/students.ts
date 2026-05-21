@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
-import { requireAdmin } from '../../auth/middleware';
+import { requireAdmin, requireAdminOnly } from '../../auth/middleware';
 
 export const studentsRouter = Router();
 studentsRouter.use(requireAdmin);
@@ -42,8 +42,8 @@ studentsRouter.get('/', async (req, res) => {
   }
 });
 
-// POST /api/admin/students
-studentsRouter.post('/', async (req, res) => {
+// POST /api/admin/students — admin only
+studentsRouter.post('/', requireAdminOnly, async (req, res) => {
   try {
     const { full_name, email, year_level, school, notes } = req.body as {
       full_name?: string; email?: string; year_level?: string; school?: string; notes?: string;
@@ -51,7 +51,7 @@ studentsRouter.post('/', async (req, res) => {
     if (!full_name) { res.status(400).json({ detail: 'full_name is required' }); return; }
 
     const profileData: any = {};
-    if (year_level !== undefined) profileData.year_level = year_level;
+    if (year_level !== undefined) profileData.year_level = String(year_level);
     if (school !== undefined) profileData.school = school;
     if (notes !== undefined) profileData.notes = notes;
     const hasProfile = Object.keys(profileData).length > 0;
@@ -121,7 +121,7 @@ studentsRouter.patch('/:id/profile', async (req, res) => {
     }>;
     const profileData: any = {};
     if (school !== undefined) profileData.school = school;
-    if (year_level !== undefined) profileData.year_level = year_level;
+    if (year_level !== undefined) profileData.year_level = String(year_level);
     if (notes !== undefined) profileData.notes = notes;
 
     // preferred_name lives on the User model
@@ -153,8 +153,8 @@ studentsRouter.patch('/:id/deactivate', async (req, res) => {
   }
 });
 
-// DELETE /api/admin/students/:id
-studentsRouter.delete('/:id', async (req, res) => {
+// DELETE /api/admin/students/:id — admin only
+studentsRouter.delete('/:id', requireAdminOnly, async (req, res) => {
   try {
     await db.user.delete({ where: { id: Number(req.params.id) } });
     res.status(204).send();

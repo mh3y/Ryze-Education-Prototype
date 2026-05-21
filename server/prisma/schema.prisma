@@ -42,6 +42,7 @@ enum AttendanceStatus {
 
 enum PaymentStatus {
   pending
+  partial   // some amount received, not fully paid
   paid
   overdue
   waived
@@ -52,6 +53,13 @@ enum HomeworkStatus {
   submitted
   marked
   late
+}
+
+enum PaymentFrequency {
+  yearly
+  termly
+  weekly
+  custom
 }
 
 // ============================================================================
@@ -89,9 +97,11 @@ model User {
   parent_links     ParentStudent[]
 
   // Authored
-  audit_logs       AuditLog[]     @relation("AuditActor")
-  announcements    Announcement[] @relation("AnnouncementAuthor")
-  notifications    Notification[] @relation("UserNotification")
+  audit_logs          AuditLog[]           @relation("AuditActor")
+  announcements       Announcement[]       @relation("AnnouncementAuthor")
+  notifications       Notification[]       @relation("UserNotification")
+  waitlist_entries    Waitlist[]
+  unavailability      TutorUnavailability[]
 
   @@index([role])
   @@index([discord_user_id])
@@ -119,7 +129,8 @@ model Parent {
   last_login_at     DateTime?
 
   children          ParentStudent[]
-  notifications     Notification[] @relation("ParentNotification")
+  notifications     Notification[]  @relation("ParentNotification")
+  message_threads   MessageThread[]
 
   @@index([email])
 }
@@ -208,6 +219,7 @@ model ClassGroup {
   resources          LessonResource[]
   announcements      Announcement[] @relation("ClassAnnouncement")
   progress_reports   ProgressReport[]
+  waitlist           Waitlist[]
 
   @@index([tutor_id])
   @@index([active])
@@ -223,6 +235,8 @@ model ClassEnrollment {
   class_id    Int
   enrolled_at DateTime   @default(now())
   active      Boolean    @default(true)
+  is_trial    Boolean    @default(false)   // trial lesson before full enrolment
+  trial_at    DateTime?
   notes       String?
   student     User       @relation(fields: [student_id], references: [id], onDelete: Cascade)
   class       ClassGroup @relation(fields: [class_id], references: [id], onDelete: Cascade)
@@ -393,25 +407,31 @@ model ProgressReport {
 // ============================================================================
 
 model StudentPayment {
-  id             Int           @id @default(autoincrement())
-  student_id     Int
-  amount_cents   Int           // store in cents — no float precision issues
-  description    String
-  period         String?       // e.g. "Term 2 2026"
-  due_date       DateTime?
-  paid_at        DateTime?
-  payment_method String?       // cash | bank_transfer | card | eftpos
-  reference      String?       // receipt / transaction ref
-  status         PaymentStatus @default(pending)
-  notes          String?
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
+  id                  Int              @id @default(autoincrement())
+  student_id          Int
+  amount_cents        Int              // total amount DUE (in cents — no float precision issues)
+  amount_paid_cents   Int              @default(0) // amount RECEIVED so far (cents)
+  description         String
+  term                String?          // e.g. "Term 2 2026" | "Week 3" | "Annual 2026"
+  frequency           PaymentFrequency @default(termly) // yearly | termly | weekly | custom
+  installment_number  Int?             // 1-based: which payment in the sequence (e.g. 2 of 4)
+  total_installments  Int?             // total in the payment plan (e.g. 4 for termly)
+  due_date            DateTime?
+  paid_at             DateTime?        // timestamp of full payment (or last installment)
+  payment_method      String?          // cash | bank_transfer | card | eftpos | other
+  received_by         String?          // name of admin who recorded the payment
+  reference           String?          // receipt / transaction ref
+  status              PaymentStatus    @default(pending)
+  notes               String?
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @updatedAt
 
-  student        User          @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  student             User             @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
   @@index([student_id])
   @@index([status])
   @@index([due_date])
+  @@index([student_id, status])
 }
 
 model TutorPayment {
@@ -522,6 +542,127 @@ model AuditLog {
   @@index([entity_type])
   @@index([action])
   @@index([created_at])
+}
+
+// ============================================================================
+// WAITLIST — students waiting for a full class
+// ============================================================================
+
+model Waitlist {
+  id          Int        @id @default(autoincrement())
+  student_id  Int
+  class_id    Int
+  notes       String?
+  notified    Boolean    @default(false) // true once admin notifies student that a spot opened
+  created_at  DateTime   @default(now())
+
+  student     User       @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  class       ClassGroup @relation(fields: [class_id], references: [id], onDelete: Cascade)
+
+  @@unique([student_id, class_id])
+  @@index([class_id])
+}
+
+// ============================================================================
+// TUTOR UNAVAILABILITY — blocks on tutor schedule
+// ============================================================================
+
+model TutorUnavailability {
+  id         Int      @id @default(autoincrement())
+  tutor_id   Int
+  date       DateTime // the specific date (time ignored — full-day block)
+  reason     String?
+  created_at DateTime @default(now())
+
+  tutor      User     @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
+
+  @@index([tutor_id])
+  @@index([date])
+}
+
+// ============================================================================
+// BOT JOBS — task queue for the Discord bot
+// ============================================================================
+
+model BotJob {
+  id           Int       @id @default(autoincrement())
+  job_type     String    // post_announcement | create_event | cancel_event | send_reminder | send_dm
+  payload      Json      // job-specific data (announcement id, lesson id, user discord id, etc.)
+  status       String    @default("pending")  // pending | processing | completed | failed
+  priority     Int       @default(5)          // 1 (highest) – 10 (lowest)
+  attempts     Int       @default(0)
+  max_attempts Int       @default(3)
+  error        String?
+  created_by   Int?      // admin user id who triggered the job
+  claimed_at   DateTime? // when the bot started processing
+  completed_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@index([status, priority])
+  @@index([job_type])
+  @@index([created_at])
+}
+
+// ============================================================================
+// MESSAGES — parent ↔ admin messaging threads
+// ============================================================================
+
+model MessageThread {
+  id         Int       @id @default(autoincrement())
+  subject    String
+  parent_id  Int
+  status     String    @default("open")  // open | resolved | archived
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  parent     Parent    @relation(fields: [parent_id], references: [id], onDelete: Cascade)
+  messages   Message[]
+
+  @@index([parent_id])
+  @@index([status])
+}
+
+model Message {
+  id           Int           @id @default(autoincrement())
+  thread_id    Int
+  sender_type  String        // parent | admin
+  sender_id    Int?          // admin user_id if sender_type=admin, parent_id if parent
+  body         String
+  read         Boolean       @default(false)
+  read_at      DateTime?
+  created_at   DateTime      @default(now())
+
+  thread       MessageThread @relation(fields: [thread_id], references: [id], onDelete: Cascade)
+
+  @@index([thread_id])
+  @@index([sender_type, sender_id])
+}
+
+// ============================================================================
+// ALERTS — system-generated warnings for admin attention
+// ============================================================================
+
+model Alert {
+  id                  Int       @id @default(autoincrement())
+  alert_type          String    // overdue_payment | missing_attendance | pending_homework | low_attendance | expiring_invite
+  severity            String    @default("medium") // low | medium | high | critical
+  title               String
+  message             String
+  related_entity_type String?   // student | payment | lesson | class
+  related_entity_id   Int?
+  status              String    @default("open")  // open | resolved | dismissed
+  assigned_to         Int?
+  resolved_at         DateTime?
+  resolved_by         Int?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  @@index([status])
+  @@index([severity])
+  @@index([alert_type])
+  @@index([created_at])
+  @@index([related_entity_type, related_entity_id])
 }
 
 // ============================================================================

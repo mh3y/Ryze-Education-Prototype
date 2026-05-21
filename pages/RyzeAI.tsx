@@ -74,12 +74,11 @@ const CodeTerminal = () => {
 
    let currentIndex = 0;
    let timeoutId: ReturnType<typeof setTimeout>;
-   let intervalId: ReturnType<typeof setInterval>;
 
    // Clear existing lines when language changes to restart animation with new language
    setLines([]);
 
-   intervalId = setInterval(() => {
+   const intervalId = setInterval(() => {
      if (currentIndex < codeSequence.length) {
        const newLine = codeSequence[currentIndex];
        if (newLine) {

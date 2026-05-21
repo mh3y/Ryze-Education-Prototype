@@ -38,7 +38,7 @@ interface AuthContextValue {
    * Use this after calling AuthService.setPassword() directly (invite flow).
    */
   refreshUser: () => Promise<void>;
-  /** Clear session. */
+  /** Clear session (calls server to clear httpOnly cookies, then clears local state). */
   logout: () => void;
 }
 
@@ -97,8 +97,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const logout = useCallback(() => {
-    AuthService.logout();
+    // Clear local state immediately so the UI redirects to /login at once.
+    // The server call to clear httpOnly cookies runs fire-and-forget in background.
     setUser(null);
+    AuthService.logout();
   }, []);
 
   const value: AuthContextValue = {

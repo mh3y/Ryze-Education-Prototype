@@ -61,6 +61,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   resources:          'Resources',
   announcements:      'Announcements',
   'audit-log':        'Audit Log',
+  'messages':         'Messages',
 };
 
 interface Crumb { label: string; }

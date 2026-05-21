@@ -137,27 +137,6 @@ const BarChart: React.FC = () => {
 };
 
 // ---------------------------------------------------------------------------
-// Mock data
-// ---------------------------------------------------------------------------
-
-const MOCK_PAYMENTS = [
-  { id: 'INV-2841', student: 'Hayden Wong',   parent: 'Cindy Wong',      amount: 480, due: 'Tomorrow',   state: 'due',     method: 'Direct debit' },
-  { id: 'INV-2840', student: 'Noah Park',     parent: 'Jin Park',        amount: 360, due: 'In 3 days',  state: 'due',     method: 'Card' },
-  { id: 'INV-2839', student: 'Sofia Reyes',   parent: 'Maria Reyes',     amount: 420, due: 'Overdue 2d', state: 'overdue', method: 'Direct debit' },
-  { id: 'INV-2838', student: 'Amelia Tran',   parent: 'Linda Tran',      amount: 540, due: 'Paid',       state: 'paid',    method: 'Card' },
-  { id: 'INV-2837', student: 'Priya Sharma',  parent: 'Anjali Sharma',   amount: 320, due: 'Paid',       state: 'paid',    method: 'BPAY' },
-  { id: 'INV-2836', student: 'Mei Chen',      parent: 'Wei Chen',        amount: 540, due: 'Paid',       state: 'paid',    method: 'Direct debit' },
-  { id: 'INV-2835', student: 'Eli Bernstein', parent: 'Hannah Bernstein',amount: 280, due: 'Paused',     state: 'paused',  method: '—' },
-];
-
-const TOP_EARNERS = [
-  { who: 'Maths Ext 1',    v: '$3,200' },
-  { who: 'Maths Ext 2',    v: '$2,400' },
-  { who: 'Maths Advanced', v: '$2,700' },
-  { who: 'Selective Prep', v: '$2,500' },
-];
-
-// ---------------------------------------------------------------------------
 // Update payment modal (kept from original)
 // ---------------------------------------------------------------------------
 
@@ -170,8 +149,10 @@ interface MarkPaidModalProps {
 const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved }) => {
   const [form, setForm] = useState({
     status: 'paid',
-    amount_paid: payment.amount_due,
+    amount_paid: String(payment.amount_due),  // dollars, displayed to user
     payment_method: '',
+    received_by: '',
+    reference: '',
     notes: payment.notes ?? '',
   });
   const [saving, setSaving]   = useState(false);
@@ -182,12 +163,25 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
     setSaving(true);
     setModalError(null);
     try {
-      await adminApi.updateStudentPayment(payment.id, {
-        status:         form.status,
-        amount_paid:    Number(form.amount_paid),
-        payment_method: form.payment_method || undefined,
-        notes:          form.notes || undefined,
-      });
+      if (form.status === 'paid') {
+        // Use the dedicated mark-paid endpoint for clean full-payment recording
+        await adminApi.markPaymentPaid(payment.id, {
+          payment_method: form.payment_method || 'other',
+          received_by: form.received_by || undefined,
+          reference:   form.reference   || undefined,
+          notes:       form.notes       || undefined,
+        });
+      } else {
+        // Partial payment or status change — use the generic update
+        await adminApi.updateStudentPayment(payment.id, {
+          status:           form.status,
+          amount_paid_cents: Math.round(Number(form.amount_paid) * 100), // convert $ → cents
+          payment_method:   form.payment_method || undefined,
+          received_by:      form.received_by    || undefined,
+          reference:        form.reference      || undefined,
+          notes:            form.notes          || undefined,
+        });
+      }
       onSaved();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to update payment.';
@@ -227,7 +221,12 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
         <div style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: 16, marginBottom: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-strong)' }}>{payment.student_name}</div>
           <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 4 }}>
-            Term: {payment.term} · Due: {formatDate(payment.due_date)} · Amount: {formatCurrency(payment.amount_due)}
+            {payment.term ? `${payment.term} · ` : ''}Due: {formatDate(payment.due_date)}
+          </div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 12 }}>
+            <span>Due: <strong style={{ color: 'var(--fg-strong)' }}>{formatCurrency(payment.amount_due)}</strong></span>
+            <span>Paid: <strong style={{ color: 'var(--ok)' }}>{formatCurrency(payment.amount_paid)}</strong></span>
+            <span>Remaining: <strong style={{ color: 'var(--danger)' }}>{formatCurrency(payment.amount_remaining)}</strong></span>
           </div>
         </div>
 
@@ -257,12 +256,25 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
             <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 6 }}>Payment method</label>
             <select value={form.payment_method} onChange={(e) => setForm(f => ({ ...f, payment_method: e.target.value }))} style={inp}>
               <option value="">— Select method —</option>
-              <option value="direct_debit">Direct debit</option>
-              <option value="card">Card</option>
-              <option value="bpay">BPAY</option>
               <option value="bank_transfer">Bank transfer</option>
               <option value="cash">Cash</option>
+              <option value="card">Card</option>
+              <option value="eftpos">EFTPOS</option>
+              <option value="bpay">BPAY</option>
+              <option value="other">Other</option>
             </select>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 6 }}>Received by</label>
+              <input type="text" placeholder="Admin name" style={inp} value={form.received_by}
+                onChange={(e) => setForm(f => ({ ...f, received_by: e.target.value }))} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 6 }}>Reference / Receipt</label>
+              <input type="text" placeholder="e.g. TXN-1234" style={inp} value={form.reference}
+                onChange={(e) => setForm(f => ({ ...f, reference: e.target.value }))} />
+            </div>
           </div>
           <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
             <button type="button" onClick={onClose} style={{
@@ -315,11 +327,13 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
 
   const defaultTerm = TERM_OPTIONS.find(t => t.includes(String(new Date().getFullYear()))) ?? TERM_OPTIONS[4];
   const [form, setForm] = useState({
-    student_user_id: '',
-    term: defaultTerm,
-    amount_due: '',
-    due_date: '',
-    notes: '',
+    student_id:  '',
+    description: '',
+    term:        defaultTerm,
+    frequency:   'termly' as 'yearly' | 'termly' | 'weekly' | 'custom',
+    amount_due:  '',
+    due_date:    '',
+    notes:       '',
   });
 
   useEffect(() => {
@@ -331,17 +345,19 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.student_user_id) { setFormError('Please select a student.'); return; }
+    if (!form.student_id)  { setFormError('Please select a student.'); return; }
     if (!form.amount_due || Number(form.amount_due) <= 0) { setFormError('Please enter a valid amount.'); return; }
     setSaving(true);
     setFormError(null);
     try {
       await adminApi.createStudentPayment({
-        student_user_id: Number(form.student_user_id),
-        term: form.term,
-        amount_due: Number(form.amount_due),
-        due_date: form.due_date || undefined,
-        notes: form.notes || undefined,
+        student_id:  Number(form.student_id),
+        description: form.description || `${form.term} tuition`,
+        amount_cents: Math.round(Number(form.amount_due) * 100), // convert $ → cents
+        term:        form.term,
+        frequency:   form.frequency,
+        due_date:    form.due_date || undefined,
+        notes:       form.notes   || undefined,
       });
       onSaved();
     } catch (e: unknown) {
@@ -393,8 +409,8 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
           <div>
             <label style={lbl}>Student</label>
             <select
-              value={form.student_user_id}
-              onChange={(e) => setForm(f => ({ ...f, student_user_id: e.target.value }))}
+              value={form.student_id}
+              onChange={(e) => setForm(f => ({ ...f, student_id: e.target.value }))}
               style={inp}
               disabled={loadingStudents}
             >
@@ -406,14 +422,40 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
           </div>
 
           <div>
-            <label style={lbl}>Term</label>
-            <select
-              value={form.term}
-              onChange={(e) => setForm(f => ({ ...f, term: e.target.value }))}
+            <label style={lbl}>Description</label>
+            <input
+              type="text"
+              value={form.description}
+              onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+              placeholder="e.g. Term 2 — Maths Ext 1 group tuition"
               style={inp}
-            >
-              {TERM_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={lbl}>Term</label>
+              <select
+                value={form.term}
+                onChange={(e) => setForm(f => ({ ...f, term: e.target.value }))}
+                style={inp}
+              >
+                {TERM_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={lbl}>Frequency</label>
+              <select
+                value={form.frequency}
+                onChange={(e) => setForm(f => ({ ...f, frequency: e.target.value as any }))}
+                style={inp}
+              >
+                <option value="termly">Termly</option>
+                <option value="weekly">Weekly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -443,8 +485,8 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ onClose, onSave
             <textarea
               value={form.notes}
               onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))}
-              placeholder="e.g. Term 2 group tuition — Maths Ext 1"
-              rows={3}
+              placeholder="e.g. Instalment 1 of 4 for term package"
+              rows={2}
               style={{ ...inp, resize: 'vertical' }}
             />
           </div>
@@ -488,31 +530,19 @@ const PaymentsPage: React.FC = () => {
   const [showCreate, setShowCreate]   = useState(false);
 
   const exportCsv = () => {
-    const rows = payments.length > 0 ? payments : MOCK_PAYMENTS.map((p) => ({
-      id: p.id.replace('INV-', ''),
-      student_name: p.student,
-      term: 'Term 2 2025',
-      amount_due: p.amount,
-      amount_paid: p.state === 'paid' ? p.amount : 0,
-      status: p.state,
-      due_date: null as string | null,
-      payment_method: p.method,
-    }));
     const escape = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const headers = ['Invoice ID', 'Student', 'Term', 'Amount Due', 'Amount Paid', 'Status', 'Due Date', 'Payment Method'];
     const lines = [
       headers.join(','),
-      ...rows.map((p) => [
-        escape('id' in p && typeof (p as { id: string | number }).id !== 'undefined' ? `INV-${(p as { id: string | number }).id}` : ''),
-        escape((p as { student_name?: string; student?: string }).student_name ?? ''),
-        escape((p as { term?: string }).term ?? ''),
-        escape((p as { amount_due?: number | string }).amount_due ?? ''),
-        escape((p as { amount_paid?: number | string }).amount_paid ?? 0),
-        escape((p as { status?: string }).status ?? ''),
-        escape((p as { due_date?: string | null }).due_date
-          ? new Date((p as { due_date: string }).due_date).toLocaleDateString('en-AU')
-          : ''),
-        escape((p as { payment_method?: string }).payment_method ?? ''),
+      ...payments.map((p) => [
+        escape(`INV-${p.id}`),
+        escape(p.student_name),
+        escape(p.term),
+        escape(p.amount_due),
+        escape(p.amount_paid),
+        escape(p.status),
+        escape(p.due_date ? new Date(p.due_date).toLocaleDateString('en-AU') : ''),
+        escape(p.payment_method ?? ''),
       ].join(',')),
     ];
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -539,14 +569,10 @@ const PaymentsPage: React.FC = () => {
   useEffect(() => { load(); }, [load]);
 
   // Summary stats from real data
-  const totalDue    = payments.reduce((s, p) => s + Number(p.amount_due), 0);
-  const totalPaid   = payments.reduce((s, p) => s + Number(p.amount_paid), 0);
-  const overdueCount = payments.filter(p => p.status === 'overdue').length;
-
-  // Display data: real if available, else mock
-  const displayPayments = payments.length > 0
-    ? payments
-    : null; // null = show mock
+  const totalDue     = payments.reduce((sum, p) => sum + (p.amount_due || 0), 0);
+  const totalPaid    = payments.reduce((sum, p) => sum + (p.amount_paid || 0), 0);
+  const totalOverdue = payments.filter(p => p.status === 'overdue').reduce((sum, p) => sum + (p.amount_remaining || 0), 0);
+  const pendingCount = payments.filter(p => p.status === 'pending' || p.status === 'partial').length;
 
   const btnStyle: React.CSSProperties = {
     height: 38, padding: '0 14px', borderRadius: 9,
@@ -601,10 +627,10 @@ const PaymentsPage: React.FC = () => {
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="This week"    value={payments.length ? `$${totalPaid.toFixed(0)}` : '$8,420'} deltaText="+12% vs last" deltaDir="up" footRight="22 invoices" />
-        <StatTile label="Outstanding"  value={payments.length ? `$${(totalDue - totalPaid).toFixed(0)}` : '$2,400'} deltaText="3 overdue" deltaDir="down" footRight="of $24k due" />
-        <StatTile label="Overdue"      value={payments.length ? String(overdueCount).padStart(2,'0') : '03'} footRight="$1,260" />
-        <StatTile label="Auto-collect" value="78%"  deltaText="Direct debit" deltaDir="up" />
+        <StatTile label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} />
+        <StatTile label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" />
+        <StatTile label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} />
+        <StatTile label="Pending"           value={loading ? '…' : `${pendingCount}`} />
       </div>
 
       {/* Two-up: table + charts */}
@@ -663,7 +689,7 @@ const PaymentsPage: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-faint)' }}>
-                  {['Invoice', 'Student / Parent', 'Amount', 'Method', 'Status', 'Due'].map((h) => (
+                  {['Invoice', 'Student', 'Amount', 'Paid', 'Frequency', 'Status', 'Due'].map((h) => (
                     <th key={h} style={{
                       padding: '12px 22px', textAlign: 'left',
                       fontSize: 11, fontWeight: 700,
@@ -682,42 +708,62 @@ const PaymentsPage: React.FC = () => {
                 {error && !loading && (
                   <tr><td colSpan={6} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)' }}>{error}</td></tr>
                 )}
-                {!loading && (displayPayments ? displayPayments : MOCK_PAYMENTS).map((p) => {
-                  const isReal = displayPayments !== null;
-                  const student = isReal ? (p as StudentPayment).student_name : (p as typeof MOCK_PAYMENTS[0]).student;
-                  const parent  = isReal ? '' : (p as typeof MOCK_PAYMENTS[0]).parent;
-                  const amount  = isReal ? formatCurrency((p as StudentPayment).amount_due) : `$${(p as typeof MOCK_PAYMENTS[0]).amount.toLocaleString()}`;
-                  const method  = isReal ? ((p as StudentPayment).payment_method ?? '—') : (p as typeof MOCK_PAYMENTS[0]).method;
-                  const status  = isReal ? (p as StudentPayment).status : (p as typeof MOCK_PAYMENTS[0]).state;
-                  const due     = isReal ? formatDate((p as StudentPayment).due_date) : (p as typeof MOCK_PAYMENTS[0]).due;
-                  const id      = isReal ? `INV-${(p as StudentPayment).id}` : (p as typeof MOCK_PAYMENTS[0]).id;
-
-                  const matchesFilter = filter === 'All' || status === filter.toLowerCase();
-                  const matchesSearch = !query || student.toLowerCase().includes(query.toLowerCase()) || parent.toLowerCase().includes(query.toLowerCase());
+                {!loading && payments.length === 0 && (
+                  <tr><td colSpan={6} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)' }}>No payment records found.</td></tr>
+                )}
+                {!loading && payments.map((p) => {
+                  const statusLower = p.status.toLowerCase();
+                  const matchesFilter = filter === 'All'
+                    || (filter === 'Due'     && (statusLower === 'pending' || statusLower === 'partial'))
+                    || (filter === 'Overdue' && statusLower === 'overdue')
+                    || (filter === 'Paid'    && statusLower === 'paid');
+                  const matchesSearch = !query || p.student_name.toLowerCase().includes(query.toLowerCase());
                   if (!matchesFilter || !matchesSearch) return null;
 
+                  const paidPct = p.amount_due > 0 ? Math.min(100, (p.amount_paid / p.amount_due) * 100) : 0;
+                  const freqLabel: Record<string, string> = { termly: 'Termly', yearly: 'Yearly', weekly: 'Weekly', custom: 'Custom' };
+
                   return (
-                    <tr key={String(p.id)} style={{
+                    <tr key={p.id} style={{
                       borderBottom: '1px solid var(--border-faint)', cursor: 'pointer',
                       transition: 'background 140ms ease',
                     }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ''; }}
-                    onClick={() => isReal ? setEditTarget(p as StudentPayment) : undefined}
+                    onClick={() => setEditTarget(p)}
                     >
-                      <td style={{ padding: '14px 22px', fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>
-                        {id}
+                      <td style={{ padding: '14px 22px' }}>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>
+                          INV-{p.id}
+                        </div>
+                        {p.term && <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>{p.term}</div>}
                       </td>
                       <td style={{ padding: '14px 22px' }}>
-                        <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{student}</div>
-                        {parent && <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{parent}</div>}
+                        <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{p.student_name}</div>
+                        {p.installment_number && p.total_installments && (
+                          <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>
+                            Instalment {p.installment_number} of {p.total_installments}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '14px 22px', fontSize: 13.5, fontWeight: 600, color: 'var(--fg-strong)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
-                        {amount}
+                        {formatCurrency(p.amount_due)}
                       </td>
-                      <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)' }}>{method}</td>
-                      <td style={{ padding: '14px 22px' }}><StatusTag status={status} /></td>
-                      <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)' }}>{due}</td>
+                      <td style={{ padding: '14px 22px', minWidth: 130 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ flex: 1, height: 5, borderRadius: 999, background: 'var(--bg-surface-2)', border: '1px solid var(--border-faint)', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${paidPct}%`, background: paidPct >= 100 ? 'var(--ok)' : 'var(--accent)', borderRadius: 999, transition: 'width 400ms ease' }} />
+                          </div>
+                          <span style={{ fontSize: 11.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', whiteSpace: 'nowrap', fontFeatureSettings: '"tnum" 1' }}>
+                            {formatCurrency(p.amount_paid)}
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '14px 22px', fontSize: 12.5, color: 'var(--fg-muted)' }}>
+                        {freqLabel[p.frequency] ?? p.frequency}
+                      </td>
+                      <td style={{ padding: '14px 22px' }}><StatusTag status={p.status} /></td>
+                      <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)' }}>{formatDate(p.due_date)}</td>
                     </tr>
                   );
                 })}
@@ -730,33 +776,13 @@ const PaymentsPage: React.FC = () => {
         <div style={{
           background: 'var(--bg-surface)', border: '1px solid var(--border-faint)',
           borderRadius: 16, padding: 'var(--card-pad)', boxShadow: 'var(--shadow-card)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          minHeight: 220,
         }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 4 }}>Cash collected</div>
-          <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginBottom: 20 }}>Last 8 weeks</div>
-
-          <BarChart />
-
-          <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0' }} />
-
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 14 }}>Top earners</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {TOP_EARNERS.map((r, i) => (
-              <div key={r.who} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
-                  color: 'var(--fg-faint)', fontFeatureSettings: '"tnum" 1', flexShrink: 0, width: 24,
-                }}>
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-                <div style={{ flex: 1, fontSize: 13, color: 'var(--fg-default)' }}>{r.who}</div>
-                <div style={{
-                  fontSize: 13, fontWeight: 600, color: 'var(--accent)',
-                  fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1',
-                }}>
-                  {r.v}
-                </div>
-              </div>
-            ))}
+          <div style={{ textAlign: 'center', color: 'var(--fg-muted)' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, color: 'var(--fg-default)' }}>Payment analytics coming soon</div>
+            <div style={{ fontSize: 13 }}>Revenue trends and collection charts will appear here.</div>
           </div>
         </div>
       </div>

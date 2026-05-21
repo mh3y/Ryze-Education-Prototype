@@ -46,7 +46,7 @@ classesRouter.get('/:id', async (req, res) => {
         _count: { select: { enrollments: true } },
         enrollments: {
           include: { student: { select: { id: true, full_name: true } } },
-          orderBy: { created_at: 'asc' },
+          orderBy: { enrolled_at: 'asc' },
         },
       },
     });
@@ -80,8 +80,8 @@ classesRouter.post('/', async (req, res) => {
     const classGroup = await db.classGroup.create({
       data: {
         name: name.trim(),
-        subject: subject ?? null,
-        year_level: year_level ?? null,
+        subject: subject ?? '',
+        year_level: year_level != null ? String(year_level) : null,
         tutor_id: tutor_user_id ?? null,
         max_students: max_students ?? null,
         active: active ?? true,
@@ -104,7 +104,7 @@ classesRouter.patch('/:id', async (req, res) => {
     const data: any = {};
     if (body.name !== undefined) data.name = body.name.trim();
     if (body.subject !== undefined) data.subject = body.subject;
-    if (body.year_level !== undefined) data.year_level = body.year_level;
+    if (body.year_level !== undefined) data.year_level = body.year_level != null ? String(body.year_level) : null;
     if (body.tutor_user_id !== undefined) data.tutor_id = body.tutor_user_id;
     if (body.max_students !== undefined) data.max_students = body.max_students;
     if (body.active !== undefined) data.active = body.active;

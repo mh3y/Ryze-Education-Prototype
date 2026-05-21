@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
-import { requireAdmin } from '../../auth/middleware';
+import { requireAdmin, requireAdminOnly } from '../../auth/middleware';
 
 export const auditRouter = Router();
-auditRouter.use(requireAdmin);
 
 function auditLogToItem(a: any) {
   return {
@@ -23,8 +22,8 @@ function auditLogToItem(a: any) {
   };
 }
 
-// GET /api/admin/audit-log
-auditRouter.get('/audit-log', async (req, res) => {
+// GET /api/admin/audit-log — admin only (tutors cannot view the audit log)
+auditRouter.get('/audit-log', requireAdminOnly, async (req, res) => {
   try {
     const limit = Math.min(Number(req.query.limit ?? 100), 500);
     const skip = Number(req.query.skip ?? 0);
@@ -51,8 +50,8 @@ auditRouter.get('/audit-log', async (req, res) => {
   }
 });
 
-// POST /api/admin/audit-log
-auditRouter.post('/audit-log', async (req, res) => {
+// POST /api/admin/audit-log — admin + tutor (both roles perform auditable actions)
+auditRouter.post('/audit-log', requireAdmin, async (req, res) => {
   try {
     const {
       actor_id, actor_type, actor_name, action, entity_type, entity_id,

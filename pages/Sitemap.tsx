@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-// @ts-ignore
 import { Link } from 'react-router-dom';
 import { ChevronRight, Home, Shield } from 'lucide-react';
 import { ROUTES } from '../src/constants/routes';

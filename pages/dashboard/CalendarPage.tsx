@@ -468,7 +468,7 @@ const CalendarPage: React.FC = () => {
       if (user?.role === 'parent') {
         const data = await parentApi.getPortal();
         data.children.forEach((child) => {
-          events.push(...parentLessonsToEvents(child.upcoming_lessons, child.student.full_name));
+          events.push(...parentLessonsToEvents(child.upcoming_lessons, child.student_name));
         });
       } else {
         const res = await portalApi.getLessons({ limit: 300 });
@@ -481,7 +481,7 @@ const CalendarPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.role]);
+  }, [user]);
 
   useEffect(() => { loadLessons(); }, [loadLessons]);
 

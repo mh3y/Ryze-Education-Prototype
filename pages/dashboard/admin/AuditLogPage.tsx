@@ -6,8 +6,8 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { ClipboardList, Trash2, RefreshCw, Filter } from 'lucide-react';
-import { auditLog, AuditEntry, AuditAction, AuditEntityType } from '../../../services/auditLog';
+import { ClipboardList, RefreshCw, Filter } from 'lucide-react';
+import { adminApi, AuditLogEntry } from '../../../services/adminApi';
 import { PageHeader, EmptyState, SearchInput } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
@@ -25,7 +25,7 @@ function formatDate(iso: string): string {
   }
 }
 
-const ACTION_COLOUR: Record<AuditAction, string> = {
+const ACTION_COLOUR: Record<string, string> = {
   create:     '#4f9b6a',
   update:     '#5e7fb3',
   delete:     '#c25450',
@@ -38,7 +38,7 @@ const ACTION_COLOUR: Record<AuditAction, string> = {
   cancel:     '#c25450',
 };
 
-const ACTION_LABEL: Record<AuditAction, string> = {
+const ACTION_LABEL: Record<string, string> = {
   create:     'Created',
   update:     'Updated',
   delete:     'Deleted',
@@ -51,7 +51,7 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   cancel:     'Cancelled',
 };
 
-const ENTITY_LABEL: Record<AuditEntityType, string> = {
+const ENTITY_LABEL: Record<string, string> = {
   student:      'Student',
   parent:       'Parent',
   tutor:        'Tutor',
@@ -69,38 +69,35 @@ const ENTITY_LABEL: Record<AuditEntityType, string> = {
 // ---------------------------------------------------------------------------
 
 const AuditLogPage: React.FC = () => {
-  const [entries, setEntries]         = useState<AuditEntry[]>([]);
-  const [query, setQuery]             = useState('');
-  const [filterAction, setFilterAction] = useState<AuditAction | 'all'>('all');
-  const [filterEntity, setFilterEntity] = useState<AuditEntityType | 'all'>('all');
-  const [clearing, setClearing]       = useState(false);
+  const [entries, setEntries]           = useState<AuditLogEntry[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [query, setQuery]               = useState('');
+  const [filterAction, setFilterAction] = useState<string>('all');
+  const [filterEntity, setFilterEntity] = useState<string>('all');
 
-  const load = () => setEntries(auditLog.getEntries());
+  const load = () => {
+    setLoading(true);
+    adminApi.getAuditLog({ limit: 200 })
+      .then((data) => { setEntries(data.items); setLoading(false); })
+      .catch(() => { setLoading(false); });
+  };
 
   useEffect(() => { load(); }, []);
 
   const filtered = useMemo(() => {
     let list = entries;
     if (filterAction !== 'all') list = list.filter((e) => e.action === filterAction);
-    if (filterEntity !== 'all') list = list.filter((e) => e.entityType === filterEntity);
+    if (filterEntity !== 'all') list = list.filter((e) => e.entity_type === filterEntity);
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter((e) =>
-        e.entityName.toLowerCase().includes(q) ||
-        e.adminName.toLowerCase().includes(q) ||
-        e.details?.toLowerCase().includes(q)
+        (e.entity_name ?? '').toLowerCase().includes(q) ||
+        (e.actor_name ?? '').toLowerCase().includes(q) ||
+        (e.entity_type ?? '').toLowerCase().includes(q)
       );
     }
     return list;
   }, [entries, filterAction, filterEntity, query]);
-
-  const handleClear = () => {
-    if (!window.confirm('Clear the entire audit log? This cannot be undone.')) return;
-    setClearing(true);
-    auditLog.clear();
-    setEntries([]);
-    setClearing(false);
-  };
 
   const selectStyle: React.CSSProperties = {
     height: 36, padding: '0 10px', borderRadius: 9,
@@ -125,11 +122,11 @@ const AuditLogPage: React.FC = () => {
           <Filter size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--fg-muted)', pointerEvents: 'none' }} />
           <select
             value={filterAction}
-            onChange={(e) => setFilterAction(e.target.value as AuditAction | 'all')}
+            onChange={(e) => setFilterAction(e.target.value)}
             style={{ ...selectStyle, paddingLeft: 28 }}
           >
             <option value="all">All actions</option>
-            {(Object.keys(ACTION_LABEL) as AuditAction[]).map((a) => (
+            {Object.keys(ACTION_LABEL).map((a) => (
               <option key={a} value={a}>{ACTION_LABEL[a]}</option>
             ))}
           </select>
@@ -138,11 +135,11 @@ const AuditLogPage: React.FC = () => {
         <div style={{ position: 'relative' }}>
           <select
             value={filterEntity}
-            onChange={(e) => setFilterEntity(e.target.value as AuditEntityType | 'all')}
+            onChange={(e) => setFilterEntity(e.target.value)}
             style={selectStyle}
           >
             <option value="all">All types</option>
-            {(Object.keys(ENTITY_LABEL) as AuditEntityType[]).map((t) => (
+            {Object.keys(ENTITY_LABEL).map((t) => (
               <option key={t} value={t}>{ENTITY_LABEL[t]}</option>
             ))}
           </select>
@@ -155,13 +152,6 @@ const AuditLogPage: React.FC = () => {
           >
             <RefreshCw size={13} /> Refresh
           </button>
-          <button
-            onClick={handleClear}
-            disabled={clearing || entries.length === 0}
-            style={{ height: 36, padding: '0 12px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in oklab, var(--danger) 10%, transparent)', color: 'var(--danger)', border: '1px solid color-mix(in oklab, var(--danger) 24%, transparent)', cursor: 'pointer' }}
-          >
-            <Trash2 size={13} /> Clear log
-          </button>
         </div>
       </div>
 
@@ -173,7 +163,11 @@ const AuditLogPage: React.FC = () => {
       )}
 
       {/* Table */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div style={{ padding: '48px 20px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+          Loading audit log…
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={ClipboardList}
           title="No audit entries"
@@ -184,43 +178,45 @@ const AuditLogPage: React.FC = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
-                {['Timestamp', 'Action', 'Type', 'Name / ID', 'Details', 'Admin'].map((h) => (
+                {['Timestamp', 'Action', 'Type', 'Name / ID', 'Actor'].map((h) => (
                   <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.map((entry, i) => (
-                <tr key={entry.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
-                    {formatDate(entry.timestamp)}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
-                      padding: '3px 8px', borderRadius: 999,
-                      background: `color-mix(in oklab, ${ACTION_COLOUR[entry.action]} 14%, transparent)`,
-                      color: ACTION_COLOUR[entry.action],
-                      border: `1px solid color-mix(in oklab, ${ACTION_COLOUR[entry.action]} 28%, transparent)`,
-                    }}>
-                      {ACTION_LABEL[entry.action]}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--fg-muted)' }}>
-                    {ENTITY_LABEL[entry.entityType]}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--fg-strong)' }}>{entry.entityName}</div>
-                    <div style={{ fontSize: 11, color: 'var(--fg-faint)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>ID {entry.entityId}</div>
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--fg-muted)', maxWidth: 260 }}>
-                    {entry.details ?? '—'}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--fg-default)', whiteSpace: 'nowrap' }}>
-                    {entry.adminName}
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((entry, i) => {
+                const actionColour = ACTION_COLOUR[entry.action] ?? '#8a8b8e';
+                const actionLabel  = ACTION_LABEL[entry.action]  ?? entry.action;
+                const entityLabel  = ENTITY_LABEL[entry.entity_type] ?? entry.entity_type;
+                return (
+                  <tr key={entry.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
+                    <td style={{ padding: '12px 16px', fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                      {formatDate(entry.created_at)}
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{
+                        fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
+                        padding: '3px 8px', borderRadius: 999,
+                        background: `color-mix(in oklab, ${actionColour} 14%, transparent)`,
+                        color: actionColour,
+                        border: `1px solid color-mix(in oklab, ${actionColour} 28%, transparent)`,
+                      }}>
+                        {actionLabel}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--fg-muted)' }}>
+                      {entityLabel}
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--fg-strong)' }}>{entry.entity_name ?? '—'}</div>
+                      {entry.entity_id && <div style={{ fontSize: 11, color: 'var(--fg-faint)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>ID {entry.entity_id}</div>}
+                    </td>
+                    <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--fg-default)', whiteSpace: 'nowrap' }}>
+                      {entry.actor_name ?? entry.actor_type}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

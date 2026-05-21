@@ -298,19 +298,18 @@ const StudentDetail: React.FC = () => {
             ) : (
               <div className="divide-y divide-white/5">
                 {student.classes.map((cls) => (
-                  <div key={cls.class_group_id} className="flex items-center justify-between px-5 py-4">
+                  <div key={cls.class_id} className="flex items-center justify-between px-5 py-4">
                     <div>
                       <div className="font-semibold ryze-text-inverse text-sm">{cls.class_name}</div>
                       <div className="text-xs ryze-text-muted mt-0.5">
-                        {cls.start_date ? `Started ${formatDate(cls.start_date)}` : 'No start date'}
-                        {cls.end_date ? ` · Ended ${formatDate(cls.end_date)}` : ''}
+                        {cls.enrolled_at ? `Started ${formatDate(cls.enrolled_at)}` : 'No start date'}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <StatusBadge value={cls.enrollment_status} />
-                      {cls.enrollment_status !== 'withdrawn' && (
+                      <StatusBadge value={cls.active ? 'active' : 'inactive'} />
+                      {cls.active && (
                         <button
-                          onClick={() => setWithdrawTarget({ classGroupId: cls.class_group_id, className: cls.class_name })}
+                          onClick={() => setWithdrawTarget({ classGroupId: cls.class_id, className: cls.class_name })}
                           className="flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg hover:bg-red-500/20 transition-all"
                         >
                           <Trash2 size={12} /> Withdraw
@@ -411,7 +410,7 @@ const StudentDetail: React.FC = () => {
                       <span className="text-[10px] font-bold text-[#FFB000] bg-[#FFB000]/10 px-2 py-0.5 rounded-full">Primary</span>
                     )}
                     <button
-                      onClick={() => navigate(`/dashboard/admin/parents/${p.parent_profile_id}`)}
+                      onClick={() => navigate(`/dashboard/admin/parents/${p.parent_id}`)}
                       className="text-xs font-semibold ryze-text-muted hover:ryze-text-inverse bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all"
                     >
                       View Parent

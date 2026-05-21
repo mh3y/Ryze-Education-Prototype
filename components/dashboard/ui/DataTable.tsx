@@ -72,10 +72,10 @@ export function DataTable<T>({
     return [...filtered].sort((a, b) => {
       const av = col.sortValue ? col.sortValue(a) : (a as any)[sortKey] ?? '';
       const bv = col.sortValue ? col.sortValue(b) : (b as any)[sortKey] ?? '';
-      let cmp = 0;
-      if (av instanceof Date && bv instanceof Date) cmp = av.getTime() - bv.getTime();
-      else if (typeof av === 'number' && typeof bv === 'number') cmp = av - bv;
-      else cmp = String(av).localeCompare(String(bv));
+      const cmp =
+        av instanceof Date && bv instanceof Date ? av.getTime() - bv.getTime()
+        : typeof av === 'number' && typeof bv === 'number' ? av - bv
+        : String(av).localeCompare(String(bv));
       return sortDir === 'asc' ? cmp : -cmp;
     });
   }, [filtered, sortKey, sortDir, columns]);

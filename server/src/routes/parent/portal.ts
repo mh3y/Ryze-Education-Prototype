@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireParent } from '../../auth/middleware';
+import { attendanceRate } from '../../utils/attendance';
 
 export const portalRouter = Router();
 
@@ -23,8 +24,8 @@ portalRouter.get('/portal', requireParent, async (req, res) => {
                         tutor: { select: { full_name: true } },
                         lessons: {
                           orderBy: { scheduled_at: 'asc' },
-                          where: { scheduled_at: { gt: new Date() } },
-                          take: 1,
+                          where: { scheduled_at: { gt: new Date() }, status: { not: 'cancelled' } },
+                          take: 20,
                         },
                       },
                     },
@@ -48,8 +49,6 @@ portalRouter.get('/portal', requireParent, async (req, res) => {
 
     const children = parent.children.map((link: any) => {
       const s = link.student;
-      const total = s.attendance.length;
-      const present = s.attendance.filter((a: any) => a.status === 'present').length;
 
       return {
         link_id: link.id,
@@ -71,7 +70,23 @@ portalRouter.get('/portal', requireParent, async (req, res) => {
               }
             : null,
         })),
-        attendance_rate: total > 0 ? Math.round((present / total) * 100) : null,
+        // Flat list of all upcoming lessons across all classes — used by CalendarPage
+        upcoming_lessons: s.enrollments.flatMap((e: any) =>
+          e.class.lessons.map((l: any) => ({
+            id: l.id,
+            title: `${e.class.name} — ${l.title}`,
+            start_time: l.scheduled_at.toISOString(),
+            end_time: l.duration_min
+              ? new Date(l.scheduled_at.getTime() + l.duration_min * 60000).toISOString()
+              : null,
+            location: l.meet_link ? 'Online (Google Meet)' : null,
+            meet_link: l.meet_link ?? null,
+            status: l.status,
+            class_name: e.class.name,
+          }))
+        ).sort((a: any, b: any) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()),
+        // Shared attendance utility: present + late = attended
+        attendance_rate: attendanceRate(s.attendance.map((a: any) => a.status)),
         recent_attendance: s.attendance.slice(0, 10).map((a: any) => ({
           lesson_title: a.lesson.title,
           scheduled_at: a.lesson.scheduled_at.toISOString(),
@@ -79,17 +94,20 @@ portalRouter.get('/portal', requireParent, async (req, res) => {
         })),
         latest_reports: s.progress_reports.map((r: any) => ({
           id: r.id,
-          period: r.period,
-          score: r.score,
-          grade: r.grade,
+          period: r.period ?? null,
+          score: r.score ?? null,
+          grade: r.grade ?? null,
           created_at: r.created_at.toISOString(),
         })),
         outstanding_payments: s.payments.map((p: any) => ({
           id: p.id,
-          amount: p.amount_cents / 100,
-          description: p.description,
+          term: p.term ?? p.description ?? '',
+          frequency: p.frequency,
+          amount_due: p.amount_cents / 100,
+          amount_paid: p.amount_paid_cents / 100,
           due_date: p.due_date?.toISOString() ?? null,
           status: p.status,
+          notes: p.notes ?? null,
         })),
       };
     });
