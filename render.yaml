@@ -1,0 +1,74 @@
+# render.yaml — Ryze Education Portal API
+# Render Blueprint: https://render.com/docs/blueprint-spec
+#
+# Connect your GitHub repo on Render and this file is detected automatically.
+# Set the secret env vars (marked sync: false) in the Render dashboard after
+# the first deploy.
+#
+# Free tier notes:
+#   - Service spins down after 15 min of inactivity → ~30s cold start on first request
+#   - Add a free UptimeRobot monitor pinging /api/health every 5 min to prevent this
+#   - 512 MB RAM, shared CPU — sufficient for this workload
+
+services:
+  - type: web
+    name: ryze-portal-api
+    runtime: node
+    rootDir: server
+    region: oregon   # Closest free region to AU — Singapore not on free tier
+
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma db push && node dist/index.js
+
+    plan: free
+
+    healthCheckPath: /api/health
+
+    envVars:
+      # ── Runtime ──────────────────────────────────────────────────────────────
+      - key: NODE_ENV
+        value: production
+
+      # PORT is injected by Render automatically — no need to set it here.
+
+      # ── Database (Supabase) ───────────────────────────────────────────────────
+      - key: DATABASE_URL
+        sync: false   # Set in Render dashboard — pgBouncer connection string
+
+      - key: DATABASE_DIRECT_URL
+        sync: false   # Set in Render dashboard — direct (non-pooled) connection string
+
+      # ── Auth ─────────────────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        sync: false   # Set in Render dashboard — generate: node -e "require('crypto').randomBytes(64).toString('hex')"
+
+      # ── Discord OAuth ─────────────────────────────────────────────────────────
+      - key: DISCORD_CLIENT_ID
+        sync: false   # From discord.com/developers/applications → your app → OAuth2
+
+      - key: DISCORD_CLIENT_SECRET
+        sync: false
+
+      - key: DISCORD_REDIRECT_URI
+        value: https://ryzeeducation.com.au/auth/discord/callback
+
+      # ── CORS / URLs ───────────────────────────────────────────────────────────
+      - key: CORS_ORIGIN
+        value: https://ryzeeducation.com.au
+
+      - key: PORTAL_BASE_URL
+        value: https://ryzeeducation.com.au
+
+      # ── Bot (optional) ────────────────────────────────────────────────────────
+      - key: BOT_API_SECRET
+        sync: false   # Set in Render dashboard — must match ryze-discord-bot BOT_API_SECRET
+
+      # ── Cloudinary (optional — file uploads) ─────────────────────────────────
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+
+      - key: CLOUDINARY_API_KEY
+        sync: false
+
+      - key: CLOUDINARY_API_SECRET
+        sync: false
