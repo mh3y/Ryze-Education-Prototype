@@ -69,8 +69,12 @@ const PORT = Number(process.env.PORT ?? 8000);
 
 // ── Determine allowed origin ──────────────────────────────────────────────────
 // In production, CORS_ORIGIN must be the exact portal URL (no wildcard).
-// In dev, allow any origin so local Vite dev server works without config.
-const corsOrigin = process.env.CORS_ORIGIN ?? (process.env.NODE_ENV === 'production' ? false : true);
+// We also accept the www. variant so users on either subdomain are not blocked.
+// In dev, allow any origin so the local Vite dev server works without config.
+const rawCorsOrigin = process.env.CORS_ORIGIN ?? '';
+const corsOrigin: string | string[] | boolean = rawCorsOrigin
+  ? [rawCorsOrigin, rawCorsOrigin.replace(/^https:\/\//, 'https://www.')]
+  : (process.env.NODE_ENV === 'production' ? false : true);
 
 // Security headers — must be before any route handlers
 app.use(helmet({
