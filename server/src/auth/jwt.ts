@@ -43,7 +43,12 @@ export const REFRESH_COOKIE = 'ryze_refresh';
 export const cookieOptions = {
   httpOnly:  true,
   secure:    IS_PROD,           // HTTPS only in production
-  sameSite:  (IS_PROD ? 'strict' : 'lax') as 'strict' | 'lax',
+  // Use 'none' in production so cookies are sent on cross-origin fetch requests
+  // (credentials: 'include') from the frontend domain to the API domain.
+  // SameSite=Strict / Lax blocks cookies on cross-origin subresource requests,
+  // which breaks auth when the API lives on a different domain (e.g. Render vs Vercel).
+  // SameSite=None requires Secure=true (already enforced above in production).
+  sameSite:  (IS_PROD ? 'none' : 'lax') as 'none' | 'lax',
   path:      '/',
 };
 
