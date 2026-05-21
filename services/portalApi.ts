@@ -1,6 +1,6 @@
 /**
  * portalApi.ts
- * Typed client for the Ryze Education Dashboard REST API (FastAPI backend).
+ * Typed client for the Ryze Education Dashboard REST API (Express/Node backend).
  *
  * Usage:
  *   import { portalApi } from '../services/portalApi';

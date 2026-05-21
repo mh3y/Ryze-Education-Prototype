@@ -72,3 +72,6 @@ services:
 
       - key: CLOUDINARY_API_SECRET
         sync: false
+
+      - key: CLOUDINARY_UPLOAD_PRESET
+        value: ryze_uploads   # Change if you rename the preset in Cloudinary dashboard
