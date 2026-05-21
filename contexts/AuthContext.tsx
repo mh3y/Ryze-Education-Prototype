@@ -13,6 +13,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { AuthService, PortalUser } from '../services/auth';
@@ -56,6 +57,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser]       = useState<PortalUser | null>(null);
   const [isLoading, setLoading] = useState(true); // start true to resolve on mount
 
+  /**
+   * Tracks whether an explicit login call (loginDiscord / loginParent) has
+   * already resolved a user in this session.  Used to guard against a race
+   * condition where the silent mount-time getCurrentUser() probe completes
+   * AFTER a login call and wipes the freshly-authenticated user with null.
+   *
+   * Scenario:
+   *   1. App mounts on /auth/discord/callback → getCurrentUser() fires (async)
+   *   2. loginDiscord(code) fires concurrently (slower — involves Discord API)
+   *   3. loginDiscord wins, sets user, navigates to /dashboard
+   *   4. getCurrentUser() resolves later (no cookies yet on its request) → null
+   *   5. Without this guard: setUser(null) → ProtectedRoute redirects back to /login
+   */
+  const loginResolved = useRef(false);
+
   // On mount — try to restore session from stored JWT.
   useEffect(() => {
     let cancelled = false;
@@ -63,7 +79,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     (async () => {
       const resolved = await AuthService.getCurrentUser();
       if (!cancelled) {
-        setUser(resolved);
+        // Only overwrite state with null if no explicit login has already
+        // resolved a user in this session.  If loginDiscord/loginParent already
+        // set a user, trust that result — the probe fired before cookies existed.
+        if (resolved !== null || !loginResolved.current) {
+          setUser(resolved);
+        }
         setLoading(false);
       }
     })();
@@ -75,6 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const u = await AuthService.handleDiscordCallback(code);
+      loginResolved.current = true;
       setUser(u);
     } finally {
       setLoading(false);
@@ -85,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const u = await AuthService.loginParent(email, password);
+      loginResolved.current = true;
       setUser(u);
     } finally {
       setLoading(false);
