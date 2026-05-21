@@ -110,13 +110,21 @@ authRouter.post('/discord/callback', authLimiter, async (req, res) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ client_id: clientId, client_secret: clientSecret, grant_type: 'authorization_code', code, redirect_uri: redirectUri }),
     });
-    if (!tokenRes.ok) throw new Error('Discord token exchange failed');
+    if (!tokenRes.ok) {
+      const discordErr = await tokenRes.json().catch(() => ({}));
+      console.error('[Discord OAuth] token exchange failed:', tokenRes.status, JSON.stringify(discordErr));
+      throw new Error(`Discord token exchange failed: ${JSON.stringify(discordErr)}`);
+    }
     const { access_token: discordToken } = await tokenRes.json() as { access_token: string };
 
     const userRes = await fetch('https://discord.com/api/users/@me', {
       headers: { Authorization: `Bearer ${discordToken}` },
     });
-    if (!userRes.ok) throw new Error('Discord user fetch failed');
+    if (!userRes.ok) {
+      const userErr = await userRes.json().catch(() => ({}));
+      console.error('[Discord OAuth] user fetch failed:', userRes.status, JSON.stringify(userErr));
+      throw new Error(`Discord user fetch failed: ${JSON.stringify(userErr)}`);
+    }
     const du = await userRes.json() as { id: string; username: string; global_name?: string; email?: string };
 
     let user = await db.user.findFirst({ where: { discord_user_id: du.id } });
