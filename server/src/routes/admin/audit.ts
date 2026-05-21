@@ -54,21 +54,24 @@ auditRouter.get('/audit-log', requireAdminOnly, async (req, res) => {
 auditRouter.post('/audit-log', requireAdmin, async (req, res) => {
   try {
     const {
-      actor_id, actor_type, actor_name, action, entity_type, entity_id,
+      action, entity_type, entity_id,
       entity_name, old_data, new_data, ip_address, user_agent,
     } = req.body as {
-      actor_id?: number; actor_type?: string; actor_name?: string; action?: string;
+      action?: string;
       entity_type?: string; entity_id?: string | number; entity_name?: string;
       old_data?: any; new_data?: any; ip_address?: string; user_agent?: string;
     };
     if (!action) { res.status(400).json({ detail: 'action is required' }); return; }
     if (!entity_type) { res.status(400).json({ detail: 'entity_type is required' }); return; }
 
+    // Always derive actor from the JWT — never trust client-supplied actor_id.
+    const p = req.jwtPayload!;
+
     const log = await db.auditLog.create({
       data: {
-        actor_id: actor_id ?? null,
-        actor_type: actor_type ?? 'system',
-        actor_name: actor_name ?? null,
+        actor_id: p.user_id ?? null,
+        actor_type: p.role ?? 'user',
+        actor_name: p.name ?? null,
         action,
         entity_type,
         entity_id: entity_id != null ? String(entity_id) : null,

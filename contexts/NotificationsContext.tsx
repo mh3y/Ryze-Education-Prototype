@@ -171,9 +171,20 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         }
       }
-    } catch {
-      // 404/405/network — fall back to synthesised notifications gracefully
-      if (isMounted.current) setNotifications(buildMockNotifications());
+    } catch (e: any) {
+      if (isMounted.current) {
+        // In development only, fall back to synthesised mock notifications when the
+        // API endpoint is unreachable (e.g. backend not yet running locally).
+        // In production we always show an empty list — never fake data.
+        const isDev = (import.meta as any).env?.DEV === true;
+        const isAuthError = String(e?.message ?? '').includes('401') ||
+                            String(e?.message ?? '').toLowerCase().includes('unauthori');
+        if (isDev && !isAuthError) {
+          setNotifications(buildMockNotifications());
+        } else {
+          setNotifications([]);
+        }
+      }
     } finally {
       if (isMounted.current) setLoading(false);
     }

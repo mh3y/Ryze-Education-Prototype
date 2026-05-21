@@ -16,7 +16,9 @@ tutorRouter.use(requireTutor);
 // ── Helper ────────────────────────────────────────────────────────────────────
 
 function tutorId(req: any): number {
-  return req.jwtPayload!.user_id!;
+  const id = req.jwtPayload?.user_id;
+  if (!id) throw new Error('Tutor session has no user_id — ensure you are logged in via Discord');
+  return id;
 }
 
 // ── GET /api/tutor/portal ─────────────────────────────────────────────────────
