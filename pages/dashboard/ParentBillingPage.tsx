@@ -1,16 +1,18 @@
 /**
  * ParentBillingPage — /dashboard/payments for parents.
- * Redesigned to match design handoff spec.
+ * Loads live invoice data from GET /api/parent/portal via parentApi.
  */
 
-import React from 'react';
-import { Download, CreditCard, MoreHorizontal, TrendingUp, TrendingDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { CreditCard, RefreshCw } from 'lucide-react';
+import { parentApi, ParentPortalPayload } from '../../services/parentApi';
 
-type TagVariant = 'ok' | 'warn' | 'default';
+type TagVariant = 'ok' | 'warn' | 'danger' | 'default';
 
 const tagStyles: Record<TagVariant, React.CSSProperties> = {
-  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
-  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
+  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',     border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
+  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
+  danger:  { color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)' },
   default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
 };
 
@@ -20,130 +22,191 @@ const Tag: React.FC<{ variant: TagVariant; children: React.ReactNode }> = ({ var
   </span>
 );
 
-const StatTile: React.FC<{ label: string; value: string; deltaText?: string; deltaDir?: 'up' | 'down'; footRight?: string }> = ({ label, value, deltaText, deltaDir, footRight }) => (
-  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 14, minHeight: 134, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card)' }}>
-    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
-    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>{value}</div>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
-      {deltaText ? (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
-          {deltaDir === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />} {deltaText}
-        </span>
-      ) : <span />}
-      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
-    </div>
-  </div>
-);
+function payStatusVariant(status: string): TagVariant {
+  if (status === 'paid')    return 'ok';
+  if (status === 'overdue') return 'danger';
+  if (status === 'pending') return 'warn';
+  return 'default';
+}
 
-const btnPrimary: React.CSSProperties = { height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: 'var(--accent-fg)', border: 'none', cursor: 'pointer', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' };
-const btnGhost: React.CSSProperties  = { height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)', cursor: 'pointer' };
-const btnQuiet: React.CSSProperties  = { height: 34, padding: '0 8px', borderRadius: 8, fontSize: 12, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', color: 'var(--fg-muted)', border: 'none', cursor: 'pointer' };
+function payStatusLabel(status: string): string {
+  const m: Record<string, string> = { paid: 'Paid', pending: 'Due', overdue: 'Overdue' };
+  return m[status] ?? status;
+}
 
-const INVOICES = [
-  { id: 'INV-2840', kid: 'Amelia Tran', amount: 540, due: 'Tomorrow',  state: 'due',  period: 'May 2026' },
-  { id: 'INV-2841', kid: 'Liam Tran',   amount: 320, due: 'In 3 days', state: 'due',  period: 'May 2026' },
-  { id: 'INV-2820', kid: 'Amelia Tran', amount: 540, due: 'Paid',      state: 'paid', period: 'Apr 2026' },
-  { id: 'INV-2819', kid: 'Liam Tran',   amount: 320, due: 'Paid',      state: 'paid', period: 'Apr 2026' },
-  { id: 'INV-2799', kid: 'Amelia Tran', amount: 540, due: 'Paid',      state: 'paid', period: 'Mar 2026' },
-  { id: 'INV-2798', kid: 'Liam Tran',   amount: 320, due: 'Paid',      state: 'paid', period: 'Mar 2026' },
-];
+function formatDueDate(iso: string | null): string {
+  if (!iso) return '—';
+  const d    = new Date(iso);
+  const now  = new Date();
+  const diff = d.getTime() - now.getTime();
+  if (diff < 0) return 'Overdue';
+  if (diff < 86_400_000)  return 'Today';
+  if (diff < 172_800_000) return 'Tomorrow';
+  if (diff < 604_800_000) return `In ${Math.round(diff / 86_400_000)} days`;
+  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+}
 
-// Simple bar chart mock
-const MONTHLY_SPEND = [480, 520, 640, 860, 860, 720, 860, 860];
+const btnGhost: React.CSSProperties   = { height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)', cursor: 'pointer' };
 
-const ParentBillingPage: React.FC = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-    <div>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Your account</div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-        <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Billing</h1>
-          <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Tuition invoices, payment method and your monthly billing history with Ryze.</p>
+type Filter = 'All' | 'Due' | 'Paid' | 'Overdue';
+const FILTERS: Filter[] = ['All', 'Due', 'Paid', 'Overdue'];
+
+const ParentBillingPage: React.FC = () => {
+  const [portal, setPortal]     = useState<ParentPortalPayload | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
+  const [filter, setFilter]     = useState<Filter>('All');
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    parentApi.getPortal()
+      .then(setPortal)
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load billing data.'))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  // Flatten all outstanding payments across all children
+  interface FlatPayment {
+    id: number;
+    child_name: string;
+    amount: number;
+    description: string;
+    due_date: string | null;
+    status: string;
+  }
+
+  const allPayments: FlatPayment[] = (portal?.children ?? []).flatMap((child) =>
+    child.outstanding_payments.map((p) => ({
+      id: p.id,
+      child_name: child.student_name,
+      amount: p.amount_due,
+      description: p.term,
+      due_date: p.due_date,
+      status: p.status,
+    }))
+  );
+
+  const filtered = allPayments.filter((p) => {
+    if (filter === 'All')     return true;
+    if (filter === 'Due')     return p.status === 'pending';
+    if (filter === 'Paid')    return p.status === 'paid';
+    if (filter === 'Overdue') return p.status === 'overdue';
+    return true;
+  });
+
+  const totalOutstanding = allPayments
+    .filter(p => p.status !== 'paid')
+    .reduce((s, p) => s + p.amount, 0);
+  const overdueTotal = allPayments
+    .filter(p => p.status === 'overdue')
+    .reduce((s, p) => s + p.amount, 0);
+  const pendingCount = allPayments.filter(p => p.status === 'pending' || p.status === 'overdue').length;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>Your account</div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Billing</h1>
+            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Tuition invoices and outstanding balances for your children.</p>
+          </div>
+          {error && (
+            <button onClick={load} style={{ ...btnGhost, gap: 6 }}>
+              <RefreshCw size={13} /> Retry
+            </button>
+          )}
         </div>
-        <button style={btnGhost}><Download size={14} /> Statement (PDF)</button>
       </div>
-    </div>
 
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
-      <StatTile label="Outstanding" value="$860"   deltaText="due tomorrow" deltaDir="down" />
-      <StatTile label="This month"  value="$860"   footRight="2 invoices" />
-      <StatTile label="YTD spend"   value="$3,140" footRight="across both" />
-      <StatTile label="Auto-pay"    value="On"     footRight="Visa •• 4242" />
-    </div>
+      {/* Stat row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-md)' }}>
+        {[
+          { label: 'Outstanding',  value: loading ? '…' : `$${totalOutstanding.toFixed(2)}`, footRight: `${pendingCount} invoice${pendingCount === 1 ? '' : 's'}` },
+          { label: 'Overdue',      value: loading ? '…' : `$${overdueTotal.toFixed(2)}` },
+          { label: 'Children',     value: loading ? '…' : String(portal?.children.length ?? 0), footRight: 'enrolled' },
+        ].map(({ label, value, footRight }) => (
+          <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 14, minHeight: 134, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card)' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>{value}</div>
+            {footRight && <div style={{ fontSize: 12, color: 'var(--fg-faint)' }}>{footRight}</div>}
+          </div>
+        ))}
+      </div>
 
-    <div style={{ display: 'grid', gridTemplateColumns: '12fr 5fr', gap: 'var(--gap-md)' }}>
       {/* Invoice table */}
       <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--shadow-card)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 22px', borderBottom: '1px solid var(--border-faint)', flexWrap: 'wrap' }}>
-          {['All', 'Due', 'Paid'].map((f, i) => (
-            <button key={f} style={{ padding: '6px 14px', borderRadius: 9, fontSize: 12.5, fontWeight: 600, border: `1px solid ${i === 0 ? 'color-mix(in oklab, var(--accent) 28%, transparent)' : 'var(--border-soft)'}`, background: i === 0 ? 'var(--accent-soft)' : 'var(--bg-surface-2)', color: i === 0 ? 'var(--accent)' : 'var(--fg-muted)', cursor: 'pointer' }}>{f}</button>
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              style={{ padding: '6px 14px', borderRadius: 9, fontSize: 12.5, fontWeight: 600, cursor: 'pointer', transition: 'all 140ms ease', border: `1px solid ${filter === f ? 'color-mix(in oklab, var(--accent) 28%, transparent)' : 'var(--border-soft)'}`, background: filter === f ? 'var(--accent-soft)' : 'var(--bg-surface-2)', color: filter === f ? 'var(--accent)' : 'var(--fg-muted)' }}
+            >
+              {f}
+            </button>
           ))}
           <div style={{ flex: 1 }} />
-          <button style={btnPrimary}><CreditCard size={14} /> Pay $860</button>
+          {totalOutstanding > 0 && (
+            <button style={{ height: 38, padding: '0 14px', borderRadius: 9, fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: 'var(--accent-fg)', border: 'none', cursor: 'pointer', boxShadow: '0 6px 18px -10px color-mix(in oklab, var(--accent) 70%, transparent)' }}>
+              <CreditCard size={14} /> Pay ${totalOutstanding.toFixed(2)}
+            </button>
+          )}
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
-              {['Invoice', 'Child', 'Period', 'Amount', 'Status', 'Due', ''].map((h, i) => (
-                <th key={i} style={{ padding: '10px 22px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fg-muted)', width: i === 6 ? 40 : undefined }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {INVOICES.map((iv, i) => (
-              <tr key={iv.id}
-                style={{ borderBottom: i < INVOICES.length - 1 ? '1px solid var(--border-faint)' : undefined, transition: 'background 140ms ease' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-              >
-                <td style={{ padding: '14px 22px', fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>{iv.id}</td>
-                <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-default)' }}>{iv.kid}</td>
-                <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-muted)' }}>{iv.period}</td>
-                <td style={{ padding: '14px 22px', fontSize: 13.5, fontWeight: 600, color: 'var(--fg-strong)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>${iv.amount}</td>
-                <td style={{ padding: '14px 22px' }}><Tag variant={iv.state === 'paid' ? 'ok' : 'warn'}>{iv.state === 'paid' ? 'Paid' : 'Due'}</Tag></td>
-                <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-muted)' }}>{iv.due}</td>
-                <td style={{ padding: '14px 22px' }}><button style={btnQuiet}><MoreHorizontal size={16} /></button></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Side panel */}
-      <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, padding: 'var(--card-pad)', boxShadow: 'var(--shadow-card)' }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 4 }}>Spend by month</div>
-        <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginBottom: 18 }}>Last 8 months</div>
-
-        {/* Mini bar chart */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 100, marginBottom: 8 }}>
-          {MONTHLY_SPEND.map((val, i) => {
-            const maxVal = Math.max(...MONTHLY_SPEND);
-            const h = (val / maxVal) * 100;
-            const isLast = i === MONTHLY_SPEND.length - 1;
-            return (
-              <div key={i} style={{ flex: 1, borderRadius: '4px 4px 0 0', height: `${h}%`, background: isLast ? 'color-mix(in oklab, var(--accent) 50%, transparent)' : 'linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #5b3d10))' }} />
-            );
-          })}
-        </div>
-
-        <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0' }} />
-
-        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)', marginBottom: 4 }}>Payment method</div>
-        <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginBottom: 14 }}>Used for automatic monthly billing.</div>
-
-        {/* Credit card panel */}
-        <div style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #0d1119, #1a2030)', color: '#fff', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 20, fontWeight: 'var(--font-display-weight)' as any }}>Visa</div>
-            <button style={{ ...btnQuiet, color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Change</button>
+        {loading && (
+          <div style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>Loading invoices…</div>
+        )}
+        {error && !loading && (
+          <div style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>{error}</div>
+        )}
+        {!loading && filtered.length === 0 && (
+          <div style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+            {allPayments.length === 0 ? 'No outstanding invoices.' : `No ${filter.toLowerCase()} invoices.`}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 16, letterSpacing: '0.12em', margin: '20px 0 10px', fontFeatureSettings: '"tnum" 1' }}>•••• •••• •••• 4242</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Expires 08 / 28</div>
-        </div>
+        )}
+
+        {!loading && filtered.length > 0 && (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
+                {['Invoice', 'Child', 'Description', 'Amount', 'Status', 'Due'].map((h, i) => (
+                  <th key={i} style={{ padding: '10px 22px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fg-muted)' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p, i) => (
+                <tr key={p.id}
+                  style={{ borderBottom: i < filtered.length - 1 ? '1px solid var(--border-faint)' : undefined, transition: 'background 140ms ease' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                >
+                  <td style={{ padding: '14px 22px', fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>
+                    INV-{p.id}
+                  </td>
+                  <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-default)' }}>{p.child_name}</td>
+                  <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-muted)', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.description}</td>
+                  <td style={{ padding: '14px 22px', fontSize: 13.5, fontWeight: 600, color: 'var(--fg-strong)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
+                    ${p.amount.toFixed(2)}
+                  </td>
+                  <td style={{ padding: '14px 22px' }}>
+                    <Tag variant={payStatusVariant(p.status)}>{payStatusLabel(p.status)}</Tag>
+                  </td>
+                  <td style={{ padding: '14px 22px', fontSize: 13.5, color: 'var(--fg-muted)' }}>
+                    {formatDueDate(p.due_date)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ParentBillingPage;

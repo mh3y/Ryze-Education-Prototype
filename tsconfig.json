@@ -30,6 +30,7 @@
     "pages",
     "components",
     "contexts",
+    "services",
     "App.tsx",
     "index.tsx",
     "api",

@@ -2,11 +2,12 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { db } from '../../prisma';
-import { requireAdmin } from '../../auth/middleware';
+import { requireAdminOnly } from '../../auth/middleware';
 import { sendInviteEmail } from '../../mailer';
 
 export const parentsRouter = Router();
-parentsRouter.use(requireAdmin);
+// Parent management is admin-only — tutors cannot access parent accounts.
+parentsRouter.use(requireAdminOnly);
 
 function parentToItem(p: any) {
   return {
@@ -64,9 +65,19 @@ parentsRouter.post('/', async (req, res) => {
   });
 
   const invite_link = makeInviteLink(invite_token);
-  await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link).catch(() => {});
+  let email_sent = true;
+  await sendInviteEmail(parent.email, `${parent.first_name} ${parent.last_name}`, invite_link)
+    .catch(() => { email_sent = false; });
 
-  res.status(201).json({ id: parent.id, full_name: `${parent.first_name} ${parent.last_name}`, invite_link, invite_expires_at: invite_expires_at.toISOString() });
+  res.status(201).json({
+    id: parent.id,
+    full_name: `${parent.first_name} ${parent.last_name}`,
+    invite_link,
+    invite_expires_at: invite_expires_at.toISOString(),
+    email_sent,
+    // When SMTP is not configured, surface a warning so the admin knows to share the link manually.
+    ...(email_sent ? {} : { email_warning: 'SMTP is not configured — the invite link is included in this response. Copy it and share it with the parent manually.' }),
+  });
 });
 
 // GET /api/admin/parents/:id

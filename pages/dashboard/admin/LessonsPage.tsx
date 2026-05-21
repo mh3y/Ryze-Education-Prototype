@@ -50,19 +50,6 @@ function stateTagStyle(state: LessonState): [TagVariant, string] {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data
-// ---------------------------------------------------------------------------
-
-const MOCK_BLOCKS: ScheduleBlock[] = [
-  { id: 1, room: 'Studio A', start: 16,   end: 17.5, title: 'Foundations',      tutor: 'Marcus Webb',  state: 'upcoming' },
-  { id: 2, room: 'Studio A', start: 18,   end: 19.5, title: 'Maths Advanced',   tutor: 'Daniel Kwok',  state: 'upcoming' },
-  { id: 3, room: 'Studio B', start: 17,   end: 18.5, title: 'Maths Ext 1',      tutor: 'Daniel Kwok',  state: 'live' },
-  { id: 4, room: 'Studio B', start: 10,   end: 11.5, title: 'OC Prep · Make-up',tutor: 'Aria Singh',   state: 'done' },
-  { id: 5, room: 'Studio C', start: 19,   end: 20.5, title: 'Maths Ext 2',      tutor: 'Priya Aiyar',  state: 'upcoming' },
-  { id: 6, room: 'Studio C', start: 11,   end: 12,   title: '1:1 Intro',        tutor: 'Priya Aiyar',  state: 'done' },
-];
-
-// ---------------------------------------------------------------------------
 // StatTile
 // ---------------------------------------------------------------------------
 
@@ -155,26 +142,24 @@ const LessonsPage: React.FC = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Convert API lessons to schedule blocks if available
-  const blocks: ScheduleBlock[] = lessons.length > 0
-    ? lessons.map((l, i) => {
-        const rooms = ['Studio A', 'Studio B', 'Studio C'];
-        const startDate = l.start_time ? new Date(l.start_time) : new Date();
-        const endDate   = l.end_time   ? new Date(l.end_time)   : new Date(startDate.getTime() + 90 * 60_000);
-        const start = startDate.getHours() + startDate.getMinutes() / 60;
-        const end   = endDate.getHours()   + endDate.getMinutes()   / 60;
-        const state: LessonState = l.status === 'active' ? 'live' : l.status === 'completed' ? 'done' : 'upcoming';
-        return {
-          id: l.id,
-          room: rooms[i % rooms.length],
-          start: Math.max(START_HOUR, Math.min(start, 20)),
-          end:   Math.min(end, 20.5),
-          title: l.title,
-          tutor: l.class_group_name ?? '',
-          state,
-        };
-      })
-    : MOCK_BLOCKS;
+  // Convert API lessons to schedule blocks
+  const blocks: ScheduleBlock[] = lessons.map((l, i) => {
+    const rooms = ['Studio A', 'Studio B', 'Studio C'];
+    const startDate = l.start_time ? new Date(l.start_time) : new Date();
+    const endDate   = l.end_time   ? new Date(l.end_time)   : new Date(startDate.getTime() + 90 * 60_000);
+    const start = startDate.getHours() + startDate.getMinutes() / 60;
+    const end   = endDate.getHours()   + endDate.getMinutes()   / 60;
+    const state: LessonState = l.status === 'live' ? 'live' : l.status === 'completed' ? 'done' : 'upcoming';
+    return {
+      id: l.id,
+      room: rooms[i % rooms.length],
+      start: Math.max(START_HOUR, Math.min(start, 20)),
+      end:   Math.min(end, 20.5),
+      title: l.title,
+      tutor: l.class_group_name ?? '',
+      state,
+    };
+  });
 
   const liveCount     = blocks.filter(b => b.state === 'live').length;
   const upcomingCount = blocks.filter(b => b.state === 'upcoming').length;
@@ -238,9 +223,9 @@ const LessonsPage: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
         <StatTile label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
-        <StatTile label="Attendance"    value="92%"  deltaText="+3 vs last wk" />
-        <StatTile label="Make-ups owed" value="03"   footRight="2 booked" />
-        <StatTile label="Empty seats"   value="07"   footRight="across 4 lessons" />
+        <StatTile label="Attendance"    value={loading ? '…' : '—'} deltaText="+3 vs last wk" />
+        <StatTile label="Make-ups owed" value="—" />
+        <StatTile label="Empty seats"   value="—" />
       </div>
 
       {/* Schedule card */}
@@ -276,6 +261,13 @@ const LessonsPage: React.FC = () => {
             Print roster <ArrowRight size={13} />
           </button>
         </div>
+
+        {/* Empty state */}
+        {!loading && blocks.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--fg-muted)', fontSize: 14 }}>
+            No lessons found for the current filter.
+          </div>
+        )}
 
         {/* Schedule grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', overflow: 'hidden' }}>

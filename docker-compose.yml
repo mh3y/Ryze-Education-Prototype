@@ -1,4 +1,19 @@
 services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ryze
+      POSTGRES_USER: ryze
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-ryze_dev_password}"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ryze"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build:
       context: ./server
@@ -6,9 +21,13 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       PORT: "8000"
-      DATABASE_URL: "file:/data/ryze-portal.db"
+      DATABASE_URL: "postgresql://ryze:${POSTGRES_PASSWORD:-ryze_dev_password}@db:5432/ryze?schema=public"
+      DATABASE_DIRECT_URL: "postgresql://ryze:${POSTGRES_PASSWORD:-ryze_dev_password}@db:5432/ryze?schema=public"
       JWT_SECRET: "${JWT_SECRET:-change-me-in-production}"
       JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-7d}"
       PORTAL_BASE_URL: "${PORTAL_BASE_URL:-http://localhost:3000}"
@@ -21,8 +40,6 @@ services:
       DISCORD_CLIENT_ID: "${DISCORD_CLIENT_ID:-}"
       DISCORD_CLIENT_SECRET: "${DISCORD_CLIENT_SECRET:-}"
       DISCORD_REDIRECT_URI: "${DISCORD_REDIRECT_URI:-}"
-    volumes:
-      - api_data:/data
 
   web:
     build:
@@ -41,4 +58,4 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
-  api_data:
+  pg_data:

@@ -39,19 +39,6 @@ const StatusTag: React.FC<{ variant: TagVariant; label: string }> = ({ variant, 
 );
 
 // ---------------------------------------------------------------------------
-// Mock data for display when API data lacks the extra fields
-// ---------------------------------------------------------------------------
-
-const MOCK_CLASSES = [
-  { id: 'ext1-tue', name: 'Maths Extension 1',  level: 'Year 12 — HSC',  tutor: 'Daniel Kwok',   day: 'TUE', time: '5:00 pm', seats: '8 / 8',   rev: '$3,200/wk', state: 'running' as const },
-  { id: 'ext2-thu', name: 'Maths Extension 2',  level: 'Year 12 — HSC',  tutor: 'Priya Aiyar',   day: 'THU', time: '7:00 pm', seats: '6 / 8',   rev: '$2,400/wk', state: 'running' as const },
-  { id: 'adv-mon',  name: 'Maths Advanced',     level: 'Year 11',        tutor: 'Daniel Kwok',   day: 'MON', time: '6:00 pm', seats: '9 / 10',  rev: '$2,700/wk', state: 'running' as const },
-  { id: 'fnd-wed',  name: 'Foundations',        level: 'Year 10',        tutor: 'Marcus Webb',   day: 'WED', time: '4:00 pm', seats: '7 / 10',  rev: '$1,890/wk', state: 'running' as const },
-  { id: 'sel-sat',  name: 'Selective Prep',     level: 'Year 9',         tutor: 'Priya Aiyar',   day: 'SAT', time: '9:00 am', seats: '10 / 12', rev: '$2,500/wk', state: 'running' as const },
-  { id: 'oc-sun',   name: 'OC Prep',            level: 'Year 5',         tutor: 'Aria Singh',    day: 'SUN', time: '10:00 am',seats: '5 / 12',  rev: '$1,200/wk', state: 'low-seat' as const },
-];
-
-// ---------------------------------------------------------------------------
 // Create class modal
 // ---------------------------------------------------------------------------
 
@@ -239,20 +226,18 @@ const ClassesPage: React.FC = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  // Map API items into display shape, or fall back to mock
-  const displayClasses = items.length > 0
-    ? items.map((c) => ({
-        id: String(c.id),
-        name: c.name,
-        level: [c.year_level, c.subject].filter(Boolean).join(' · ') || '—',
-        tutor: c.tutor?.full_name ?? '—',
-        day: '—',
-        time: '—',
-        seats: `${c.member_count} enrolled`,
-        rev: '—',
-        state: (c.active ? 'running' : 'inactive') as 'running' | 'low-seat' | 'inactive',
-      }))
-    : MOCK_CLASSES;
+  // Map API items into display shape
+  const displayClasses = items.map((c) => ({
+    id: String(c.id),
+    name: c.name,
+    level: [c.year_level, c.subject].filter(Boolean).join(' · ') || '—',
+    tutor: c.tutor?.full_name ?? '—',
+    day: '—',
+    time: '—',
+    seats: `${c.member_count} enrolled`,
+    rev: '—',
+    state: (c.active ? 'running' : 'inactive') as 'running' | 'low-seat' | 'inactive',
+  }));
 
   const btnStyle: React.CSSProperties = {
     height: 38, padding: '0 14px', borderRadius: 9,
@@ -323,6 +308,13 @@ const ClassesPage: React.FC = () => {
       )}
 
       {/* Class grid */}
+      {!loading && displayClasses.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--fg-muted)' }}>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>📚</div>
+          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No classes yet</div>
+          <div style={{ fontSize: 14 }}>Create your first class to get started.</div>
+        </div>
+      )}
       {!loading && (
         <div style={{
           display: 'grid',

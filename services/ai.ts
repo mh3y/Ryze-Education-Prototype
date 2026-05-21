@@ -155,7 +155,7 @@ export const RyzeAI = {
       const parts: string[] = [];
       let start = 0;
       while (start < cleanText.length) {
-        let end = start + CHUNK_SIZE;
+        const end = start + CHUNK_SIZE;
         parts.push(`${context}\n${cleanText.slice(start, end)}`.trim());
         start = end - 100; // Overlap
       }

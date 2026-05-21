@@ -5,8 +5,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Plus, Search, Trash2, GraduationCap } from 'lucide-react';
-import { portalApi, UserRecord } from '../../../services/portalApi';
-import { adminApi } from '../../../services/adminApi';
+import { adminApi, TutorListItem } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDeleteModal';
@@ -28,13 +27,13 @@ function getInitials(name: string): string {
 const TutorsPage: React.FC = () => {
   const { user } = useAuth();
 
-  const [tutors, setTutors]           = useState<UserRecord[]>([]);
+  const [tutors, setTutors]           = useState<TutorListItem[]>([]);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Delete state
-  const [deleteTarget, setDeleteTarget] = useState<UserRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<TutorListItem | null>(null);
   const [deleting, setDeleting]         = useState(false);
   const [deleteError, setDeleteError]   = useState<string | null>(null);
 
@@ -42,10 +41,7 @@ const TutorsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Use the confirmed-working /api/students endpoint with role=tutor filter.
-      // The /api/admin/students endpoint does not reliably filter by role on the
-      // production server — portalApi hits the original Discord bot API directly.
-      const { items } = await portalApi.getStudents({ role: 'tutor', limit: 500 });
+      const { items } = await adminApi.getTutors({ limit: 500 });
       setTutors(items);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load tutors.';
@@ -63,18 +59,16 @@ const TutorsPage: React.FC = () => {
     setDeleteError(null);
     const adminName = user?.name ?? 'Admin';
 
-    if (tutors.length > 0) {
-      try {
-        await adminApi.deleteStudent(deleteTarget.id);
-      } catch {
-        // API error (e.g. 405) — fall through to local removal.
-      }
+    try {
+      await adminApi.deleteTutor(deleteTarget.id);
+      auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name ?? deleteTarget.email ?? String(deleteTarget.id), adminName, 'Tutor account deleted');
+      setTutors((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (e: unknown) {
+      setDeleteError(e instanceof Error ? e.message : 'Failed to delete tutor.');
+    } finally {
+      setDeleting(false);
     }
-
-    auditLog.log('delete', 'tutor', deleteTarget.id, deleteTarget.full_name ?? deleteTarget.email ?? String(deleteTarget.id), adminName, 'Tutor account deleted');
-    setTutors((prev) => prev.filter((t) => t.id !== deleteTarget.id));
-    setDeleteTarget(null);
-    setDeleting(false);
   };
 
   const filtered = tutors.filter((t) =>

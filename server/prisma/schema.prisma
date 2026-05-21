@@ -1,11 +1,115 @@
+// ============================================================================
+// Ryze Education — Production Database Schema
+// Provider: PostgreSQL (Railway / Supabase)
+//
+// Architecture: Dashboard is source of truth. Discord is an output layer only.
+// ============================================================================
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")  // for migrations; same as DATABASE_URL on Railway
 }
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  admin
+  tutor
+  student
+}
+
+enum LessonStatus {
+  scheduled
+  live
+  completed
+  cancelled
+}
+
+enum AttendanceStatus {
+  present
+  absent
+  late
+  excused
+  unknown
+}
+
+enum PaymentStatus {
+  pending
+  partial   // some amount received, not fully paid
+  paid
+  overdue
+  waived
+}
+
+enum HomeworkStatus {
+  pending
+  submitted
+  marked
+  late
+}
+
+enum PaymentFrequency {
+  yearly
+  termly
+  weekly
+  custom
+}
+
+// ============================================================================
+// USERS — all Discord-linked portal users (admins, tutors, students)
+// ============================================================================
+
+model User {
+  id               Int       @id @default(autoincrement())
+  discord_user_id  String?   @unique
+  email            String?   @unique
+  full_name        String
+  preferred_name   String?
+  avatar_url       String?
+  role             UserRole  @default(student)
+  active           Boolean   @default(true)
+  last_login_at    DateTime?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  // Profiles
+  student_profile  StudentProfile?
+  tutor_profile    TutorProfile?
+  discord_link     DiscordLink?
+
+  // Teaching
+  taught_classes   ClassGroup[]   @relation("ClassTutor")
+
+  // Student activity
+  enrollments      ClassEnrollment[]
+  attendance       Attendance[]
+  submissions      HomeworkSubmission[]
+  progress_reports ProgressReport[]    @relation("ReportStudent")
+  created_reports  ProgressReport[]    @relation("ReportCreator")
+  payments         StudentPayment[]
+  parent_links     ParentStudent[]
+
+  // Authored
+  audit_logs          AuditLog[]           @relation("AuditActor")
+  announcements       Announcement[]       @relation("AnnouncementAuthor")
+  notifications       Notification[]       @relation("UserNotification")
+  waitlist_entries    Waitlist[]
+  unavailability      TutorUnavailability[]
+
+  @@index([role])
+  @@index([discord_user_id])
+}
+
+// ============================================================================
+// PARENTS — email/password portal users (not Discord-linked)
+// ============================================================================
 
 model Parent {
   id                Int       @id @default(autoincrement())
@@ -23,28 +127,55 @@ model Parent {
   created_at        DateTime  @default(now())
   updated_at        DateTime  @updatedAt
   last_login_at     DateTime?
+
   children          ParentStudent[]
+  notifications     Notification[]  @relation("ParentNotification")
+  message_threads   MessageThread[]
+
+  @@index([email])
 }
 
-model Student {
-  id              Int       @id @default(autoincrement())
-  discord_user_id String?   @unique
-  full_name       String
-  email           String?
-  role            String    @default("student")
-  year_level      String?
-  school          String?
-  preferred_name  String?
-  notes           String?
-  active          Boolean   @default(true)
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  parents         ParentStudent[]
-  enrollments     ClassEnrollment[]
-  attendance      Attendance[]
-  reports         ProgressReport[]
-  payments        Payment[]
+// ============================================================================
+// PROFILES
+// ============================================================================
+
+model StudentProfile {
+  id             Int     @id @default(autoincrement())
+  user_id        Int     @unique
+  year_level     String?
+  school         String?
+  notes          String?
+  user           User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
+
+model TutorProfile {
+  id          Int     @id @default(autoincrement())
+  user_id     Int     @unique
+  bio         String?
+  hourly_rate Float?
+  subjects    String? // comma-separated
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  payments    TutorPayment[]
+}
+
+// ============================================================================
+// DISCORD INTEGRATION
+// ============================================================================
+
+model DiscordLink {
+  id               Int      @id @default(autoincrement())
+  user_id          Int      @unique
+  discord_user_id  String   @unique
+  discord_guild_id String?
+  discord_roles    String[] // Postgres array of role IDs
+  linked_at        DateTime @default(now())
+  synced_at        DateTime?
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+// ============================================================================
+// PARENT–STUDENT LINK
+// ============================================================================
 
 model ParentStudent {
   id                 Int     @id @default(autoincrement())
@@ -53,21 +184,50 @@ model ParentStudent {
   relationship       String  @default("parent")
   is_primary_contact Boolean @default(true)
   parent             Parent  @relation(fields: [parent_id], references: [id], onDelete: Cascade)
-  student            Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  student            User    @relation(fields: [student_id], references: [id], onDelete: Cascade)
   @@unique([parent_id, student_id])
 }
 
+// ============================================================================
+// CLASSES
+// ============================================================================
+
 model ClassGroup {
-  id          Int       @id @default(autoincrement())
-  name        String
-  subject     String
-  description String?
-  tutor_name  String?
-  active      Boolean   @default(true)
-  created_at  DateTime  @default(now())
-  enrollments ClassEnrollment[]
-  lessons     Lesson[]
+  id                 Int       @id @default(autoincrement())
+  name               String
+  subject            String
+  description        String?
+  year_level         String?
+  schedule           String?   // human-readable, e.g. "Tuesdays 5pm"
+  schedule_day       Int?      // 0=Sun … 6=Sat
+  schedule_hour      Int?
+  schedule_minute    Int?
+  duration_min       Int       @default(60)
+  max_students       Int?
+  discord_channel_id String?
+  discord_role_id    String?
+  tutor_id           Int?
+  active             Boolean   @default(true)
+  archived_at        DateTime?
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+
+  tutor              User?          @relation("ClassTutor", fields: [tutor_id], references: [id])
+  enrollments        ClassEnrollment[]
+  lessons            Lesson[]
+  homework           Homework[]
+  resources          LessonResource[]
+  announcements      Announcement[] @relation("ClassAnnouncement")
+  progress_reports   ProgressReport[]
+  waitlist           Waitlist[]
+
+  @@index([tutor_id])
+  @@index([active])
 }
+
+// ============================================================================
+// ENROLMENTS
+// ============================================================================
 
 model ClassEnrollment {
   id          Int        @id @default(autoincrement())
@@ -75,64 +235,444 @@ model ClassEnrollment {
   class_id    Int
   enrolled_at DateTime   @default(now())
   active      Boolean    @default(true)
-  student     Student    @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  is_trial    Boolean    @default(false)   // trial lesson before full enrolment
+  trial_at    DateTime?
+  notes       String?
+  student     User       @relation(fields: [student_id], references: [id], onDelete: Cascade)
   class       ClassGroup @relation(fields: [class_id], references: [id], onDelete: Cascade)
   @@unique([student_id, class_id])
+  @@index([class_id])
 }
+
+// ============================================================================
+// LESSONS
+// ============================================================================
 
 model Lesson {
-  id           Int        @id @default(autoincrement())
+  id               Int           @id @default(autoincrement())
+  class_id         Int
+  title            String
+  description      String?
+  scheduled_at     DateTime
+  duration_min     Int           @default(60)
+  meet_link        String?
+  recording_url    String?
+  discord_event_id String?
+  status           LessonStatus  @default(scheduled)
+  notes            String?       // tutor notes post-lesson
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+
+  class            ClassGroup    @relation(fields: [class_id], references: [id], onDelete: Cascade)
+  attendance       Attendance[]
+  voice_attendance VoiceAttendance[]
+  resources        LessonResource[]
+
+  @@index([class_id])
+  @@index([scheduled_at])
+  @@index([status])
+}
+
+// ============================================================================
+// RESOURCES
+// ============================================================================
+
+model LessonResource {
+  id            Int         @id @default(autoincrement())
+  class_id      Int?
+  lesson_id     Int?
+  title         String
+  description   String?
+  file_url      String?
+  file_size     Int?
+  file_type     String?
+  external_url  String?
+  resource_type String      @default("document") // document | video | link | worksheet
+  audience      String      @default("enrolled")  // enrolled | all | tutors_only
+  created_by    Int?
+  created_at    DateTime    @default(now())
+
+  class         ClassGroup? @relation(fields: [class_id], references: [id])
+  lesson        Lesson?     @relation(fields: [lesson_id], references: [id])
+}
+
+// ============================================================================
+// HOMEWORK
+// ============================================================================
+
+model Homework {
+  id           Int       @id @default(autoincrement())
   class_id     Int
   title        String
-  scheduled_at DateTime
-  duration_min Int        @default(60)
-  notes        String?
-  class        ClassGroup @relation(fields: [class_id], references: [id], onDelete: Cascade)
-  attendance   Attendance[]
+  description  String?
+  instructions String?
+  due_date     DateTime?
+  max_score    Int?
+  file_url     String?   // attachment for the task itself
+  published    Boolean   @default(false)
+  published_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  class        ClassGroup         @relation(fields: [class_id], references: [id], onDelete: Cascade)
+  submissions  HomeworkSubmission[]
+
+  @@index([class_id])
+  @@index([due_date])
 }
+
+model HomeworkSubmission {
+  id           Int            @id @default(autoincrement())
+  homework_id  Int
+  student_id   Int
+  file_url     String?
+  notes        String?
+  score        Float?
+  feedback     String?
+  status       HomeworkStatus @default(pending)
+  submitted_at DateTime?
+  marked_at    DateTime?
+  created_at   DateTime       @default(now())
+
+  homework     Homework       @relation(fields: [homework_id], references: [id], onDelete: Cascade)
+  student      User           @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  @@unique([homework_id, student_id])
+}
+
+// ============================================================================
+// ATTENDANCE
+// ============================================================================
 
 model Attendance {
-  id         Int      @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
   lesson_id  Int
   student_id Int
-  status     String   @default("unknown")
+  status     AttendanceStatus @default(unknown)
+  notes      String?
+  marked_by  Int?
   marked_at  DateTime?
-  lesson     Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
-  student    Student  @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  created_at DateTime         @default(now())
+
+  lesson     Lesson           @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  student    User             @relation(fields: [student_id], references: [id], onDelete: Cascade)
   @@unique([lesson_id, student_id])
+  @@index([lesson_id])
+  @@index([student_id])
 }
 
+// Voice attendance — tracked by Discord bot
+model VoiceAttendance {
+  id               Int      @id @default(autoincrement())
+  lesson_id        Int
+  discord_user_id  String
+  discord_channel  String?
+  joined_at        DateTime
+  left_at          DateTime?
+  duration_seconds Int?
+
+  lesson           Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  @@index([lesson_id])
+}
+
+// ============================================================================
+// PROGRESS REPORTS
+// ============================================================================
+
 model ProgressReport {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   student_id   Int
-  period       String
+  class_id     Int?
+  created_by   Int?
+  period       String?
   score        Float?
   grade        String?
   strengths    String?
   improvements String?
   notes        String?
+  status       String    @default("draft")   // draft | published
+  published_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  student      User        @relation("ReportStudent", fields: [student_id], references: [id], onDelete: Cascade)
+  creator      User?       @relation("ReportCreator", fields: [created_by], references: [id])
+  class        ClassGroup? @relation(fields: [class_id], references: [id])
+
+  @@index([student_id])
+  @@index([status])
+}
+
+// ============================================================================
+// PAYMENTS
+// ============================================================================
+
+model StudentPayment {
+  id                  Int              @id @default(autoincrement())
+  student_id          Int
+  amount_cents        Int              // total amount DUE (in cents — no float precision issues)
+  amount_paid_cents   Int              @default(0) // amount RECEIVED so far (cents)
+  description         String
+  term                String?          // e.g. "Term 2 2026" | "Week 3" | "Annual 2026"
+  frequency           PaymentFrequency @default(termly) // yearly | termly | weekly | custom
+  installment_number  Int?             // 1-based: which payment in the sequence (e.g. 2 of 4)
+  total_installments  Int?             // total in the payment plan (e.g. 4 for termly)
+  due_date            DateTime?
+  paid_at             DateTime?        // timestamp of full payment (or last installment)
+  payment_method      String?          // cash | bank_transfer | card | eftpos | other
+  received_by         String?          // name of admin who recorded the payment
+  reference           String?          // receipt / transaction ref
+  status              PaymentStatus    @default(pending)
+  notes               String?
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @updatedAt
+
+  student             User             @relation(fields: [student_id], references: [id], onDelete: Cascade)
+
+  @@index([student_id])
+  @@index([status])
+  @@index([due_date])
+  @@index([student_id, status])
+}
+
+model TutorPayment {
+  id           Int      @id @default(autoincrement())
+  tutor_id     Int
+  amount_cents Int
+  period       String?
+  description  String
+  paid_at      DateTime?
+  status       String   @default("pending")
+  notes        String?
   created_at   DateTime @default(now())
-  student      Student  @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  updated_at   DateTime @updatedAt
+
+  tutor        TutorProfile       @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
+  items        TutorPaymentItem[]
+
+  @@index([tutor_id])
 }
 
-model Payment {
-  id          Int       @id @default(autoincrement())
+model TutorPaymentItem {
+  id           Int          @id @default(autoincrement())
+  payment_id   Int
+  class_id     Int?
+  description  String
+  hours        Float?
+  rate_cents   Int?
+  amount_cents Int
+
+  payment      TutorPayment @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+}
+
+// ============================================================================
+// ANNOUNCEMENTS
+// ============================================================================
+
+model Announcement {
+  id           Int         @id @default(autoincrement())
+  title        String
+  body         String
+  author_id    Int?
+  class_id     Int?
+  audience     String      @default("all") // all | class | students | parents | tutors
+  pinned       Boolean     @default(false)
+  published    Boolean     @default(false)
+  published_at DateTime?
+  expires_at   DateTime?
+  discord_sent Boolean     @default(false)
+  email_sent   Boolean     @default(false)
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+
+  author       User?       @relation("AnnouncementAuthor", fields: [author_id], references: [id])
+  class        ClassGroup? @relation("ClassAnnouncement", fields: [class_id], references: [id])
+
+  @@index([published])
+  @@index([audience])
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  parent_id  Int?
+  type       String   // lesson_reminder | homework_due | payment_due | report_ready | announcement | system
+  title      String
+  body       String?
+  data       Json?
+  read       Boolean  @default(false)
+  read_at    DateTime?
+  sent_at    DateTime?
+  channel    String   @default("in_app") // in_app | email | discord
+  created_at DateTime @default(now())
+
+  user       User?    @relation("UserNotification", fields: [user_id], references: [id])
+  parent     Parent?  @relation("ParentNotification", fields: [parent_id], references: [id])
+
+  @@index([user_id])
+  @@index([parent_id])
+  @@index([read])
+}
+
+// ============================================================================
+// AUDIT LOGS — server-side, not localStorage
+// ============================================================================
+
+model AuditLog {
+  id           Int      @id @default(autoincrement())
+  actor_id     Int?
+  actor_type   String   @default("user") // user | parent | system | bot
+  actor_name   String?
+  action       String   // create | update | delete | login | logout | publish | mark | enrol | unenrol
+  entity_type  String   // student | class | lesson | homework | payment | report | announcement | parent
+  entity_id    String?
+  entity_name  String?
+  old_data     Json?
+  new_data     Json?
+  ip_address   String?
+  user_agent   String?
+  created_at   DateTime @default(now())
+
+  actor        User?    @relation("AuditActor", fields: [actor_id], references: [id])
+
+  @@index([actor_id])
+  @@index([entity_type])
+  @@index([action])
+  @@index([created_at])
+}
+
+// ============================================================================
+// WAITLIST — students waiting for a full class
+// ============================================================================
+
+model Waitlist {
+  id          Int        @id @default(autoincrement())
   student_id  Int
-  amount      Float
-  description String
-  due_date    DateTime?
-  paid_at     DateTime?
-  status      String    @default("pending")
-  created_at  DateTime  @default(now())
-  student     Student   @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  class_id    Int
+  notes       String?
+  notified    Boolean    @default(false) // true once admin notifies student that a spot opened
+  created_at  DateTime   @default(now())
+
+  student     User       @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  class       ClassGroup @relation(fields: [class_id], references: [id], onDelete: Cascade)
+
+  @@unique([student_id, class_id])
+  @@index([class_id])
 }
 
-model AdminUser {
-  id              Int      @id @default(autoincrement())
-  discord_user_id String?  @unique
-  full_name       String
-  email           String?  @unique
-  role            String   @default("admin")
-  active          Boolean  @default(true)
-  created_at      DateTime @default(now())
+// ============================================================================
+// TUTOR UNAVAILABILITY — blocks on tutor schedule
+// ============================================================================
+
+model TutorUnavailability {
+  id         Int      @id @default(autoincrement())
+  tutor_id   Int
+  date       DateTime // the specific date (time ignored — full-day block)
+  reason     String?
+  created_at DateTime @default(now())
+
+  tutor      User     @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
+
+  @@index([tutor_id])
+  @@index([date])
+}
+
+// ============================================================================
+// BOT JOBS — task queue for the Discord bot
+// ============================================================================
+
+model BotJob {
+  id           Int       @id @default(autoincrement())
+  job_type     String    // post_announcement | create_event | cancel_event | send_reminder | send_dm
+  payload      Json      // job-specific data (announcement id, lesson id, user discord id, etc.)
+  status       String    @default("pending")  // pending | processing | completed | failed
+  priority     Int       @default(5)          // 1 (highest) – 10 (lowest)
+  attempts     Int       @default(0)
+  max_attempts Int       @default(3)
+  error        String?
+  created_by   Int?      // admin user id who triggered the job
+  claimed_at   DateTime? // when the bot started processing
+  completed_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@index([status, priority])
+  @@index([job_type])
+  @@index([created_at])
+}
+
+// ============================================================================
+// MESSAGES — parent ↔ admin messaging threads
+// ============================================================================
+
+model MessageThread {
+  id         Int       @id @default(autoincrement())
+  subject    String
+  parent_id  Int
+  status     String    @default("open")  // open | resolved | archived
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  parent     Parent    @relation(fields: [parent_id], references: [id], onDelete: Cascade)
+  messages   Message[]
+
+  @@index([parent_id])
+  @@index([status])
+}
+
+model Message {
+  id           Int           @id @default(autoincrement())
+  thread_id    Int
+  sender_type  String        // parent | admin
+  sender_id    Int?          // admin user_id if sender_type=admin, parent_id if parent
+  body         String
+  read         Boolean       @default(false)
+  read_at      DateTime?
+  created_at   DateTime      @default(now())
+
+  thread       MessageThread @relation(fields: [thread_id], references: [id], onDelete: Cascade)
+
+  @@index([thread_id])
+  @@index([sender_type, sender_id])
+}
+
+// ============================================================================
+// ALERTS — system-generated warnings for admin attention
+// ============================================================================
+
+model Alert {
+  id                  Int       @id @default(autoincrement())
+  alert_type          String    // overdue_payment | missing_attendance | pending_homework | low_attendance | expiring_invite
+  severity            String    @default("medium") // low | medium | high | critical
+  title               String
+  message             String
+  related_entity_type String?   // student | payment | lesson | class
+  related_entity_id   Int?
+  status              String    @default("open")  // open | resolved | dismissed
+  assigned_to         Int?
+  resolved_at         DateTime?
+  resolved_by         Int?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  @@index([status])
+  @@index([severity])
+  @@index([alert_type])
+  @@index([created_at])
+  @@index([related_entity_type, related_entity_id])
+}
+
+// ============================================================================
+// SETTINGS
+// ============================================================================
+
+model Setting {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  value      String
+  updated_by Int?
+  updated_at DateTime @updatedAt
 }

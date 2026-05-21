@@ -4,15 +4,21 @@
  * TutorAttendance, TutorHomework (all in one file, rendered by role-aware route).
  */
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ClipboardCheck, Plus, ArrowRight, ArrowUpRight,
   CalendarDays, ClipboardList, PenLine, BookOpen,
   Mail, Download, Search, Filter, ArrowUpDown, MoreHorizontal,
-  TrendingUp, TrendingDown, AlertTriangle,
+  TrendingUp, TrendingDown, AlertTriangle, Loader2, ChevronLeft,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  tutorApi,
+  type TutorPortalPayload,
+  type TutorAttendanceRoster,
+  type TutorLesson,
+} from '../../services/tutorApi';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -152,43 +158,53 @@ const AVATAR_COLOURS: Record<string, { bg: string; fg: string }> = {
 };
 
 // ---------------------------------------------------------------------------
-// Mock data
+// Data hook
 // ---------------------------------------------------------------------------
 
-const TUTOR_TODAY = [
-  { id: 1, time: '16:00', end: '17:30', cls: 'Foundations · Year 10',    roster: 7,  state: 'upcoming', room: 'Studio A' },
-  { id: 2, time: '18:00', end: '19:30', cls: 'Maths Advanced · Year 11', roster: 9,  state: 'upcoming', room: 'Studio A' },
-];
+function useTutorPortal() {
+  const [data, setData]       = useState<TutorPortalPayload | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState<string | null>(null);
 
-const TUTOR_CLASSES = [
-  { id: 'fnd-wed',  name: 'Foundations',       level: 'Year 10',       day: 'WED', time: '4:00 pm', size: '7 / 10', hw: '3 / 7 graded',  state: 'running' },
-  { id: 'adv-mon',  name: 'Maths Advanced',    level: 'Year 11',       day: 'MON', time: '6:00 pm', size: '9 / 10', hw: 'All graded',    state: 'running' },
-  { id: 'ext1-tue', name: 'Maths Extension 1', level: 'Year 12 — HSC', day: 'TUE', time: '5:00 pm', size: '8 / 8',  hw: '5 / 8 graded',  state: 'running' },
-];
+  useEffect(() => {
+    let cancelled = false;
+    tutorApi.getPortal()
+      .then((d) => { if (!cancelled) { setData(d); setLoading(false); } })
+      .catch((e) => { if (!cancelled) { setError(e?.message ?? 'Failed to load'); setLoading(false); } });
+    return () => { cancelled = true; };
+  }, []);
 
-const TUTOR_ROSTER = [
-  { id: 1, name: 'Amelia Tran',     yr: 'Year 12', initials: 'AT', colour: '',       last: 'Last lesson · present', state: 'present' },
-  { id: 2, name: 'Mei Chen',        yr: 'Year 12', initials: 'MC', colour: 'blue',   last: 'Last lesson · present', state: 'present' },
-  { id: 3, name: 'Hayden Wong',     yr: 'Year 12', initials: 'HW', colour: 'green',  last: 'Last lesson · present', state: 'present' },
-  { id: 4, name: 'Sofia Reyes',     yr: 'Year 10', initials: 'SR', colour: 'rose',   last: 'Missed 2 lessons',      state: 'missing' },
-  { id: 5, name: 'Eli Bernstein',   yr: 'Year 10', initials: 'EB', colour: 'rose',   last: 'Paused enrolment',      state: 'paused' },
-  { id: 6, name: 'Priya Sharma',    yr: 'Year 9',  initials: 'PS', colour: 'purple', last: 'Last lesson · late',    state: 'late' },
-  { id: 7, name: 'Lachlan O\'Brien',yr: 'Year 11', initials: 'LO', colour: 'blue',   last: 'Last lesson · present', state: 'present' },
-];
+  return { data, loading, error };
+}
 
-const TUTOR_HOMEWORK = [
-  { id: 'HW-318', title: 'Inverse trig derivatives',      cls: 'Maths Ext 1', due: 'Tomorrow',  submitted: 6, total: 8, state: 'open' },
-  { id: 'HW-317', title: 'Combinatorics problem set',      cls: 'Maths Adv',  due: 'In 3 days', submitted: 4, total: 9, state: 'open' },
-  { id: 'HW-316', title: 'Algebraic fractions worksheet',  cls: 'Foundations',due: 'Yesterday', submitted: 7, total: 7, state: 'grading' },
-  { id: 'HW-315', title: 'Mechanics — projectile motion',  cls: 'Maths Ext 2',due: '1 week ago',submitted: 6, total: 6, state: 'graded' },
-];
+// Helper: format a scheduled_at ISO string as HH:MM
+function fmtTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+function fmtEndTime(iso: string, durationMin?: number | null): string {
+  if (!durationMin) return '';
+  const end = new Date(new Date(iso).getTime() + durationMin * 60000);
+  return end.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+function isToday(iso: string): boolean {
+  const d = new Date(iso);
+  const t = new Date();
+  return d.getDate() === t.getDate() && d.getMonth() === t.getMonth() && d.getFullYear() === t.getFullYear();
+}
+function initials(name: string): string {
+  return name.trim().split(/\s+/).map(w => w[0] ?? '').join('').slice(0, 2).toUpperCase();
+}
 
 // ---------------------------------------------------------------------------
 // Sub-pages
 // ---------------------------------------------------------------------------
 
-const TutorOverview: React.FC<{ firstName: string; todayLabel: string }> = ({ firstName, todayLabel }) => {
+const TutorOverview: React.FC<{ firstName: string; todayLabel: string; portal: TutorPortalPayload | null }> = ({ firstName, todayLabel, portal }) => {
   const navigate = useNavigate();
+  const todayLessons = (portal?.upcoming_lessons ?? []).filter(l => isToday(l.scheduled_at));
+  const totalStudents = (portal?.classes ?? []).reduce((s, c) => s + c.student_count, 0);
+  const ungradedHw = (portal?.recent_homework ?? []).filter(h => h.published && h.submission_count > 0).length;
+
   const QUICK_ACTIONS = [
     { key: 'attendance', label: 'Take attendance', icon: ClipboardCheck, accent: true,  path: '/dashboard/attendance' },
     { key: 'homework',   label: 'Assign homework',  icon: PenLine,        accent: false, path: '/dashboard/homework' },
@@ -227,10 +243,10 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string }> = ({ fi
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
-        <StatTile label="Today's lessons"  value="02" footRight="Studio A · both" />
-        <StatTile label="Students taught"  value="24" deltaText="+2 trial" deltaDir="up" footRight="across 3 classes" />
-        <StatTile label="Hours this week"  value="12" footRight="of 16 booked" />
-        <StatTile label="To grade"         value="03" deltaText="2 overdue" deltaDir="down" />
+        <StatTile label="Today's lessons"  value={String(todayLessons.length).padStart(2, '0')} footRight={`across ${portal?.classes?.length ?? 0} classes`} />
+        <StatTile label="Students taught"  value={String(totalStudents).padStart(2, '0')} footRight="enrolled across all classes" />
+        <StatTile label="Classes"          value={String(portal?.classes?.length ?? 0).padStart(2, '0')} />
+        <StatTile label="To grade"         value={String(ungradedHw).padStart(2, '0')} deltaText={ungradedHw > 0 ? 'Needs attention' : 'All caught up'} deltaDir={ungradedHw > 0 ? 'down' : 'up'} />
       </div>
 
       {/* 8-4 row */}
@@ -240,26 +256,31 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string }> = ({ fi
           <div style={cardHeadStyle}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>Your lessons today</div>
-              <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginTop: 2 }}>2 scheduled · take attendance from each row.</div>
+              <div style={{ fontSize: 12.5, color: 'var(--fg-muted)', marginTop: 2 }}>
+                {todayLessons.length} scheduled · take attendance from each row.
+              </div>
             </div>
             <button style={btnQuiet}><span>Open week</span> <ArrowRight size={13} /></button>
           </div>
-          {TUTOR_TODAY.map((l) => (
+          {todayLessons.length === 0 && (
+            <div style={{ padding: '24px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>No lessons scheduled for today.</div>
+          )}
+          {todayLessons.map((l) => (
             <div key={l.id} style={{ display: 'grid', gridTemplateColumns: '76px 1fr auto', alignItems: 'center', gap: 16, padding: '14px 22px', borderBottom: '1px solid var(--border-faint)', transition: 'background 140ms ease' }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             >
               <div>
-                <div style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-mono)', color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>{l.time}</div>
-                <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>→ {l.end}</div>
+                <div style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-mono)', color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>{fmtTime(l.scheduled_at)}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>→ {l.end_time ? fmtTime(l.end_time) : '—'}</div>
               </div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>{l.cls}</div>
-                <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>{l.room} · {l.roster} students enrolled</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>{l.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>{l.class_name ?? 'Class'} · {l.meet_link ? 'Online' : 'In person'}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <button style={btnQuiet}><ClipboardCheck size={13} /> Mark</button>
-                <Tag variant="info">Upcoming</Tag>
+                <button style={btnQuiet} onClick={() => navigate(`/dashboard/attendance?lesson=${l.id}`)}><ClipboardCheck size={13} /> Mark</button>
+                <Tag variant={l.status === 'live' ? 'ok' : 'info'}>{l.status === 'live' ? 'Live' : 'Upcoming'}</Tag>
               </div>
             </div>
           ))}
@@ -335,12 +356,27 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string }> = ({ fi
 // ---------------------------------------------------------------------------
 
 const TutorClassesPage: React.FC = () => {
+  const { data: portal, loading, error } = useTutorPortal();
+  const classes = portal?.classes ?? [];
+
+  const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dayPillStyle = (day: string): React.CSSProperties => ({
     fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
     padding: '4px 10px', borderRadius: 8,
     background: 'var(--accent-soft)', color: 'var(--accent)',
     display: 'inline-block',
   });
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 96 }}>
+      <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--fg-muted)' }} />
+    </div>
+  );
+  if (error) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 64, color: 'var(--danger)', fontSize: 14 }}>
+      <AlertTriangle size={18} style={{ marginRight: 8 }} />{error}
+    </div>
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
@@ -349,32 +385,41 @@ const TutorClassesPage: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
             <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Classes</h1>
-            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Three recurring classes this term. Click any class to open the roster, attendance and homework tools.</p>
+            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>{classes.length} active class{classes.length !== 1 ? 'es' : ''} this term. Click any class to open the roster, attendance and homework tools.</p>
           </div>
           <button style={btnGhost}><CalendarDays size={14} /> Week view</button>
         </div>
       </div>
 
+      {classes.length === 0 && (
+        <div style={{ padding: 48, textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>No classes assigned yet.</div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--gap-md)' }}>
-        {TUTOR_CLASSES.map((c) => (
+        {classes.map((c) => {
+          const nextLessonDay = c.next_lesson
+            ? DAY_LABELS[new Date(c.next_lesson.scheduled_at).getDay()]
+            : null;
+          const nextLessonTime = c.next_lesson ? fmtTime(c.next_lesson.scheduled_at) : null;
+          return (
           <div
-            key={c.id}
+            key={c.class_id}
             style={{ ...cardStyle, display: 'flex', flexDirection: 'column', gap: 0, transition: 'transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease', cursor: 'pointer' }}
             onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = 'translateY(-2px)'; el.style.borderColor = 'var(--border-strong)'; }}
             onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = ''; el.style.borderColor = 'var(--border-faint)'; }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ ...dayPillStyle(c.day) }}>{c.day}</div>
-                <span style={{ fontSize: 12.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', fontFeatureSettings: '"tnum" 1' }}>{c.time}</span>
+                {nextLessonDay && <div style={{ ...dayPillStyle(nextLessonDay) }}>{nextLessonDay.toUpperCase()}</div>}
+                {nextLessonTime && <span style={{ fontSize: 12.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', fontFeatureSettings: '"tnum" 1' }}>{nextLessonTime}</span>}
               </div>
-              <Tag variant="ok">Running</Tag>
+              <Tag variant="ok">Active</Tag>
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 26, color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6 }}>{c.name}</div>
-            <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 18 }}>{c.level}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 26, color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6 }}>{c.class_name}</div>
+            <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 18 }}>{c.subject ?? c.year_level ?? '—'}</div>
             <div style={{ height: 1, background: 'var(--border-faint)', marginBottom: 18 }} />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
-              {[['Size', c.size], ['Time', c.time], ['Homework', c.hw]].map(([label, val]) => (
+              {[['Students', String(c.student_count)], ['Schedule', c.schedule ?? '—'], ['Next', nextLessonDay ? `${nextLessonDay} ${nextLessonTime}` : 'TBD']].map(([label, val]) => (
                 <div key={label as string}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 4 }}>{label}</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-strong)' }}>{val}</div>
@@ -385,7 +430,8 @@ const TutorClassesPage: React.FC = () => {
               <button style={btnQuiet}>Open class <ArrowUpRight size={13} /></button>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -395,46 +441,211 @@ const TutorClassesPage: React.FC = () => {
 // Tutor Attendance page
 // ---------------------------------------------------------------------------
 
+/** Pick a colour bucket from the student's name so avatars aren't all the same. */
+function avatarColour(name: string): { bg: string; fg: string } {
+  const pool = Object.values(AVATAR_COLOURS);
+  return pool[name.charCodeAt(0) % pool.length];
+}
+
 const TutorAttendancePage: React.FC = () => {
-  const [marks, setMarks] = useState<Record<number, string>>(() =>
-    Object.fromEntries(TUTOR_ROSTER.map((s) => [s.id, s.state]))
-  );
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const qs        = new URLSearchParams(location.search);
+  const rawLesson = qs.get('lesson');
+  const lessonId  = rawLesson ? parseInt(rawLesson, 10) : null;
 
-  const tally = Object.values(marks).reduce((a: Record<string, number>, v) => ({ ...a, [v]: (a[v] || 0) + 1 }), {});
-  const pad = (n: number) => String(n).padStart(2, '0');
+  // ── Lesson picker (no ?lesson= in URL) ───────────────────────────────────
+  const [lessons,       setLessons]       = useState<TutorLesson[]>([]);
+  const [loadingList,   setLoadingList]   = useState(!lessonId);
 
-  const attendanceTagVariant = (state: string): TagVariant => {
-    if (state === 'present') return 'ok';
-    if (state === 'missing') return 'danger';
-    if (state === 'late')    return 'warn';
-    return 'default';
+  // ── Roster view ───────────────────────────────────────────────────────────
+  const [roster,        setRoster]        = useState<TutorAttendanceRoster | null>(null);
+  const [loadingRoster, setLoadingRoster] = useState(!!lessonId);
+  const [marks,         setMarks]         = useState<Record<number, string>>({});
+  const [saving,        setSaving]        = useState(false);
+  const [saveOk,        setSaveOk]        = useState(false);
+  const [saveError,     setSaveError]     = useState<string | null>(null);
+
+  // Load lesson list when no lesson selected
+  useEffect(() => {
+    if (lessonId) return;
+    setLoadingList(true);
+    tutorApi.getLessons()
+      .then((ls) => { setLessons(ls); setLoadingList(false); })
+      .catch(() => setLoadingList(false));
+  }, [lessonId]);
+
+  // Load roster when lesson is selected
+  useEffect(() => {
+    if (!lessonId) return;
+    setLoadingRoster(true);
+    setSaveOk(false);
+    setSaveError(null);
+    tutorApi.getAttendance(lessonId)
+      .then((r) => {
+        setRoster(r);
+        const init: Record<number, string> = {};
+        r.roster.forEach((s) => { init[s.student_id] = s.status ?? 'unknown'; });
+        setMarks(init);
+        setLoadingRoster(false);
+      })
+      .catch(() => setLoadingRoster(false));
+  }, [lessonId]);
+
+  const handleSave = async () => {
+    if (!lessonId || !roster) return;
+    setSaving(true); setSaveOk(false); setSaveError(null);
+    try {
+      await Promise.all(
+        roster.roster.map((s) =>
+          tutorApi.markAttendance(lessonId, { student_id: s.student_id, status: marks[s.student_id] ?? 'unknown' })
+        )
+      );
+      setSaveOk(true);
+    } catch (e: any) {
+      setSaveError(e?.message ?? 'Save failed');
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const markAll = (status: string) => {
+    if (!roster) return;
+    const all: Record<number, string> = {};
+    roster.roster.forEach((s) => { all[s.student_id] = status; });
+    setMarks(all);
+  };
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const tally = Object.values(marks).reduce<Record<string, number>>(
+    (a, v) => ({ ...a, [v]: (a[v] || 0) + 1 }), {}
+  );
+
+  const statusVariant = (st: string): TagVariant => {
+    if (st === 'present') return 'ok';
+    if (st === 'late')    return 'warn';
+    if (st === 'absent')  return 'danger';
+    return 'default';
+  };
+  const statusLabel = (st: string) =>
+    st === 'present' ? 'Present' : st === 'late' ? 'Late' : st === 'absent' ? 'Absent' : 'Unknown';
+
+  const h1Style: React.CSSProperties = {
+    fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)',
+    fontWeight: 'var(--font-display-weight)' as any,
+    fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08,
+    letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0,
+  };
+
+  // ── Lesson picker ──────────────────────────────────────────────────────────
+  if (!lessonId) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
+            MARK THE ROLL
+          </div>
+          <h1 style={h1Style}>Attendance</h1>
+          <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>
+            Pick a lesson below to open its roll.
+          </p>
+        </div>
+
+        {loadingList ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: 64 }}>
+            <Loader2 size={28} className="spin" style={{ color: 'var(--fg-muted)', animation: 'spin 1s linear infinite' }} />
+          </div>
+        ) : (
+          <div style={cardFlushStyle}>
+            {lessons.length === 0 && (
+              <div style={{ padding: '24px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>No lessons found.</div>
+            )}
+            {lessons.map((l, i) => (
+              <div
+                key={l.id}
+                onClick={() => navigate(`/dashboard/attendance?lesson=${l.id}`)}
+                style={{ display: 'grid', gridTemplateColumns: '86px 1fr auto', alignItems: 'center', gap: 16, padding: '14px 22px', borderBottom: i < lessons.length - 1 ? '1px solid var(--border-faint)' : undefined, cursor: 'pointer', transition: 'background 140ms ease' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+              >
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-mono)', color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>{fmtTime(l.scheduled_at)}</div>
+                  <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>
+                    {new Date(l.scheduled_at).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-strong)' }}>{l.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
+                    {l.class_name ?? 'Class'}{l.student_count ? ` · ${l.student_count} students` : ''}
+                  </div>
+                </div>
+                <Tag variant={isToday(l.scheduled_at) ? 'ok' : 'default'}>
+                  {isToday(l.scheduled_at) ? 'Today' : l.status}
+                </Tag>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Loading roster ─────────────────────────────────────────────────────────
+  if (loadingRoster) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 96 }}>
+        <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--fg-muted)' }} />
+      </div>
+    );
+  }
+
+  const entries = roster?.roster ?? [];
+
+  // ── Roster view ────────────────────────────────────────────────────────────
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
       <div>
+        <button
+          style={{ ...btnQuiet, marginBottom: 10, paddingLeft: 0 }}
+          onClick={() => navigate('/dashboard/attendance')}
+        >
+          <ChevronLeft size={14} /> Back to lessons
+        </button>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
-          {new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Australia/Sydney' }).toUpperCase()} · STUDIO A
+          {new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Australia/Sydney' }).toUpperCase()}
+          {roster?.class_name ? ` · ${roster.class_name.toUpperCase()}` : ''}
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 'clamp(38px, 3.5vw, 54px)', lineHeight: 1.08, letterSpacing: '-0.018em', color: 'var(--fg-strong)', margin: 0 }}>Attendance</h1>
-            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>Foundations · Year 10 — mark who's in the room.</p>
+            <h1 style={h1Style}>Attendance</h1>
+            <p style={{ fontSize: 14, color: 'var(--fg-muted)', margin: '10px 0 0' }}>
+              {roster?.class_name ?? 'Class'} — mark who's in the room.
+            </p>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button style={btnGhost}>Mark all present</button>
-            <button style={btnPrimary}><ClipboardCheck size={14} /> Save roll</button>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            {saveOk && <span style={{ fontSize: 13, color: 'var(--ok)', fontWeight: 600 }}>Roll saved ✓</span>}
+            {saveError && <span style={{ fontSize: 13, color: 'var(--danger)' }}>{saveError}</span>}
+            <button style={btnGhost} onClick={() => markAll('present')}>Mark all present</button>
+            <button style={btnPrimary} onClick={handleSave} disabled={saving}>
+              {saving
+                ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+                : <ClipboardCheck size={14} />}
+              {saving ? 'Saving…' : 'Save roll'}
+            </button>
           </div>
         </div>
       </div>
 
+      {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
-        <StatTile label="Roll size"  value={pad(TUTOR_ROSTER.length)} footRight="enrolled" />
-        <StatTile label="Present"    value={pad(tally.present || 0)} deltaText="Looking good" deltaDir="up" />
-        <StatTile label="Late"       value={pad(tally.late || 0)} footRight="counts as present" />
-        <StatTile label="Absent"     value={pad((tally.missing || 0) + (tally.paused || 0))} deltaText={(tally.missing || 0) > 0 ? 'Reminder sent' : '—'} deltaDir="down" />
+        <StatTile label="Roll size" value={pad(entries.length)} footRight="enrolled" />
+        <StatTile label="Present"   value={pad(tally.present || 0)} deltaText="Looking good" deltaDir="up" />
+        <StatTile label="Late"      value={pad(tally.late || 0)} footRight="counts as present" />
+        <StatTile label="Absent"    value={pad(tally.absent || 0)} deltaText={(tally.absent || 0) > 0 ? 'Follow up' : '—'} deltaDir="down" />
       </div>
 
+      {/* Roster table */}
       <div style={cardFlushStyle}>
         {/* Toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 22px', borderBottom: '1px solid var(--border-faint)', flexWrap: 'wrap' }}>
@@ -447,43 +658,58 @@ const TutorAttendancePage: React.FC = () => {
           ))}
         </div>
 
-        {/* Table */}
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
-              {['Student', 'Year', 'Last seen', 'Today'].map((h) => (
+              {['Student', 'Previous status', 'Marked at', 'Today'].map((h) => (
                 <th key={h} style={{ padding: '10px 22px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fg-muted)' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {TUTOR_ROSTER.map((s) => {
-              const av = AVATAR_COLOURS[s.colour] || AVATAR_COLOURS[''];
+            {entries.length === 0 && (
+              <tr><td colSpan={4} style={{ padding: '24px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>No students enrolled in this lesson.</td></tr>
+            )}
+            {entries.map((s) => {
+              const av  = avatarColour(s.student_name);
+              const ini = initials(s.student_name);
+              const cur = marks[s.student_id] ?? 'unknown';
               return (
-                <tr key={s.id} style={{ borderBottom: '1px solid var(--border-faint)', transition: 'background 140ms ease' }}
+                <tr key={s.student_id}
+                  style={{ borderBottom: '1px solid var(--border-faint)', transition: 'background 140ms ease' }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                 >
                   <td style={{ padding: '14px 22px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 34, height: 34, borderRadius: '50%', background: av.bg, color: av.fg, display: 'grid', placeItems: 'center', fontSize: 12.5, fontWeight: 700, flexShrink: 0 }}>{s.initials}</div>
-                      <div>
-                        <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.name}</div>
-                        <div style={{ fontSize: 11.5, color: 'var(--fg-muted)', marginTop: 1 }}>{s.last}</div>
+                      <div style={{ width: 34, height: 34, borderRadius: '50%', background: av.bg, color: av.fg, display: 'grid', placeItems: 'center', fontSize: 12.5, fontWeight: 700, flexShrink: 0 }}>
+                        {ini}
                       </div>
+                      <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.student_name}</div>
                     </div>
                   </td>
-                  <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>{s.yr}</td>
-                  <td style={{ padding: '14px 22px' }}><Tag variant={attendanceTagVariant(s.state)}>{s.state === 'present' ? 'Active' : s.state === 'missing' ? 'Absent' : s.state === 'late' ? 'Late' : 'Paused'}</Tag></td>
+                  <td style={{ padding: '14px 22px' }}>
+                    <Tag variant={statusVariant(s.status)}>{statusLabel(s.status)}</Tag>
+                  </td>
+                  <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 12.5, fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
+                    {s.marked_at ? new Date(s.marked_at).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) : '—'}
+                  </td>
                   <td style={{ padding: '14px 22px' }}>
                     <div style={{ display: 'inline-flex', background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: 3, gap: 2 }}>
-                      {['present', 'late', 'missing', 'paused'].map((v) => (
+                      {(['present', 'late', 'absent', 'unknown'] as const).map((v) => (
                         <button
                           key={v}
-                          onClick={() => setMarks((m) => ({ ...m, [s.id]: v }))}
-                          style={{ padding: '6px 14px', borderRadius: 7, fontSize: 12.5, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'background 140ms ease, color 140ms ease, box-shadow 140ms ease', background: marks[s.id] === v ? 'var(--bg-surface)' : 'transparent', color: marks[s.id] === v ? 'var(--fg-strong)' : 'var(--fg-muted)', boxShadow: marks[s.id] === v ? '0 1px 4px rgba(0,0,0,.18)' : 'none' }}
+                          onClick={() => setMarks((m) => ({ ...m, [s.student_id]: v }))}
+                          style={{
+                            padding: '6px 14px', borderRadius: 7, fontSize: 12.5, fontWeight: 600,
+                            border: 'none', cursor: 'pointer',
+                            transition: 'background 140ms ease, color 140ms ease, box-shadow 140ms ease',
+                            background: cur === v ? 'var(--bg-surface)' : 'transparent',
+                            color:      cur === v ? 'var(--fg-strong)' : 'var(--fg-muted)',
+                            boxShadow:  cur === v ? '0 1px 4px rgba(0,0,0,.18)' : 'none',
+                          }}
                         >
-                          {v === 'missing' ? 'Absent' : v.charAt(0).toUpperCase() + v.slice(1)}
+                          {v === 'unknown' ? '—' : v.charAt(0).toUpperCase() + v.slice(1)}
                         </button>
                       ))}
                     </div>
@@ -503,12 +729,35 @@ const TutorAttendancePage: React.FC = () => {
 // ---------------------------------------------------------------------------
 
 const TutorHomeworkPage: React.FC = () => {
-  const hwStateVariant = (state: string): TagVariant => {
-    if (state === 'graded')  return 'ok';
-    if (state === 'grading') return 'warn';
+  const { data: portal, loading, error } = useTutorPortal();
+  const homework = portal?.recent_homework ?? [];
+
+  const hwStateVariant = (hw: { published: boolean; submission_count: number }): TagVariant => {
+    if (!hw.published) return 'default';
+    if (hw.submission_count > 0) return 'warn';
     return 'info';
   };
-  const hwStateLabel = (state: string) => state === 'graded' ? 'Graded' : state === 'grading' ? 'To grade' : 'Upcoming';
+  const hwStateLabel = (hw: { published: boolean; submission_count: number }) => {
+    if (!hw.published) return 'Draft';
+    if (hw.submission_count > 0) return 'To grade';
+    return 'Published';
+  };
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 96 }}>
+      <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--fg-muted)' }} />
+    </div>
+  );
+  if (error) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 64, color: 'var(--danger)', fontSize: 14 }}>
+      <AlertTriangle size={18} style={{ marginRight: 8 }} />{error}
+    </div>
+  );
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const openCount    = homework.filter((h) => h.published && !h.submission_count).length;
+  const toGradeCount = homework.filter((h) => h.published && h.submission_count > 0).length;
+  const draftCount   = homework.filter((h) => !h.published).length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
@@ -524,10 +773,10 @@ const TutorHomeworkPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
-        <StatTile label="Open"      value="02" footRight="this week" />
-        <StatTile label="To grade"  value="01" deltaText="overdue 1d" deltaDir="down" />
-        <StatTile label="Graded"    value="01" footRight="this term" />
-        <StatTile label="Avg score" value="78%" deltaText="+4 vs last" deltaDir="up" />
+        <StatTile label="Published"  value={pad(openCount)}    footRight="awaiting submissions" />
+        <StatTile label="To grade"   value={pad(toGradeCount)} deltaText={toGradeCount > 0 ? 'Needs attention' : 'All caught up'} deltaDir={toGradeCount > 0 ? 'down' : 'up'} />
+        <StatTile label="Drafts"     value={pad(draftCount)}   footRight="not yet published" />
+        <StatTile label="Total"      value={pad(homework.length)} footRight="recent assignments" />
       </div>
 
       <div style={cardFlushStyle}>
@@ -552,34 +801,37 @@ const TutorHomeworkPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {TUTOR_HOMEWORK.map((h) => {
-              const pct = (h.submitted / h.total) * 100;
-              return (
-                <tr key={h.id} style={{ borderBottom: '1px solid var(--border-faint)', transition: 'background 140ms ease' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                >
-                  <td style={{ padding: '14px 22px' }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{h.title}</div>
-                    <div style={{ fontSize: 11.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', marginTop: 2 }}>{h.id}</div>
-                  </td>
-                  <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>{h.cls}</td>
-                  <td style={{ padding: '14px 22px', minWidth: 160 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ flex: 1, height: 6, borderRadius: 999, background: 'var(--bg-surface-2)', border: '1px solid var(--border-faint)', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 65%, #fff))', borderRadius: 999 }} />
-                      </div>
-                      <span style={{ fontSize: 12.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', whiteSpace: 'nowrap', fontFeatureSettings: '"tnum" 1' }}>{h.submitted}/{h.total}</span>
-                    </div>
-                  </td>
-                  <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>{h.due}</td>
-                  <td style={{ padding: '14px 22px' }}><Tag variant={hwStateVariant(h.state)}>{hwStateLabel(h.state)}</Tag></td>
-                  <td style={{ padding: '14px 22px', textAlign: 'right' }}>
-                    <button style={{ ...btnQuiet, padding: '4px 8px' }}><MoreHorizontal size={16} /></button>
-                  </td>
-                </tr>
-              );
-            })}
+            {homework.length === 0 && (
+              <tr><td colSpan={6} style={{ padding: '24px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>No homework assignments yet.</td></tr>
+            )}
+            {homework.map((hw) => (
+              <tr key={hw.id} style={{ borderBottom: '1px solid var(--border-faint)', transition: 'background 140ms ease' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+              >
+                <td style={{ padding: '14px 22px' }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{hw.title}</div>
+                  <div style={{ fontSize: 11.5, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', marginTop: 2 }}>#{hw.id}</div>
+                </td>
+                <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>{hw.class_name ?? '—'}</td>
+                <td style={{ padding: '14px 22px' }}>
+                  <span style={{ fontSize: 13, fontFamily: 'var(--font-mono)', color: 'var(--fg-muted)', fontFeatureSettings: '"tnum" 1' }}>
+                    {hw.submission_count} submitted
+                  </span>
+                </td>
+                <td style={{ padding: '14px 22px', color: 'var(--fg-muted)', fontSize: 13.5 }}>
+                  {hw.due_date
+                    ? new Date(hw.due_date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })
+                    : '—'}
+                </td>
+                <td style={{ padding: '14px 22px' }}>
+                  <Tag variant={hwStateVariant(hw)}>{hwStateLabel(hw)}</Tag>
+                </td>
+                <td style={{ padding: '14px 22px', textAlign: 'right' }}>
+                  <button style={{ ...btnQuiet, padding: '4px 8px' }}><MoreHorizontal size={16} /></button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -593,16 +845,33 @@ const TutorHomeworkPage: React.FC = () => {
 
 const TutorDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { data: portal, loading, error } = useTutorPortal();
   const firstName  = getFirstName(user?.name ?? 'there');
   const todayLabel = getTodayLabel();
 
-  // For now, the sidebar routes tutors to:
-  //   /dashboard/overview   → TutorOverview
-  //   /dashboard/classes     → TutorClasses   (via admin/classes — shared)
-  //   /dashboard/attendance  → TutorAttendance
-  //   /dashboard/homework    → TutorHomework
-  // This component renders TutorOverview (the default landing).
-  return <TutorOverview firstName={firstName} todayLabel={todayLabel} />;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+        <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--fg-muted)' }} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', flexDirection: 'column', gap: 12 }}>
+        <AlertTriangle size={28} style={{ color: 'var(--danger)' }} />
+        <p style={{ fontSize: 14, color: 'var(--fg-muted)' }}>{error}</p>
+      </div>
+    );
+  }
+
+  // Sidebar routes tutors to:
+  //   /dashboard/overview   → TutorOverview   (this component)
+  //   /dashboard/classes    → TutorClassesPage
+  //   /dashboard/attendance → TutorAttendancePage
+  //   /dashboard/homework   → TutorHomeworkPage
+  return <TutorOverview firstName={firstName} todayLabel={todayLabel} portal={portal} />;
 };
 
 export default TutorDashboard;

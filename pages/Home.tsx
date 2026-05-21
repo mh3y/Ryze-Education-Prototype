@@ -1,6 +1,5 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-// @ts-ignore
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import PrimaryCTA from '../components/PrimaryCTA';

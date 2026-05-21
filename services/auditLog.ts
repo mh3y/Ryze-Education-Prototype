@@ -1,9 +1,12 @@
 /**
- * auditLog.ts — frontend-only audit trail stored in localStorage.
+ * auditLog.ts — fires server-side audit trail entries via POST /api/admin/audit-log.
  *
- * Records every admin create / update / delete action so that admins
- * can review a history of changes in the Audit Log page.
+ * Falls back to a silent no-op if the API call fails (e.g. during local dev
+ * without a running backend). The real audit history is stored in PostgreSQL
+ * and viewable in the Audit Log page.
  */
+
+import { adminApi } from './adminApi';
 
 export type AuditAction =
   | 'create'
@@ -29,71 +32,30 @@ export type AuditEntityType =
   | 'homework'
   | 'alert';
 
-export interface AuditEntry {
-  id: string;
-  action: AuditAction;
-  entityType: AuditEntityType;
-  entityId: number | string;
-  entityName: string;
-  details?: string;
-  adminName: string;
-  timestamp: string; // ISO 8601
-}
-
-const STORAGE_KEY = 'ryze_audit_log';
-const MAX_ENTRIES = 500;
-
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
-
-function loadEntries(): AuditEntry[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AuditEntry[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveEntries(entries: AuditEntry[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  } catch {
-    // ignore quota errors
-  }
-}
-
 export const auditLog = {
+  /**
+   * Record an admin action.
+   * Fire-and-forget — errors are swallowed so they never break the calling flow.
+   */
   log(
     action: AuditAction,
     entityType: AuditEntityType,
     entityId: number | string,
     entityName: string,
     adminName: string,
-    details?: string,
+    _details?: string,
   ): void {
-    const entries = loadEntries();
-    const entry: AuditEntry = {
-      id: generateId(),
-      action,
-      entityType,
-      entityId,
-      entityName,
-      details,
-      adminName,
-      timestamp: new Date().toISOString(),
-    };
-    entries.unshift(entry); // newest first
-    if (entries.length > MAX_ENTRIES) entries.length = MAX_ENTRIES;
-    saveEntries(entries);
-  },
-
-  getEntries(): AuditEntry[] {
-    return loadEntries();
-  },
-
-  clear(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    adminApi
+      .postAuditLog({
+        action,
+        entity_type: entityType,
+        entity_id: entityId,
+        entity_name: entityName,
+        actor_name: adminName,
+        actor_type: 'admin',
+      })
+      .catch(() => {
+        // Silently swallow — the UI should never fail because of an audit write.
+      });
   },
 };

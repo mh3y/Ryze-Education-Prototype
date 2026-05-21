@@ -1,29 +1,72 @@
 import 'dotenv/config';
 import { db } from './prisma';
-import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 
 async function main() {
   console.log('Seeding Ryze Portal database...\n');
 
-  // Admin
-  await db.adminUser.upsert({
+  // Admin user
+  await db.user.upsert({
     where: { id: 1 },
     create: { full_name: 'Admin', email: 'admin@ryzeeducation.com.au', role: 'admin' },
     update: {},
   });
 
-  // Students
+  // Tutor user
+  await db.user.upsert({
+    where: { id: 2 },
+    create: { full_name: 'Daniel Kwok', email: 'daniel@ryzeeducation.com.au', role: 'tutor' },
+    update: {},
+  });
+
+  // TutorProfile for Daniel
+  await db.tutorProfile.upsert({
+    where: { user_id: 2 },
+    create: { user_id: 2, subjects: 'Mathematics' },
+    update: {},
+  });
+
+  // Student users
   const [amelia, liam, noah] = await Promise.all([
-    db.student.upsert({ where: { id: 1 }, create: { full_name: 'Amelia Tran', email: 'amelia@example.com', year_level: 'Year 12', school: 'Sydney Girls High School', active: true }, update: {} }),
-    db.student.upsert({ where: { id: 2 }, create: { full_name: 'Liam Tran', email: 'liam@example.com', year_level: 'Year 9', active: true }, update: {} }),
-    db.student.upsert({ where: { id: 3 }, create: { full_name: 'Noah Park', email: 'noah@example.com', year_level: 'Year 11', active: true }, update: {} }),
+    db.user.upsert({
+      where: { id: 3 },
+      create: {
+        full_name: 'Amelia Tran',
+        email: 'amelia@example.com',
+        role: 'student',
+        active: true,
+        student_profile: { create: { year_level: 'Year 12', school: 'Sydney Girls High School' } },
+      },
+      update: {},
+    }),
+    db.user.upsert({
+      where: { id: 4 },
+      create: {
+        full_name: 'Liam Tran',
+        email: 'liam@example.com',
+        role: 'student',
+        active: true,
+        student_profile: { create: { year_level: 'Year 9' } },
+      },
+      update: {},
+    }),
+    db.user.upsert({
+      where: { id: 5 },
+      create: {
+        full_name: 'Noah Park',
+        email: 'noah@example.com',
+        role: 'student',
+        active: true,
+        student_profile: { create: { year_level: 'Year 11' } },
+      },
+      update: {},
+    }),
   ]);
 
-  // Class
+  // ClassGroup with Daniel as tutor
   const mathsClass = await db.classGroup.upsert({
     where: { id: 1 },
-    create: { name: 'Maths Extension 1 — HSC', subject: 'Mathematics', tutor_name: 'Daniel Kwok' },
+    create: { name: 'Maths Extension 1 — HSC', subject: 'Mathematics', tutor_id: 2 },
     update: {},
   });
 
@@ -40,22 +83,42 @@ async function main() {
   nextTuesday.setHours(17, 0, 0, 0);
   await db.lesson.upsert({
     where: { id: 1 },
-    create: { class_id: mathsClass.id, title: 'Complex Numbers — Argand Diagram', scheduled_at: nextTuesday },
+    create: {
+      class_id: mathsClass.id,
+      title: 'Complex Numbers — Argand Diagram',
+      scheduled_at: nextTuesday,
+      duration_min: 60,
+      status: 'scheduled',
+    },
     update: {},
   });
 
   // Progress report for Amelia
   await db.progressReport.upsert({
     where: { id: 1 },
-    create: { student_id: amelia.id, period: 'Term 1 2026', score: 86, grade: 'A', strengths: 'Strong algebraic manipulation and exam technique', improvements: 'Integration techniques need more practice' },
+    create: {
+      student_id: amelia.id,
+      period: 'Term 1 2026',
+      score: 86,
+      grade: 'A',
+      strengths: 'Strong algebraic manipulation and exam technique',
+      improvements: 'Integration techniques need more practice',
+      status: 'published',
+    },
     update: {},
   });
 
   // Outstanding payment for Amelia
   const tomorrow = new Date(Date.now() + 86400000);
-  await db.payment.upsert({
+  await db.studentPayment.upsert({
     where: { id: 1 },
-    create: { student_id: amelia.id, amount: 540, description: 'May 2026 — Maths Extension 1', due_date: tomorrow, status: 'pending' },
+    create: {
+      student_id: amelia.id,
+      amount_cents: 54000,
+      description: 'May 2026 — Maths Extension 1',
+      due_date: tomorrow,
+      status: 'pending',
+    },
     update: {},
   });
 
@@ -64,7 +127,8 @@ async function main() {
   const parent = await db.parent.upsert({
     where: { email: 'sarah.tran@example.com' },
     create: {
-      first_name: 'Sarah', last_name: 'Tran',
+      first_name: 'Sarah',
+      last_name: 'Tran',
       email: 'sarah.tran@example.com',
       phone: '0412 345 678',
       invite_token: inviteToken,
@@ -74,7 +138,7 @@ async function main() {
     update: {},
   });
 
-  // Link Sarah to Amelia and Liam
+  // Link Sarah → Amelia (student_id: 3) and Liam (student_id: 4)
   for (const student of [amelia, liam]) {
     await db.parentStudent.upsert({
       where: { parent_id_student_id: { parent_id: parent.id, student_id: student.id } },

@@ -7,12 +7,9 @@
  *   const health = await portalApi.getHealth();
  */
 
-import { getToken } from './auth';
+import { portalFetch } from './auth';
 
 const BASE_URL = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
-// Legacy static API key — used for bot-to-api server calls only.
-// Portal user sessions use JWT Bearer tokens instead.
-const API_KEY  = (import.meta as any).env?.VITE_PORTAL_API_KEY  ?? '';
 
 // ---------------------------------------------------------------------------
 // Types (mirroring the Pydantic schemas in bot/api/schemas.py)
@@ -102,35 +99,14 @@ interface PaginatedResponse<T> {
 // Internal fetch helper
 // ---------------------------------------------------------------------------
 
-async function apiFetch<T>(path: string, params?: Record<string, string | number | boolean | undefined>): Promise<T> {
+function apiFetch<T>(path: string, params?: Record<string, string | number | boolean | undefined>): Promise<T> {
   const url = new URL(`${BASE_URL}${path}`, window.location.origin);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
     });
   }
-
-  // Prefer JWT Bearer token (portal users); fall back to static API key (bot/server).
-  const jwt = getToken();
-  const authHeader: Record<string, string> = jwt
-    ? { Authorization: `Bearer ${jwt}` }
-    : API_KEY
-    ? { 'X-API-Key': API_KEY }
-    : {};
-
-  const res = await fetch(url.toString(), {
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeader,
-    },
-  });
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`API ${res.status}: ${text}`);
-  }
-
-  return res.json() as Promise<T>;
+  return portalFetch<T>(url.toString(), { method: 'GET' });
 }
 
 // ---------------------------------------------------------------------------

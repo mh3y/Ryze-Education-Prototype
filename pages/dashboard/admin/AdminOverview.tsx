@@ -58,21 +58,8 @@ function getFirstName(name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data
+// Quick actions
 // ---------------------------------------------------------------------------
-
-const MOCK_LESSONS = [
-  { id: 1, time: '16:00', end: '17:30', title: 'Foundations — Algebraic fractions',           tutor: 'Marcus Webb',  room: 'Studio A', seats: '7 / 10', state: 'upcoming' },
-  { id: 2, time: '17:00', end: '18:30', title: 'Maths Ext 1 — Inverse trig differentiation',  tutor: 'Daniel Kwok',  room: 'Studio B', seats: '8 / 8',  state: 'active' },
-  { id: 3, time: '18:00', end: '19:30', title: 'Maths Advanced — Combinatorics review',        tutor: 'Daniel Kwok',  room: 'Studio A', seats: '9 / 10', state: 'upcoming' },
-  { id: 4, time: '19:00', end: '20:30', title: 'Maths Ext 2 — Mechanics: projectiles',         tutor: 'Priya Aiyar',  room: 'Studio C', seats: '6 / 8',  state: 'upcoming' },
-];
-
-const MOCK_ALERTS = [
-  { id: 1, severity: 'high', title: '3 students missed lesson check-ins',      body: 'Foundations · Wed 4pm — automated reminders sent.',  when: '8m ago' },
-  { id: 2, severity: 'med',  title: 'Sofia Reyes progress dropping',           body: '3 weeks below class median in Algebra topic.',       when: '1h ago' },
-  { id: 3, severity: 'low',  title: 'Discord bot reconnected',                 body: 'Brief outage 14:02–14:04, all reminders delivered.', when: '2h ago' },
-];
 
 const QUICK_ACTIONS = [
   { key: 'add-student',  label: 'Add student',      Icon: Plus,          accent: true,  path: '/dashboard/admin/students?new=1' },
@@ -232,26 +219,22 @@ const AdminOverview: React.FC = () => {
 
   const firstName = getFirstName(user?.name ?? 'there');
 
-  const activeStudents = stats?.total_students ?? 142;
-  const classesRunning = stats?.active_classes ?? 18;
-  const lessonsToday   = stats?.today_lessons   ?? 4;
-  const alertCount     = stats?.open_alerts      ?? 3;
+  const activeStudents = stats?.total_students ?? 0;
+  const classesRunning = stats?.active_classes ?? 0;
+  const lessonsToday   = stats?.today_lessons   ?? 0;
+  const alertCount     = stats?.open_alerts      ?? 0;
 
-  const lessonList = stats?.today_lesson_list?.length
-    ? stats.today_lesson_list.map((l) => ({
-        id: l.id, time: formatMono(l.start_time),
-        end: l.end_time ? formatMono(l.end_time) : '',
-        title: l.title, tutor: l.class_name ?? '',
-        room: '', seats: '', state: l.status,
-      }))
-    : MOCK_LESSONS;
+  const lessonList = stats?.today_lesson_list?.map((l) => ({
+    id: l.id, time: formatMono(l.start_time),
+    end: l.end_time ? formatMono(l.end_time) : '',
+    title: l.title, tutor: l.class_name ?? '',
+    room: '', seats: '', state: l.status as 'upcoming' | 'live' | 'done' | string,
+  })) ?? [];
 
-  const alertList = stats?.recent_alerts?.length
-    ? stats.recent_alerts.map((a) => ({
-        id: a.id, severity: a.severity,
-        title: a.title, body: a.message, when: '',
-      }))
-    : MOCK_ALERTS;
+  const alertList = stats?.recent_alerts?.map((a) => ({
+    id: a.id, severity: a.severity,
+    title: a.title, body: a.message, when: '',
+  })) ?? [];
 
   return (
     <div className="section-stack">
@@ -301,7 +284,7 @@ const AdminOverview: React.FC = () => {
             <Stat label="Active students"  value={activeStudents} deltaText="+6 this week"     deltaDir="up"   footRight="92% retention" />
             <Stat label="Classes running"  value={classesRunning} deltaText="2 with low seats" deltaDir="down" footRight="5 tutors" />
             <Stat label="Lessons today"    value={String(lessonsToday).padStart(2, '0')} deltaText="1 live now" deltaDir="up" footRight="08 tomorrow" />
-            <Stat label="Outstanding"      value="$2.4k"          deltaText="3 overdue"         deltaDir="down" footRight="of $24k due" />
+            <Stat label="Pending payments" value={stats ? `${stats.pending_payments}` : '—'} deltaText="3 overdue" deltaDir="down" footRight={stats?.missing_reports ? `${stats.missing_reports} missing reports` : undefined} />
           </div>
         </EditableWidget>
       )}
@@ -332,6 +315,11 @@ const AdminOverview: React.FC = () => {
                   </button>
                 </div>
                 <div>
+                  {!loading && lessonList.length === 0 && (
+                    <div style={{ padding: '28px 20px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+                      No lessons scheduled for today.
+                    </div>
+                  )}
                   {lessonList.map((l) => (
                     <div key={l.id} className="lesson-row" onClick={() => navigate(typeof l.id === 'number' ? `/dashboard/admin/lessons/${l.id}` : '/dashboard/admin/lessons')} style={{ cursor: 'pointer' }}>
                       <div className="lesson-row__time">
@@ -372,6 +360,11 @@ const AdminOverview: React.FC = () => {
                   </button>
                 </div>
                 <div>
+                  {!loading && alertList.length === 0 && (
+                    <div style={{ padding: '28px 20px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
+                      ✓ No open alerts
+                    </div>
+                  )}
                   {alertList.map((a) => (
                     <div key={a.id} className="alert-row">
                       <div className={alertPipClass(a.severity)}>

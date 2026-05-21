@@ -13,5 +13,5 @@ export function validateEmail(email: string): boolean {
 
 /** Phone validation: 8–15 digits, optional leading +, ignoring whitespace/dashes/parens. */
 export function validatePhone(phone: string): boolean {
-  return /^\+?[\d]{8,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
+  return /^\+?[\d]{8,15}$/.test(phone.replace(/[\s\-()]/g, ''));
 }
