@@ -122,7 +122,9 @@ export async function portalFetch<T>(
 
   if (!res.ok) {
     // After a second 401 (refresh also failed) redirect to login.
-    if (res.status === 401) {
+    // Guard: never redirect if we are already on /login (prevents infinite reload loop
+    // if the backend returns 401 during the initial session probe on app mount).
+    if (res.status === 401 && window.location.pathname !== '/login') {
       window.location.href = '/login';
     }
     let detail = res.statusText;
@@ -221,10 +223,20 @@ export const AuthService = {
    * Resolve the current session cookies to a PortalUser via /api/auth/me.
    * Returns null if no valid session exists.
    * Called on every app mount to restore state across page refreshes.
+   *
+   * IMPORTANT: Uses plain fetch — NOT portalFetch — so that a 401 response
+   * (meaning "not logged in") silently returns null instead of triggering
+   * the portalFetch redirect-to-/login logic, which would cause an infinite
+   * reload loop on the login page itself.
    */
   async getCurrentUser(): Promise<PortalUser | null> {
     try {
-      const data = await portalFetch<MeResponse>(`${BASE_URL}/api/auth/me`);
+      const res = await fetch(`${BASE_URL}/api/auth/me`, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) return null;
+      const data = await res.json() as MeResponse;
       return meToUser(data);
     } catch {
       return null;
