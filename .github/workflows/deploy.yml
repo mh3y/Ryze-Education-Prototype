@@ -17,24 +17,16 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: DB_PASSWORD
           script: |
             set -e
             # Pull latest frontend code
             cd "${{ secrets.VPS_APP_DIR }}"
             git pull origin main
-            # Ensure DB_PASSWORD is present in the compose .env before rebuilding
+            # Move to compose directory and load existing .env so docker compose
+            # can interpolate DB_PASSWORD (already set there from initial VPS setup)
             cd "${{ secrets.VPS_COMPOSE_DIR }}"
-            if [ -n "$DB_PASSWORD" ]; then
-              if grep -q "^DB_PASSWORD=" .env 2>/dev/null; then
-                sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" .env
-              else
-                echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
-              fi
-            fi
-            # Rebuild the web container
+            set -a && source .env && set +a
+            # Rebuild only the web container (bot/db/api keep running untouched)
             docker compose up -d --build web
             docker image prune -f
             echo "✅ Deployed $(git -C "${{ secrets.VPS_APP_DIR }}" rev-parse --short HEAD) at $(date)"
-        env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
