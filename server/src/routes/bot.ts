@@ -156,6 +156,57 @@ botRouter.post('/sync-members', async (req, res) => {
   }
 });
 
+// ── POST /api/bot/classes ─────────────────────────────────────────────────────
+// Bot creates a new class group discovered from Google Calendar.
+// Body: { name, subject, google_calendar_id, discord_channel_id?, discord_role_id?, year_level?, description? }
+
+botRouter.post('/classes', async (req, res) => {
+  try {
+    const {
+      name, subject, google_calendar_id,
+      discord_channel_id, discord_role_id,
+      year_level, description,
+    } = req.body as {
+      name: string; subject: string; google_calendar_id: string;
+      discord_channel_id?: string; discord_role_id?: string;
+      year_level?: string; description?: string;
+    };
+
+    if (!name || !subject || !google_calendar_id) {
+      res.status(400).json({ detail: 'name, subject, google_calendar_id are required' });
+      return;
+    }
+
+    // Prevent duplicates — idempotent by google_calendar_id
+    const existing = await db.classGroup.findFirst({
+      where: { google_calendar_id },
+    });
+    if (existing) {
+      res.json({ id: existing.id, created: false, class: existing });
+      return;
+    }
+
+    const cls = await db.classGroup.create({
+      data: {
+        name,
+        subject,
+        google_calendar_id,
+        discord_channel_id: discord_channel_id ?? null,
+        discord_role_id:    discord_role_id    ?? null,
+        year_level:         year_level         ?? null,
+        description:        description        ?? null,
+        active:             true,
+      },
+    });
+
+    console.log(`[bot] Auto-created class "${name}" (id=${cls.id}) from Google Calendar ${google_calendar_id}`);
+    res.status(201).json({ id: cls.id, created: true, class: cls });
+  } catch (e: any) {
+    console.error('[bot] create class error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // ── GET /api/bot/classes ──────────────────────────────────────────────────────
 // Bot fetches the list of active classes so it can match Google Calendar IDs.
 
@@ -175,6 +226,33 @@ botRouter.get('/classes', async (_req, res) => {
       orderBy: { name: 'asc' },
     });
     res.json(classes);
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── PATCH /api/bot/classes/:id ───────────────────────────────────────────────
+// Bot updates Discord channel/role IDs on a class after creating them in Discord.
+
+botRouter.patch('/classes/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { discord_channel_id, discord_role_id } = req.body as {
+      discord_channel_id?: string;
+      discord_role_id?: string;
+    };
+
+    const data: Record<string, any> = {};
+    if (discord_channel_id !== undefined) data.discord_channel_id = discord_channel_id;
+    if (discord_role_id    !== undefined) data.discord_role_id    = discord_role_id;
+
+    if (!Object.keys(data).length) {
+      res.status(400).json({ detail: 'Nothing to update' });
+      return;
+    }
+
+    const cls = await db.classGroup.update({ where: { id }, data });
+    res.json({ id: cls.id, discord_channel_id: cls.discord_channel_id, discord_role_id: cls.discord_role_id });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }
