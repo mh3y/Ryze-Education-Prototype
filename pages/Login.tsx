@@ -14,7 +14,7 @@
  *       1. Enter email + password → POST /auth/parent/login → JWT stored → redirect
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -50,6 +50,16 @@ const Login: React.FC = () => {
   const [error, setError]     = useState('');
   const [discordLoading, setDiscordLoading] = useState(false);
   const [parentLoading, setParentLoading]   = useState(false);
+
+  // Pick up any auth error forwarded from DiscordCallback via router state
+  useEffect(() => {
+    const authError = (location.state as any)?.authError;
+    if (authError) {
+      setError(authError);
+      // Clear it from router state so it doesn't reappear on back-navigation
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Discord login ─────────────────────────────────────────────────────── //
   const handleDiscordLogin = async () => {
