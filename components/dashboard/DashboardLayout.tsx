@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Menu, Search, Bell, ChevronRight, Pencil,
+  Menu, Bell, ChevronRight, Pencil,
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
@@ -259,51 +259,6 @@ const DashboardLayoutInner: React.FC = () => {
                 </React.Fragment>
               ))}
             </div>
-          </div>
-
-          {/* Center: search */}
-          <div
-            style={{
-              flex: 1,
-              maxWidth: 460,
-              margin: '0 auto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '8px 12px',
-              background: 'var(--bg-surface-2)',
-              border: '1px solid var(--border-soft)',
-              borderRadius: 10,
-              color: 'var(--fg-muted)',
-              fontSize: 13,
-              cursor: 'text',
-              transition: 'border-color 140ms ease',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-soft)';
-            }}
-          >
-            <Search size={15} style={{ flexShrink: 0 }} />
-            <span style={{ flex: 1 }} className="hidden sm:block">
-              Search students, classes, invoices…
-            </span>
-            <span
-              className="hidden sm:block"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 10.5,
-                padding: '2px 6px',
-                borderRadius: 5,
-                background: 'var(--bg-hover)',
-                border: '1px solid var(--border-soft)',
-                color: 'var(--fg-muted)',
-              }}
-            >
-              ⌘K
-            </span>
           </div>
 
           {/* Right: bell + customize (admin) + divider + user */}
