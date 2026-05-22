@@ -54,6 +54,9 @@ botJobsRouter.post('/', requireAdminOnly, async (req, res) => {
     if (!payload)  { res.status(400).json({ detail: 'payload is required' }); return; }
 
     const VALID_TYPES = [
+      // Sync triggers — admin can fire these from the Bot Health page
+      'sync_members', 'sync_classes', 'sync_lessons', 'sync_attendance',
+      // Bot communication jobs
       'post_announcement', 'create_event', 'cancel_event',
       'send_reminder', 'send_dm',
     ];

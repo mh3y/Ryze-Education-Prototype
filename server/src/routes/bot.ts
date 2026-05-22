@@ -354,6 +354,58 @@ botRouter.post('/sync-lessons', async (req, res) => {
   }
 });
 
+// ── POST /api/bot/sync-log ───────────────────────────────────────────────────
+// Bot pushes a sync audit record after each scheduled or triggered sync.
+
+botRouter.post('/sync-log', async (req, res) => {
+  try {
+    const {
+      sync_type, source, started_at, completed_at,
+      status, records_created, records_updated, records_failed,
+      error_message, triggered_by, portal_api_url,
+    } = req.body as {
+      sync_type:        string;
+      source?:          string;
+      started_at:       string;
+      completed_at?:    string;
+      status:           string;
+      records_created?: number;
+      records_updated?: number;
+      records_failed?:  number;
+      error_message?:   string;
+      triggered_by?:    string;
+      portal_api_url?:  string;
+    };
+
+    if (!sync_type || !started_at || !status) {
+      res.status(400).json({ detail: 'sync_type, started_at, and status are required' });
+      return;
+    }
+
+    const log = await db.botSyncLog.create({
+      data: {
+        sync_type,
+        source:          source          ?? 'scheduled',
+        started_at:      new Date(started_at),
+        completed_at:    completed_at    ? new Date(completed_at) : null,
+        status,
+        records_created: records_created ?? 0,
+        records_updated: records_updated ?? 0,
+        records_failed:  records_failed  ?? 0,
+        error_message:   error_message   ?? null,
+        triggered_by:    triggered_by    ?? null,
+        portal_api_url:  portal_api_url  ?? null,
+      },
+    });
+
+    console.log(`[bot] sync-log: ${sync_type} ${status} created=${records_created ?? 0} updated=${records_updated ?? 0}`);
+    res.status(201).json({ id: log.id });
+  } catch (e: any) {
+    console.error('[bot] sync-log error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // ── POST /api/bot/attendance ──────────────────────────────────────────────────
 // Bot reports voice-channel attendance (who joined / left a lesson VC).
 
