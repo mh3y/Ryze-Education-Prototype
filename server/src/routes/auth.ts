@@ -129,9 +129,34 @@ authRouter.post('/discord/callback', authLimiter, async (req, res) => {
 
     let user = await db.user.findFirst({ where: { discord_user_id: du.id } });
     if (!user) {
+      // Check whether this Discord ID is pre-designated as admin.
+      // Set ADMIN_DISCORD_IDS in Render env as a comma-separated list of Discord user IDs.
+      // e.g.  ADMIN_DISCORD_IDS=123456789012345678,987654321098765432
+      const adminIds = (process.env.ADMIN_DISCORD_IDS ?? '')
+        .split(',').map((s) => s.trim()).filter(Boolean);
+      const defaultRole = adminIds.includes(du.id) ? 'admin' : 'student';
+
       user = await db.user.create({
-        data: { discord_user_id: du.id, full_name: du.global_name ?? du.username, email: du.email ?? null, role: 'student' },
+        data: {
+          discord_user_id: du.id,
+          full_name: du.global_name ?? du.username,
+          email: du.email ?? null,
+          role: defaultRole,
+        },
       });
+      console.log(`[auth] New Discord user created: ${du.id} (${user.full_name}) as ${defaultRole}`);
+    }
+
+    // If an existing user's role is wrong (e.g. created before ADMIN_DISCORD_IDS was set),
+    // promote them to admin now if their Discord ID is in the admin list.
+    const adminIds = (process.env.ADMIN_DISCORD_IDS ?? '')
+      .split(',').map((s) => s.trim()).filter(Boolean);
+    if (user.role === 'student' && adminIds.includes(du.id)) {
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { role: 'admin' },
+      });
+      console.log(`[auth] Promoted existing user ${du.id} (${user.full_name}) from student → admin`);
     }
 
     if (!user.active) { res.status(403).json({ detail: 'Account deactivated. Contact your admin.' }); return; }
