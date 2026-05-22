@@ -192,7 +192,7 @@ async function main() {
 
   // ── 6. Lessons — upcoming ─────────────────────────────────────────────────
 
-  const upcomingLessons = [
+  const upcomingLessons: { id: number; class_id: number; title: string; scheduled_at: Date; duration_min: number; status?: 'scheduled' | 'live' | 'completed' | 'cancelled' }[] = [
     { id: 1,  class_id: ext1Class.id,   title: 'Complex Numbers — Argand Diagram & Modulus',   scheduled_at: nextWeekday(2, 17), duration_min: 90 },
     { id: 2,  class_id: advClass.id,    title: 'Calculus — Integration by Substitution',        scheduled_at: nextWeekday(4, 17), duration_min: 90 },
     { id: 3,  class_id: yr10Class.id,   title: 'Trigonometry — Sine and Cosine Rules',          scheduled_at: nextWeekday(3, 16), duration_min: 60 },

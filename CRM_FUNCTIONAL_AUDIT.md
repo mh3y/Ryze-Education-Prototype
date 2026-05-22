@@ -7,10 +7,11 @@
 ## 🔴 ROOT CAUSE SUMMARY (read this first)
 
 ### Bug #1 — CRITICAL: Admin user shows as Student
-**Where:** `server/src/routes/auth.ts` line 132  
-**Code:** `role: 'student'` — hardcoded on every new Discord login  
-**Effect:** When you log in via Discord and there is no existing DB record matching your `discord_user_id`, a new `User` row is created with `role: 'student'`. The seed script creates an admin user but does **not** set `discord_user_id`, so there is no row to find — you always get a brand-new student record.  
-**Fix required:** Seed the admin user with your real Discord user ID, **and** add `ADMIN_DISCORD_IDS` env var so the auth callback grants `admin` role to known Discord IDs instead of always defaulting to `student`.
+**Where:** `server/src/routes/auth.ts`  
+**Root cause:** Role was hardcoded to `student` on every new Discord login. No guild role lookup was performed.  
+**Fix applied (PR #76):** Auth callback now calls `GET /api/guilds/{GUILD_ID}/members/{user_id}` using the bot token, fetches all guild role names, and maps them with priority Admin > Tutor > Student. Role is stored in DB and re-synced on every login (role changes in Discord are reflected immediately). Users with no recognised guild role are denied access with a clear message.  
+**Required env vars on Render:** `DISCORD_GUILD_ID`, `DISCORD_BOT_TOKEN`  
+**Status:** ✅ Code fixed — needs deployment + env vars set
 
 ---
 
