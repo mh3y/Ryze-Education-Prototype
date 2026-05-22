@@ -88,6 +88,194 @@ botRouter.patch('/jobs/:id/fail', async (req, res) => {
   }
 });
 
+// ── POST /api/bot/sync-members ───────────────────────────────────────────────
+// Bot pushes a bulk snapshot of all Discord guild members with their portal role.
+// Body: { members: Array<{ discord_user_id: string; full_name: string; avatar_url?: string; role: "admin"|"tutor"|"student" }> }
+
+botRouter.post('/sync-members', async (req, res) => {
+  try {
+    const { members } = req.body as {
+      members: Array<{
+        discord_user_id: string;
+        full_name: string;
+        avatar_url?: string;
+        role: 'admin' | 'tutor' | 'student';
+      }>;
+    };
+
+    if (!Array.isArray(members)) {
+      res.status(400).json({ detail: 'members array is required' });
+      return;
+    }
+
+    let created = 0;
+    let updated = 0;
+
+    for (const m of members) {
+      if (!m.discord_user_id || !m.full_name || !m.role) continue;
+
+      const existing = await db.user.findUnique({
+        where: { discord_user_id: m.discord_user_id },
+      });
+
+      if (existing) {
+        // Only update role/avatar — never overwrite manually set fields like email
+        const changed =
+          existing.role !== m.role ||
+          (m.avatar_url && existing.avatar_url !== m.avatar_url);
+
+        if (changed) {
+          await db.user.update({
+            where: { discord_user_id: m.discord_user_id },
+            data: {
+              role:       m.role,
+              avatar_url: m.avatar_url ?? existing.avatar_url,
+              updated_at: new Date(),
+            },
+          });
+          updated++;
+        }
+      } else {
+        await db.user.create({
+          data: {
+            discord_user_id: m.discord_user_id,
+            full_name:       m.full_name,
+            avatar_url:      m.avatar_url ?? null,
+            role:            m.role,
+            active:          true,
+          },
+        });
+        created++;
+      }
+    }
+
+    res.json({ synced: members.length, created, updated });
+  } catch (e: any) {
+    console.error('[bot] sync-members error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── GET /api/bot/classes ──────────────────────────────────────────────────────
+// Bot fetches the list of active classes so it can match Google Calendar IDs.
+
+botRouter.get('/classes', async (_req, res) => {
+  try {
+    const classes = await db.classGroup.findMany({
+      where:   { active: true },
+      select:  {
+        id:                true,
+        name:              true,
+        subject:           true,
+        google_calendar_id: true,
+        discord_channel_id: true,
+        discord_role_id:   true,
+        tutor_id:          true,
+      },
+      orderBy: { name: 'asc' },
+    });
+    res.json(classes);
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── PATCH /api/bot/classes/:id/set-calendar ───────────────────────────────────
+// Bot or admin sets the Google Calendar ID for a class.
+
+botRouter.patch('/classes/:id/set-calendar', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { google_calendar_id } = req.body as { google_calendar_id: string };
+    if (!google_calendar_id) {
+      res.status(400).json({ detail: 'google_calendar_id is required' });
+      return;
+    }
+    const cls = await db.classGroup.update({
+      where: { id },
+      data:  { google_calendar_id },
+    });
+    res.json({ id: cls.id, google_calendar_id: cls.google_calendar_id });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── POST /api/bot/sync-lessons ────────────────────────────────────────────────
+// Bot pushes lessons parsed from Google Calendar into Supabase.
+// Body: { lessons: Array<{ google_event_id, class_id, title, description?, scheduled_at, duration_min, meet_link?, status? }> }
+
+botRouter.post('/sync-lessons', async (req, res) => {
+  try {
+    const { lessons } = req.body as {
+      lessons: Array<{
+        google_event_id: string;
+        class_id: number;
+        title: string;
+        description?: string;
+        scheduled_at: string;   // ISO string
+        duration_min: number;
+        meet_link?: string;
+        status?: 'scheduled' | 'live' | 'completed' | 'cancelled';
+      }>;
+    };
+
+    if (!Array.isArray(lessons)) {
+      res.status(400).json({ detail: 'lessons array is required' });
+      return;
+    }
+
+    let created = 0;
+    let updated = 0;
+
+    for (const l of lessons) {
+      if (!l.google_event_id || !l.class_id || !l.scheduled_at) continue;
+
+      const scheduledAt = new Date(l.scheduled_at);
+      const status = (l.status ?? 'scheduled') as any;
+
+      const existing = await db.lesson.findUnique({
+        where: { google_event_id: l.google_event_id },
+      });
+
+      if (existing) {
+        await db.lesson.update({
+          where: { google_event_id: l.google_event_id },
+          data: {
+            title:        l.title,
+            description:  l.description ?? existing.description,
+            scheduled_at: scheduledAt,
+            duration_min: l.duration_min,
+            meet_link:    l.meet_link ?? existing.meet_link,
+            status,
+            updated_at:   new Date(),
+          },
+        });
+        updated++;
+      } else {
+        await db.lesson.create({
+          data: {
+            class_id:       l.class_id,
+            google_event_id: l.google_event_id,
+            title:          l.title,
+            description:    l.description ?? null,
+            scheduled_at:   scheduledAt,
+            duration_min:   l.duration_min,
+            meet_link:      l.meet_link ?? null,
+            status,
+          },
+        });
+        created++;
+      }
+    }
+
+    res.json({ synced: lessons.length, created, updated });
+  } catch (e: any) {
+    console.error('[bot] sync-lessons error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // ── POST /api/bot/attendance ──────────────────────────────────────────────────
 // Bot reports voice-channel attendance (who joined / left a lesson VC).
 
