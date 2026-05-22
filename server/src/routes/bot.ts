@@ -398,7 +398,8 @@ botRouter.post('/sync-log', async (req, res) => {
       },
     });
 
-    console.log(`[bot] sync-log: ${sync_type} ${status} created=${records_created ?? 0} updated=${records_updated ?? 0}`);
+    const errSuffix = (status === 'failed' && error_message) ? ` | error: ${error_message}` : '';
+    console.log(`[bot] sync-log: ${sync_type} ${status} created=${records_created ?? 0} updated=${records_updated ?? 0}${errSuffix}`);
     res.status(201).json({ id: log.id });
   } catch (e: any) {
     console.error('[bot] sync-log error:', e?.message);
