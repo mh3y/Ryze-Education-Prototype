@@ -40,14 +40,14 @@ function isOverdue(iso: string): boolean {
 
 function SubmissionStatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string; Icon: React.ElementType }> = {
-    submitted: { label: 'Submitted', cls: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', Icon: CheckCircle },
-    late:      { label: 'Late',      cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20',       Icon: Clock },
-    missing:   { label: 'Missing',   cls: 'text-red-400 bg-red-500/10 border-red-500/20',             Icon: XCircle },
-    reviewed:  { label: 'Reviewed',  cls: 'text-blue-400 bg-blue-500/10 border-blue-500/20',          Icon: Eye },
+    submitted: { label: 'Submitted', cls: 'tag tag--ok',     Icon: CheckCircle },
+    late:      { label: 'Late',      cls: 'tag tag--warn',   Icon: Clock },
+    missing:   { label: 'Missing',   cls: 'tag tag--danger', Icon: XCircle },
+    reviewed:  { label: 'Reviewed',  cls: 'tag tag--info',   Icon: Eye },
   };
-  const cfg = map[status] ?? { label: status, cls: 'text-slate-400 bg-slate-500/10 border-slate-500/20', Icon: AlertCircle };
+  const cfg = map[status] ?? { label: status, cls: 'tag', Icon: AlertCircle };
   return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${cfg.cls}`}>
+    <span className={cfg.cls}>
       <cfg.Icon size={11} />
       {cfg.label}
     </span>
@@ -374,24 +374,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
         {total > 0 && (
           <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
             {submitted > 0 && (
-              <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
-                {submitted} submitted
-              </span>
+              <span className="tag tag--ok">{submitted} submitted</span>
             )}
             {late > 0 && (
-              <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
-                {late} late
-              </span>
+              <span className="tag tag--warn">{late} late</span>
             )}
             {missing > 0 && (
-              <span className="text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">
-                {missing} missing
-              </span>
+              <span className="tag tag--danger">{missing} missing</span>
             )}
             {reviewed > 0 && (
-              <span className="text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full">
-                {reviewed} reviewed
-              </span>
+              <span className="tag tag--info">{reviewed} reviewed</span>
             )}
           </div>
         )}

@@ -444,7 +444,7 @@ const StudentsPage: React.FC = () => {
                         <div>
                           <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.name}</div>
                           <div style={{ fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
-                            ID #RYZ-{1200 + (typeof s.id === 'number' ? s.id * 7 : parseInt(String(s.id), 10) * 7)}
+                            ID #RYZ-{String(s.id).padStart(4, '0')}
                           </div>
                         </div>
                       </div>
