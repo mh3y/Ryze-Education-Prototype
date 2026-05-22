@@ -404,7 +404,127 @@ export interface AuditLogEntry {
   created_at: string;
 }
 
-// Overview stats
+// ---------------------------------------------------------------------------
+// Comprehensive overview — GET /api/admin/overview
+// ---------------------------------------------------------------------------
+
+export interface OverviewLessonItem {
+  id: number;
+  title: string;
+  className: string;
+  classId: number;
+  tutorName: string | null;
+  enrolledCount: number | null;
+  scheduledAt: string;
+  endAt: string;
+  durationMin: number;
+  status: string;
+  meetLink: string | null;
+}
+
+export interface OverviewPaymentItem {
+  id: number;
+  studentId: number;
+  studentName: string;
+  amountOwed: number; // cents
+  dueDate: string | null;
+  description: string;
+}
+
+export interface OverviewTutorPayItem {
+  id: number;
+  tutorId: number;
+  tutorName: string;
+  amountOwed: number; // cents
+  period: string | null;
+  description: string;
+}
+
+export interface OverviewAlertItem {
+  id: number;
+  alertType: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  title: string;
+  message: string;
+  relatedType: string | null;
+  relatedId: number | null;
+  createdAt: string;
+}
+
+export interface OverviewRiskItem {
+  type: string;
+  severity: 'low' | 'medium' | 'high';
+  title: string;
+  entityType: string;
+  entityId: number;
+  action: string;
+}
+
+export interface OverviewSyncInfo {
+  status: string;
+  at: string;
+  error: string | null;
+  created: number;
+  updated: number;
+}
+
+export interface OverviewActivityItem {
+  id: number;
+  action: string;
+  entityType: string;
+  entityName: string | null;
+  actorName: string | null;
+  actorType: string;
+  createdAt: string;
+}
+
+export interface AdminOverviewData {
+  summary: {
+    activeStudents: number;
+    activeTutors: number;
+    activeClasses: number;
+    parentAccounts: { total: number; pendingInvite: number; active: number };
+    studentsByYear: Record<string, number>;
+    newStudentsLast30Days: number;
+    unreadMessages: number;
+  };
+  financials: {
+    parentOutstanding: number;
+    parentOverdue: number;
+    countOverdue: number;
+    oldestOverdueDate: string | null;
+    topOverduePayments: OverviewPaymentItem[];
+    revenueThisMonth: number;
+    revenueAllTime: number;
+    tutorPaymentsOwed: number;
+    countTutorPaymentsPending: number;
+    topTutorPayments: OverviewTutorPayItem[];
+  };
+  schedule: {
+    today: OverviewLessonItem[];
+    upcoming: OverviewLessonItem[];
+  };
+  actions: {
+    priorityAlerts: OverviewAlertItem[];
+  };
+  risk: {
+    students: OverviewRiskItem[];
+    classes: OverviewRiskItem[];
+    tutors: OverviewRiskItem[];
+  };
+  automation: {
+    lastMemberSync: OverviewSyncInfo | null;
+    lastCalendarSync: OverviewSyncInfo | null;
+    lastLessonSync: OverviewSyncInfo | null;
+    lastAttendanceSync: OverviewSyncInfo | null;
+    pendingBotJobs: number;
+    failedBotJobs: number;
+    lastError: string | null;
+  };
+  recentActivity: OverviewActivityItem[];
+}
+
+// Overview stats (legacy — kept for compatibility)
 export interface AdminOverviewStats {
   total_students: number;
   active_classes: number;
@@ -437,6 +557,10 @@ export interface AdminOverviewStats {
 export const adminApi = {
 
   // ── Overview ────────────────────────────────────────────────────────── //
+
+  getOverview(): Promise<AdminOverviewData> {
+    return get('/overview');
+  },
 
   getOverviewStats(): Promise<AdminOverviewStats> {
     return get('/overview-stats');
