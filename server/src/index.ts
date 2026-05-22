@@ -67,6 +67,11 @@ import { messagesRouter } from './routes/messages';
 const app = express();
 const PORT = Number(process.env.PORT ?? 8000);
 
+// Trust the first proxy hop (required on Render/Heroku/etc so that
+// express-rate-limit and req.ip see the real client IP from X-Forwarded-For,
+// not the internal load-balancer address).
+app.set('trust proxy', 1);
+
 // ── Determine allowed origin ──────────────────────────────────────────────────
 // In production, CORS_ORIGIN must be the exact portal URL (no wildcard).
 // We also accept the www. variant so users on either subdomain are not blocked.
