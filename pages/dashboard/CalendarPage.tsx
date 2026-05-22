@@ -46,6 +46,8 @@ export interface CalendarEvent {
   subtitle?: string;
   /** Google Calendar web link for manually-added events */
   htmlLink?: string;
+  /** Google Calendar event ID — used to deduplicate gcalEvents against allEvents */
+  googleEventId?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -222,15 +224,16 @@ function parentLessonsToEvents(lessons: ChildLesson[], childName: string): Calen
 
 function portalLessonsToEvents(lessons: Lesson[]): CalendarEvent[] {
   return lessons.map((ls) => ({
-    id:       `lesson-${ls.id}`,
-    title:    ls.title,
-    category: 'lesson' as EventCategory,
-    start:    new Date(ls.start_time),
-    end:      new Date(ls.end_time),
-    location: ls.location ?? undefined,
-    meetLink: ls.meet_link ?? undefined,
-    status:   ls.status,
-    subtitle: ls.class_group_name,
+    id:            `lesson-${ls.id}`,
+    title:         ls.title,
+    category:      'lesson' as EventCategory,
+    start:         new Date(ls.start_time),
+    end:           ls.end_time ? new Date(ls.end_time) : undefined,
+    location:      ls.location ?? undefined,
+    meetLink:      ls.meet_link ?? undefined,
+    status:        ls.status,
+    subtitle:      ls.class_group_name ?? undefined,
+    googleEventId: (ls as any).google_event_id ?? undefined,
   }));
 }
 
@@ -497,16 +500,12 @@ const CalendarPage: React.FC = () => {
       const end   = new Date(y, m + 1, 0, 23, 59, 59).toISOString();
       const raw   = await adminApi.getCalendarEvents(start, end);
 
-      // Build set of google_event_ids already represented in DB lessons
-      const existingIds = new Set(
+      // Build set of google_event_ids already represented in DB lessons so we
+      // don't show the same event twice (once as a lesson, once as a gcal event).
+      const existingIds = new Set<string>(
         allEvents
-          .filter((e) => e.id.startsWith('lesson-'))
-          .map((e) => {
-            // We don't store gcal IDs on the client-side lesson objects,
-            // so we just pass an empty set — the backend already filters
-            return '';
-          })
-          .filter(Boolean),
+          .map((e) => e.googleEventId)
+          .filter((id): id is string => !!id),
       );
 
       setGcalEvents(gcalEventsToCalendarEvents(raw, existingIds));

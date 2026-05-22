@@ -118,7 +118,7 @@ portalRouter.get('/lessons', requireAuth, async (req, res) => {
         status: l.status,
         tutor_name: l.class?.tutor?.full_name ?? null,
         discord_thread_id: null,
-        google_event_id: null,
+        google_event_id: l.google_event_id ?? null,
       })),
     });
   } catch (e: any) {

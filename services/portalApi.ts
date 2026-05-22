@@ -49,7 +49,7 @@ export interface Lesson {
   title: string;
   description: string | null;
   start_time: string;
-  end_time: string;
+  end_time: string | null;
   location: string | null;
   meet_link: string | null;
   status: 'scheduled' | 'active' | 'completed' | 'cancelled';
