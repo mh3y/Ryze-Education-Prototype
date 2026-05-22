@@ -56,13 +56,14 @@ export interface CalendarEvent {
 
 const CATEGORY_CONFIG: Record<
   EventCategory,
-  { label: string; color: string; bg: string; border: string; icon: React.ElementType }
+  { label: string; color: string; bg: string; border: string; hex: string; icon: React.ElementType }
 > = {
   lesson: {
     label: 'Lessons',
     color: 'text-[#FFB000]',
     bg: 'bg-[#FFB000]/15',
     border: 'border-[#FFB000]/30',
+    hex: '#FFB000',
     icon: BookOpen,
   },
   'tutor-meet': {
@@ -70,6 +71,7 @@ const CATEGORY_CONFIG: Record<
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/15',
     border: 'border-emerald-500/30',
+    hex: '#34d399',
     icon: Users,
   },
   meeting: {
@@ -77,6 +79,7 @@ const CATEGORY_CONFIG: Record<
     color: 'text-blue-400',
     bg: 'bg-blue-500/15',
     border: 'border-blue-500/30',
+    hex: '#60a5fa',
     icon: Briefcase,
   },
   other: {
@@ -84,6 +87,7 @@ const CATEGORY_CONFIG: Record<
     color: 'ryze-text-muted',
     bg: 'bg-slate-500/15',
     border: 'border-slate-500/30',
+    hex: '#94a3b8',
     icon: CalendarDays,
   },
 };
@@ -400,23 +404,57 @@ const DayCell: React.FC<{
   const overflow = events.length - MAX_VISIBLE;
 
   return (
-    <div className={`min-h-[90px] md:min-h-[110px] p-1.5 md:p-2 rounded-xl border transition-colors ${
-      isToday ? 'border-[#FFB000]/40 bg-[#FFB000]/5' : 'border-white/5 bg-white/[0.015] hover:bg-white/[0.03]'
-    }`}>
-      <div className={`text-xs font-bold mb-1.5 w-6 h-6 flex items-center justify-center rounded-full ${
-        isToday ? 'bg-[#FFB000] text-[#0a0f1e]' : 'ryze-text-muted'
-      }`}>
+    <div
+      style={{
+        minHeight: 90,
+        padding: '6px 8px',
+        borderRadius: 12,
+        border: isToday ? '1px solid rgba(255,176,0,0.40)' : '1px solid rgba(255,255,255,0.05)',
+        background: isToday ? 'rgba(255,176,0,0.05)' : 'rgba(255,255,255,0.015)',
+        transition: 'background 140ms ease',
+      }}
+    >
+      {/* Day number */}
+      <div style={{
+        fontSize: 11, fontWeight: 700,
+        marginBottom: 6,
+        width: 24, height: 24,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        borderRadius: '50%',
+        background: isToday ? '#FFB000' : 'transparent',
+        color: isToday ? '#0a0f1e' : 'var(--fg-muted)',
+        flexShrink: 0,
+      }}>
         {day}
       </div>
-      <div className="space-y-0.5">
+
+      {/* Event pills — use inline styles so colours always render */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {visible.map((ev) => {
-          const cfg = CATEGORY_CONFIG[ev.category];
+          const hex = CATEGORY_CONFIG[ev.category].hex;
           return (
             <button
               key={ev.id}
               onClick={() => onEventClick(ev)}
-              className={`w-full text-left px-1.5 py-0.5 rounded-md text-[10px] font-semibold truncate transition-opacity hover:opacity-80 ${cfg.bg} ${cfg.color} border ${cfg.border}`}
               title={ev.title}
+              style={{
+                width: '100%',
+                textAlign: 'left',
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontSize: 10,
+                fontWeight: 600,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                background: `${hex}26`,   /* 15% opacity */
+                color: hex,
+                border: `1px solid ${hex}4d`,  /* 30% opacity */
+                cursor: 'pointer',
+                transition: 'opacity 120ms ease',
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.75'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
             >
               {ev.title}
             </button>
@@ -425,7 +463,11 @@ const DayCell: React.FC<{
         {!showAll && overflow > 0 && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowAll(true); }}
-            className="w-full text-left text-[10px] ryze-text-muted px-1.5 py-0.5 hover:ryze-text-inverse transition-colors"
+            style={{
+              width: '100%', textAlign: 'left', fontSize: 10,
+              color: 'var(--fg-muted)', padding: '2px 6px',
+              background: 'transparent', border: 'none', cursor: 'pointer',
+            }}
           >
             +{overflow} more
           </button>
@@ -542,16 +584,19 @@ const CalendarPage: React.FC = () => {
     return counts;
   }, [mergedEvents]);
 
+  // Indexed by day-of-month for the currently viewed month — built with the
+  // same comparison used by the "Events this month" list so both always agree.
   const eventsByDay = useMemo(() => {
-    const map = new Map<string, CalendarEvent[]>();
+    const map = new Map<number, CalendarEvent[]>();
     filteredEvents.forEach((ev) => {
-      const key = `${ev.start.getFullYear()}-${ev.start.getMonth()}-${ev.start.getDate()}`;
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(ev);
+      if (ev.start.getFullYear() !== year || ev.start.getMonth() !== month) return;
+      const d = ev.start.getDate();
+      if (!map.has(d)) map.set(d, []);
+      map.get(d)!.push(ev);
     });
     map.forEach((evs) => evs.sort((a, b) => a.start.getTime() - b.start.getTime()));
     return map;
-  }, [filteredEvents]);
+  }, [filteredEvents, year, month]);
 
   const grid = useMemo(() => buildGrid(year, month), [year, month]);
 
@@ -677,8 +722,7 @@ const CalendarPage: React.FC = () => {
         <div className="grid grid-cols-7 gap-1 p-2 md:p-3">
           {grid.map((day, idx) => {
             if (day === null) return <div key={`blank-${idx}`} />;
-            const key    = `${year}-${month}-${day}`;
-            const dayEvs = eventsByDay.get(key) ?? [];
+            const dayEvs = eventsByDay.get(day) ?? [];
             const isToday =
               today.getFullYear() === year &&
               today.getMonth()    === month &&
@@ -686,7 +730,7 @@ const CalendarPage: React.FC = () => {
 
             return (
               <DayCell
-                key={key}
+                key={day}
                 day={day}
                 year={year}
                 month={month}
