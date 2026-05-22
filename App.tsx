@@ -62,6 +62,7 @@ const AnnouncementsPage   = lazy(() => import('./pages/dashboard/admin/Announcem
 const HomeworkPage        = lazy(() => import('./pages/dashboard/admin/HomeworkPage'));
 const AuditLogPage        = lazy(() => import('./pages/dashboard/admin/AuditLogPage'));
 const TutorsPage          = lazy(() => import('./pages/dashboard/admin/TutorsPage'));
+const TutorDetail         = lazy(() => import('./pages/dashboard/admin/TutorDetail'));
 const MessagesPage        = lazy(() => import('./pages/dashboard/admin/MessagesPage'));
 const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
 const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
@@ -443,6 +444,7 @@ const AppContent: React.FC = () => {
               <Route path="resources"       element={<ResourcesPage />} />
               <Route path="announcements"   element={<AnnouncementsPage />} />
               <Route path="tutors"          element={<TutorsPage />} />
+              <Route path="tutors/:id"     element={<TutorDetail />} />
               <Route path="audit-log"       element={<AuditLogPage />} />
               <Route path="messages"        element={<MessagesPage />} />
               {/* Bot / ops routes — admin + tutor only */}

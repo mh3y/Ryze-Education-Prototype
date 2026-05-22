@@ -4,6 +4,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Trash2, GraduationCap } from 'lucide-react';
 import { adminApi, TutorListItem } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
@@ -26,6 +27,7 @@ function getInitials(name: string): string {
 
 const TutorsPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [tutors, setTutors]           = useState<TutorListItem[]>([]);
   const [loading, setLoading]         = useState(true);
@@ -204,7 +206,9 @@ const TutorsPage: React.FC = () => {
                   style={{
                     borderBottom: '1px solid var(--border-faint)',
                     transition: 'background 140ms ease',
+                    cursor: 'pointer',
                   }}
+                  onClick={() => navigate(`/dashboard/admin/tutors/${t.id}`)}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ''; }}
                 >
@@ -250,9 +254,9 @@ const TutorsPage: React.FC = () => {
                     </span>
                   </td>
                   {/* Actions */}
-                  <td style={{ padding: 'var(--table-cell-pad, 14px 22px)' }} onClick={(e) => e.stopPropagation()}>
+                  <td style={{ padding: 'var(--table-cell-pad, 14px 22px)' }}>
                     <button
-                      onClick={() => setDeleteTarget(t)}
+                      onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
                       title="Delete tutor"
                       style={{
                         width: 28, height: 28, borderRadius: 6,

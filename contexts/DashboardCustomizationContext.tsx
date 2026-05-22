@@ -5,7 +5,9 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 
 // IDs for hideable overview widgets
-export type WidgetId = 'stats' | 'lessons' | 'alerts' | 'quick-actions' | 'health';
+export type WidgetId =
+  | 'stats' | 'lessons' | 'alerts' | 'quick-actions' | 'health'
+  | 'action-centre' | 'calendar' | 'financials' | 'snapshot' | 'risk' | 'automation' | 'activity';
 // IDs for quick action keys (match QUICK_ACTIONS keys)
 export type QuickActionKey = 'add-student' | 'schedule' | 'invoice' | 'broadcast' | 'report' | 'export';
 
