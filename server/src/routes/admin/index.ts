@@ -14,6 +14,7 @@ import { resourcesRouter } from './resources';
 import { auditRouter } from './audit';
 import { alertsRouter } from './alerts';
 import { botJobsRouter } from './bot-jobs';
+import { botHealthRouter } from './bot-health';
 
 export const adminRouter = Router();
 
@@ -33,3 +34,4 @@ adminRouter.use('/resources', resourcesRouter);
 adminRouter.use('/', auditRouter);
 adminRouter.use('/', alertsRouter);
 adminRouter.use('/bot-jobs', botJobsRouter);
+adminRouter.use('/bot-health', botHealthRouter);

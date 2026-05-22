@@ -684,3 +684,29 @@ model Setting {
   updated_by Int?
   updated_at DateTime @updatedAt
 }
+
+// ============================================================================
+// BOT SYNC LOGS — audit trail of every data sync the Discord bot performs
+// Written by the bot via POST /api/bot/sync-log
+// Read by admin via GET /api/admin/bot-health
+// ============================================================================
+
+model BotSyncLog {
+  id               Int       @id @default(autoincrement())
+  sync_type        String    // members | classes | lessons | attendance
+  source           String    @default("scheduled") // scheduled | admin_triggered | slash_command
+  started_at       DateTime
+  completed_at     DateTime?
+  status           String    // running | success | partial | failed
+  records_created  Int       @default(0)
+  records_updated  Int       @default(0)
+  records_failed   Int       @default(0)
+  error_message    String?
+  triggered_by     String?   // "scheduled" | "admin:<user_id>" | "/slash_command"
+  portal_api_url   String?   // the URL the bot was pointing at during this sync
+  created_at       DateTime  @default(now())
+
+  @@index([sync_type])
+  @@index([status])
+  @@index([created_at])
+}

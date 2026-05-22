@@ -350,6 +350,44 @@ export interface HomeworkTaskDetail extends HomeworkTask {
   submissions: HomeworkSubmission[];
 }
 
+// Bot sync health
+export interface BotSyncEntry {
+  id:              number;
+  status:          'running' | 'success' | 'partial' | 'failed';
+  source:          string;
+  started_at:      string;
+  completed_at:    string | null;
+  records_created: number;
+  records_updated: number;
+  records_failed:  number;
+  error_message:   string | null;
+  triggered_by:    string | null;
+  portal_api_url:  string | null;
+}
+
+export interface BotHealthResponse {
+  sync_summary: {
+    members:    BotSyncEntry | null;
+    classes:    BotSyncEntry | null;
+    lessons:    BotSyncEntry | null;
+    attendance: BotSyncEntry | null;
+  };
+  recent_failures: {
+    id: number; sync_type: string; status: string;
+    error_message: string | null; created_at: string; triggered_by: string | null;
+  }[];
+  jobs: {
+    pending: number;
+    failed:  number;
+    recent: {
+      id: number; job_type: string; status: string;
+      attempts: number; error: string | null; created_at: string;
+    }[];
+  };
+  portal_api_url: string | null;
+  last_any_sync:  string | null;
+}
+
 // Audit log
 export interface AuditLogEntry {
   id: number;
@@ -852,5 +890,30 @@ export const adminApi = {
     status?: string; tutor_feedback?: string;
   }): Promise<{ id: number; status: string; tutor_feedback: string | null }> {
     return patch(`/homework/${taskId}/submissions/${submissionId}`, body);
+  },
+
+  // ── Bot Health ───────────────────────────────────────────────────────── //
+
+  getBotHealth(): Promise<BotHealthResponse> {
+    return get('/bot-health');
+  },
+
+  /** Queue a sync trigger job for the bot to pick up within 30 seconds. */
+  triggerBotSync(syncType: 'sync_members' | 'sync_classes' | 'sync_lessons' | 'sync_attendance'): Promise<{ id: number; status: string }> {
+    return post('/bot-jobs', { job_type: syncType, payload: { triggered_by: 'admin_portal' } });
+  },
+
+  // ── Bot Jobs ─────────────────────────────────────────────────────────── //
+
+  getBotJobs(params?: { status?: string; job_type?: string }): Promise<Paginated<{
+    id: number; job_type: string; status: string; priority: number;
+    attempts: number; max_attempts: number; error: string | null;
+    created_at: string; claimed_at: string | null; completed_at: string | null;
+  }>> {
+    return get('/bot-jobs', params);
+  },
+
+  cancelBotJob(id: number): Promise<void> {
+    return del(`/bot-jobs/${id}`);
   },
 };
