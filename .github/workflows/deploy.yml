@@ -22,10 +22,14 @@ jobs:
             # Pull latest frontend code
             cd "${{ secrets.VPS_APP_DIR }}"
             git pull origin main
-            # Move to compose directory and load existing .env so docker compose
-            # can interpolate DB_PASSWORD (already set there from initial VPS setup)
+            # Move to compose directory
             cd "${{ secrets.VPS_COMPOSE_DIR }}"
-            set -a && source .env && set +a
+            # Load .env if present (picks up DB_PASSWORD if set there)
+            set -a && source .env 2>/dev/null || true && set +a
+            # DB_PASSWORD is required by compose for variable interpolation even
+            # though we only rebuild 'web'. Provide a no-op fallback if missing —
+            # the running db container is not touched by this deploy.
+            export DB_PASSWORD="${DB_PASSWORD:-unused_by_web_rebuild}"
             # Rebuild only the web container (bot/db/api keep running untouched)
             docker compose up -d --build web
             docker image prune -f
