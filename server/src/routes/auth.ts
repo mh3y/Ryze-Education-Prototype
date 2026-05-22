@@ -127,11 +127,82 @@ authRouter.post('/discord/callback', authLimiter, async (req, res) => {
     }
     const du = await userRes.json() as { id: string; username: string; global_name?: string; email?: string };
 
-    let user = await db.user.findFirst({ where: { discord_user_id: du.id } });
-    if (!user) {
-      user = await db.user.create({
-        data: { discord_user_id: du.id, full_name: du.global_name ?? du.username, email: du.email ?? null, role: 'student' },
+    // ── Resolve portal role from Discord guild membership ─────────────────────
+    // The bot token is used to fetch the user's roles in the Ryze server.
+    // Role priority: Admin > Tutor > Student.
+    // If the user is not a guild member or has no recognised role, access is denied.
+    const guildId   = process.env.DISCORD_GUILD_ID;
+    const botToken  = process.env.DISCORD_BOT_TOKEN;
+
+    let detectedRole: 'admin' | 'tutor' | 'student' | null = null;
+
+    if (guildId && botToken) {
+      const memberRes2 = await fetch(`https://discord.com/api/guilds/${guildId}/members/${du.id}`, {
+        headers: { Authorization: `Bot ${botToken}` },
       });
+
+      if (memberRes2.status === 404) {
+        // User is not in the guild at all
+        res.status(403).json({ detail: 'Your Discord account is not a member of the Ryze Education server.' });
+        return;
+      }
+
+      if (memberRes2.ok) {
+        const member = await memberRes2.json() as { roles: string[]; nick?: string };
+        const guildRes = await fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
+          headers: { Authorization: `Bot ${botToken}` },
+        });
+        if (guildRes.ok) {
+          const guildRoles = await guildRes.json() as { id: string; name: string }[];
+          // Build map: role_id → role_name (lowercase)
+          const roleNameById = new Map(guildRoles.map((r) => [r.id, r.name.toLowerCase()]));
+          const memberRoleNames = member.roles.map((id) => roleNameById.get(id) ?? '');
+
+          // Priority: admin > tutor > student
+          if (memberRoleNames.includes('admin')) detectedRole = 'admin';
+          else if (memberRoleNames.includes('tutor')) detectedRole = 'tutor';
+          else if (memberRoleNames.includes('student')) detectedRole = 'student';
+
+          console.log(`[auth] Guild roles for ${du.id}: [${memberRoleNames.filter(Boolean).join(', ')}] → portal role: ${detectedRole ?? 'none'}`);
+        }
+      } else {
+        const errBody = await memberRes2.json().catch(() => ({}));
+        console.error(`[auth] Guild member fetch failed for ${du.id}:`, memberRes2.status, JSON.stringify(errBody));
+      }
+    } else {
+      console.warn('[auth] DISCORD_GUILD_ID or DISCORD_BOT_TOKEN not set — guild role detection skipped. Set both env vars in production.');
+    }
+
+    // If guild role detection ran but found no recognised role, deny access.
+    if (guildId && botToken && detectedRole === null) {
+      res.status(403).json({
+        detail: 'Your Discord account is not linked to an approved Ryze Education role. Ask an admin to assign you the correct role in the Discord server.',
+      });
+      return;
+    }
+
+    // ── Upsert user in database ──────────────────────────────────────────────
+    let user = await db.user.findFirst({ where: { discord_user_id: du.id } });
+
+    if (!user) {
+      // Default to 'student' if guild detection is not configured (dev environments without bot token)
+      const roleToAssign = detectedRole ?? 'student';
+      user = await db.user.create({
+        data: {
+          discord_user_id: du.id,
+          full_name: du.global_name ?? du.username,
+          email: du.email ?? null,
+          role: roleToAssign,
+        },
+      });
+      console.log(`[auth] New user created: ${du.id} (${user.full_name}) as ${roleToAssign}`);
+    } else if (detectedRole && user.role !== detectedRole) {
+      // Keep DB role in sync with Discord guild role (e.g. promoted from student → tutor)
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { role: detectedRole },
+      });
+      console.log(`[auth] Role updated for ${du.id} (${user.full_name}): ${user.role} → ${detectedRole}`);
     }
 
     if (!user.active) { res.status(403).json({ detail: 'Account deactivated. Contact your admin.' }); return; }
