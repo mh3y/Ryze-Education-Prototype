@@ -7,88 +7,87 @@
  * Flow:
  *   1. Read the `code` query param
  *   2. POST it to the backend /auth/discord/callback
- *   3. Backend returns a JWT → stored via AuthContext
- *   4. Redirect to /dashboard (or wherever the user was trying to go)
+ *   3. On success → redirect to /dashboard
+ *   4. On failure → redirect to /login with a specific error message in
+ *      router state so the login page can display it in context.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+
+/**
+ * Maps raw API/OAuth error strings to user-facing messages with
+ * scenario-specific guidance.
+ */
+function mapAuthError(raw: string): string {
+  const msg = raw.toLowerCase();
+
+  if (msg.includes('not a member') || msg.includes('not in the guild')) {
+    return 'Your Discord account is not a member of the Ryze Education server. You need to join the server before you can log in.';
+  }
+  if (msg.includes('not linked to an approved') || msg.includes('no recognised role') || msg.includes('role')) {
+    return 'Your Discord account does not have a student, tutor, or admin role in the Ryze Education server. Please ask your admin to assign you the correct role.';
+  }
+  if (msg.includes('deactivated')) {
+    return 'Your account has been deactivated. Please contact your admin for assistance.';
+  }
+  if (msg.includes('cancelled') || msg.includes('denied') || msg.includes('access_denied')) {
+    return 'Discord login was cancelled. Please try again.';
+  }
+  if (msg.includes('too many login attempts') || msg.includes('rate limit')) {
+    return raw; // keep rate-limit message verbatim — it already explains the wait time
+  }
+  if (msg.includes('no authorisation code') || msg.includes('no authorization code')) {
+    return 'No authorisation code was received from Discord. Please try logging in again.';
+  }
+  // Fallback for unexpected errors
+  return 'Login failed. Please try again. If the problem persists, contact your admin.';
+}
 
 const DiscordCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { loginDiscord } = useAuth();
   const navigate = useNavigate();
 
-  const [error, setError] = useState<string | null>(null);
   const attempted = useRef(false); // prevent double-invoke in React Strict Mode
 
   useEffect(() => {
     if (attempted.current) return;
     attempted.current = true;
 
-    const code  = searchParams.get('code');
+    const code       = searchParams.get('code');
     const oauthError = searchParams.get('error');
 
+    // User cancelled or denied the Discord OAuth prompt
     if (oauthError) {
-      // User denied access or another OAuth error
-      setError('Discord login was cancelled or denied. Please try again.');
+      navigate('/login', {
+        replace: true,
+        state: { authError: mapAuthError(oauthError) },
+      });
       return;
     }
 
     if (!code) {
-      setError('No authorisation code received from Discord.');
+      navigate('/login', {
+        replace: true,
+        state: { authError: mapAuthError('no authorisation code') },
+      });
       return;
     }
 
     loginDiscord(code)
       .then(() => navigate('/dashboard', { replace: true }))
       .catch((err: any) => {
-        setError(
-          err?.message ??
-            'Authentication failed. Please return to the login page and try again.'
-        );
+        const raw = err?.message ?? '';
+        navigate('/login', {
+          replace: true,
+          state: { authError: mapAuthError(raw) },
+        });
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (error) {
-    return (
-      <div
-        className="min-h-screen flex flex-col items-center justify-center bg-transparent ryze-text-inverse font-sans px-6"
-        style={{ fontFamily: "'Inter', sans-serif" }}
-      >
-        <div className="bg-[#0a0f1e] border border-red-500/20 rounded-2xl p-8 max-w-md text-center shadow-xl">
-          <div className="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-red-400"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-bold ryze-text-inverse mb-2">Login Failed</h2>
-          <p className="text-sm ryze-text-muted mb-6 leading-relaxed">{error}</p>
-          <button
-            onClick={() => navigate('/login', { replace: true })}
-            className="px-6 py-3 bg-[#FFB000] text-[#050510] font-bold rounded-xl text-sm hover:bg-[#ffc133] transition-all"
-          >
-            Back to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Show a spinner while the exchange is in-flight
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center bg-transparent ryze-text-inverse font-sans"
