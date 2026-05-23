@@ -102,6 +102,25 @@
       />
     </noscript>
 
+    <!--
+      Apple Smart App Banner — shown only on /login and /admin paths.
+      Prompts iOS users to open Discord if installed (or go to App Store if not).
+      Discord App Store ID: 985746645.
+      This is a native iOS banner rendered by Safari — no JS required once the
+      meta tag is present. We inject it conditionally to keep it off marketing pages.
+    -->
+    <script>
+      (function () {
+        var p = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+        if (p === '/login' || p === '/admin') {
+          var m = document.createElement('meta');
+          m.name = 'apple-itunes-app';
+          m.content = 'app-id=985746645';
+          document.head.appendChild(m);
+        }
+      })();
+    </script>
+
     <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
