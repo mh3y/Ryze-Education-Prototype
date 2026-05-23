@@ -20,6 +20,7 @@ import {
   Clock, Users, BookOpen, DollarSign, Activity,
   Wifi, WifiOff, Calendar, TrendingUp, TrendingDown,
   Zap, ShieldAlert, MessageSquare, BarChart3,
+  Plus, FileText, Megaphone, GraduationCap,
 } from 'lucide-react';
 import {
   adminApi,
@@ -664,13 +665,18 @@ const AutomationSection: React.FC<{
 
 // ── Section 7: Activity Feed ───────────────────────────────────────────────
 
-const ActivityFeed: React.FC<{ activity: AdminOverviewData['recentActivity'] }> = ({ activity }) => (
+const ActivityFeed: React.FC<{ activity: AdminOverviewData['recentActivity']; onNav?: (p: string) => void }> = ({ activity, onNav }) => (
   <div className="card card--flush">
     <div className="card__head">
       <div>
         <div className="card__title">Recent Activity</div>
         <div className="card__sub">Last {activity.length} events recorded server-side</div>
       </div>
+      {onNav && (
+        <button className="btn btn--quiet" style={{ fontSize: 12 }} onClick={() => onNav('/dashboard/admin/audit-log')}>
+          Audit Log <ArrowRight size={12} />
+        </button>
+      )}
     </div>
     {activity.length === 0 ? (
       <EmptyCard
@@ -829,24 +835,59 @@ const AdminOverview: React.FC = () => {
       {/* ── Content ─────────────────────────────────────────────────── */}
       {data && !loading && (
         <>
-          {/* ── S1: Action Centre ─────────────────────────────────── */}
-          <div>
-            <SectionHeader title="Immediate Action Centre" sub="Items that require your attention now" onNav={nav} />
-            <div className="row row--3">
-              <OverduePaymentsCard data={data.financials} onNav={nav} />
-              <TutorPayCard        data={data.financials} onNav={nav} />
-              <PriorityAlertsCard  alerts={data.actions.priorityAlerts} onNav={nav} />
+          {/* ── Quick Actions ─────────────────────────────────────── */}
+          <div className="card" style={{ padding: '18px 20px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 14 }}>
+              Quick Actions
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}
+                 className="grid-cols-2 sm:grid-cols-3">
+              {([
+                { icon: <Users size={16} />,       label: 'Add student',      path: '/dashboard/admin/students?new=1' },
+                { icon: <Calendar size={16} />,    label: 'Schedule lesson',  path: '/dashboard/admin/lessons' },
+                { icon: <FileText size={16} />,    label: 'New invoice',      path: '/dashboard/admin/payments' },
+                { icon: <Megaphone size={16} />,   label: 'Announcement',     path: '/dashboard/admin/announcements' },
+                { icon: <GraduationCap size={16}/>,label: 'Add tutor',        path: '/dashboard/admin/tutors' },
+                { icon: <BookOpen size={16} />,    label: 'Progress reports', path: '/dashboard/admin/progress-reports' },
+              ] as { icon: React.ReactNode; label: string; path: string }[]).map(({ icon, label, path }) => (
+                <button
+                  key={label}
+                  onClick={() => nav(path)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 14px', borderRadius: 10,
+                    background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)',
+                    color: 'var(--fg-default)', fontSize: 13, fontWeight: 600,
+                    cursor: 'pointer', transition: 'border-color 140ms ease, background 140ms ease',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = 'var(--accent)';
+                    el.style.background = 'color-mix(in oklab, var(--accent) 6%, var(--bg-surface-2))';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = 'var(--border-soft)';
+                    el.style.background = 'var(--bg-surface-2)';
+                  }}
+                >
+                  <span style={{ color: 'var(--accent)', flexShrink: 0 }}>{icon}</span>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── S1: Action Centre ─────────────────────────────────── */}
+          <div className="row row--3">
+            <OverduePaymentsCard data={data.financials} onNav={nav} />
+            <TutorPayCard        data={data.financials} onNav={nav} />
+            <PriorityAlertsCard  alerts={data.actions.priorityAlerts} onNav={nav} />
           </div>
 
           {/* ── S2: Schedule ──────────────────────────────────────── */}
           <div>
-            <SectionHeader
-              title="Schedule"
-              sub="Today and the next 7 days"
-              action={{ label: 'Full Calendar', path: '/dashboard/calendar' }}
-              onNav={nav}
-            />
             <div className="row row--2">
               {/* Today */}
               <div className="card card--flush">
@@ -887,18 +928,16 @@ const AdminOverview: React.FC = () => {
           <div>
             <SectionHeader
               title="Financial Snapshot"
-              sub="Revenue in · Tutor cost out · Net position"
               action={{ label: 'Payments', path: '/dashboard/admin/payments' }}
               onNav={nav}
             />
             <FinancialSection data={data.financials} onNav={nav} />
           </div>
 
-          {/* ── S4: Student & Tutor Snapshot ──────────────────────── */}
+          {/* ── S4: Business Snapshot ─────────────────────────────── */}
           <div>
             <SectionHeader
               title="Business Snapshot"
-              sub="Current scale — students, tutors, classes, parents"
               action={{ label: 'Students', path: '/dashboard/admin/students' }}
               onNav={nav}
             />
@@ -906,36 +945,13 @@ const AdminOverview: React.FC = () => {
           </div>
 
           {/* ── S5: Risk ──────────────────────────────────────────── */}
-          <div>
-            <SectionHeader
-              title="Academic & Operations Risk"
-              sub="Top 5 issues requiring intervention"
-              onNav={nav}
-            />
-            <RiskSection risk={data.risk} onNav={nav} />
-          </div>
+          <RiskSection risk={data.risk} onNav={nav} />
 
           {/* ── S6: Automation Health ─────────────────────────────── */}
-          <div>
-            <SectionHeader
-              title="Automation Health"
-              sub="Discord bot · Google Calendar · Sync pipeline"
-              action={{ label: 'Bot Health', path: '/dashboard/admin/bot-health' }}
-              onNav={nav}
-            />
-            <AutomationSection auto={data.automation} onNav={nav} onTriggerSync={triggerSync} syncing={syncing} />
-          </div>
+          <AutomationSection auto={data.automation} onNav={nav} onTriggerSync={triggerSync} syncing={syncing} />
 
           {/* ── S7: Activity Feed ─────────────────────────────────── */}
-          <div>
-            <SectionHeader
-              title="Recent Activity"
-              sub="Server-side audit log — last 15 events"
-              action={{ label: 'Audit Log', path: '/dashboard/admin/audit-log' }}
-              onNav={nav}
-            />
-            <ActivityFeed activity={data.recentActivity} />
-          </div>
+          <ActivityFeed activity={data.recentActivity} onNav={nav} />
         </>
       )}
 

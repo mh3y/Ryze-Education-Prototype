@@ -5,9 +5,12 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plus, ArrowRight, TrendingUp } from 'lucide-react';
+import { Plus, ArrowRight } from 'lucide-react';
 import { adminApi, LessonListItem } from '../../../services/adminApi';
 import ScheduleLessonModal from '../../../components/dashboard/modals/ScheduleLessonModal';
+import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
+import { StatCard } from '../../../components/dashboard/ui/StatCard';
+import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
 
 // ---------------------------------------------------------------------------
 // Types & helpers
@@ -37,46 +40,11 @@ function getTodayLabel(): string {
   })).toUpperCase();
 }
 
-type TagVariant = 'info' | 'accent' | 'default';
-const tagStyles: Record<TagVariant, React.CSSProperties> = {
-  info:    { color: 'var(--info)',   background: 'color-mix(in oklab, var(--info) 14%, transparent)',   border: '1px solid color-mix(in oklab, var(--info) 28%, transparent)' },
-  accent:  { color: 'var(--accent)', background: 'var(--accent-soft)', border: '1px solid color-mix(in oklab, var(--accent) 26%, transparent)' },
-  default: { color: 'var(--fg-muted)', background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)' },
-};
-function stateTagStyle(state: LessonState): [TagVariant, string] {
-  if (state === 'live')     return ['accent', 'Live now'];
-  if (state === 'upcoming') return ['info',   'Upcoming'];
-  return ['default', 'Done'];
+function lessonState(state: LessonState): string {
+  if (state === 'live')     return 'live';
+  if (state === 'upcoming') return 'upcoming';
+  return 'completed';
 }
-
-// ---------------------------------------------------------------------------
-// StatTile
-// ---------------------------------------------------------------------------
-
-const StatTile: React.FC<{ label: string; value: string; deltaText?: string; footRight?: string }> = ({ label, value, deltaText, footRight }) => (
-  <div style={{
-    background: 'var(--bg-surface)', border: '1px solid var(--border-faint)',
-    borderRadius: 14, minHeight: 134, padding: '18px 20px',
-    display: 'flex', flexDirection: 'column', gap: 14,
-    boxShadow: 'var(--shadow-card)', transition: 'border-color 140ms ease',
-  }}
-  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)'; }}
-  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
-  >
-    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
-    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
-      {value}
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
-      {deltaText ? (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ok)' }}>
-          <TrendingUp size={12} /> {deltaText}
-        </span>
-      ) : <span />}
-      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
-    </div>
-  </div>
-);
 
 // ---------------------------------------------------------------------------
 // Segmented control
@@ -188,26 +156,11 @@ const LessonsPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
 
-      {/* PageHead */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
-            {getTodayLabel()}
-          </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic', fontWeight: 500,
-            fontSize: 'clamp(38px, 3.5vw, 54px)',
-            lineHeight: 1.08, letterSpacing: '-0.018em',
-            color: 'var(--fg-strong)', margin: 0,
-          }}>
-            Lessons
-          </h1>
-          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            The day, by studio. Click any block to manage attendance and homework.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+      <PageHeader
+        compact
+        eyebrow={getTodayLabel()}
+        title="Lessons"
+        actions={<>
           <Seg active={view} options={['Day', 'Week', 'Month']} onChange={setView} />
           <button
             onClick={() => setShowSchedule(true)}
@@ -216,16 +169,16 @@ const LessonsPage: React.FC = () => {
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> Schedule
           </button>
-        </div>
-      </div>
+        </>}
+      />
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
-        <StatTile label="Attendance"    value={loading ? '…' : '—'} deltaText="+3 vs last wk" />
-        <StatTile label="Make-ups owed" value="—" />
-        <StatTile label="Empty seats"   value="—" />
+        <StatCard label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
+        <StatCard label="Attendance"    value={loading ? '…' : '—'} deltaText="+3 vs last wk" deltaDir="up" />
+        <StatCard label="Make-ups owed" value="—" />
+        <StatCard label="Empty seats"   value="—" />
       </div>
 
       {/* Schedule card */}
@@ -329,7 +282,7 @@ const LessonsPage: React.FC = () => {
 
                     {/* Lesson blocks */}
                     {roomBlocks.map((b) => {
-                      const [tagVariant, tagLabel] = stateTagStyle(b.state);
+                      const lessonBadgeValue = lessonState(b.state);
                       const blockStyle = blockBg(b.state);
                       const isLive = b.state === 'live';
                       return (
@@ -359,14 +312,7 @@ const LessonsPage: React.FC = () => {
                             {b.tutor}
                           </div>
                           <div style={{ alignSelf: 'flex-start' }}>
-                            <span style={{
-                              display: 'inline-flex', alignItems: 'center',
-                              fontSize: 10, fontWeight: 600, letterSpacing: '0.04em',
-                              padding: '2px 6px', borderRadius: 999,
-                              ...tagStyles[tagVariant],
-                            }}>
-                              {tagLabel}
-                            </span>
+                            <StatusBadge value={lessonBadgeValue} />
                           </div>
                         </div>
                       );
