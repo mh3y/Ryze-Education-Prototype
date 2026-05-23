@@ -265,6 +265,18 @@ const Home: React.FC = () => {
                 </div>
               </div>
 
+              {/* Trust strip — above the feature grid, under the headline */}
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 sm:mt-7">
+                <span className="flex items-center gap-1.5 text-[0.83rem] font-semibold text-white/70">
+                  <span className="text-[var(--color-ryze-500)] tracking-tighter">★★★★★</span>
+                  4.9 on Google
+                </span>
+                <span className="hidden h-3 w-px bg-white/18 sm:block" aria-hidden="true" />
+                <span className="text-[0.83rem] font-medium italic text-white/50">
+                  "Band 6 from Band 3 in one term" — Year 12 HSC student
+                </span>
+              </div>
+
               <div className="mt-8 grid max-w-[48rem] gap-x-8 gap-y-5 border-t border-white/10 pt-6 text-left sm:mt-10 sm:gap-y-8 sm:pt-8 sm:grid-cols-3 lg:mt-12 lg:gap-x-10 lg:pt-10">
                 <div className="relative pl-6">
                   <div className="absolute left-0 top-1.5 h-[calc(100%-12px)] w-[2px] bg-white/10">
@@ -304,6 +316,10 @@ const Home: React.FC = () => {
                   <ArrowRight size={16} />
                 </a>
               </div>
+              <p className="mt-3 flex items-center gap-1.5 text-[0.8rem] font-medium text-white/45">
+                <span className="inline-block h-3.5 w-3.5 rounded-full bg-[var(--color-ryze-500)]/20 text-center text-[0.6rem] leading-3.5 text-[var(--color-ryze-500)]">✓</span>
+                First lesson free · No lock-in contract
+              </p>
             </div>
 
             <div className="relative mx-auto hidden w-full max-w-[22rem] sm:max-w-[26rem] md:block lg:ml-auto lg:w-[24rem] lg:max-w-none lg:justify-self-end xl:w-[25.5rem]">

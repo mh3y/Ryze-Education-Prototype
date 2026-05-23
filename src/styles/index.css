@@ -454,7 +454,7 @@ body.ryze-sticky-cta-active .ryze-main-with-sticky {
   --fg-strong: #f6f4ef;
   --fg-default: #d8d4cb;
   --fg-muted: #8a8b8e;
-  --fg-faint: #5a5c61;
+  --fg-faint: #7c7f88; /* was #5a5c61 (~2.5:1) → now ~3.8:1 on dark bg — WCAG AA for large text */
   --border-faint: rgba(255,255,255,0.06);
   --border-soft: rgba(255,255,255,0.09);
   --border-strong: rgba(255,255,255,0.14);

@@ -1,7 +1,7 @@
 const GTM_ID = 'GTM-N3VVTQ3W';
-const GA_ID = 'G-7XJFCSB41D';
-const GOOGLE_ADS_ID = 'AW-17763964178';
 const META_PIXEL_ID = '1218919857096197';
+// GA4 (G-7XJFCSB41D) and Google Ads (AW-17763964178) are configured inside the GTM container.
+// Do NOT load gtag/js directly — that would duplicate measurement and inflate event counts.
 
 export const initAnalytics = () => {
   if (typeof window === 'undefined') return;
@@ -62,15 +62,8 @@ export function initTrackingDeferred() {
   if (w.__trackingDeferredInit) return;
   w.__trackingDeferredInit = true;
 
-  const configureGaOnce = () => {
-    if (w.__gaConfigured) return;
-    w.__gaConfigured = true;
-    w.gtag('js', new Date());
-    w.gtag('config', GA_ID, { send_page_view: false });
-    w.gtag('config', GOOGLE_ADS_ID);
-  };
-
   const load = () => {
+    // GTM container carries GA4 + Google Ads tags — one script is all we need.
     if (!document.getElementById('gtm-js')) {
       w.dataLayer = w.dataLayer || [];
       w.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
@@ -80,17 +73,6 @@ export function initTrackingDeferred() {
       gtmScript.async = true;
       gtmScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
       document.head.appendChild(gtmScript);
-    }
-
-    if (!document.getElementById('gtag-js')) {
-      const gtagScript = document.createElement('script');
-      gtagScript.id = 'gtag-js';
-      gtagScript.async = true;
-      gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`;
-      gtagScript.onload = configureGaOnce;
-      document.head.appendChild(gtagScript);
-    } else {
-      configureGaOnce();
     }
 
     if (!document.getElementById('fb-pixel')) {

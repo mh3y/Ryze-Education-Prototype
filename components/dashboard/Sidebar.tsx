@@ -50,7 +50,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
       items: [
         { label: 'Overview',          path: '/dashboard/admin',              icon: LayoutDashboard },
         { label: 'Calendar',          path: '/dashboard/calendar',           icon: CalendarDays },
-        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert, badge: 3 },
+        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert },
       ],
     },
     {
@@ -588,6 +588,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {isOpen && (
               <button
                 onClick={onLogout}
+                aria-label="Sign out"
                 title="Sign out"
                 style={{
                   width: 28,
@@ -620,6 +621,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!isOpen && (
             <button
               onClick={onLogout}
+              aria-label="Sign out"
               title="Sign out"
               className="w-full flex items-center justify-center mt-2 rounded-lg transition-colors duration-140"
               style={{
