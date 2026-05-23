@@ -59,9 +59,12 @@ services:
       - key: PORTAL_BASE_URL
         value: https://ryzeeducation.com.au
 
-      # ── Bot (optional) ────────────────────────────────────────────────────────
+      # ── Bot / Cron ───────────────────────────────────────────────────────────
       - key: BOT_API_SECRET
         sync: false   # Set in Render dashboard — must match ryze-discord-bot BOT_API_SECRET
+
+      - key: CRON_SECRET
+        sync: false   # Set in Render dashboard — bearer token for POST /api/notifications/generate-cron
 
       # ── Cloudinary (optional — file uploads) ─────────────────────────────────
       - key: CLOUDINARY_CLOUD_NAME
