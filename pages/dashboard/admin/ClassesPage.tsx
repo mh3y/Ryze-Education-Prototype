@@ -253,7 +253,7 @@ const ClassesPage: React.FC = () => {
       {loading && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
           gap: 'var(--gap-md)',
         }}>
           {[1,2,3,4,5,6].map((i) => (
@@ -282,7 +282,7 @@ const ClassesPage: React.FC = () => {
       {!loading && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
           gap: 'var(--gap-md)',
         }}>
           {displayClasses.map((c) => {
@@ -350,7 +350,7 @@ const ClassesPage: React.FC = () => {
                 <div style={{ height: 1, background: 'var(--border-faint)', marginBottom: 18 }} />
 
                 {/* Meta grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 120px), 1fr))', gap: 12, marginBottom: 18 }}>
                   {[
                     { label: 'Tutor',   value: c.tutor },
                     { label: 'Seats',   value: c.seats },

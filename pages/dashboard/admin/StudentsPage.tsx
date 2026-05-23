@@ -208,8 +208,7 @@ const StudentsPage: React.FC = () => {
       />
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
-           className="grid-cols-2 sm:grid-cols-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatCard label="Total"    value={loading ? '—' : students.length} footRight="enrolled" loading={loading} />
         <StatCard label="Active"   value={loading ? '—' : activeCount}   footRight={loading ? '' : `${students.length > 0 ? Math.round((activeCount / students.length) * 100) : 0}%`} loading={loading} />
         <StatCard label="Inactive" value={loading ? '—' : inactiveCount} loading={loading} />
@@ -232,7 +231,7 @@ const StudentsPage: React.FC = () => {
         }}>
           {/* Search */}
           <div style={{
-            flex: 1, minWidth: 240,
+            flex: 1, minWidth: 0,
             display: 'flex', alignItems: 'center', gap: 8,
             background: 'var(--bg-surface-2)',
             border: '1px solid var(--border-soft)',

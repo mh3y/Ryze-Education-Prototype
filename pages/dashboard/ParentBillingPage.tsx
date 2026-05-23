@@ -123,7 +123,7 @@ const ParentBillingPage: React.FC = () => {
       </div>
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 'var(--gap-md)' }}>
         {[
           { label: 'Outstanding',  value: loading ? '…' : `$${totalOutstanding.toFixed(2)}`, footRight: `${pendingCount} invoice${pendingCount === 1 ? '' : 's'}` },
           { label: 'Overdue',      value: loading ? '…' : `$${overdueTotal.toFixed(2)}` },
@@ -170,7 +170,8 @@ const ParentBillingPage: React.FC = () => {
         )}
 
         {!loading && filtered.length > 0 && (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: 540, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
                 {['Invoice', 'Child', 'Description', 'Amount', 'Status', 'Due'].map((h, i) => (
@@ -203,6 +204,7 @@ const ParentBillingPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

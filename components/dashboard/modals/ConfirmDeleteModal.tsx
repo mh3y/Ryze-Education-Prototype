@@ -76,7 +76,7 @@ const ConfirmDeleteModal: React.FC<Props> = ({
           borderRadius: 'var(--radius-card, 16px)',
           boxShadow: '0 24px 64px -12px rgba(0,0,0,0.6)',
           width: '100%',
-          maxWidth: 460,
+          maxWidth: 'min(460px, calc(100vw - 24px))',
           overflow: 'hidden',
         }}
       >

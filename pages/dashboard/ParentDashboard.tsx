@@ -216,7 +216,7 @@ const ParentDashboard: React.FC = () => {
       )}
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatTile label="Children enrolled" value={loading ? '—' : String(children.length).padStart(2, '0')} footRight={children.map((c) => c.student_name.split(' ')[0]).join(' · ') || undefined} />
         <StatTile label="Upcoming lessons"  value={loading ? '—' : String(nextLessonCount).padStart(2, '0')} />
         <StatTile label="Avg attendance"    value={loading ? '—' : (() => { const rates = children.map((c) => c.attendance_rate).filter((r): r is number => r !== null); return rates.length ? `${Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)}%` : '—'; })()} />
@@ -225,7 +225,7 @@ const ParentDashboard: React.FC = () => {
 
       {/* Loading skeleton */}
       {loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gap-md)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'var(--gap-md)' }}>
           {[0, 1].map((i) => (
             <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-faint)', borderRadius: 16, height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg-faint)', fontSize: 13 }}>
               Loading…
@@ -245,7 +245,7 @@ const ParentDashboard: React.FC = () => {
 
       {/* Child cards */}
       {!loading && children.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: children.length === 1 ? '1fr' : 'repeat(2, 1fr)', gap: 'var(--gap-md)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: children.length === 1 ? '1fr' : 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 'var(--gap-md)' }}>
           {children.map((child, i) => (
             <ChildCard key={child.link_id} child={child} index={i} />
           ))}

@@ -173,8 +173,7 @@ const LessonsPage: React.FC = () => {
       />
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
-           className="grid-cols-2 sm:grid-cols-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatCard label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
         <StatCard label="Attendance"    value={loading ? '…' : '—'} deltaText="+3 vs last wk" deltaDir="up" />
         <StatCard label="Make-ups owed" value="—" />

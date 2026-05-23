@@ -60,7 +60,7 @@ const cardSubStyle: React.CSSProperties = { fontSize: 12, color: 'var(--fg-muted
 /* ── Form primitives ────────────────────────────────────────── */
 
 const Row: React.FC<{ label: string; hint?: string; full?: boolean; children: React.ReactNode }> = ({ label, hint, full, children }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: full ? '1fr' : '200px 1fr', gap: full ? 8 : 24, alignItems: 'start', padding: '14px 20px', borderBottom: '1px solid var(--border-faint)' }}>
+  <div className={full ? undefined : 'settings-row'} style={{ display: 'grid', gridTemplateColumns: full ? '1fr' : '200px 1fr', gap: full ? 8 : 24, alignItems: 'start', padding: '14px 20px', borderBottom: '1px solid var(--border-faint)' }}>
     <div>
       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--fg-default)' }}>{label}</div>
       {hint && <div style={{ fontSize: 11.5, color: 'var(--fg-muted)', marginTop: 3, lineHeight: 1.4 }}>{hint}</div>}
@@ -126,7 +126,7 @@ const FontPicker: React.FC<{ value: string; onChange: (v: string) => void }> = (
     { value: 'modern',     name: 'Modern SaaS', family: '"Geist", "Manrope", sans-serif', italic: false, caption: 'Geist all-sans' },
   ];
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 140px), 1fr))', gap: 10 }}>
       {options.map(o => {
         const active = value === o.value;
         return (
@@ -334,14 +334,14 @@ const NotificationsSection: React.FC = () => {
             <div style={cardSubStyle}>Toggle on/off per event and delivery method.</div>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 80px)', padding: '10px 20px', borderBottom: '1px solid var(--border-faint)', background: 'var(--bg-surface-2)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 56px)', padding: '10px 20px', borderBottom: '1px solid var(--border-faint)', background: 'var(--bg-surface-2)' }}>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)' }}>Event</div>
           {NOTIF_CHANNELS.map(ch => (
             <div key={ch} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)', textAlign: 'center' }}>{ch}</div>
           ))}
         </div>
         {NOTIF_EVENTS.map((ev, i) => (
-          <div key={ev.key} style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 80px)', padding: '14px 20px', alignItems: 'center', borderBottom: i < NOTIF_EVENTS.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
+          <div key={ev.key} style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 56px)', padding: '14px 20px', alignItems: 'center', borderBottom: i < NOTIF_EVENTS.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--fg-default)' }}>{ev.label}</div>
               <div style={{ fontSize: 11.5, color: 'var(--fg-muted)', marginTop: 2 }}>{ev.hint}</div>
@@ -551,7 +551,7 @@ const BillingSection: React.FC = () => (
         <button style={btnGhost}>Manage plan</button>
       </div>
       <div style={{ height: 1, background: 'var(--border-faint)', margin: '20px 0' }} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 14 }}>
         {[
           { label: 'Active tutors',   value: '2',      limit: '10 included' },
           { label: 'Active students', value: '7',      limit: '50 included' },

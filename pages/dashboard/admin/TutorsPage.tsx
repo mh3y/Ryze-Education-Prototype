@@ -132,7 +132,7 @@ const TutorsPage: React.FC = () => {
           borderBottom: '1px solid var(--border-faint)',
         }}>
           <div style={{
-            flex: 1, minWidth: 240,
+            flex: 1, minWidth: 0,
             display: 'flex', alignItems: 'center', gap: 8,
             background: 'var(--bg-surface-2)',
             border: '1px solid var(--border-soft)',

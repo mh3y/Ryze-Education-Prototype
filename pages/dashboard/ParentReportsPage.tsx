@@ -103,7 +103,7 @@ const ParentReportsPage: React.FC = () => {
       </div>
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 'var(--gap-md)' }}>
         {[
           { label: 'Reports',     value: loading ? '…' : String(reportsCount).padStart(2, '0') },
           { label: 'With grades', value: loading ? '…' : String(withGrades).padStart(2, '0') },
@@ -152,7 +152,8 @@ const ParentReportsPage: React.FC = () => {
         )}
 
         {!loading && filtered.length > 0 && (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: 480, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
                 {['Report', 'Child', 'Score', 'Grade', 'Published', ''].map((h, i) => (
@@ -192,6 +193,7 @@ const ParentReportsPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

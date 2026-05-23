@@ -397,6 +397,7 @@ const DashboardLayoutInner: React.FC = () => {
           style={{
             flex: 1,
             overflowY: 'auto',
+            overflowX: 'hidden',
             scrollbarWidth: 'thin',
             scrollbarColor: 'var(--border-strong) transparent',
           }}
