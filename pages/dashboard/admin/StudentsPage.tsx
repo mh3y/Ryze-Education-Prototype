@@ -212,7 +212,7 @@ const StudentsPage: React.FC = () => {
         <StatCard label="Total"    value={loading ? '—' : students.length} footRight="enrolled" loading={loading} />
         <StatCard label="Active"   value={loading ? '—' : activeCount}   footRight={loading ? '' : `${students.length > 0 ? Math.round((activeCount / students.length) * 100) : 0}%`} loading={loading} />
         <StatCard label="Inactive" value={loading ? '—' : inactiveCount} loading={loading} />
-        <StatCard label="At risk"  value="—" />
+        <StatCard label="At risk"  value="—" loading={loading} />
       </div>
 
       {/* Roster card */}

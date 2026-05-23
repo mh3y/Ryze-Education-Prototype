@@ -1,6 +1,15 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdmin, requireAdminOnly } from '../../auth/middleware';
+import {
+  generateOverduePayments,
+  resolveNotificationsForEntity,
+} from '../../services/notificationService';
+
+// Fire-and-forget helper — notification failures must not affect payment mutations
+function notifyAsync(fn: () => Promise<unknown>): void {
+  fn().catch((e) => console.error('[payments] notification side-effect error:', e));
+}
 
 // ── Student Payments ──────────────────────────────────────────────────────────
 
@@ -144,7 +153,17 @@ studentPaymentsRouter.patch('/student-payments/:id', requireAdminOnly, async (re
       data.paid_at = new Date();
     }
 
-    await db.studentPayment.update({ where: { id }, data });
+    const updated = await db.studentPayment.update({ where: { id }, data });
+
+    // Post-mutation notification side-effects (fire-and-forget)
+    const finalStatus = updated.status;
+    if (finalStatus === 'overdue') {
+      notifyAsync(() => generateOverduePayments());
+    } else if (finalStatus === 'paid' || finalStatus === 'waived') {
+      // Resolve any unread overdue-payment notifications for this invoice
+      notifyAsync(() => resolveNotificationsForEntity('overdue_payment', id));
+    }
+
     res.json({ updated: true });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
@@ -174,6 +193,8 @@ studentPaymentsRouter.patch('/student-payments/:id/mark-paid', requireAdminOnly,
         notes:              notes ?? existing.notes,
       },
     });
+    // Resolve any outstanding overdue-payment notifications for this invoice
+    notifyAsync(() => resolveNotificationsForEntity('overdue_payment', id));
     res.json({ updated: true });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
@@ -239,6 +260,10 @@ studentPaymentsRouter.post('/student-payments/escalate-overdue', requireAdminOnl
       },
       data: { status: 'overdue' },
     });
+    // If any payments were escalated, generate overdue notifications
+    if (result.count > 0) {
+      notifyAsync(() => generateOverduePayments());
+    }
     res.json({ escalated: result.count });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

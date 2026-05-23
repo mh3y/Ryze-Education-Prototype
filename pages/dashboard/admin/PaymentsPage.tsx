@@ -34,40 +34,85 @@ const PAY_FILTERS: PayStatusFilter[] = ['All', 'Due', 'Overdue', 'Paid'];
 
 
 // ---------------------------------------------------------------------------
-// Bar chart
+// Bar chart — weekly paid revenue, computed from real payment data
 // ---------------------------------------------------------------------------
 
-const BarChart: React.FC = () => {
-  const heights  = [44, 60, 52, 71, 58, 66, 78, 82];
-  const labels   = ['W1','W2','W3','W4','W5','W6','W7','W8'];
-  const maxH     = 130;
+interface WeekBucket { label: string; amount: number; weekStart: Date; }
+
+/** Build 8 weekly buckets going back from today, summing amount_paid for
+ *  payments whose paid_at falls in each ISO week. */
+function buildWeeklyRevenue(payments: StudentPayment[]): WeekBucket[] {
+  const now = new Date();
+  // Align to Monday of this week
+  const thisMon = new Date(now);
+  thisMon.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Monday
+  thisMon.setHours(0, 0, 0, 0);
+
+  const buckets: WeekBucket[] = [];
+  for (let i = 7; i >= 0; i--) {
+    const weekStart = new Date(thisMon.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+    const weekEnd   = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+    const label     = weekStart.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    const amount    = payments
+      .filter(p => {
+        if (!p.paid_at) return false;
+        const d = new Date(p.paid_at);
+        return d >= weekStart && d <= weekEnd;
+      })
+      .reduce((s, p) => s + (p.amount_paid || 0), 0);
+    buckets.push({ label, amount, weekStart });
+  }
+  return buckets;
+}
+
+const BarChart: React.FC<{ payments: StudentPayment[] }> = ({ payments }) => {
+  const buckets = buildWeeklyRevenue(payments);
+  const maxAmount = Math.max(...buckets.map(b => b.amount), 1); // avoid div-by-zero
+  const maxH = 130;
+
+  if (buckets.every(b => b.amount === 0)) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: maxH + 24, color: 'var(--fg-faint)', fontSize: 13 }}>
+        No paid invoices in the last 8 weeks
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: maxH, paddingBottom: 24, position: 'relative' }}>
-      {heights.map((h, i) => (
-        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, height: '100%', justifyContent: 'flex-end' }}>
-          <div style={{
-            width: '100%',
-            height: `${(h / 100) * maxH}px`,
-            borderRadius: '5px 5px 3px 3px',
-            background: i === heights.length - 1
-              ? 'color-mix(in oklab, var(--accent) 40%, transparent)'
-              : 'linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10))',
-            transition: 'opacity 140ms ease',
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.8'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-          />
-          <div style={{
-            position: 'absolute', bottom: 0,
-            fontSize: 10.5, color: 'var(--fg-faint)',
-            fontFamily: 'var(--font-mono)',
-            left: `calc(${(i / heights.length) * 100}% + ${(1 / heights.length) * 50}%)`,
-            transform: 'translateX(-50%)',
-          }}>
-            {labels[i]}
+      {buckets.map((b, i) => {
+        const heightPx = Math.max(3, (b.amount / maxAmount) * maxH);
+        const isCurrentWeek = i === buckets.length - 1;
+        return (
+          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, height: '100%', justifyContent: 'flex-end' }}>
+            <div
+              title={`${b.label}: $${b.amount.toFixed(2)}`}
+              style={{
+                width: '100%',
+                height: `${heightPx}px`,
+                borderRadius: '5px 5px 3px 3px',
+                background: isCurrentWeek
+                  ? 'color-mix(in oklab, var(--accent) 40%, transparent)'
+                  : 'linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #5b3d10))',
+                transition: 'opacity 140ms ease',
+                cursor: 'default',
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.7'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+            />
+            <div style={{
+              position: 'absolute', bottom: 0,
+              fontSize: 10, color: 'var(--fg-faint)',
+              fontFamily: 'var(--font-mono)',
+              left: `calc(${(i / buckets.length) * 100}% + ${(1 / buckets.length) * 50}%)`,
+              transform: 'translateX(-50%)',
+              whiteSpace: 'nowrap',
+            }}>
+              {b.label}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -547,7 +592,7 @@ const PaymentsPage: React.FC = () => {
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
-        <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} loading={loading} />
+        <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} footRight={`${payments.length} invoices`} loading={loading} />
         <StatCard label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" loading={loading} />
         <StatCard label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} loading={loading} />
         <StatCard label="Pending"           value={loading ? '…' : `${pendingCount}`} loading={loading} />
@@ -696,18 +741,21 @@ const PaymentsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Charts card */}
+        {/* Charts card — weekly paid revenue (real data) */}
         <div style={{
           background: 'var(--bg-surface)', border: '1px solid var(--border-faint)',
           borderRadius: 16, padding: 'var(--card-pad)', boxShadow: 'var(--shadow-card)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          minHeight: 220,
         }}>
-          <div style={{ textAlign: 'center', color: 'var(--fg-muted)' }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
-            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, color: 'var(--fg-default)' }}>Payment analytics coming soon</div>
-            <div style={{ fontSize: 13 }}>Revenue trends and collection charts will appear here.</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-strong)' }}>Weekly revenue</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>Paid invoices · last 8 weeks</div>
+            </div>
           </div>
+          {loading
+            ? <div style={{ height: 154, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg-faint)', fontSize: 13 }}>Loading…</div>
+            : <BarChart payments={payments} />
+          }
         </div>
       </div>
 

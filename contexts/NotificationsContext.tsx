@@ -1,24 +1,40 @@
 /**
  * NotificationsContext.tsx
  *
- * Manages portal notifications. Fetches from /api/notifications if available;
- * falls back to synthesising notifications from the alerts API.
- * Persists "read" state in localStorage.
+ * Manages the in-app notification feed for the portal.
+ *
+ * Architecture:
+ *   - Full list:   fetched from GET /api/notifications on mount and every
+ *                  POLL_FULL_MS (5 min), or when the notification panel opens.
+ *   - Unread count: polled cheaply from GET /api/notifications/unread-count
+ *                  every POLL_COUNT_MS (30 s) so the bell badge stays current
+ *                  without transferring 50 records.
+ *   - Optimistic reads: when the user marks a notification read, the UI
+ *                  responds immediately via a local pendingReadIds set; the
+ *                  server is patched in the background. On the next full-list
+ *                  fetch the server's read field takes over.
+ *   - Dev fallback: if the API returns 404 (backend not yet running) in dev
+ *                  mode, a set of mock notifications is shown so the UI is
+ *                  always workable during local development. Never in prod.
  */
 
 import React, {
   createContext, useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
 import { portalFetch } from '../services/auth';
+import { notificationApi, ApiNotification } from '../services/notificationApi';
 
-const BASE_URL: string = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
-const STORAGE_KEY = 'ryze_notifications_read';
-const POLL_MS     = 60_000; // re-fetch every 60 s
+const POLL_FULL_MS  = 5 * 60_000;  // full list every 5 min
+const POLL_COUNT_MS = 30_000;       // unread count every 30 s
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
+/**
+ * Frontend display type derived from the DB type string.
+ * Used for icon + colour selection in NotificationPanel.
+ */
 export type NotifType =
   | 'alert'    // system alert (red/orange)
   | 'lesson'   // lesson event (gold)
@@ -26,15 +42,41 @@ export type NotifType =
   | 'student'  // student update
   | 'system';  // generic system
 
+/** Map DB type strings → frontend display type */
+function toDisplayType(dbType: string): NotifType {
+  switch (dbType) {
+    case 'overdue_payment':
+    case 'payment_due':
+    case 'payment':
+      return 'payment';
+    case 'lesson_reminder':
+    case 'lesson':
+      return 'lesson';
+    case 'attendance_unmarked':
+    case 'admin_alert':
+    case 'alert':
+      return 'alert';
+    case 'progress_missing':
+    case 'student':
+      return 'student';
+    default:
+      return 'system';
+  }
+}
+
 export interface Notification {
-  id: string;
-  type: NotifType;
-  title: string;
-  body: string;
+  id:         string;
+  type:       NotifType;
+  /** Original DB type string — useful for filtering/analytics */
+  dbType:     string;
+  title:      string;
+  body:       string;
+  /** Whether the server has this notification as read */
+  read:       boolean;
   /** ISO timestamp */
   created_at: string;
   /** Optional URL to navigate on click */
-  href?: string;
+  href?:      string;
 }
 
 // ---------------------------------------------------------------------------
@@ -42,12 +84,13 @@ export interface Notification {
 // ---------------------------------------------------------------------------
 
 interface NotificationsContextValue {
-  notifications: Notification[];
-  unreadCount: number;
-  loading: boolean;
-  markRead: (id: string) => void;
-  markAllRead: () => void;
-  refresh: () => void;
+  notifications:  Notification[];
+  unreadCount:    number;
+  loading:        boolean;
+  markRead:       (id: string) => void;
+  markAllRead:    () => void;
+  /** Trigger an immediate full-list refresh (e.g. on panel open) */
+  refresh:        () => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextValue>({
@@ -63,18 +106,7 @@ const NotificationsContext = createContext<NotificationsContextValue>({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function readIds(): Set<string> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return new Set(raw ? JSON.parse(raw) : []);
-  } catch { return new Set(); }
-}
-
-function saveIds(ids: Set<string>) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids])); } catch { /* ignore */ }
-}
-
-function relativeTime(iso: string): string {
+export function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60_000);
   if (m < 1)  return 'just now';
@@ -84,48 +116,50 @@ function relativeTime(iso: string): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-// Fallback mock notifications (used when API 404s)
+function apiToNotif(n: ApiNotification): Notification {
+  return {
+    id:         String(n.id),
+    type:       toDisplayType(n.type),
+    dbType:     n.type,
+    title:      n.title  ?? '',
+    body:       n.body   ?? '',
+    read:       n.read   ?? false,
+    created_at: n.created_at,
+    href:       n.href   ?? undefined,
+  };
+}
+
+// Dev-only mock data (never shown in production)
 function buildMockNotifications(): Notification[] {
   const now = Date.now();
   return [
     {
-      id:         'mock-1',
-      type:       'alert',
-      title:      '3 students missed lesson check-ins',
-      body:       'Foundations · Wed 4 pm — automated reminders sent.',
+      id: 'mock-1', type: 'alert', dbType: 'admin_alert',
+      title: '3 students missed lesson check-ins', read: false,
+      body:  'Foundations · Wed 4 pm — automated reminders sent.',
       created_at: new Date(now - 8  * 60_000).toISOString(),
-      href:       '/dashboard/admin/alerts',
+      href: '/dashboard/admin/alerts',
     },
     {
-      id:         'mock-2',
-      type:       'student',
-      title:      'Sofia Reyes progress dropping',
-      body:       '3 consecutive weeks below class median in Algebra.',
-      created_at: new Date(now - 65 * 60_000).toISOString(),
-      href:       '/dashboard/admin/students',
+      id: 'mock-2', type: 'payment', dbType: 'overdue_payment',
+      title: '2 invoices overdue', read: false,
+      body:  '$480 outstanding across 2 families.',
+      created_at: new Date(now - 3  * 3600_000).toISOString(),
+      href: '/dashboard/admin/payments',
     },
     {
-      id:         'mock-3',
-      type:       'payment',
-      title:      '2 invoices overdue',
-      body:       '$480 outstanding across 2 families.',
-      created_at: new Date(now - 3  * 60 * 60_000).toISOString(),
-      href:       '/dashboard/admin/payments',
-    },
-    {
-      id:         'mock-4',
-      type:       'lesson',
-      title:      'Maths Ext 1 — live now',
-      body:       'Studio B · Daniel Kwok · 8 / 8 students checked in.',
+      id: 'mock-3', type: 'lesson', dbType: 'lesson_reminder',
+      title: 'Maths Ext 1 — live now', read: false,
+      body:  'Studio B · Daniel Kwok · 8/8 students checked in.',
       created_at: new Date(now - 10 * 60_000).toISOString(),
-      href:       '/dashboard/admin/lessons',
+      href: '/dashboard/admin/lessons',
     },
     {
-      id:         'mock-5',
-      type:       'system',
-      title:      'Discord bot reconnected',
-      body:       'Brief outage 14:02–14:04, all reminders delivered.',
-      created_at: new Date(now - 2  * 60 * 60_000).toISOString(),
+      id: 'mock-4', type: 'student', dbType: 'progress_missing',
+      title: 'No progress reports — Foundations', read: true,
+      body:  'Class has no progress reports in the last 45 days.',
+      created_at: new Date(now - 25 * 3600_000).toISOString(),
+      href: '/dashboard/admin/progress-reports',
     },
   ];
 }
@@ -135,104 +169,139 @@ function buildMockNotifications(): Notification[] {
 // ---------------------------------------------------------------------------
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading]             = useState(true);
-  const [readSet, setReadSet]             = useState<Set<string>>(readIds);
-  const isMounted                         = useRef(true);
+  const [notifications, setNotifications]   = useState<Notification[]>([]);
+  const [serverUnread,  setServerUnread]     = useState<number>(0);
+  const [pendingReadIds, setPendingReadIds]  = useState<Set<string>>(new Set());
+  const [loading, setLoading]               = useState(true);
+  const isMounted                           = useRef(true);
+  const isMockMode                          = useRef(false);  // dev fallback flag
 
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
   }, []);
 
+  // ── Full list fetch ────────────────────────────────────────────────────── //
+
   const fetchNotifications = useCallback(async () => {
     try {
-      const url = new URL(`${BASE_URL}/api/notifications`, window.location.origin).toString();
-      // Backend returns numeric IDs — normalise to strings for consistent Set membership
-      const raw = await portalFetch<any[]>(url);
-      const notifs: Notification[] = raw.map((n: any) => ({
-        id:         String(n.id),
-        type:       (n.type as NotifType) ?? 'system',
-        title:      n.title  ?? '',
-        body:       n.body   ?? '',
-        created_at: n.created_at,
-        href:       (n.data as any)?.href ?? undefined,
-      }));
-      if (isMounted.current) {
-        setNotifications(notifs);
-        // Pre-populate readSet with IDs already marked read on the server
-        const serverRead = raw.filter((n: any) => n.read).map((n: any) => String(n.id));
-        if (serverRead.length) {
-          setReadSet((prev) => {
-            const next = new Set(prev);
-            serverRead.forEach((id) => next.add(id));
-            saveIds(next);
-            return next;
-          });
-        }
-      }
+      const raw = await notificationApi.list();
+      if (!isMounted.current) return;
+
+      isMockMode.current = false;
+      const notifs = raw.map(apiToNotif);
+      setNotifications(notifs);
+      // Derive server-side unread count from the fresh list
+      setServerUnread(notifs.filter((n) => !n.read).length);
+      // Clear optimistic reads that the server now confirms
+      setPendingReadIds((prev) => {
+        const confirmed = new Set<string>(
+          notifs.filter((n) => n.read).map((n) => n.id)
+        );
+        const next = new Set(prev);
+        confirmed.forEach((id) => next.delete(id));
+        return next;
+      });
     } catch (e: any) {
-      if (isMounted.current) {
-        // In development only, fall back to synthesised mock notifications when the
-        // API endpoint is unreachable (e.g. backend not yet running locally).
-        // In production we always show an empty list — never fake data.
-        const isDev = (import.meta as any).env?.DEV === true;
-        const isAuthError = String(e?.message ?? '').includes('401') ||
-                            String(e?.message ?? '').toLowerCase().includes('unauthori');
-        if (isDev && !isAuthError) {
-          setNotifications(buildMockNotifications());
-        } else {
-          setNotifications([]);
-        }
+      if (!isMounted.current) return;
+      const isDev      = (import.meta as any).env?.DEV === true;
+      const isAuthErr  = String(e?.message ?? '').includes('401') ||
+                         String(e?.message ?? '').toLowerCase().includes('unauthori');
+      if (isDev && !isAuthErr) {
+        isMockMode.current = true;
+        const mocks = buildMockNotifications();
+        setNotifications(mocks);
+        setServerUnread(mocks.filter((n) => !n.read).length);
+      } else {
+        setNotifications([]);
+        setServerUnread(0);
       }
     } finally {
       if (isMounted.current) setLoading(false);
     }
   }, []);
 
-  // Initial fetch + polling
+  // ── Cheap unread count poll ────────────────────────────────────────────── //
+
+  const pollUnreadCount = useCallback(async () => {
+    if (isMockMode.current) return; // don't poll in mock mode
+    try {
+      const { count } = await notificationApi.unreadCount();
+      if (isMounted.current) {
+        // Only update if count differs — avoids unnecessary re-renders
+        setServerUnread((prev) => (prev !== count ? count : prev));
+      }
+    } catch { /* non-fatal — badge stays at last known value */ }
+  }, []);
+
+  // Mount: full fetch
   useEffect(() => {
     fetchNotifications();
-    const id = setInterval(fetchNotifications, POLL_MS);
+  }, [fetchNotifications]);
+
+  // Full list re-fetch every 5 min
+  useEffect(() => {
+    const id = setInterval(fetchNotifications, POLL_FULL_MS);
     return () => clearInterval(id);
   }, [fetchNotifications]);
 
+  // Cheap count poll every 30 s (starts after initial load completes)
+  useEffect(() => {
+    const id = setInterval(pollUnreadCount, POLL_COUNT_MS);
+    return () => clearInterval(id);
+  }, [pollUnreadCount]);
+
+  // ── unreadCount ──────────────────────────────────────────────────────── //
+  // Combine the server-authoritative count with any optimistic local reads.
+  // pendingReadIds = IDs the user has clicked "read" since the last full fetch.
+
+  const unreadCount = Math.max(0, serverUnread - pendingReadIds.size);
+
+  // ── markRead ──────────────────────────────────────────────────────────── //
+
   const markRead = useCallback((id: string) => {
-    // Update local state immediately so the UI responds instantly
-    setReadSet((prev) => {
+    setPendingReadIds((prev) => {
+      if (prev.has(id)) return prev;
       const next = new Set(prev);
       next.add(id);
-      saveIds(next);
       return next;
     });
-    // Persist to server for real notifications (mock IDs start with 'mock-')
+    // Optimistically reflect in notification list too
+    setNotifications((prev) =>
+      prev.map((n) => n.id === id ? { ...n, read: true } : n)
+    );
+    // Persist to server (mock IDs start with 'mock-')
     if (!id.startsWith('mock-')) {
-      const url = new URL(`${BASE_URL}/api/notifications/${id}/read`, window.location.origin).toString();
-      portalFetch<{ updated: boolean }>(url, {
-        method: 'PATCH',
-        body: JSON.stringify({ read: true }),
-      }).catch(() => { /* non-fatal — local state already updated */ });
+      notificationApi.markRead(id).catch(() => { /* non-fatal */ });
     }
   }, []);
 
+  // ── markAllRead ───────────────────────────────────────────────────────── //
+
   const markAllRead = useCallback(() => {
-    setReadSet((prev) => {
+    const allIds = notifications.map((n) => n.id);
+    setPendingReadIds((prev) => {
       const next = new Set(prev);
-      notifications.forEach((n) => next.add(n.id));
-      saveIds(next);
+      allIds.forEach((id) => next.add(id));
       return next;
     });
-    // Single batch call to mark all as read on the server
-    const url = new URL(`${BASE_URL}/api/notifications/read-all`, window.location.origin).toString();
-    portalFetch<{ updated: number }>(url, { method: 'PATCH' })
-      .catch(() => { /* non-fatal */ });
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setServerUnread(0);
+    if (!isMockMode.current) {
+      notificationApi.markAllRead().catch(() => { /* non-fatal */ });
+    }
   }, [notifications]);
-
-  const unreadCount = notifications.filter((n) => !readSet.has(n.id)).length;
 
   return (
     <NotificationsContext.Provider
-      value={{ notifications, unreadCount, loading, markRead, markAllRead, refresh: fetchNotifications }}
+      value={{
+        notifications,
+        unreadCount,
+        loading,
+        markRead,
+        markAllRead,
+        refresh: fetchNotifications,
+      }}
     >
       {children}
     </NotificationsContext.Provider>
@@ -246,6 +315,3 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 export function useNotifications() {
   return useContext(NotificationsContext);
 }
-
-// Re-export for convenience
-export { relativeTime };

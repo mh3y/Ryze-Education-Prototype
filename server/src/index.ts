@@ -64,6 +64,7 @@ import { notificationsRouter } from './routes/notifications';
 import { uploadRouter } from './routes/upload';
 import { messagesRouter } from './routes/messages';
 import { leadsRouter } from './routes/leads';
+import { generateAll as generateAllNotifications } from './services/notificationService';
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 8000);
@@ -127,4 +128,22 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Ryze Portal API running on :${PORT}`);
+
+  // ── Notification scheduler ────────────────────────────────────────────── //
+  // Run generators once on startup (30 s delay so the DB pool is ready) then
+  // every hour.  On a persistent VPS this is reliable; the GitHub Actions
+  // nightly cron provides an external backup.
+  const NOTIFY_INTERVAL_MS = 60 * 60_000; // 1 hour
+
+  setTimeout(() => {
+    generateAllNotifications()
+      .then((r) => console.log('[notify-scheduler] startup run →', r))
+      .catch((e) => console.error('[notify-scheduler] startup run error:', e));
+
+    setInterval(() => {
+      generateAllNotifications()
+        .then((r) => { if (r.total > 0) console.log('[notify-scheduler] hourly run →', r); })
+        .catch((e) => console.error('[notify-scheduler] hourly run error:', e));
+    }, NOTIFY_INTERVAL_MS);
+  }, 30_000); // wait 30 s for DB connection pool to be ready
 });

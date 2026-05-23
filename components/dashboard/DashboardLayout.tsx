@@ -28,6 +28,7 @@ import {
 } from '../../contexts/DashboardCustomizationContext';
 import { EditModeBar } from './EditModeBar';
 import { EditModePanel } from './EditModePanel';
+import { adminApi } from '../../services/adminApi';
 
 // ---------------------------------------------------------------------------
 // Breadcrumb helpers
@@ -99,6 +100,22 @@ const DashboardLayoutInner: React.FC = () => {
   const [notifOpen, setNotifOpen] = useState(false);
   const toggleNotif = useCallback(() => setNotifOpen((v) => !v), []);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  // Open alert count — admin only, drives the Alerts sidebar badge
+  const [openAlertCount, setOpenAlertCount] = useState<number>(0);
+  useEffect(() => {
+    if (user?.role !== 'admin') return;
+    let cancelled = false;
+    const fetchAlertCount = async () => {
+      try {
+        const result = await adminApi.getAlerts({ status: 'open', limit: 1 });
+        if (!cancelled) setOpenAlertCount(result.total);
+      } catch { /* non-fatal — badge stays at 0 */ }
+    };
+    fetchAlertCount();
+    const intervalId = setInterval(fetchAlertCount, 60_000);
+    return () => { cancelled = true; clearInterval(intervalId); };
+  }, [user?.role]);
 
   // Customization context (admin only)
   const { isEditMode, toggleEditMode } = useDashboardCustomization();
@@ -181,6 +198,9 @@ const DashboardLayoutInner: React.FC = () => {
         userEmail={user?.email}
         onLogout={handleLogout}
         onCloseMobile={() => { if (isMobile) setIsSidebarOpen(false); }}
+        navBadges={user?.role === 'admin' && openAlertCount > 0
+          ? { '/dashboard/admin/alerts': openAlertCount }
+          : undefined}
       />
 
       {/* ── Main column ─────────────────────────────────────────── */}
