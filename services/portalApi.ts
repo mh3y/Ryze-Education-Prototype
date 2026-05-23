@@ -17,6 +17,7 @@ const BASE_URL = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
 
 export interface UserRecord {
   id: number;
+  display_id: string | null;
   discord_user_id: number;
   full_name: string;
   email: string | null;

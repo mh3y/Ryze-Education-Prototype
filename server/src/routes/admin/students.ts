@@ -8,6 +8,7 @@ studentsRouter.use(requireAdmin);
 function studentToItem(s: any) {
   return {
     id: s.id,
+    display_id: s.display_id ?? null,
     discord_user_id: s.discord_user_id ? Number(s.discord_user_id) : null,
     full_name: s.full_name,
     email: s.email ?? null,
