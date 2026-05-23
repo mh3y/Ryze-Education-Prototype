@@ -25,6 +25,9 @@ import {
   AlertCircle,
   MessageSquare,
   Users,
+  Smartphone,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthService } from '../services/auth';
@@ -45,11 +48,17 @@ const Login: React.FC = () => {
   const [tab, setTab] = useState<LoginTab>('discord');
 
   // Parent form state
-  const [email, setEmail]     = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]     = useState('');
+  const [error, setError]       = useState('');
   const [discordLoading, setDiscordLoading] = useState(false);
   const [parentLoading, setParentLoading]   = useState(false);
+  const [showMobileHelp, setShowMobileHelp] = useState(false);
+
+  // Detect mobile for UX hints — not used for gating, purely cosmetic
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(
+    typeof navigator !== 'undefined' ? navigator.userAgent : '',
+  );
 
   // Pick up any auth error forwarded from DiscordCallback via router state
   useEffect(() => {
@@ -61,10 +70,22 @@ const Login: React.FC = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Detect mobile so we can tune copy/UX (not used for UA-gating — just hints)
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(
-    typeof navigator !== 'undefined' ? navigator.userAgent : '',
-  );
+  // ── bfcache recovery ──────────────────────────────────────────────────── //
+  // Mobile Safari aggressively caches pages in bfcache. When the user navigates
+  // to Discord for OAuth and then comes back (cancelled, or Discord redirected to
+  // a different page), the login page is restored from bfcache with
+  // discordLoading=true — the button appears frozen. The pageshow event fires
+  // when a bfcache-restored page becomes visible; we use it to reset state.
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        // Page was restored from bfcache — reset any in-flight loading state
+        setDiscordLoading(false);
+      }
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, []);
 
   // ── Discord login ─────────────────────────────────────────────────────── //
   const handleDiscordLogin = async () => {
@@ -72,7 +93,11 @@ const Login: React.FC = () => {
     setError('');
     try {
       await AuthService.redirectToDiscord();
-      // Page will navigate away — no need to reset loading
+      // Page navigates away to Discord. On iOS with Discord app installed,
+      // Universal Links may route the discord.com OAuth URL to the Discord
+      // app natively — this is the platform's built-in app handoff mechanism.
+      // After OAuth, Discord redirects back to /auth/discord/callback in the
+      // browser. No custom scheme needed; Universal Links handle it.
     } catch (err: any) {
       setError(err?.message ?? 'Failed to connect to Discord. Please try again.');
       setDiscordLoading(false);
@@ -183,15 +208,29 @@ const Login: React.FC = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className="space-y-6"
+                  className="space-y-5"
                 >
-                  <div className="text-center space-y-2">
-                    <p className="ryze-text-muted text-sm leading-relaxed">
-                      All Ryze classes take place on Discord. Sign in with your Discord
-                      account to access the portal.
-                    </p>
-                  </div>
+                  {/* Mobile app hint — only shown on mobile devices */}
+                  {isMobile && (
+                    <div className="flex items-start gap-2.5 bg-[#5865F2]/10 border border-[#5865F2]/20 rounded-xl p-3">
+                      <Smartphone size={14} className="text-[#5865F2] shrink-0 mt-0.5" />
+                      <p className="text-xs leading-relaxed" style={{ color: 'rgba(88,101,242,0.85)' }}>
+                        If Discord is installed on your device, you may be prompted to
+                        open it automatically — then returned here to complete sign-in.
+                      </p>
+                    </div>
+                  )}
 
+                  {!isMobile && (
+                    <div className="text-center">
+                      <p className="ryze-text-muted text-sm leading-relaxed">
+                        All Ryze classes take place on Discord. Sign in with your Discord
+                        account to access the portal.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Main Discord button */}
                   <button
                     onClick={handleDiscordLogin}
                     disabled={busy}
@@ -214,8 +253,53 @@ const Login: React.FC = () => {
                   <p className="text-xs ryze-text-muted text-center leading-relaxed">
                     {isMobile
                       ? "You'll be taken to Discord to authorise — then returned here automatically."
-                      : 'You\'ll be redirected to Discord to authorise access. Only Ryze Education students, tutors, and admins can log in.'}
+                      : "You'll be redirected to Discord to authorise access. Only Ryze Education students, tutors, and admins can log in."}
                   </p>
+
+                  {/* Mobile-only "Having trouble?" expandable helper */}
+                  {isMobile && (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setShowMobileHelp((v) => !v)}
+                        className="w-full flex items-center justify-center gap-1.5 text-xs ryze-text-muted py-1 hover:ryze-text-inverse transition-colors"
+                      >
+                        {showMobileHelp ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        Having trouble signing in?
+                      </button>
+
+                      <AnimatePresence>
+                        {showMobileHelp && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="mt-3 bg-white/5 border border-white/10 rounded-xl p-4 text-xs ryze-text-muted space-y-3">
+                              <p className="font-semibold ryze-text-inverse text-xs tracking-wide uppercase">
+                                Steps for mobile login
+                              </p>
+                              <ol className="space-y-2 list-decimal list-inside leading-relaxed">
+                                <li>Make sure you're already <span className="ryze-text-inverse">signed in to Discord</span> on this device</li>
+                                <li>Tap <span className="ryze-text-inverse font-medium">Continue with Discord</span> above</li>
+                                <li>Approve access when prompted — this may open in Discord or your browser</li>
+                                <li>You'll be returned here automatically once authorised</li>
+                              </ol>
+                              <div className="pt-1 border-t border-white/10">
+                                <p>
+                                  Not a Ryze student, tutor, or admin?{' '}
+                                  <Link to="/contact" className="text-[#FFB000] hover:underline">
+                                    Contact us
+                                  </Link>
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
                 </motion.div>
               )}
 

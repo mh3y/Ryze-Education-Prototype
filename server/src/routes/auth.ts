@@ -5,7 +5,7 @@ import { db } from '../prisma';
 import {
   signJwt, signRefreshToken, verifyRefreshToken,
   ACCESS_COOKIE, REFRESH_COOKIE,
-  accessCookieOptions, refreshCookieOptions,
+  cookieOptions, accessCookieOptions, refreshCookieOptions,
   JwtPayload,
 } from '../auth/jwt';
 import { requireAuth } from '../auth/middleware';
@@ -39,8 +39,11 @@ function setAuthCookies(res: any, payload: JwtPayload) {
 }
 
 function clearAuthCookies(res: any) {
-  res.clearCookie(ACCESS_COOKIE,  { path: '/' });
-  res.clearCookie(REFRESH_COOKIE, { path: '/' });
+  // Must use the same SameSite/Secure/HttpOnly attributes as the original
+  // Set-Cookie. Mobile Safari and other strict browsers silently ignore a
+  // clearCookie() call if the attributes don't match the stored cookie.
+  res.clearCookie(ACCESS_COOKIE,  cookieOptions);
+  res.clearCookie(REFRESH_COOKIE, cookieOptions);
 }
 
 // Dev-only stub — only active when NODE_ENV !== 'production'
