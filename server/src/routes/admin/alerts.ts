@@ -11,6 +11,7 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdminOnly } from '../../auth/middleware';
+import { generateAll as generateAllNotifications } from '../../services/notificationService';
 
 export const alertsRouter = Router();
 alertsRouter.use(requireAdminOnly);
@@ -176,6 +177,10 @@ alertsRouter.post('/alerts/generate', async (req, res) => {
         related_entity_id: p.id,
       });
     }
+
+    // Also generate in-app notifications for the new alerts and other CRM events.
+    // Fire-and-forget — notification failure must not fail the alert generation response.
+    generateAllNotifications().catch((e) => console.error('[alerts/generate] notification error:', e));
 
     res.json({ created: created.length, alert_ids: created });
   } catch (e: any) {

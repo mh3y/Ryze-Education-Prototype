@@ -2,12 +2,19 @@
  * /api/notifications — in-app notification feed
  *
  * Supports both user (Discord) and parent sessions.
- * Returns the 50 most-recent notifications for the authenticated principal.
+ *
+ * Routes:
+ *   GET    /                  list last 50 notifications for current principal
+ *   GET    /unread-count      cheap count of unread notifications (for badge polling)
+ *   PATCH  /read-all          mark every unread notification as read
+ *   PATCH  /:id/read          mark a single notification as read
+ *   POST   /generate          (admin only) run all notification generators
  */
 
 import { Router } from 'express';
 import { db } from '../prisma';
-import { requireAuth } from '../auth/middleware';
+import { requireAuth, requireAdminOnly } from '../auth/middleware';
+import { generateAll } from '../services/notificationService';
 
 export const notificationsRouter = Router();
 notificationsRouter.use(requireAuth);
@@ -43,6 +50,44 @@ notificationsRouter.get('/', async (req, res) => {
       created_at: n.created_at instanceof Date ? n.created_at.toISOString() : n.created_at,
       href:       (n.data as any)?.href ?? null,
     })));
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── GET /api/notifications/unread-count ──────────────────────────────────────
+// Lightweight endpoint polled by the topbar bell badge every 30 s.
+// Returns { count: N } without fetching the full notification list.
+
+notificationsRouter.get('/unread-count', async (req, res) => {
+  try {
+    const p     = req.jwtPayload!;
+    const where: any = { read: false };
+
+    if (p.role === 'parent' && p.parent_profile_id) {
+      where.parent_id = p.parent_profile_id;
+    } else if (p.user_id) {
+      where.user_id = p.user_id;
+    } else {
+      res.json({ count: 0 });
+      return;
+    }
+
+    const count = await db.notification.count({ where });
+    res.json({ count });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── POST /api/notifications/generate ─────────────────────────────────────────
+// Admin-only: run all five notification generators and return counts.
+// Safe to call repeatedly — generators are idempotent via dedup windows.
+
+notificationsRouter.post('/generate', requireAdminOnly, async (_req, res) => {
+  try {
+    const result = await generateAll();
+    res.json(result);
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }
