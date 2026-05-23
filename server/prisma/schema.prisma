@@ -114,6 +114,7 @@ model User {
   notifications    Notification[]        @relation("UserNotification")
   waitlist_entries Waitlist[]
   unavailability   TutorUnavailability[]
+  voice_attendance VoiceAttendance[]
 
   @@index([role])
   @@index([discord_user_id])
@@ -380,18 +381,28 @@ model Attendance {
 }
 
 // Voice attendance — tracked by Discord bot
+// lesson_id is optional: sessions are recorded even when no lesson is configured
+// so the CRM always has a complete picture of Discord voice activity.
 model VoiceAttendance {
-  id               Int       @id @default(autoincrement())
-  lesson_id        Int
-  discord_user_id  String
-  discord_channel  String?
-  joined_at        DateTime
-  left_at          DateTime?
-  duration_seconds Int?
+  id                 Int       @id @default(autoincrement())
+  lesson_id          Int?      // null when channel not mapped to a class
+  discord_user_id    String
+  discord_username   String?   // Display name at time of session
+  discord_channel_id String?   // Snowflake ID of the voice channel
+  discord_channel    String?   // Human-readable channel name
+  joined_at          DateTime
+  left_at            DateTime?
+  duration_seconds   Int?
+  status             String    @default("completed") // active | completed | unknown
+  crm_user_id        Int?      // matched CRM user (null = unmatched Discord user)
+  created_at         DateTime  @default(now())
 
-  lesson Lesson @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  lesson Lesson? @relation(fields: [lesson_id], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [crm_user_id], references: [id], onDelete: SetNull)
 
   @@index([lesson_id])
+  @@index([discord_user_id])
+  @@index([joined_at])
 }
 
 // ============================================================================
