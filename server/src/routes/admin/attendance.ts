@@ -54,6 +54,67 @@ attendanceRouter.get('/', async (req, res) => {
   }
 });
 
+// GET /api/admin/attendance/voice-sessions
+// Returns Discord voice activity — works with or without linked lessons.
+attendanceRouter.get('/voice-sessions', async (req, res) => {
+  try {
+    const { date, user_id, skip, limit } = req.query as {
+      date?: string; user_id?: string; skip?: string; limit?: string;
+    };
+
+    const where: any = {};
+
+    // Filter by date (AEST day boundary)
+    if (date) {
+      const day = new Date(date + 'T00:00:00+10:00');
+      const nextDay = new Date(day.getTime() + 86_400_000);
+      where.joined_at = { gte: day, lt: nextDay };
+    }
+
+    // Filter by CRM user
+    if (user_id) where.crm_user_id = Number(user_id);
+
+    const take   = Math.min(Number(limit ?? 50), 200);
+    const offset = Number(skip ?? 0);
+
+    const [items, total] = await Promise.all([
+      db.voiceAttendance.findMany({
+        where,
+        include: {
+          user:   { select: { id: true, full_name: true, role: true } },
+          lesson: { select: { id: true, title: true, scheduled_at: true } },
+        },
+        orderBy: { joined_at: 'desc' },
+        take,
+        skip: offset,
+      }),
+      db.voiceAttendance.count({ where }),
+    ]);
+
+    res.json({
+      total,
+      items: items.map((v: any) => ({
+        id:                 v.id,
+        discord_user_id:    v.discord_user_id,
+        discord_username:   v.discord_username,
+        discord_channel_id: v.discord_channel_id,
+        discord_channel:    v.discord_channel,
+        joined_at:          v.joined_at,
+        left_at:            v.left_at,
+        duration_minutes:   v.duration_seconds != null ? Math.round(v.duration_seconds / 60) : null,
+        status:             v.status,
+        lesson_id:          v.lesson_id,
+        lesson_title:       v.lesson?.title ?? null,
+        crm_user_id:        v.crm_user_id,
+        crm_user_name:      v.user?.full_name ?? null,
+        crm_user_role:      v.user?.role ?? null,
+      })),
+    });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // POST /api/admin/attendance/:lessonId/:userId/mark
 attendanceRouter.post('/:lessonId/:userId/mark', async (req, res) => {
   try {

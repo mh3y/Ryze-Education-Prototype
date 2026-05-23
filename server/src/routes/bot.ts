@@ -407,6 +407,107 @@ botRouter.post('/sync-log', async (req, res) => {
   }
 });
 
+// ── POST /api/bot/sync-voice-sessions ────────────────────────────────────────
+// Class-agnostic voice session push from the Discord bot.
+// lesson_id is optional — sessions are recorded even when the channel is not
+// mapped to a class, so the CRM always has a complete picture of voice activity.
+//
+// Body: { sessions: Array<{
+//   discord_user_id:    string
+//   discord_username?:  string
+//   discord_channel_id?: string
+//   discord_channel?:   string
+//   joined_at:          string  (ISO 8601)
+//   left_at?:           string  (ISO 8601, omit for active sessions)
+//   status?:            "active" | "completed" | "unknown"
+// }> }
+
+botRouter.post('/sync-voice-sessions', async (req, res) => {
+  try {
+    const { sessions } = req.body as {
+      sessions: Array<{
+        discord_user_id:    string;
+        discord_username?:  string;
+        discord_channel_id?: string;
+        discord_channel?:   string;
+        joined_at:          string;
+        left_at?:           string;
+        status?:            string;
+      }>;
+    };
+
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+      res.status(400).json({ detail: 'sessions array is required' });
+      return;
+    }
+
+    let created = 0;
+    let updated = 0;
+
+    for (const s of sessions) {
+      if (!s.discord_user_id || !s.joined_at) continue;
+
+      const joinedDate = new Date(s.joined_at);
+      const leftDate   = s.left_at ? new Date(s.left_at) : null;
+      const seconds    = leftDate
+        ? Math.max(0, Math.floor((leftDate.getTime() - joinedDate.getTime()) / 1000))
+        : null;
+      const status     = s.status ?? (leftDate ? 'completed' : 'active');
+
+      // Match to CRM user by Discord ID
+      const crmUser = await db.user.findFirst({
+        where: { discord_user_id: s.discord_user_id },
+        select: { id: true },
+      });
+
+      // Try to update an existing active session for this user+channel first
+      const existing = await db.voiceAttendance.findFirst({
+        where: {
+          discord_user_id:    s.discord_user_id,
+          discord_channel_id: s.discord_channel_id ?? undefined,
+          status:             'active',
+        },
+        orderBy: { joined_at: 'desc' },
+      });
+
+      if (existing && leftDate) {
+        // Close the active session
+        await db.voiceAttendance.update({
+          where: { id: existing.id },
+          data: {
+            left_at:          leftDate,
+            duration_seconds: seconds,
+            status,
+          },
+        });
+        updated++;
+      } else if (!existing) {
+        // Create new session record
+        await db.voiceAttendance.create({
+          data: {
+            discord_user_id:    s.discord_user_id,
+            discord_username:   s.discord_username   ?? null,
+            discord_channel_id: s.discord_channel_id ?? null,
+            discord_channel:    s.discord_channel    ?? null,
+            joined_at:          joinedDate,
+            left_at:            leftDate,
+            duration_seconds:   seconds,
+            status,
+            crm_user_id:        crmUser?.id ?? null,
+          },
+        });
+        created++;
+      }
+    }
+
+    console.log(`[bot] sync-voice-sessions: created=${created} updated=${updated}`);
+    res.json({ created, updated });
+  } catch (e: any) {
+    console.error('[bot] sync-voice-sessions error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // ── POST /api/bot/attendance ──────────────────────────────────────────────────
 // Bot reports voice-channel attendance (who joined / left a lesson VC).
 
