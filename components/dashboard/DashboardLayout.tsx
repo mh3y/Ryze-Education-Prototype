@@ -210,8 +210,8 @@ const DashboardLayoutInner: React.FC = () => {
               onClick={toggleSidebar}
               aria-label="Toggle navigation"
               style={{
-                width: 36,
-                height: 36,
+                width: isMobile ? 44 : 36,
+                height: isMobile ? 44 : 36,
                 borderRadius: 9,
                 display: 'grid',
                 placeItems: 'center',
@@ -262,7 +262,7 @@ const DashboardLayoutInner: React.FC = () => {
           </div>
 
           {/* Right: bell + customize (admin) + divider + user */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 14, flexShrink: 0 }}>
             {/* Admin: Customize button */}
             {isAdmin && (
               <button
@@ -270,7 +270,7 @@ const DashboardLayoutInner: React.FC = () => {
                 onClick={toggleEditMode}
                 title={isEditMode ? 'Exit edit mode' : 'Customize dashboard'}
                 style={{
-                  width: 36, height: 36, borderRadius: 9,
+                  width: isMobile ? 44 : 36, height: isMobile ? 44 : 36, borderRadius: 9,
                   display: 'grid', placeItems: 'center',
                   color: isEditMode ? '#f59e0b' : 'var(--fg-muted)',
                   background: isEditMode
@@ -306,8 +306,8 @@ const DashboardLayoutInner: React.FC = () => {
                 onClick={toggleNotif}
                 style={{
                   position: 'relative',
-                  width: 36,
-                  height: 36,
+                  width: isMobile ? 44 : 36,
+                  height: isMobile ? 44 : 36,
                   borderRadius: 9,
                   display: 'grid',
                   placeItems: 'center',
@@ -354,12 +354,14 @@ const DashboardLayoutInner: React.FC = () => {
               )}
             </div>
 
-            {/* Divider */}
-            <div style={{
-              width: 1,
-              height: 22,
-              background: 'var(--border-soft)',
-            }} />
+            {/* Divider — hidden on mobile */}
+            {!isMobile && (
+              <div style={{
+                width: 1,
+                height: 22,
+                background: 'var(--border-soft)',
+              }} />
+            )}
 
             {/* Name + role + avatar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -411,7 +413,7 @@ const DashboardLayoutInner: React.FC = () => {
                 padding: 'var(--pad-page-y) var(--pad-page-x)',
                 maxWidth: 1480,
                 margin: '0 auto',
-                paddingBottom: 48,
+                paddingBottom: isMobile ? 32 : 48,
               }}
             >
               <Outlet />

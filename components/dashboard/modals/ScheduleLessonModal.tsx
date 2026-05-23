@@ -46,12 +46,12 @@ function toISODateTime(date: string, time: string): string | undefined {
 
 function inputStyle(focused: boolean): React.CSSProperties {
   return {
-    width: '100%', height: 40,
+    width: '100%', height: 44,
     background: 'var(--bg-surface-2)',
     border: `1px solid ${focused ? 'var(--accent)' : 'var(--border-soft)'}`,
     borderRadius: 9, outline: 'none',
     padding: '0 12px',
-    fontSize: 13.5, color: 'var(--fg-strong)',
+    fontSize: 14, color: 'var(--fg-strong)',
     transition: 'border-color 140ms ease',
     boxSizing: 'border-box',
     fontFamily: 'inherit',
