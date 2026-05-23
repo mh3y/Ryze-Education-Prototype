@@ -50,7 +50,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
       items: [
         { label: 'Overview',          path: '/dashboard/admin',              icon: LayoutDashboard },
         { label: 'Calendar',          path: '/dashboard/calendar',           icon: CalendarDays },
-        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert, badge: 3 },
+        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert },
       ],
     },
     {
@@ -166,6 +166,8 @@ interface SidebarProps {
   userEmail?: string;
   onLogout: () => void;
   onCloseMobile: () => void;
+  /** Dynamic badge counts keyed by nav item path — overrides any static badge */
+  navBadges?: Partial<Record<string, number>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -199,6 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   userEmail,
   onLogout,
   onCloseMobile,
+  navBadges,
 }) => {
   const location = useLocation();
   const groups   = NAV[userRole] ?? NAV.admin;
@@ -461,9 +464,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </span>
                       )}
 
-                      {/* Badge — pill in expanded, dot in rail */}
-                      {!isEditMode && item.badge ? (
-                        isOpen ? (
+                      {/* Badge — pill in expanded, dot in rail.
+                          Prefer runtime navBadges over static item.badge. */}
+                      {!isEditMode && (() => {
+                        const count = navBadges?.[item.path] ?? item.badge ?? 0;
+                        if (!count) return null;
+                        return isOpen ? (
                           <span style={{
                             fontSize: 10.5,
                             fontWeight: 700,
@@ -475,7 +481,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             minWidth: 20,
                             textAlign: 'center',
                           }}>
-                            {item.badge}
+                            {count > 99 ? '99+' : count}
                           </span>
                         ) : (
                           <span style={{
@@ -487,8 +493,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             borderRadius: 999,
                             background: 'var(--danger)',
                           }} />
-                        )
-                      ) : null}
+                        );
+                      })()}
 
                       {/* Tooltip in rail mode */}
                       {!isOpen && (
