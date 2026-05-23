@@ -6,6 +6,8 @@ interface PageHeaderProps {
   eyebrow?: string;
   breadcrumb?: { label: string; href?: string };
   actions?: React.ReactNode;
+  /** Shrinks the h1 to ~28px and reduces bottom spacing — use on list/data pages */
+  compact?: boolean;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -14,8 +16,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   eyebrow,
   breadcrumb,
   actions,
+  compact,
 }) => (
-  <div className="page-head">
+  <div className={compact ? 'page-head page-head--compact' : 'page-head'}>
     <div>
       {(eyebrow || breadcrumb) && (
         <div className="page-head__eyebrow">

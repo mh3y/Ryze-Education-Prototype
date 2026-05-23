@@ -6,9 +6,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Download, Plus, Search, Filter, Check, X, AlertCircle,
-  TrendingUp, TrendingDown,
 } from 'lucide-react';
 import { adminApi, StudentPayment } from '../../../services/adminApi';
+import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
+import { StatCard } from '../../../components/dashboard/ui/StatCard';
+import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -30,72 +32,6 @@ function formatDate(iso: string | null | undefined): string {
 type PayStatusFilter = 'All' | 'Due' | 'Overdue' | 'Paid';
 const PAY_FILTERS: PayStatusFilter[] = ['All', 'Due', 'Overdue', 'Paid'];
 
-type TagVariant = 'ok' | 'warn' | 'danger' | 'info' | 'default';
-const tagStyles: Record<TagVariant, React.CSSProperties> = {
-  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',     border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
-  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
-  danger:  { color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)' },
-  info:    { color: 'var(--info)',   background: 'color-mix(in oklab, var(--info) 14%, transparent)',   border: '1px solid color-mix(in oklab, var(--info) 28%, transparent)' },
-  default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
-};
-
-function payStatusVariant(status: string): TagVariant {
-  if (status === 'paid')    return 'ok';
-  if (status === 'due' || status === 'pending' || status === 'partial') return 'warn';
-  if (status === 'overdue') return 'danger';
-  return 'default';
-}
-function payStatusLabel(status: string): string {
-  const m: Record<string, string> = { paid: 'Paid', due: 'Due', pending: 'Due', overdue: 'Overdue', partial: 'Partial', waived: 'Waived', paused: 'Paused' };
-  return m[status] ?? status;
-}
-
-const StatusTag: React.FC<{ status: string }> = ({ status }) => {
-  const v = payStatusVariant(status);
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center',
-      fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
-      padding: '4px 9px', borderRadius: 999,
-      ...tagStyles[v],
-    }}>
-      {payStatusLabel(status)}
-    </span>
-  );
-};
-
-// ---------------------------------------------------------------------------
-// Stat tile
-// ---------------------------------------------------------------------------
-
-const StatTile: React.FC<{
-  label: string; value: string;
-  deltaText?: string; deltaDir?: 'up' | 'down'; footRight?: string;
-}> = ({ label, value, deltaText, deltaDir, footRight }) => (
-  <div style={{
-    background: 'var(--bg-surface)', border: '1px solid var(--border-faint)',
-    borderRadius: 14, minHeight: 134, padding: '18px 20px',
-    display: 'flex', flexDirection: 'column', gap: 14,
-    boxShadow: 'var(--shadow-card)', transition: 'border-color 140ms ease',
-  }}
-  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)'; }}
-  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
-  >
-    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>{label}</div>
-    <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 44, color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1' }}>
-      {value}
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
-      {deltaText ? (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
-          {deltaDir === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-          {deltaText}
-        </span>
-      ) : <span />}
-      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
-    </div>
-  </div>
-);
 
 // ---------------------------------------------------------------------------
 // Bar chart
@@ -585,26 +521,11 @@ const PaymentsPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
 
-      {/* PageHead */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
-            Finance
-          </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic', fontWeight: 500,
-            fontSize: 'clamp(38px, 3.5vw, 54px)',
-            lineHeight: 1.08, letterSpacing: '-0.018em',
-            color: 'var(--fg-strong)', margin: 0,
-          }}>
-            Payments
-          </h1>
-          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            Invoices, direct debits and outstanding balances. Run a chase, mark paid, or export to CSV.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <PageHeader
+        compact
+        eyebrow="Finance"
+        title="Payments"
+        actions={<>
           <button
             onClick={exportCsv}
             style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
@@ -621,16 +542,16 @@ const PaymentsPage: React.FC = () => {
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> New invoice
           </button>
-        </div>
-      </div>
+        </>}
+      />
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} />
-        <StatTile label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" />
-        <StatTile label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} />
-        <StatTile label="Pending"           value={loading ? '…' : `${pendingCount}`} />
+        <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} loading={loading} />
+        <StatCard label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" loading={loading} />
+        <StatCard label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} loading={loading} />
+        <StatCard label="Pending"           value={loading ? '…' : `${pendingCount}`} loading={loading} />
       </div>
 
       {/* Two-up: table + charts */}
@@ -662,7 +583,7 @@ const PaymentsPage: React.FC = () => {
               />
             </div>
             {PAY_FILTERS.map((f) => (
-              <button key={f} onClick={() => setFilter(f)} style={{
+              <button key={f} onClick={() => setFilter(f)} aria-pressed={filter === f} style={{
                 height: 32, padding: '0 12px', borderRadius: 9,
                 fontSize: 12.5, fontWeight: 600,
                 border: filter === f ? '1px solid color-mix(in oklab, var(--accent) 40%, transparent)' : '1px solid var(--border-soft)',
@@ -724,13 +645,18 @@ const PaymentsPage: React.FC = () => {
                   const freqLabel: Record<string, string> = { termly: 'Termly', yearly: 'Yearly', weekly: 'Weekly', custom: 'Custom' };
 
                   return (
-                    <tr key={p.id} style={{
+                    <tr key={p.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Edit invoice INV-${p.id} for ${p.student_name}`}
+                    onClick={() => setEditTarget(p)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEditTarget(p); } }}
+                    style={{
                       borderBottom: '1px solid var(--border-faint)', cursor: 'pointer',
                       transition: 'background 140ms ease',
                     }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ''; }}
-                    onClick={() => setEditTarget(p)}
                     >
                       <td style={{ padding: '14px 22px' }}>
                         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 600, color: 'var(--fg-strong)', fontFeatureSettings: '"tnum" 1' }}>
@@ -762,7 +688,7 @@ const PaymentsPage: React.FC = () => {
                       <td style={{ padding: '14px 22px', fontSize: 12.5, color: 'var(--fg-muted)' }}>
                         {freqLabel[p.frequency] ?? p.frequency}
                       </td>
-                      <td style={{ padding: '14px 22px' }}><StatusTag status={p.status} /></td>
+                      <td style={{ padding: '14px 22px' }}><StatusBadge value={p.status} /></td>
                       <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)' }}>{formatDate(p.due_date)}</td>
                     </tr>
                   );

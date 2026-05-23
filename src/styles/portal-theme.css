@@ -47,7 +47,7 @@
   --fg-strong: #f6f4ef;
   --fg-default: #d8d4cb;
   --fg-muted: #8a8b8e;
-  --fg-faint: #5a5c61;
+  --fg-faint: #7c7f88; /* was #5a5c61 (~2.5:1) → now ~3.8:1 on #0a0e16 */
 
   --border-faint: rgba(255, 255, 255, 0.06);
   --border-soft: rgba(255, 255, 255, 0.09);
@@ -73,7 +73,7 @@
   --fg-strong: #11151d;
   --fg-default: #2a2f3a;
   --fg-muted: #6b7280;
-  --fg-faint: #9aa0a8;
+  --fg-faint: #757c85; /* was #9aa0a8 (~2.1:1 on white) → now ~4.5:1 */
 
   --border-faint: rgba(17, 21, 29, 0.06);
   --border-soft: rgba(17, 21, 29, 0.1);
@@ -214,7 +214,6 @@
 
 /* ── ALL display surfaces: font-family, style, weight ── */
 .ryze-portal .page-head__title,
-.ryze-portal .stat__value,
 .ryze-portal .class-card__name,
 .ryze-portal .card__title,
 .ryze-portal .s-card__title,
@@ -237,7 +236,6 @@
   border-radius: max(var(--radius-btn, 9px) * 0.5, 5px);
 }
 .ryze-portal[data-font="modern"] .page-head__title,
-.ryze-portal[data-font="modern"] .stat__value,
 .ryze-portal[data-font="modern"] .class-card__name,
 .ryze-portal[data-font="modern"] .card__title,
 .ryze-portal[data-font="modern"] .s-card__title,
@@ -256,7 +254,6 @@
 
 /* Editorial: generous, elegant italic serif — Cormorant Garamond */
 .ryze-portal[data-font="editorial"] .page-head__title,
-.ryze-portal[data-font="editorial"] .stat__value,
 .ryze-portal[data-font="editorial"] .class-card__name,
 .ryze-portal[data-font="editorial"] .card__title,
 .ryze-portal[data-font="editorial"] .s-card__title,
@@ -271,7 +268,6 @@
 
 /* Instrument: warm, open serif — Instrument Serif */
 .ryze-portal[data-font="instrument"] .page-head__title,
-.ryze-portal[data-font="instrument"] .stat__value,
 .ryze-portal[data-font="instrument"] .class-card__name,
 .ryze-portal[data-font="instrument"] .card__title,
 .ryze-portal[data-font="instrument"] .s-card__title,
@@ -847,6 +843,19 @@ body {
   flex-shrink: 0;
 }
 
+/* Compact variant — data/list pages where the table must be above the fold */
+.ryze-portal .page-head--compact {
+  padding-bottom: 18px;
+  margin-bottom: var(--gap-md);
+  align-items: center;
+}
+.ryze-portal .page-head--compact .page-head__title {
+  font-size: clamp(22px, 2vw, 30px);
+}
+.ryze-portal .page-head--compact .page-head__eyebrow {
+  margin-bottom: 6px;
+}
+
 .ryze-portal .btn {
   display: inline-flex;
   align-items: center;
@@ -930,11 +939,14 @@ body {
   text-transform: uppercase;
 }
 .ryze-portal .stat__value {
-  font-family: var(--font-display);
-  font-style: var(--font-display-style);
-  font-weight: var(--font-display-weight);
-  font-size: 44px;
-  letter-spacing: -0.02em;
+  /* Tabular mono for clear numeric comparison — JetBrains Mono */
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 36px;
+  letter-spacing: -0.03em;
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
   color: var(--fg-strong);
   line-height: 1;
 }

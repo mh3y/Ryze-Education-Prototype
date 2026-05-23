@@ -9,34 +9,13 @@ import { CalendarDays, Plus, ArrowUpRight, X, AlertCircle } from 'lucide-react';
 import { adminApi, ClassGroupListItem } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
+import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
+import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-type TagVariant = 'ok' | 'warn' | 'default';
-function classStateVariant(active: boolean, seats?: string): TagVariant {
-  if (!active) return 'default';
-  if (seats === 'low') return 'warn';
-  return 'ok';
-}
-
-const tagStyles: Record<TagVariant, React.CSSProperties> = {
-  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
-  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
-  default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
-};
-
-const StatusTag: React.FC<{ variant: TagVariant; label: string }> = ({ variant, label }) => (
-  <span style={{
-    display: 'inline-flex', alignItems: 'center',
-    fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
-    padding: '4px 9px', borderRadius: 999,
-    ...tagStyles[variant],
-  }}>
-    {label}
-  </span>
-);
 
 // ---------------------------------------------------------------------------
 // Create class modal
@@ -250,26 +229,11 @@ const ClassesPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
 
-      {/* PageHead */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
-            Operations
-          </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic', fontWeight: 500,
-            fontSize: 'clamp(38px, 3.5vw, 54px)',
-            lineHeight: 1.08, letterSpacing: '-0.018em',
-            color: 'var(--fg-strong)', margin: 0,
-          }}>
-            Classes
-          </h1>
-          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            Recurring group sessions and their tutors. Click any class to manage roster, attendance and homework.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <PageHeader
+        compact
+        eyebrow="Operations"
+        title="Classes"
+        actions={<>
           <button style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
@@ -282,8 +246,8 @@ const ClassesPage: React.FC = () => {
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> New class
           </button>
-        </div>
-      </div>
+        </>}
+      />
 
       {/* Loading / error state */}
       {loading && (
@@ -322,7 +286,6 @@ const ClassesPage: React.FC = () => {
           gap: 'var(--gap-md)',
         }}>
           {displayClasses.map((c) => {
-            const stateVariant: TagVariant = c.state === 'low-seat' ? 'warn' : c.state === 'running' ? 'ok' : 'default';
             const stateLabel = c.state === 'low-seat' ? 'Low seats' : c.state === 'running' ? 'Running' : 'Inactive';
 
             return (
@@ -366,7 +329,7 @@ const ClassesPage: React.FC = () => {
                       {c.time}
                     </span>
                   </div>
-                  <StatusTag variant={stateVariant} label={stateLabel} />
+                  <StatusBadge value={c.state} label={stateLabel} />
                 </div>
 
                 {/* Class name */}

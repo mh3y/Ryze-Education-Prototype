@@ -6,8 +6,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail,
-  TrendingDown, Trash2,
+  Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail, Trash2,
 } from 'lucide-react';
 import { portalApi, UserRecord } from '../../../services/portalApi';
 import { adminApi } from '../../../services/adminApi';
@@ -15,6 +14,9 @@ import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import AddStudentModal from '../../../components/dashboard/modals/AddStudentModal';
 import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDeleteModal';
+import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
+import { StatCard } from '../../../components/dashboard/ui/StatCard';
+import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
 
 // ---------------------------------------------------------------------------
 // Helpers & types
@@ -37,84 +39,6 @@ function getInitials(name: string): string {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
-
-type TagVariant = 'ok' | 'warn' | 'danger' | 'info' | 'default';
-
-function statusTagVariant(status: string): TagVariant {
-  if (status === 'active')  return 'ok';
-  if (status === 'trial')   return 'info';
-  if (status === 'at-risk') return 'warn';
-  if (status === 'paused')  return 'default';
-  return 'default';
-}
-function statusTagLabel(status: string): string {
-  const m: Record<string, string> = { active: 'Active', trial: 'Trial', paused: 'Paused', 'at-risk': 'At risk' };
-  return m[status] ?? status;
-}
-
-const tagStyles: Record<TagVariant, React.CSSProperties> = {
-  ok:      { color: 'var(--ok)',     background: 'color-mix(in oklab, var(--ok) 12%, transparent)',     border: '1px solid color-mix(in oklab, var(--ok) 26%, transparent)' },
-  warn:    { color: 'var(--warn)',   background: 'color-mix(in oklab, var(--warn) 12%, transparent)',   border: '1px solid color-mix(in oklab, var(--warn) 26%, transparent)' },
-  danger:  { color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 12%, transparent)', border: '1px solid color-mix(in oklab, var(--danger) 26%, transparent)' },
-  info:    { color: 'var(--info)',   background: 'color-mix(in oklab, var(--info) 14%, transparent)',   border: '1px solid color-mix(in oklab, var(--info) 28%, transparent)' },
-  default: { color: 'var(--fg-default)', background: 'var(--bg-hover)', border: '1px solid var(--border-soft)' },
-};
-
-const StatusTag: React.FC<{ status: string }> = ({ status }) => {
-  const v = statusTagVariant(status);
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 6,
-      fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
-      padding: '4px 9px', borderRadius: 999,
-      ...tagStyles[v],
-    }}>
-      {statusTagLabel(status)}
-    </span>
-  );
-};
-
-// ---------------------------------------------------------------------------
-// Stat tile
-// ---------------------------------------------------------------------------
-
-const StatTile: React.FC<{ label: string; value: string | number; footRight?: string; deltaText?: string; deltaDir?: 'up' | 'down' }> = ({
-  label, value, footRight, deltaText, deltaDir,
-}) => (
-  <div style={{
-    background: 'var(--bg-surface)',
-    border: '1px solid var(--border-faint)',
-    borderRadius: 14,
-    minHeight: 134,
-    padding: '18px 20px',
-    display: 'flex', flexDirection: 'column', gap: 14,
-    boxShadow: 'var(--shadow-card)',
-    transition: 'border-color 140ms ease',
-  }}
-  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)'; }}
-  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-faint)'; }}
-  >
-    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--fg-muted)' }}>
-      {label}
-    </div>
-    <div style={{
-      fontFamily: 'var(--font-display)',
-      fontStyle: 'italic', fontWeight: 500, fontSize: 44,
-      color: 'var(--fg-strong)', lineHeight: 1, fontFeatureSettings: '"tnum" 1',
-    }}>
-      {value}
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
-      {deltaText ? (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: deltaDir === 'up' ? 'var(--ok)' : 'var(--danger)' }}>
-          <TrendingDown size={12} /> {deltaText}
-        </span>
-      ) : <span />}
-      {footRight && <span style={{ color: 'var(--fg-faint)' }}>{footRight}</span>}
-    </div>
-  </div>
-);
-
 
 // ---------------------------------------------------------------------------
 // Component
@@ -260,26 +184,11 @@ const StudentsPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
 
-      {/* PageHead */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 10 }}>
-            Roster
-          </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic', fontWeight: 500,
-            fontSize: 'clamp(38px, 3.5vw, 54px)',
-            lineHeight: 1.08, letterSpacing: '-0.018em',
-            color: 'var(--fg-strong)', margin: 0,
-          }}>
-            Students
-          </h1>
-          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginTop: 10, marginBottom: 0 }}>
-            {loading ? 'Loading…' : `${students.length} enrolled student${students.length !== 1 ? 's' : ''}. Sort, filter and drill in.`}
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <PageHeader
+        compact
+        eyebrow="Roster"
+        title="Students"
+        actions={<>
           <button
             onClick={() => exportToCSV(filtered)}
             style={{ ...btnStyle, background: 'var(--bg-surface)', color: 'var(--fg-default)', border: '1px solid var(--border-soft)' }}
@@ -294,16 +203,16 @@ const StudentsPage: React.FC = () => {
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; }}>
             <Plus size={14} /> Add student
           </button>
-        </div>
-      </div>
+        </>}
+      />
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatTile label="Total"    value={loading ? '—' : students.length} footRight="enrolled" />
-        <StatTile label="Active"   value={loading ? '—' : activeCount}   footRight={loading ? '' : `${students.length > 0 ? Math.round((activeCount / students.length) * 100) : 0}%`} />
-        <StatTile label="Inactive" value={loading ? '—' : inactiveCount} />
-        <StatTile label="At risk"  value="—" />
+        <StatCard label="Total"    value={loading ? '—' : students.length} footRight="enrolled" loading={loading} />
+        <StatCard label="Active"   value={loading ? '—' : activeCount}   footRight={loading ? '' : `${students.length > 0 ? Math.round((activeCount / students.length) * 100) : 0}%`} loading={loading} />
+        <StatCard label="Inactive" value={loading ? '—' : inactiveCount} loading={loading} />
+        <StatCard label="At risk"  value="—" />
       </div>
 
       {/* Roster card */}
@@ -345,6 +254,7 @@ const StudentsPage: React.FC = () => {
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
+              aria-pressed={activeFilter === f}
               style={{
                 height: 32, padding: '0 12px', borderRadius: 9,
                 fontSize: 12.5, fontWeight: 600,
@@ -422,6 +332,10 @@ const StudentsPage: React.FC = () => {
                   <tr
                     key={s.id}
                     onClick={() => navigate(`/dashboard/admin/students/${s.id}`)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/dashboard/admin/students/${s.id}`); } }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`View ${s.name}`}
                     style={{
                       borderBottom: '1px solid var(--border-faint)',
                       cursor: 'pointer',
@@ -484,7 +398,7 @@ const StudentsPage: React.FC = () => {
                     </td>
                     {/* Status */}
                     <td style={{ padding: '14px 22px' }}>
-                      <StatusTag status={s.status} />
+                      <StatusBadge value={s.status} />
                     </td>
                     {/* Last seen */}
                     <td style={{ padding: '14px 22px', fontSize: 13, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap' }}>
@@ -492,14 +406,16 @@ const StudentsPage: React.FC = () => {
                     </td>
                     {/* Actions */}
                     <td style={{ padding: '14px 22px' }} onClick={(e) => e.stopPropagation()}>
-                      <button style={{
-                        width: 28, height: 28, borderRadius: 6,
-                        display: 'grid', placeItems: 'center',
-                        color: 'var(--fg-muted)', background: 'transparent', border: 'none', cursor: 'pointer',
-                        transition: 'background 140ms ease, color 140ms ease',
-                      }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)'; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)'; }}
+                      <button
+                        aria-label={`More options for ${s.name}`}
+                        style={{
+                          width: 28, height: 28, borderRadius: 6,
+                          display: 'grid', placeItems: 'center',
+                          color: 'var(--fg-muted)', background: 'transparent', border: 'none', cursor: 'pointer',
+                          transition: 'background 140ms ease, color 140ms ease',
+                        }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-strong)'; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-muted)'; }}
                       >
                         <MoreHorizontal size={16} />
                       </button>
