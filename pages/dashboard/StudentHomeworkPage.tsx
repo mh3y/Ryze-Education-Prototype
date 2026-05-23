@@ -81,7 +81,7 @@ const StudentHomeworkPage: React.FC = () => {
       </div>
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 'var(--gap-md)' }}>
         {[
           { label: 'Due / open',  value: loading ? '…' : String(openHW.length).padStart(2, '0') },
           { label: 'Submitted',   value: loading ? '…' : String(submittedHW.length).padStart(2, '0'), footRight: 'this term' },

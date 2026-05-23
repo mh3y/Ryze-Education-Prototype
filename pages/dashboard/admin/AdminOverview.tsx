@@ -840,8 +840,7 @@ const AdminOverview: React.FC = () => {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 14 }}>
               Quick Actions
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}
-                 className="grid-cols-2 sm:grid-cols-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 10 }}>
               {([
                 { icon: <Users size={16} />,       label: 'Add student',      path: '/dashboard/admin/students?new=1' },
                 { icon: <Calendar size={16} />,    label: 'Schedule lesson',  path: '/dashboard/admin/lessons?new=1' },

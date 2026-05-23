@@ -166,7 +166,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
         position: 'absolute',
         top: 'calc(100% + 8px)',
         right: 0,
-        width: 380,
+        width: 'min(380px, calc(100vw - 16px))',
         maxHeight: 520,
         background: 'var(--bg-elevated)',
         border: '1px solid var(--border-soft)',

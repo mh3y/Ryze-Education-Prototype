@@ -66,7 +66,7 @@ const StudentProgressPage: React.FC = () => {
       </div>
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))', gap: 'var(--gap-md)' }}>
         {[
           { label: 'Reports published', value: loading ? '…' : String(reports.length).padStart(2, '0') },
           { label: 'Average score',     value: loading ? '…' : avgScore !== null ? `${avgScore}%` : '—' },

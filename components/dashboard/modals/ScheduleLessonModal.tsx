@@ -191,7 +191,7 @@ const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClose, onCr
         border: '1px solid var(--border-soft)',
         borderRadius: 20,
         boxShadow: '0 24px 64px -12px rgba(0,0,0,0.4)',
-        width: '100%', maxWidth: 520,
+        width: '100%', maxWidth: 'min(520px, calc(100vw - 24px))',
         maxHeight: '90vh',
         overflowY: 'auto',
         scrollbarWidth: 'thin',

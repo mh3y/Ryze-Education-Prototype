@@ -546,8 +546,7 @@ const PaymentsPage: React.FC = () => {
       />
 
       {/* Stat row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
-           className="grid-cols-2 sm:grid-cols-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} loading={loading} />
         <StatCard label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" loading={loading} />
         <StatCard label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} loading={loading} />
@@ -555,8 +554,7 @@ const PaymentsPage: React.FC = () => {
       </div>
 
       {/* Two-up: table + charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '7fr 5fr', gap: 'var(--gap-md)', alignItems: 'start' }}
-           className="grid-cols-1 xl:grid-cols-[7fr_5fr]">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 420px), 1fr))', gap: 'var(--gap-md)', alignItems: 'start' }}>
 
         {/* Invoice table */}
         <div style={{
@@ -569,7 +567,7 @@ const PaymentsPage: React.FC = () => {
             padding: '14px 22px', borderBottom: '1px solid var(--border-faint)',
           }}>
             <div style={{
-              flex: 1, minWidth: 200,
+              flex: 1, minWidth: 0,
               display: 'flex', alignItems: 'center', gap: 8,
               background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)',
               borderRadius: 9, padding: '7px 12px',

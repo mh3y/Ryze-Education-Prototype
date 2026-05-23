@@ -242,7 +242,7 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string; portal: T
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatTile label="Today's lessons"  value={String(todayLessons.length).padStart(2, '0')} footRight={`across ${portal?.classes?.length ?? 0} classes`} />
         <StatTile label="Students taught"  value={String(totalStudents).padStart(2, '0')} footRight="enrolled across all classes" />
         <StatTile label="Classes"          value={String(portal?.classes?.length ?? 0).padStart(2, '0')} />
@@ -315,12 +315,12 @@ const TutorOverview: React.FC<{ firstName: string; todayLabel: string; portal: T
 
       {/* Quick actions */}
       <div style={cardStyle}>
-        <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
-          <div style={{ width: 220, flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div style={{ width: 220, flexShrink: 0, minWidth: 0 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>Shortcuts</div>
             <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginTop: 8, lineHeight: 1.5 }}>Day-to-day tutor actions, one click away.</div>
           </div>
-          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
+          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 96px), 1fr))', gap: 10 }}>
             {QUICK_ACTIONS.map((a) => {
               const Icon = a.icon;
               return (
@@ -418,7 +418,7 @@ const TutorClassesPage: React.FC = () => {
             <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontWeight: 'var(--font-display-weight)' as any, fontSize: 26, color: 'var(--fg-strong)', lineHeight: 1.1, marginBottom: 6 }}>{c.class_name}</div>
             <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 18 }}>{c.subject ?? c.year_level ?? '—'}</div>
             <div style={{ height: 1, background: 'var(--border-faint)', marginBottom: 18 }} />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 100px), 1fr))', gap: 12, marginBottom: 18 }}>
               {[['Students', String(c.student_count)], ['Schedule', c.schedule ?? '—'], ['Next', nextLessonDay ? `${nextLessonDay} ${nextLessonTime}` : 'TBD']].map(([label, val]) => (
                 <div key={label as string}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 4 }}>{label}</div>
@@ -638,7 +638,7 @@ const TutorAttendancePage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatTile label="Roll size" value={pad(entries.length)} footRight="enrolled" />
         <StatTile label="Present"   value={pad(tally.present || 0)} deltaText="Looking good" deltaDir="up" />
         <StatTile label="Late"      value={pad(tally.late || 0)} footRight="counts as present" />
@@ -649,7 +649,7 @@ const TutorAttendancePage: React.FC = () => {
       <div style={cardFlushStyle}>
         {/* Toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 22px', borderBottom: '1px solid var(--border-faint)', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 240, background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: '8px 12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: '8px 12px' }}>
             <Search size={14} style={{ color: 'var(--fg-muted)', flexShrink: 0 }} />
             <input placeholder="Search by name…" style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: 13, color: 'var(--fg-default)', flex: 1 }} />
           </div>
@@ -772,7 +772,7 @@ const TutorHomeworkPage: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
         <StatTile label="Published"  value={pad(openCount)}    footRight="awaiting submissions" />
         <StatTile label="To grade"   value={pad(toGradeCount)} deltaText={toGradeCount > 0 ? 'Needs attention' : 'All caught up'} deltaDir={toGradeCount > 0 ? 'down' : 'up'} />
         <StatTile label="Drafts"     value={pad(draftCount)}   footRight="not yet published" />
@@ -781,7 +781,7 @@ const TutorHomeworkPage: React.FC = () => {
 
       <div style={cardFlushStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 22px', borderBottom: '1px solid var(--border-faint)', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 240, background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: '8px 12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, background: 'var(--bg-surface-2)', border: '1px solid var(--border-soft)', borderRadius: 9, padding: '8px 12px' }}>
             <Search size={14} style={{ color: 'var(--fg-muted)', flexShrink: 0 }} />
             <input placeholder="Search homework…" style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: 13, color: 'var(--fg-default)', flex: 1 }} />
           </div>

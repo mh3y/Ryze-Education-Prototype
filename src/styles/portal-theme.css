@@ -303,6 +303,9 @@ body {
   letter-spacing: var(--body-letter-spacing, 0);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Prevent the root grid shell itself from ever exceeding viewport width */
+  max-width: 100vw;
+  overflow-x: clip;
 }
 
 .ryze-portal button {
@@ -2579,5 +2582,30 @@ body {
   }
   .ryze-portal .empty {
     padding: 24px 16px;
+  }
+}
+
+/* ── §21 Overflow safety — second-pass corrections ──────────── */
+/* Settings Row: collapse label / control from 2-col to 1-col    */
+@media (max-width: 599px) {
+  .ryze-portal .settings-row {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+}
+
+/* Segment controls: allow wrapping rather than overflowing       */
+@media (max-width: 479px) {
+  .ryze-portal .settings-row > div:last-child {
+    overflow-x: auto;
+  }
+}
+
+/* Notification panel: cap width to viewport on small screens    */
+@media (max-width: 479px) {
+  .ryze-portal [role="dialog"],
+  .ryze-portal .notif-panel {
+    max-width: calc(100vw - 16px) !important;
+    right: 8px !important;
   }
 }

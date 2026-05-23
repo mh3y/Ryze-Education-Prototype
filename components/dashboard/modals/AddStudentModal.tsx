@@ -171,7 +171,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({ onClose, onCreated })
           border: '1px solid var(--border-soft)',
           borderRadius: 20,
           boxShadow: '0 24px 64px -12px rgba(0,0,0,0.4)',
-          width: '100%', maxWidth: 480,
+          width: '100%', maxWidth: 'min(480px, calc(100vw - 24px))',
           animation: 'modal-in 200ms ease',
           overflow: 'hidden',
         }}
