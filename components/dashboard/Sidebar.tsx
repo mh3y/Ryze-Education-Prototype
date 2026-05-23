@@ -16,7 +16,7 @@ import {
   ClipboardList, FolderOpen,
   CreditCard, DollarSign,
   Megaphone, Activity, Settings,
-  LogOut, FileText, MessageSquare,
+  LogOut, FileText, MessageSquare, UserPlus,
 } from 'lucide-react';
 
 import { useDashboardCustomization } from '../../contexts/DashboardCustomizationContext';
@@ -56,6 +56,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
     {
       group: 'People',
       items: [
+        { label: 'Leads',             path: '/dashboard/admin/leads',        icon: UserPlus },
         { label: 'Students',          path: '/dashboard/admin/students',     icon: Users },
         { label: 'Parents',           path: '/dashboard/admin/parents',      icon: Home },
         { label: 'Tutors',            path: '/dashboard/admin/tutors',       icon: GraduationCap },

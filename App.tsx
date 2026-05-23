@@ -64,6 +64,7 @@ const AuditLogPage        = lazy(() => import('./pages/dashboard/admin/AuditLogP
 const TutorsPage          = lazy(() => import('./pages/dashboard/admin/TutorsPage'));
 const TutorDetail         = lazy(() => import('./pages/dashboard/admin/TutorDetail'));
 const MessagesPage        = lazy(() => import('./pages/dashboard/admin/MessagesPage'));
+const LeadsPage           = lazy(() => import('./pages/dashboard/admin/LeadsPage'));
 const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
 const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
 // Tutor role pages
@@ -86,6 +87,51 @@ const Sitemap = lazy(() => import('./pages/Sitemap'));
 
 const ENABLE_DASHBOARD =
   String((import.meta as any).env?.VITE_ENABLE_DASHBOARD || '').toLowerCase() === 'true';
+
+/**
+ * Top-level error boundary — catches any unhandled render error in the app tree
+ * and shows a branded fallback instead of a blank white screen.
+ */
+class AppErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean; message: string }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, message: '' };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, message: error?.message ?? 'An unexpected error occurred.' };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[AppErrorBoundary]', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f172a] px-6 text-center">
+          <h1 className="mb-3 text-3xl font-display text-[#f8f3ea]">Something went wrong</h1>
+          <p className="mb-8 max-w-md text-[#9aa0aa]">
+            Ryze encountered an unexpected error. Please refresh the page or{' '}
+            <a href="/" className="underline text-[#b8841e]">return home</a>.
+          </p>
+          {import.meta.env.DEV && (
+            <pre className="max-w-xl overflow-auto rounded-lg bg-[#1e293b] p-4 text-left text-xs text-red-400">
+              {this.state.message}
+            </pre>
+          )}
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 rounded-full bg-[#b8841e] px-6 py-2.5 text-sm font-semibold text-[#0f172a] hover:bg-[#d4a030] transition-colors"
+          >
+            Refresh page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 /**
  * Catches Starfield render errors so a WebGL/worker failure doesn't blank the entire page.
@@ -447,6 +493,7 @@ const AppContent: React.FC = () => {
               <Route path="tutors/:id"     element={<TutorDetail />} />
               <Route path="audit-log"       element={<AuditLogPage />} />
               <Route path="messages"        element={<MessagesPage />} />
+              <Route path="leads"           element={<LeadsPage />} />
               {/* Bot / ops routes — admin + tutor only */}
               <Route path="bot-health"  element={<BotHealth />} />
               <Route path="members"     element={<StudentsView />} />
@@ -481,17 +528,19 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AuthProvider>
-        <LanguageProvider>
-          <RouteTracking />
-          <ScrollToTop />
-          <Suspense fallback={<PageLoader />}>
-            <AppContent />
-          </Suspense>
-        </LanguageProvider>
-      </AuthProvider>
-    </Router>
+    <AppErrorBoundary>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AuthProvider>
+          <LanguageProvider>
+            <RouteTracking />
+            <ScrollToTop />
+            <Suspense fallback={<PageLoader />}>
+              <AppContent />
+            </Suspense>
+          </LanguageProvider>
+        </AuthProvider>
+      </Router>
+    </AppErrorBoundary>
   );
 };
 

@@ -324,8 +324,7 @@ const Home: React.FC = () => {
                       tag="Primary"
                       className="aspect-[0.92] min-h-[14rem]"
                       titleClassName="max-w-[10ch]"
-                      priority
-                      fetchPriority="high"
+                      fetchPriority="low"
                     />
                     <HeroProofTile
                       image={marketingCardImages.smallGroupFocus}
@@ -349,7 +348,7 @@ const Home: React.FC = () => {
                       tag="Senior"
                       className="aspect-[0.92] min-h-[14rem]"
                       titleClassName="max-w-[10ch]"
-                      priority
+                      fetchPriority="low"
                     />
                     <HeroProofTile
                       image={marketingCardImages.hybridLearning}

@@ -43,8 +43,8 @@ const Navbar: React.FC = () => {
   const menuPanelId = 'ryze-mobile-nav-panel';
   const brandLogoUrl =
     'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Enrol Now';
-  const mobileEnrolLabel = 'Enrol Now';
+  const bookConsultationLabel = 'Book a Free Trial';
+  const mobileEnrolLabel = 'Book a Free Trial';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: ROUTES.HOW_IT_WORKS, desc: 'Our process explained.' },

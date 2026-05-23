@@ -548,7 +548,7 @@ const PaymentsPage: React.FC = () => {
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
-        <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} deltaText="+12% vs last" deltaDir="up" footRight={`${payments.length} invoices`} loading={loading} />
+        <StatCard label="Revenue collected" value={loading ? '…' : `$${totalPaid.toFixed(0)}`} footRight={`${payments.length} invoices`} loading={loading} />
         <StatCard label="Outstanding"       value={loading ? '…' : `$${(totalDue - totalPaid).toFixed(0)}`} deltaDir="down" footRight="of total due" loading={loading} />
         <StatCard label="Overdue"           value={loading ? '…' : `$${totalOverdue.toFixed(0)}`} loading={loading} />
         <StatCard label="Pending"           value={loading ? '…' : `${pendingCount}`} loading={loading} />
