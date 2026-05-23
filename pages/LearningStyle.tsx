@@ -770,26 +770,6 @@ const LearningStyle: React.FC = () => {
           ))}
         </div>
       </FadeInSection>
-
-      {/* Soft CTA — end of page */}
-      <FadeInSection as="section" className="mx-auto max-w-3xl px-4 pb-20 text-center sm:px-6 lg:px-8 lg:pb-28">
-        <h2 className="font-display text-[clamp(1.8rem,5vw,2.6rem)] font-semibold leading-[1.1] tracking-[-0.03em] ryze-text-primary">
-          Ready to find your learning style?
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-[1rem] leading-7 ryze-text-secondary">
-          Book a free trial lesson and we'll match you to the right program, format, and tutor — no commitment required.
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
-          <Link
-            to={ROUTES.CONTACT}
-            className="inline-flex min-h-[3.2rem] items-center justify-center gap-2 rounded-full bg-[#b8841e] px-8 text-[0.97rem] font-semibold text-white shadow-[0_14px_32px_-18px_rgba(184,132,30,0.52)] transition-all hover:-translate-y-px hover:bg-[#c8941e] hover:shadow-[0_18px_36px_-18px_rgba(184,132,30,0.6)]"
-          >
-            Book a Free Trial
-            <ArrowRight size={15} />
-          </Link>
-        </div>
-        <p className="mt-4 text-[0.8rem] text-[rgba(23,29,40,0.38)]">First lesson free · No lock-in contract</p>
-      </FadeInSection>
     </motion.div>
   );
 };

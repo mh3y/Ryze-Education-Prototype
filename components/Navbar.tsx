@@ -43,8 +43,8 @@ const Navbar: React.FC = () => {
   const menuPanelId = 'ryze-mobile-nav-panel';
   const brandLogoUrl =
     'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Book a Free Trial';
-  const mobileEnrolLabel = 'Book a Free Trial';
+  const bookConsultationLabel = 'Enrol Now';
+  const mobileEnrolLabel = 'Enrol Now';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: ROUTES.HOW_IT_WORKS, desc: 'Our process explained.' },
@@ -391,14 +391,14 @@ const Navbar: React.FC = () => {
                 >
                   Call +61 413 885 839
                 </a>
-                {/* Portal Sign In — quiet text link */}
+                {/* Portal Sign In */}
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-2 rounded-full px-3 py-2.5 text-[0.92rem] font-medium text-[rgba(248,243,234,0.45)] transition-colors hover:text-[rgba(248,243,234,0.8)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#5865F2]/30 bg-[#5865F2]/12 px-5 py-3 text-[0.9rem] font-semibold text-[#7b8ef7] transition-colors hover:bg-[#5865F2]/20 hover:text-[#9aa4f9]"
                   onClick={() => setIsOpen(false)}
                 >
                   <LogIn size={15} />
-                  Sign in to Portal
+                  Sign In to Portal
                 </Link>
                 <PrimaryCTA
                   page="nav"
@@ -544,17 +544,19 @@ const Navbar: React.FC = () => {
                   {t('Learning Style')}
                 </NavLink>
                 <div className={navDividerClass} aria-hidden="true" />
-                {/* Portal Sign In — quiet far-right text link, not a CTA */}
+                {/* Portal Sign In */}
                 <Link
                   to="/login"
-                  className={`${focusRingClass} inline-flex items-center gap-1 whitespace-nowrap rounded-full text-[0.82rem] font-medium tracking-[0.01em] transition-colors duration-300 ${
-                    useInverseRestState
-                      ? 'text-white/50 hover:text-white/85'
-                      : 'text-[#171d28]/40 hover:text-[#171d28]/70'
+                  className={`${focusRingClass} inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[0.85rem] font-semibold tracking-[0.01em] transition-all duration-300 ${
+                    isSolidNav
+                      ? 'border-[#5865F2]/25 bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2]/18'
+                      : useInverseRestState
+                        ? 'border-white/20 bg-white/10 text-white/90 hover:bg-white/18'
+                        : 'border-[#5865F2]/25 bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2]/18'
                   }`}
                 >
-                  <LogIn size={12} />
-                  Portal
+                  <LogIn size={13} />
+                  Sign In
                 </Link>
                 <PrimaryCTA
                   page="nav"

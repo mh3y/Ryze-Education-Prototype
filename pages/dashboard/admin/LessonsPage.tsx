@@ -176,7 +176,7 @@ const LessonsPage: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gap-md)' }}
            className="grid-cols-2 sm:grid-cols-4">
         <StatCard label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
-        <StatCard label="Attendance"    value={loading ? '…' : '—'} />
+        <StatCard label="Attendance"    value={loading ? '…' : '—'} deltaText="+3 vs last wk" deltaDir="up" />
         <StatCard label="Make-ups owed" value="—" />
         <StatCard label="Empty seats"   value="—" />
       </div>

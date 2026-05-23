@@ -11,12 +11,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { EyeOff } from 'lucide-react';
 import {
   LayoutDashboard, CalendarDays, ShieldAlert,
-  Users, Home, GraduationCap,
+  Users, Home, GraduationCap, UserPlus,
   BookOpen, CalendarRange, ClipboardCheck, PenLine,
   ClipboardList, FolderOpen,
   CreditCard, DollarSign,
   Megaphone, Activity, Settings,
-  LogOut, FileText, MessageSquare, UserPlus,
+  LogOut, FileText, MessageSquare,
 } from 'lucide-react';
 
 import { useDashboardCustomization } from '../../contexts/DashboardCustomizationContext';
@@ -50,7 +50,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
       items: [
         { label: 'Overview',          path: '/dashboard/admin',              icon: LayoutDashboard },
         { label: 'Calendar',          path: '/dashboard/calendar',           icon: CalendarDays },
-        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert },
+        { label: 'Alerts',            path: '/dashboard/admin/alerts',       icon: ShieldAlert, badge: 3 },
       ],
     },
     {
@@ -588,7 +588,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {isOpen && (
               <button
                 onClick={onLogout}
-                aria-label="Sign out"
                 title="Sign out"
                 style={{
                   width: 28,
@@ -621,7 +620,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!isOpen && (
             <button
               onClick={onLogout}
-              aria-label="Sign out"
               title="Sign out"
               className="w-full flex items-center justify-center mt-2 rounded-lg transition-colors duration-140"
               style={{

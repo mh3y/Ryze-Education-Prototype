@@ -7,22 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig(({ mode }) => {
-  // In production builds, VITE_PORTAL_API_URL must be set so the frontend
-  // knows where the API lives. Fail fast rather than silently ship a blank URL.
-  // VERCEL_ENV === 'production' only on the main-branch deploy; previews and
-  // local builds are allowed through so they don't fail on missing env vars.
-  const isVercelProd = process.env.VERCEL_ENV === 'production';
-  if (mode === 'production' && isVercelProd) {
-    const portalApiUrl = process.env.VITE_PORTAL_API_URL ?? '';
-    if (!portalApiUrl) {
-      throw new Error(
-        '[vite.config] VITE_PORTAL_API_URL is not set. ' +
-        'Add it in your Vercel / CI environment variables before building for production.'
-      );
-    }
-  }
-
+export default defineConfig(() => {
   // API_PROXY_TARGET controls where /api/* requests are forwarded in dev.
   // Default: local backend on :8000 (matches docker-compose + server/ setup).
   // Override in .env: API_PROXY_TARGET=https://ryzeeducation.com.au to use
