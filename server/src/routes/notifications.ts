@@ -17,6 +17,33 @@ import { requireAuth, requireAdminOnly } from '../auth/middleware';
 import { generateAll } from '../services/notificationService';
 
 export const notificationsRouter = Router();
+
+// ── POST /api/notifications/generate-cron ─────────────────────────────────────
+// MUST be registered before notificationsRouter.use(requireAuth) below so that
+// the JWT middleware does not intercept it.  The cron job authenticates with a
+// static CRON_SECRET bearer token instead of a user session cookie.
+
+notificationsRouter.post('/generate-cron', async (req, res) => {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    res.status(501).json({ detail: 'CRON_SECRET not configured' });
+    return;
+  }
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ') || header.slice(7) !== cronSecret) {
+    res.status(401).json({ detail: 'Invalid cron secret' });
+    return;
+  }
+  try {
+    const result = await generateAll();
+    console.log('[notify-cron] external trigger →', result);
+    res.json(result);
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// All routes below this line require a valid user session.
 notificationsRouter.use(requireAuth);
 
 // ── GET /api/notifications ────────────────────────────────────────────────────
@@ -87,32 +114,6 @@ notificationsRouter.get('/unread-count', async (req, res) => {
 notificationsRouter.post('/generate', requireAdminOnly, async (_req, res) => {
   try {
     const result = await generateAll();
-    res.json(result);
-  } catch (e: any) {
-    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
-  }
-});
-
-// ── POST /api/notifications/generate-cron ─────────────────────────────────────
-// Accepts a static CRON_SECRET bearer token instead of a user JWT.
-// Intended for GitHub Actions / external schedulers that cannot hold a session.
-// Set CRON_SECRET to a strong random string in server .env (same pattern as
-// BOT_API_SECRET).  If CRON_SECRET is not set this endpoint returns 501.
-
-notificationsRouter.post('/generate-cron', async (req, res) => {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    res.status(501).json({ detail: 'CRON_SECRET not configured' });
-    return;
-  }
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ') || header.slice(7) !== cronSecret) {
-    res.status(401).json({ detail: 'Invalid cron secret' });
-    return;
-  }
-  try {
-    const result = await generateAll();
-    console.log('[notify-cron] external trigger →', result);
     res.json(result);
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

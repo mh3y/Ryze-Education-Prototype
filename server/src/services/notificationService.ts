@@ -48,6 +48,10 @@ async function dedupExists(opts: {
   entity_id:  number;
   windowMs:   number;
 }): Promise<boolean> {
+  // Intentionally does NOT filter by read=false.
+  // A notification that has been read still counts as "already sent" within the
+  // dedup window.  Without this, marking a notification read would allow the
+  // hourly scheduler to recreate the same notification immediately.
   const windowStart = new Date(Date.now() - opts.windowMs);
 
   if (opts.user_id !== undefined) {
@@ -55,7 +59,6 @@ async function dedupExists(opts: {
       SELECT id FROM "Notification"
       WHERE  type       = ${opts.type}
       AND    user_id    = ${opts.user_id}
-      AND    read       = false
       AND    created_at > ${windowStart}
       AND    (data->>'entity_id')::int = ${opts.entity_id}
       LIMIT  1
@@ -68,7 +71,6 @@ async function dedupExists(opts: {
       SELECT id FROM "Notification"
       WHERE  type       = ${opts.type}
       AND    parent_id  = ${opts.parent_id}
-      AND    read       = false
       AND    created_at > ${windowStart}
       AND    (data->>'entity_id')::int = ${opts.entity_id}
       LIMIT  1
