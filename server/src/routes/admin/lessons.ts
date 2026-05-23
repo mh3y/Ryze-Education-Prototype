@@ -1,6 +1,14 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdmin } from '../../auth/middleware';
+import {
+  generateUnmarkedAttendance,
+  generateUpcomingLessons,
+} from '../../services/notificationService';
+
+function notifyAsync(fn: () => Promise<unknown>): void {
+  fn().catch((e) => console.error('[lessons] notification side-effect error:', e));
+}
 
 export const lessonsRouter = Router();
 lessonsRouter.use(requireAdmin);
@@ -150,6 +158,13 @@ lessonsRouter.post('/', async (req, res) => {
         notes: notes ?? null,
       },
     });
+
+    // If lesson falls within the 25-hour reminder window, notify enrolled students/parents
+    const hoursUntil = (scheduledAt.getTime() - Date.now()) / 3600_000;
+    if (hoursUntil >= 1 && hoursUntil <= 25) {
+      notifyAsync(() => generateUpcomingLessons());
+    }
+
     res.status(201).json({ id: lesson.id, title: lesson.title });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
@@ -180,6 +195,16 @@ lessonsRouter.patch('/:id', async (req, res) => {
     }
 
     await db.lesson.update({ where: { id }, data });
+
+    // Post-mutation notification side-effects (fire-and-forget)
+    if (body.status === 'completed') {
+      // Lesson just completed — attendance is almost certainly all 'unknown'
+      notifyAsync(() => generateUnmarkedAttendance());
+    } else if (body.start_time && !body.status) {
+      // Lesson rescheduled — re-evaluate upcoming reminder window
+      notifyAsync(() => generateUpcomingLessons());
+    }
+
     res.json({ updated: true });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

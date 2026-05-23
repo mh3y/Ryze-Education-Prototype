@@ -1,6 +1,14 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdmin } from '../../auth/middleware';
+import {
+  generateUnmarkedAttendance,
+  resolveNotificationsForEntity,
+} from '../../services/notificationService';
+
+function notifyAsync(fn: () => Promise<unknown>): void {
+  fn().catch((e) => console.error('[attendance] notification side-effect error:', e));
+}
 
 export const attendanceRouter = Router();
 attendanceRouter.use(requireAdmin);
@@ -59,6 +67,22 @@ attendanceRouter.post('/:lessonId/:userId/mark', async (req, res) => {
       create: { lesson_id, student_id, status: status as any, notes: notes ?? null },
       update: { status: status as any, notes: notes ?? null },
     });
+
+    // Post-mutation notification side-effects (fire-and-forget)
+    notifyAsync(async () => {
+      // Check if this lesson still has any unknown attendance records
+      const unknownCount = await db.attendance.count({
+        where: { lesson_id, status: 'unknown' },
+      });
+      if (unknownCount === 0) {
+        // Lesson fully marked — resolve any outstanding attendance notifications
+        await resolveNotificationsForEntity('attendance_unmarked', lesson_id);
+      } else {
+        // Still has unknown records — refresh notifications (dedup prevents spam)
+        await generateUnmarkedAttendance();
+      }
+    });
+
     res.json({ id: record.id, status: record.status });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

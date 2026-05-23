@@ -404,6 +404,38 @@ export async function generateAdminAlerts(): Promise<number> {
 }
 
 // ---------------------------------------------------------------------------
+// resolveNotificationsForEntity
+// Mark all unread notifications of a specific type+entity as read.
+// Called when the source condition is resolved so stale notifications
+// don't sit unread after the underlying issue is fixed.
+//
+// Examples:
+//   payment paid      → resolveNotificationsForEntity('overdue_payment', paymentId)
+//   attendance marked → resolveNotificationsForEntity('attendance_unmarked', lessonId)
+//   alert resolved    → resolveNotificationsForEntity('admin_alert', alertId)
+// ---------------------------------------------------------------------------
+
+export async function resolveNotificationsForEntity(
+  type: string,
+  entityId: number,
+): Promise<number> {
+  try {
+    const result = await db.$executeRaw(Prisma.sql`
+      UPDATE "Notification"
+      SET    read    = true,
+             read_at = NOW()
+      WHERE  type      = ${type}
+      AND    read      = false
+      AND    (data->>'entity_id')::int = ${entityId}
+    `);
+    return result;
+  } catch (e) {
+    console.error(`[notifService] resolveNotificationsForEntity(${type}, ${entityId}) error:`, e);
+    return 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // generateAll — run every generator and return per-type counts
 // ---------------------------------------------------------------------------
 

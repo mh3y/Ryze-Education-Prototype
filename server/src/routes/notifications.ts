@@ -93,6 +93,32 @@ notificationsRouter.post('/generate', requireAdminOnly, async (_req, res) => {
   }
 });
 
+// ── POST /api/notifications/generate-cron ─────────────────────────────────────
+// Accepts a static CRON_SECRET bearer token instead of a user JWT.
+// Intended for GitHub Actions / external schedulers that cannot hold a session.
+// Set CRON_SECRET to a strong random string in server .env (same pattern as
+// BOT_API_SECRET).  If CRON_SECRET is not set this endpoint returns 501.
+
+notificationsRouter.post('/generate-cron', async (req, res) => {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    res.status(501).json({ detail: 'CRON_SECRET not configured' });
+    return;
+  }
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ') || header.slice(7) !== cronSecret) {
+    res.status(401).json({ detail: 'Invalid cron secret' });
+    return;
+  }
+  try {
+    const result = await generateAll();
+    console.log('[notify-cron] external trigger →', result);
+    res.json(result);
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // ── PATCH /api/notifications/:id/read ────────────────────────────────────────
 
 notificationsRouter.patch('/:id/read', async (req, res) => {

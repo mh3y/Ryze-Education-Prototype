@@ -11,7 +11,14 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdminOnly } from '../../auth/middleware';
-import { generateAll as generateAllNotifications } from '../../services/notificationService';
+import {
+  generateAll as generateAllNotifications,
+  resolveNotificationsForEntity,
+} from '../../services/notificationService';
+
+function notifyAsync(fn: () => Promise<unknown>): void {
+  fn().catch((e) => console.error('[alerts] notification side-effect error:', e));
+}
 
 export const alertsRouter = Router();
 alertsRouter.use(requireAdminOnly);
@@ -202,6 +209,8 @@ alertsRouter.patch('/alerts/:id/resolve', async (req, res) => {
       where: { id },
       data: { status: 'resolved', resolved_at: new Date() },
     });
+    // Mark any in-app notifications for this alert as read so they disappear from the feed
+    notifyAsync(() => resolveNotificationsForEntity('admin_alert', id));
     res.json({ resolved: true });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
@@ -222,6 +231,8 @@ alertsRouter.patch('/alerts/:id/dismiss', async (req, res) => {
       where: { id },
       data: { status: 'dismissed' },
     });
+    // Mark any in-app notifications for this alert as read
+    notifyAsync(() => resolveNotificationsForEntity('admin_alert', id));
     res.json({ dismissed: true });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

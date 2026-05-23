@@ -1,0 +1,41 @@
+name: Nightly notification generation
+
+# Runs at 8 PM UTC daily = approx 6 AM AEST (7 AM AEDT).
+# This is a belt-and-suspenders backup to the server-side hourly setInterval.
+# If the server restarts and the interval hasn't fired yet, this guarantees
+# at least one daily generation run.
+#
+# Required GitHub Actions secrets:
+#   PORTAL_API_URL   — e.g. https://api.ryze.education  (no trailing slash)
+#   CRON_SECRET      — must match CRON_SECRET in server .env
+
+on:
+  schedule:
+    - cron: '0 20 * * *'   # 8 PM UTC daily
+  workflow_dispatch:        # allow manual trigger from Actions UI
+
+jobs:
+  generate-notifications:
+    name: Generate notifications
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: POST /api/notifications/generate-cron
+        run: |
+          response=$(curl -s -o /tmp/notif_response.json -w "%{http_code}" \
+            -X POST "${{ secrets.PORTAL_API_URL }}/api/notifications/generate-cron" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30)
+
+          echo "HTTP status: $response"
+          echo "Response body:"
+          cat /tmp/notif_response.json
+
+          if [ "$response" -ne 200 ]; then
+            echo "❌ Notification generation failed (HTTP $response)"
+            exit 1
+          fi
+
+          total=$(cat /tmp/notif_response.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('total', 0))")
+          echo "✅ Generated $total new notifications"
