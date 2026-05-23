@@ -69,6 +69,7 @@ enum PaymentFrequency {
 
 model User {
   id              Int       @id @default(autoincrement())
+  display_id      String?   @unique  // e.g. RYZ-S-0001 | RYZ-T-0001 | RYZ-A-0001 — assigned by DB trigger
   discord_user_id String?   @unique
   email           String?   @unique
   full_name       String
@@ -114,6 +115,7 @@ model User {
 
 model Parent {
   id                Int       @id @default(autoincrement())
+  display_id        String?   @unique  // e.g. RYZ-P-0001 — assigned by DB trigger
   first_name        String
   last_name         String
   email             String    @unique

@@ -24,6 +24,7 @@ tutorsRouter.use(requireAdminOnly);
 function tutorToItem(t: any) {
   return {
     id: t.id,
+    display_id: t.display_id ?? null,
     discord_user_id: t.discord_user_id ? Number(t.discord_user_id) : null,
     full_name: t.full_name,
     email: t.email ?? null,

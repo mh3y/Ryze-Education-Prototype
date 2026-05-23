@@ -69,6 +69,7 @@ export interface ParentDetail extends ParentListItem {
 // Tutors
 export interface TutorListItem {
   id: number;
+  display_id: string | null;
   discord_user_id: number | null;
   full_name: string;
   email: string | null;
@@ -92,6 +93,7 @@ export interface TutorDetail extends TutorListItem {
 // Students
 export interface StudentListItem {
   id: number;
+  display_id: string | null;
   discord_user_id: number;
   full_name: string;
   email: string | null;
@@ -103,6 +105,7 @@ export interface StudentListItem {
 
 export interface StudentDetail {
   id: number;
+  display_id: string | null;
   discord_user_id: string | null;
   full_name: string;
   email: string | null;

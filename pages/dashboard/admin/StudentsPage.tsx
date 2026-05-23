@@ -147,6 +147,7 @@ const StudentsPage: React.FC = () => {
     const colours = ['', 'blue', 'green', 'purple', 'rose'];
     return {
       id: s.id,
+      display_id: s.display_id ?? `RYZ-S-${String(s.id).padStart(4, '0')}`,
       name: s.full_name,
       year: '',
       class: '',
@@ -358,7 +359,7 @@ const StudentsPage: React.FC = () => {
                         <div>
                           <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{s.name}</div>
                           <div style={{ fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
-                            ID #RYZ-{String(s.id).padStart(4, '0')}
+                            {s.display_id}
                           </div>
                         </div>
                       </div>

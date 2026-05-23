@@ -227,7 +227,7 @@ const TutorsPage: React.FC = () => {
                       <div>
                         <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{t.full_name}</div>
                         <div style={{ fontSize: 12, color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)', fontFeatureSettings: '"tnum" 1' }}>
-                          ID #{t.id}
+                          {t.display_id ?? `RYZ-T-${String(t.id).padStart(4, '0')}`}
                         </div>
                       </div>
                     </div>
