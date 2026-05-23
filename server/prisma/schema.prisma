@@ -63,6 +63,16 @@ enum PaymentFrequency {
   custom
 }
 
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  trial_scheduled
+  trial_done
+  enrolled
+  lost
+}
+
 // ============================================================================
 // USERS — all Discord-linked portal users (admins, tutors, students)
 // ============================================================================
@@ -673,6 +683,38 @@ model Alert {
   @@index([alert_type])
   @@index([created_at])
   @@index([related_entity_type, related_entity_id])
+}
+
+// ============================================================================
+// LEADS — enquiries from the public marketing contact form
+// Written by public POST /api/leads (no auth required).
+// Managed in admin CRM at /dashboard/admin/leads.
+// ============================================================================
+
+model Lead {
+  id                  Int        @id @default(autoincrement())
+  name                String
+  email               String
+  phone               String?
+  message             String?
+  source              String     @default("website")  // website | referral | social | other
+  page                String?                         // which page the form was on
+  utm_source          String?
+  utm_medium          String?
+  utm_campaign        String?
+  utm_content         String?
+  status              LeadStatus @default(new)
+  assigned_to         Int?       // admin User.id
+  notes               String?
+  contacted_at        DateTime?
+  converted_at        DateTime?
+  converted_user_id   Int?       // User.id after enrollment
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
+
+  @@index([status])
+  @@index([created_at])
+  @@index([email])
 }
 
 // ============================================================================

@@ -1044,3 +1044,52 @@ export const adminApi = {
     return del(`/bot-jobs/${id}`);
   },
 };
+
+// ---------------------------------------------------------------------------
+// Leads — /api/leads (public write, admin read)
+// Uses a separate URL builder because the endpoint is NOT under /api/admin.
+// ---------------------------------------------------------------------------
+
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'trial_scheduled' | 'trial_done' | 'enrolled' | 'lost';
+
+export interface Lead {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  source: string;
+  page: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  status: LeadStatus;
+  assigned_to: number | null;
+  notes: string | null;
+  contacted_at: string | null;
+  converted_at: string | null;
+  converted_user_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+function buildLeadsUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
+  const url = new URL(`${BASE_URL}/api/leads${path}`, window.location.origin);
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
+    });
+  }
+  return url.toString();
+}
+
+export const leadsApi = {
+  getLeads(params?: { status?: LeadStatus; skip?: number; limit?: number }): Promise<Paginated<Lead>> {
+    return portalFetch(buildLeadsUrl('', params as Record<string, any>), { method: 'GET' });
+  },
+
+  updateLead(id: number, data: Partial<Pick<Lead, 'status' | 'notes' | 'assigned_to' | 'contacted_at' | 'converted_at' | 'converted_user_id'>>): Promise<Lead> {
+    return portalFetch(buildLeadsUrl(`/${id}`), { method: 'PATCH', body: JSON.stringify(data) });
+  },
+};

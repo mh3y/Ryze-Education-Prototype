@@ -64,6 +64,7 @@ const AuditLogPage        = lazy(() => import('./pages/dashboard/admin/AuditLogP
 const TutorsPage          = lazy(() => import('./pages/dashboard/admin/TutorsPage'));
 const TutorDetail         = lazy(() => import('./pages/dashboard/admin/TutorDetail'));
 const MessagesPage        = lazy(() => import('./pages/dashboard/admin/MessagesPage'));
+const LeadsPage           = lazy(() => import('./pages/dashboard/admin/LeadsPage'));
 const SettingsPage        = lazy(() => import('./pages/dashboard/SettingsPage'));
 const CalendarPage        = lazy(() => import('./pages/dashboard/CalendarPage'));
 // Tutor role pages
@@ -443,6 +444,7 @@ const AppContent: React.FC = () => {
               <Route path="alerts"          element={<AlertsPage />} />
               <Route path="resources"       element={<ResourcesPage />} />
               <Route path="announcements"   element={<AnnouncementsPage />} />
+              <Route path="leads"           element={<LeadsPage />} />
               <Route path="tutors"          element={<TutorsPage />} />
               <Route path="tutors/:id"     element={<TutorDetail />} />
               <Route path="audit-log"       element={<AuditLogPage />} />

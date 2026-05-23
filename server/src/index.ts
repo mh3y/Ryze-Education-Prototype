@@ -63,6 +63,7 @@ import { botRouter } from './routes/bot';
 import { notificationsRouter } from './routes/notifications';
 import { uploadRouter } from './routes/upload';
 import { messagesRouter } from './routes/messages';
+import { leadsRouter } from './routes/leads';
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 8000);
@@ -111,6 +112,7 @@ app.use('/api/bot', botRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/leads', leadsRouter);
 
 // 404
 app.use((_req: Request, res: Response) => {

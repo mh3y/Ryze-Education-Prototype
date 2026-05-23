@@ -11,7 +11,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { EyeOff } from 'lucide-react';
 import {
   LayoutDashboard, CalendarDays, ShieldAlert,
-  Users, Home, GraduationCap,
+  Users, Home, GraduationCap, UserPlus,
   BookOpen, CalendarRange, ClipboardCheck, PenLine,
   ClipboardList, FolderOpen,
   CreditCard, DollarSign,
@@ -56,6 +56,7 @@ const NAV: Record<UserRole, NavGroup[]> = {
     {
       group: 'People',
       items: [
+        { label: 'Leads',             path: '/dashboard/admin/leads',        icon: UserPlus },
         { label: 'Students',          path: '/dashboard/admin/students',     icon: Users },
         { label: 'Parents',           path: '/dashboard/admin/parents',      icon: Home },
         { label: 'Tutors',            path: '/dashboard/admin/tutors',       icon: GraduationCap },

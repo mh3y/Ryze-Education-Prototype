@@ -12,6 +12,7 @@ const VARIANTS: Record<string, VariantEntry> = {
   // Payment
   paid:           { cls: 'tag tag--ok' },
   pending:        { cls: 'tag tag--warn' },
+  partial:        { cls: 'tag tag--warn' },
   overdue:        { cls: 'tag tag--danger' },
   waived:         { cls: 'tag' },
   unpaid:         { cls: 'tag tag--danger' },

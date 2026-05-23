@@ -844,7 +844,7 @@ const AdminOverview: React.FC = () => {
                  className="grid-cols-2 sm:grid-cols-3">
               {([
                 { icon: <Users size={16} />,       label: 'Add student',      path: '/dashboard/admin/students?new=1' },
-                { icon: <Calendar size={16} />,    label: 'Schedule lesson',  path: '/dashboard/admin/lessons' },
+                { icon: <Calendar size={16} />,    label: 'Schedule lesson',  path: '/dashboard/admin/lessons?new=1' },
                 { icon: <FileText size={16} />,    label: 'New invoice',      path: '/dashboard/admin/payments' },
                 { icon: <Megaphone size={16} />,   label: 'Announcement',     path: '/dashboard/admin/announcements' },
                 { icon: <GraduationCap size={16}/>,label: 'Add tutor',        path: '/dashboard/admin/tutors' },
