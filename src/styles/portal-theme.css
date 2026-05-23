@@ -1079,8 +1079,26 @@ body {
 .ryze-portal .row--4 { grid-template-columns: repeat(4, 1fr); }
 .ryze-portal .row--12-5 { grid-template-columns: 7fr 5fr; }
 .ryze-portal .row--8-4 { grid-template-columns: 8fr 4fr; }
+/* Row grids — tiered responsive system (see §RESPONSIVE ARCHITECTURE below) */
 @media (max-width: 1100px) {
-  .ryze-portal .row--2, .ryze-portal .row--3, .ryze-portal .row--4, .ryze-portal .row--12-5, .ryze-portal .row--8-4 { grid-template-columns: 1fr; }
+  /* 4-col → 2×2 at 1100px (stat cards stay compact, not single-column) */
+  .ryze-portal .row--4 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 1023px) {
+  /* Asymmetric grids collapse at tablet */
+  .ryze-portal .row--12-5,
+  .ryze-portal .row--8-4 { grid-template-columns: 1fr; }
+  /* 3-col → 2-col at tablet */
+  .ryze-portal .row--3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 767px) {
+  /* 2-col and 3-col → 1-col on phones; 4-col stays 2×2 for stat tile pairs */
+  .ryze-portal .row--2,
+  .ryze-portal .row--3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 479px) {
+  /* Very small phones: all grids go single column */
+  .ryze-portal .row--4 { grid-template-columns: 1fr; }
 }
 
 /* ── Misc ──────────────────────────────────────────────── */
@@ -2181,4 +2199,385 @@ body {
 .ryze-portal[data-tnum="true"] {
   font-feature-settings: "tnum" 1;
   font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   RESPONSIVE ARCHITECTURE
+   ── Breakpoint Reference ─────────────────────────────────────
+     < 480px   xs  very small phones (iPhone SE, Galaxy A)
+   480–767px   sm  standard phones (iPhone 14, Pixel 7)
+   768–1023px  md  tablets (iPad portrait, iPad Air)
+  1024–1279px  lg  tablet landscape / small laptop
+  1280px+      xl  desktop (default density assumed)
+
+   Grid rows — see the tiered system in §Two-column grid above.
+   Spacing  — CSS variable overrides cascade: xl → lg → md → sm.
+   ============================================================ */
+
+/* ── §1 Responsive Spacing Tokens ─────────────────────────── */
+/* Tablet: reduce density-agnostic padding so nothing overflows */
+@media (max-width: 1023px) {
+  .ryze-portal,
+  .ryze-portal[data-density="airy"],
+  .ryze-portal[data-density="balanced"] {
+    --pad-page-x: 24px;
+    --pad-page-y: 24px;
+    --card-pad: 18px;
+    --gap-md: 16px;
+    --gap-lg: 22px;
+  }
+  .ryze-portal[data-density="dense"] {
+    --pad-page-x: 16px;
+    --pad-page-y: 16px;
+  }
+}
+
+/* Mobile: override ALL density variants — 40px padding on a 375px
+   viewport leaves only 295px of content width, which is too narrow. */
+@media (max-width: 767px) {
+  .ryze-portal,
+  .ryze-portal[data-density="airy"],
+  .ryze-portal[data-density="balanced"],
+  .ryze-portal[data-density="dense"] {
+    --pad-page-x: 16px;
+    --pad-page-y: 20px;
+    --card-pad: 16px;
+    --gap-md: 12px;
+    --gap-lg: 18px;
+    --row-h: 48px;
+  }
+}
+
+/* ── §2 Touch Targets (min 44×44px on mobile) ──────────────── */
+@media (max-width: 767px) {
+  /* Primary buttons */
+  .ryze-portal .btn {
+    height: 44px;
+    padding: 0 16px;
+  }
+  /* Icon-only buttons in topbar */
+  .ryze-portal .top__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+  /* Sidebar nav items */
+  .ryze-portal .nav-item {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+  /* Settings nav items */
+  .ryze-portal .settings-nav__item {
+    min-height: 44px;
+    padding: 12px 10px;
+  }
+  /* Toolbar filter chips */
+  .ryze-portal .toolbar__chip {
+    height: 44px;
+    padding: 0 14px;
+  }
+  /* Segmented control tabs */
+  .ryze-portal .seg__btn {
+    padding: 9px 16px;
+    min-height: 38px;
+  }
+  /* Row action icons (edit/delete in table rows) */
+  .ryze-portal .row-act {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* ── §3 Topbar ─────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .ryze-portal .top {
+    padding: 0 var(--pad-page-x);
+    gap: 10px;
+  }
+  .ryze-portal .top__right {
+    gap: 6px;
+  }
+  /* Remove decorative divider between icons and avatar on small screens */
+  .ryze-portal .top__divider {
+    display: none;
+  }
+  /* Hide name/role text — avatar alone is sufficient on mobile */
+  .ryze-portal .top__me-meta {
+    display: none;
+  }
+  .ryze-portal .top__crumbs {
+    max-width: 55%;
+    font-size: 12px;
+  }
+}
+
+/* ── §4 Page Header ────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .ryze-portal .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: var(--gap-md);
+  }
+  .ryze-portal .page-head__actions {
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+  .ryze-portal .page-head__title {
+    font-size: clamp(26px, 8vw, 38px);
+  }
+  .ryze-portal .page-head--compact .page-head__title {
+    font-size: clamp(18px, 5.5vw, 26px);
+  }
+}
+
+/* ── §5 Toolbar (above tables) ─────────────────────────────── */
+@media (max-width: 767px) {
+  .ryze-portal .toolbar {
+    padding: 10px 16px;
+    gap: 8px;
+  }
+  /* Remove fixed min-width — was 240px and caused horizontal overflow */
+  .ryze-portal .toolbar__search {
+    min-width: 0;
+    flex: 1;
+    height: 40px;
+  }
+}
+
+/* ── §6 Input Fields ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Remove 220px min-width that forces horizontal overflow in forms */
+  .ryze-portal .field {
+    height: 44px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* iOS Safari auto-zooms any input with font-size < 16px on focus,
+     which disrupts the layout and user flow. Setting ≥ 16px prevents it.
+     This applies to both .field inputs and inline-styled modal inputs. */
+  .ryze-portal input,
+  .ryze-portal select,
+  .ryze-portal textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ── §7 Cards ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .ryze-portal .card__head {
+    padding: var(--card-pad, 16px);
+  }
+  /* Settings card: reduce horizontal padding from 24px to 16px */
+  .ryze-portal .s-card {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .ryze-portal .s-card__head {
+    padding: 14px 16px 12px;
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+  /* Reduce empty state padding */
+  .ryze-portal .empty {
+    padding: 36px 16px;
+  }
+}
+
+/* ── §8 Lesson Row ─────────────────────────────────────────── */
+/* 3-col (time | content | action) → 2-col on small phones      */
+@media (max-width: 599px) {
+  .ryze-portal .lesson-row {
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    padding: 12px 16px;
+  }
+  /* Push the action/tag column below the content */
+  .ryze-portal .lesson-row > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── §9 Alert Row ──────────────────────────────────────────── */
+/* Remove auto-width timestamp column on small phones           */
+@media (max-width: 599px) {
+  .ryze-portal .alert-row {
+    grid-template-columns: 32px 1fr;
+    gap: 8px 12px;
+    padding: 12px 16px;
+  }
+  /* Timestamp shifts below the text content */
+  .ryze-portal .alert-row > :last-child {
+    grid-column: 2 / 3;
+    margin-top: 2px;
+  }
+}
+
+/* ── §10 Quick-Actions Grid ────────────────────────────────── */
+/* 6-col → 3-col → 2-col as viewport narrows */
+@media (max-width: 767px) {
+  .ryze-portal .quick__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 499px) {
+  .ryze-portal .quick__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── §11 Danger Zone Rows ──────────────────────────────────── */
+@media (max-width: 599px) {
+  .ryze-portal .danger-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+  }
+}
+
+/* ── §12 Save Bar ──────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .ryze-portal .save-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    bottom: 12px;
+    padding: 12px 16px;
+  }
+  .ryze-portal .save-bar__btns {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* ── §13 Sessions List ─────────────────────────────────────── */
+@media (max-width: 599px) {
+  .ryze-portal .sess-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+}
+
+/* ── §14 Table Footer / Pagination ────────────────────────── */
+@media (max-width: 599px) {
+  .ryze-portal .table-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+}
+
+/* ── §15 Notification Matrix ───────────────────────────────── */
+/* Tighten the 3 channel columns from 100px → 48px on mobile   */
+@media (max-width: 599px) {
+  .ryze-portal .ntable__head,
+  .ryze-portal .ntable__row {
+    grid-template-columns: 1fr 48px 48px 48px;
+    padding: 10px 12px;
+    gap: 6px;
+  }
+}
+
+/* ── §16 Stat Tiles ────────────────────────────────────────── */
+/* Scale down the display number on very small phones where
+   two stat cards sit side-by-side at ~160px each               */
+@media (max-width: 479px) {
+  .ryze-portal .stat__value {
+    font-size: 28px;
+  }
+  .ryze-portal .stat {
+    min-height: 110px;
+    padding: 14px 14px;
+    gap: 10px;
+  }
+}
+
+/* ── §17 Settings Nav — horizontal scroll on mobile ─────────── */
+/* At ≤1100px the settings-shell already stacks nav above content.
+   On mobile we convert it from a vertical list into a horizontal
+   scrollable tab strip.                                         */
+@media (max-width: 767px) {
+  .ryze-portal .settings-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px;
+    gap: 2px;
+    border-radius: 10px;
+    position: relative !important;
+    top: 0 !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ryze-portal .settings-nav::-webkit-scrollbar { display: none; }
+  .ryze-portal .settings-nav__head,
+  .ryze-portal .settings-nav__foot { display: none; }
+  .ryze-portal .settings-nav__list {
+    flex-direction: row;
+    gap: 2px;
+    min-width: max-content;
+  }
+  /* Compact each tab item to icon + label (no description, no chevron) */
+  .ryze-portal .settings-nav__item {
+    grid-template-columns: 16px auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 9px 12px;
+    min-height: 40px;
+  }
+  .ryze-portal .settings-nav__desc,
+  .ryze-portal .settings-nav__chev { display: none; }
+}
+
+/* ── §18 Scrollable Tables on Mobile ──────────────────────── */
+/* Tables inside .card--flush scroll horizontally so columns
+   never compress to unreadable widths on phones.               */
+@media (max-width: 767px) {
+  .ryze-portal .card--flush {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Preserve a minimum column width so no column collapses to 0 */
+  .ryze-portal .table {
+    min-width: 540px;
+  }
+}
+
+/* ── §19 Shell grid (static/preview contexts) ──────────────── */
+/* The React DashboardLayout already switches to 1-col via JS.
+   This ensures the CSS .app class behaves the same in static
+   previews and Storybook.                                       */
+@media (max-width: 767px) {
+  .ryze-portal .app {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── §20 Landscape phone adjustments ──────────────────────── */
+/* Short landscape viewports need reduced vertical padding to
+   keep content accessible without constant scrolling.          */
+@media (max-height: 500px) and (max-width: 900px) {
+  .ryze-portal,
+  .ryze-portal[data-density="airy"],
+  .ryze-portal[data-density="balanced"],
+  .ryze-portal[data-density="dense"] {
+    --pad-page-y: 12px;
+    --gap-lg: 14px;
+  }
+  .ryze-portal .page-head {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+  .ryze-portal .empty {
+    padding: 24px 16px;
+  }
 }
