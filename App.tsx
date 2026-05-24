@@ -114,6 +114,66 @@ class StarfieldErrorBoundary extends Component<
   }
 }
 
+/**
+ * Catches render errors in admin pages so a single broken component doesn't blank the entire CRM.
+ * Resets automatically when the user navigates to a different route (see AdminErrorBoundaryWrapper).
+ */
+class DashboardErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[DashboardErrorBoundary] Admin page render error:', error, info.componentStack);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 p-8 text-center">
+          <div className="text-4xl">⚠️</div>
+          <h2 className="text-xl font-semibold text-[var(--text)]">Something went wrong</h2>
+          <p className="max-w-md text-sm text-[var(--text-muted)]">
+            This page encountered an unexpected error. Your data is safe — try reloading or go back to
+            the overview.
+          </p>
+          {(import.meta as any).env?.DEV && this.state.error && (
+            <pre className="max-w-xl overflow-auto rounded bg-red-950/30 p-3 text-left text-xs text-red-400">
+              {this.state.error.message}
+            </pre>
+          )}
+          <div className="flex gap-3">
+            <button
+              onClick={() => this.setState({ hasError: false, error: null })}
+              className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            >
+              Try again
+            </button>
+            <a
+              href="/dashboard/overview"
+              className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--bg-elevated)]"
+            >
+              Go to overview
+            </a>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/** Wraps children in DashboardErrorBoundary, resetting it on each route change. */
+const AdminErrorBoundaryWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { pathname } = useLocation();
+  return <DashboardErrorBoundary key={pathname}>{children}</DashboardErrorBoundary>;
+};
+
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
@@ -180,7 +240,11 @@ const AdminGuard: React.FC = () => {
   if (user.role !== 'admin') {
     return <Navigate to="/dashboard/overview" replace />;
   }
-  return <Outlet />;
+  return (
+    <AdminErrorBoundaryWrapper>
+      <Outlet />
+    </AdminErrorBoundaryWrapper>
+  );
 };
 
 /** Renders a different page component based on the authenticated user's role. */
