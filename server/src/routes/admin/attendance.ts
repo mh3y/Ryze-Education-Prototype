@@ -5,6 +5,7 @@
  *   Scheduled Lesson → Attendance Engine → Raw Discord Evidence → Final Result
  *
  * Endpoints:
+ *   GET  /health                                 — attendance health dashboard (discrepancy detection)
  *   GET  /lessons                                — lesson-based attendance report (main view)
  *   POST /lessons/:lessonId/participants/:userId/override — manual status override
  *   GET  /voice-sessions                         — raw Discord voice feed (audit / debug)
@@ -64,6 +65,161 @@ function serializeDate(d: Date | null | undefined): string | null {
   if (!d) return null;
   return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
+
+// ── GET /api/admin/attendance/health ──────────────────────────────────────────
+//
+// Attendance health check for a given date (AEST). Detects:
+//   • Lessons with no voice evidence at all ("missing_attendance")
+//   • Voice sessions not matched to any lesson participant ("orphan_sessions")
+//   • Bot sync log showing last sync time and status
+//
+// Returns a structured health report suitable for an admin dashboard widget.
+
+attendanceRouter.get('/health', async (req, res) => {
+  try {
+    const dateStr = (req.query.date as string | undefined) ?? todayAEST();
+    const { dayStart, dayEnd } = aestDayBoundaries(dateStr);
+
+    const voiceWindowStart = new Date(dayStart.getTime() - THRESHOLDS.BUFFER_BEFORE_MS);
+    const voiceWindowEnd   = new Date(dayEnd.getTime()   + THRESHOLDS.BUFFER_AFTER_MS);
+
+    // Fetch lessons and voice sessions in parallel
+    const [lessons, allVoiceSessions, lastSyncs] = await Promise.all([
+      db.lesson.findMany({
+        where: {
+          scheduled_at: { gte: dayStart, lt: dayEnd },
+          status:       { not: 'cancelled' },
+        },
+        include: {
+          class: {
+            include: {
+              tutor: { select: { id: true, full_name: true } },
+              enrollments: {
+                where:   { active: true },
+                include: { student: { select: { id: true, full_name: true } } },
+              },
+            },
+          },
+        },
+        orderBy: { scheduled_at: 'asc' },
+      }),
+      db.voiceAttendance.findMany({
+        where:   { joined_at: { gte: voiceWindowStart, lt: voiceWindowEnd } },
+        include: { user: { select: { id: true, full_name: true, role: true } } },
+        orderBy: { joined_at: 'asc' },
+      }),
+      // Last 3 sync log entries of each type relevant to attendance
+      db.botSyncLog.findMany({
+        where:   { sync_type: { in: ['voice_sessions', 'lessons', 'members', 'classes'] } },
+        orderBy: { started_at: 'desc' },
+        take: 10,
+      }).catch(() => [] as any[]),
+    ]);
+
+    const matchedSessionIds = new Set<number>();
+
+    // For each lesson, check if any participant has voice evidence
+    const lessonHealth = lessons.map((lesson: any) => {
+      const { windowStart, windowEnd } = lessonWindow({
+        scheduled_at: lesson.scheduled_at,
+        duration_min: lesson.duration_min,
+      });
+
+      const participantIds = new Set<number>();
+      if (lesson.class?.tutor?.id) participantIds.add(lesson.class.tutor.id);
+      for (const e of (lesson.class?.enrollments ?? [])) {
+        participantIds.add(e.student.id);
+      }
+
+      const lessonSessions = allVoiceSessions.filter(
+        (s: any) =>
+          s.crm_user_id != null &&
+          participantIds.has(s.crm_user_id) &&
+          sessionOverlapsWindow(
+            { joined_at: new Date(s.joined_at), left_at: s.left_at ? new Date(s.left_at) : null },
+            windowStart, windowEnd,
+          ),
+      );
+      lessonSessions.forEach((s: any) => matchedSessionIds.add(s.id));
+
+      const hasEvidence    = lessonSessions.length > 0;
+      const enrolledCount  = participantIds.size;
+      const withEvidence   = new Set(lessonSessions.map((s: any) => s.crm_user_id)).size;
+      const missingCount   = enrolledCount - withEvidence;
+
+      return {
+        lesson_id:      lesson.id,
+        lesson_title:   lesson.title,
+        scheduled_at:   lesson.scheduled_at,
+        class_name:     lesson.class?.name ?? 'Unknown',
+        enrolled_count: enrolledCount,
+        with_evidence:  withEvidence,
+        missing_count:  missingCount,
+        has_evidence:   hasEvidence,
+        status:         !hasEvidence && enrolledCount > 0
+          ? 'no_attendance'
+          : missingCount > 0
+          ? 'partial_attendance'
+          : 'ok',
+      };
+    });
+
+    // Orphan sessions: voice activity with no matching lesson participant
+    const orphanSessions = allVoiceSessions
+      .filter((s: any) => !matchedSessionIds.has(s.id))
+      .map((s: any) => ({
+        id:               s.id,
+        discord_username: s.discord_username ?? null,
+        crm_user_name:    s.user?.full_name ?? null,
+        discord_channel:  s.discord_channel ?? null,
+        joined_at:        s.joined_at,
+        left_at:          s.left_at ?? null,
+      }));
+
+    // Summarise sync log by type
+    const syncByType: Record<string, any> = {};
+    for (const entry of lastSyncs) {
+      if (!syncByType[entry.sync_type]) {
+        syncByType[entry.sync_type] = {
+          last_run:  entry.started_at,
+          status:    entry.status,
+          error:     entry.error_message ?? null,
+        };
+      }
+    }
+
+    // Overall health score
+    const totalLessons      = lessonHealth.length;
+    const noAttendance      = lessonHealth.filter((l: any) => l.status === 'no_attendance').length;
+    const partialAttendance = lessonHealth.filter((l: any) => l.status === 'partial_attendance').length;
+    const okLessons         = lessonHealth.filter((l: any) => l.status === 'ok').length;
+
+    const overallStatus =
+      noAttendance > 0   ? 'critical' :
+      partialAttendance > 0 ? 'warning' :
+      totalLessons === 0 ? 'no_lessons' :
+      'healthy';
+
+    res.json({
+      date:   dateStr,
+      status: overallStatus,
+      summary: {
+        total_lessons:        totalLessons,
+        lessons_ok:           okLessons,
+        lessons_no_attendance: noAttendance,
+        lessons_partial:      partialAttendance,
+        voice_sessions_total: allVoiceSessions.length,
+        orphan_sessions:      orphanSessions.length,
+      },
+      lessons:         lessonHealth,
+      orphan_sessions: orphanSessions,
+      sync_log:        syncByType,
+    });
+  } catch (e: any) {
+    console.error('[attendance] health error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
 
 // ── GET /api/admin/attendance/lessons ─────────────────────────────────────────
 //
