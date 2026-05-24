@@ -316,8 +316,8 @@ const LeadsPage: React.FC = () => {
       ) : (
         <DataTable
           columns={columns}
-          rows={filteredLeads}
-          keyExtractor={(l) => l.id}
+          data={filteredLeads}
+          rowKey={(l) => l.id}
           onRowClick={(l) => setSelectedLead(l)}
         />
       )}

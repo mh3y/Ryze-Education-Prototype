@@ -36,6 +36,8 @@ enum AttendanceStatus {
   present
   absent
   late
+  left_early // left more than 10 min before scheduled end
+  partial    // attended but below the presence threshold (< 70%)
   excused
   unknown
 }
