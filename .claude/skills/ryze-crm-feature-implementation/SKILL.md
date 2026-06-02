@@ -1,6 +1,6 @@
 ---
 name: ryze-crm-feature-implementation
-description: Use for any Ryze CRM or admin dashboard work. Triggers on: new admin page, CRM feature, dashboard table, student detail, tutor detail, parent detail, payments, homework, attendance view, progress reports, leads CRM, messages, alerts, announcements, resources, API endpoint, Prisma model change, admin route.
+description: Use automatically for any Ryze CRM or admin dashboard work including new admin page, CRM feature, dashboard table, API endpoint, Prisma model change, role-gated portal feature, student management, tutor management, parent portal, class management, lesson management, homework, payments, progress reports, leads pipeline, messages, alerts, announcements, resources, audit log, or any /dashboard/admin route.
 ---
 
 ## Purpose

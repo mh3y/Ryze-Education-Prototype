@@ -1,6 +1,6 @@
 ---
 name: ryze-attendance-pipeline-triage
-description: Use for any Ryze attendance system issue. Triggers on: attendance not recorded, attendance missing, Discord voice session missing, bot offline, bot sync failure, voice session not pushed, lesson not matched, unmatched voice session, Google Calendar sync, attendanceEngine, late status, partial status, left_early status, missing attendance records, backfill sessions, bot push failed.
+description: Use automatically for any Ryze attendance system issue including attendance not recorded, missing attendance, Discord voice session, bot sync failure, bot offline, VoiceAttendance, voice session not pushed, lesson not matched, unmatched session, Google Calendar sync, attendanceEngine.ts, late status, partial status, left_early status, missing attendance records, backfill sessions, or attendance pipeline investigation.
 ---
 
 ## Purpose
