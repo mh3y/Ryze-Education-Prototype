@@ -1,8 +1,9 @@
 /**
  * useContactForm — shared contact form lifecycle hook.
  *
- * Covers: state management, field validation, FormSubmit submission,
- * Google Ads + Meta CAPI conversion firing, and analytics events.
+ * Covers: state management, field validation, CRM lead capture,
+ * FormSubmit email delivery, Google Ads + Meta CAPI conversion firing,
+ * and analytics events.
  *
  * Pages retain full control of layout, rendering, and field presentation.
  * This hook handles business logic only.
@@ -12,6 +13,7 @@ import { useState } from 'react';
 import { validateEmail, validatePhone } from '../lib/validation';
 import { trackFormSubmission } from '../lib/tracking';
 import { trackEvent } from '../analytics';
+import { captureLeadCRM, readUtmParams } from '../lib/leads';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,39 +48,6 @@ type UseContactFormReturn = {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const FORMSUBMIT_URL = 'https://formsubmit.co/ryzeeducationhq@gmail.com';
-
-/**
- * Silently write the enquiry to the CRM leads table.
- * Never throws — FormSubmit is the user-facing fallback if this fails.
- */
-async function captureLeadSilently(
-  data: ContactFormData,
-  page: string,
-): Promise<void> {
-  try {
-    const apiBase = (import.meta as any).env?.VITE_PORTAL_API_URL ?? '';
-    // Collect UTM params from the current URL if present
-    const sp = new URLSearchParams(window.location.search);
-    await fetch(`${apiBase}/api/leads`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        message: data.message,
-        source: 'website',
-        page,
-        utm_source:   sp.get('utm_source')   ?? undefined,
-        utm_medium:   sp.get('utm_medium')   ?? undefined,
-        utm_campaign: sp.get('utm_campaign') ?? undefined,
-        utm_content:  sp.get('utm_content')  ?? undefined,
-      }),
-    });
-  } catch {
-    // Silently swallow — FormSubmit covers notification delivery
-  }
-}
 
 const DEFAULT_FORM: ContactFormData = {
   name: '',
@@ -140,7 +109,15 @@ export function useContactForm(config: UseContactFormConfig): UseContactFormRetu
     setStatus('sending');
 
     // CRM capture — fire-and-forget. FormSubmit below is the user-facing path.
-    await captureLeadSilently(formData, page);
+    await captureLeadCRM({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      message: formData.message || undefined,
+      source: 'website',
+      page,
+      ...readUtmParams(window.location.search),
+    });
 
     try {
       const response = await fetch(FORMSUBMIT_URL, {

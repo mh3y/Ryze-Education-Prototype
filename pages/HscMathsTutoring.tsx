@@ -21,6 +21,7 @@ import PrimaryCTA from '../components/PrimaryCTA';
 import { Container, TestimonialCard } from '../components/design';
 import { trackEvent } from '../src/analytics';
 import { trackPhoneClick, postMetaConversion } from '../src/lib/tracking';
+import { captureLeadCRM, readUtmParams } from '../src/lib/leads';
 import { validateEmail, validatePhone } from '../src/lib/validation';
 import { testimonials } from '../data/testimonials';
 import { applySeo } from '../src/utils/seo';
@@ -249,8 +250,20 @@ const HscMathsTutoring: React.FC = () => {
 
     setStatus('sending');
 
+    const submission = { ...formData };
+
+    // CRM lead capture — fire-and-forget. FormSubmit below is the user-facing path.
+    void captureLeadCRM({
+      name: submission.name,
+      email: submission.email,
+      phone: submission.phone || undefined,
+      message: `Student level: ${submission.studentLevel}`,
+      source: 'website',
+      page: '/hsc-maths-tutoring',
+      ...readUtmParams(location.search),
+    });
+
     try {
-      const submission = { ...formData };
       const response = await fetch('https://formsubmit.co/ryzeeducationhq@gmail.com', {
         method: 'POST',
         headers: {
