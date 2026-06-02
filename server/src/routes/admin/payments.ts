@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
-import { requireAdmin, requireAdminOnly } from '../../auth/middleware';
+import { requireAdminOnly } from '../../auth/middleware';
 import {
   generateOverduePayments,
   resolveNotificationsForEntity,
@@ -14,7 +14,7 @@ function notifyAsync(fn: () => Promise<unknown>): void {
 // ── Student Payments ──────────────────────────────────────────────────────────
 
 export const studentPaymentsRouter = Router();
-studentPaymentsRouter.use(requireAdmin);
+studentPaymentsRouter.use(requireAdminOnly);
 
 function studentPaymentToItem(p: any) {
   const amountDue       = p.amount_cents / 100;
@@ -273,7 +273,7 @@ studentPaymentsRouter.post('/student-payments/escalate-overdue', requireAdminOnl
 // ── Tutor Payments ────────────────────────────────────────────────────────────
 
 export const tutorPaymentsRouter = Router();
-tutorPaymentsRouter.use(requireAdmin);
+tutorPaymentsRouter.use(requireAdminOnly);
 
 function tutorPaymentToItem(p: any) {
   return {

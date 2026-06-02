@@ -16,7 +16,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../prisma';
-import { requireAuth, requireAdmin } from '../auth/middleware';
+import { requireAuth, requireAdminOnly } from '../auth/middleware';
 import rateLimit from 'express-rate-limit';
 
 export const leadsRouter = Router();
@@ -105,7 +105,7 @@ leadsRouter.post('/', submitLimiter, async (req: Request, res: Response, next: N
 
 // ── GET /api/leads — admin only: list all leads ────────────────────────────
 
-leadsRouter.get('/', requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+leadsRouter.get('/', requireAuth, requireAdminOnly, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { status, skip = '0', limit = '50' } = req.query as Record<string, string>;
 
@@ -129,7 +129,7 @@ leadsRouter.get('/', requireAuth, requireAdmin, async (req: Request, res: Respon
 
 // ── PATCH /api/leads/:id — admin only: update status/notes/assigned_to ────
 
-leadsRouter.patch('/:id', requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+leadsRouter.patch('/:id', requireAuth, requireAdminOnly, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = parseInt(req.params.id, 10);
     const { status, notes, assigned_to, contacted_at, converted_at, converted_user_id } = req.body as Record<string, any>;
