@@ -17,6 +17,7 @@ import PrimaryCTA from '../PrimaryCTA';
 import { Container, TestimonialCard } from '../design';
 import { trackEvent } from '../../src/analytics';
 import { trackPhoneClick, postMetaConversion } from '../../src/lib/tracking';
+import { captureLeadCRM, readUtmParams } from '../../src/lib/leads';
 import { validateEmail, validatePhone } from '../../src/lib/validation';
 import { testimonials } from '../../data/testimonials';
 import { applySeo } from '../../src/utils/seo';
@@ -162,6 +163,18 @@ const ProgramLandingPage: React.FC<{ config: ProgramLandingConfig }> = ({ config
     if (!validatePhone(formData.phone)) return setErrorMessage('Please enter a valid phone number.'), setStatus('error');
 
     setStatus('sending');
+
+    // CRM lead capture — fire-and-forget. FormSubmit below is the user-facing path.
+    void captureLeadCRM({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      message: `Student level: ${formData.studentLevel}`,
+      source: 'website',
+      page: config.path,
+      ...readUtmParams(window.location.search),
+    });
+
     try {
       const response = await fetch('https://formsubmit.co/ryzeeducationhq@gmail.com', {
         method: 'POST',
