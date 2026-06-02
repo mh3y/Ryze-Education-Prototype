@@ -25,7 +25,8 @@ messagesRouter.get('/', async (req, res) => {
 
     if (p.role === 'parent' && p.parent_profile_id) {
       where.parent_id = p.parent_profile_id;
-    } else if (p.role !== 'admin' && p.role !== 'tutor') {
+    } else if (p.role !== 'admin') {
+      // Only admins may list all threads. Tutors, students, and other roles are excluded.
       res.status(403).json({ detail: 'Forbidden' });
       return;
     }

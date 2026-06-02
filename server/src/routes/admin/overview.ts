@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
-import { requireAdmin } from '../../auth/middleware';
+import { requireAdminOnly } from '../../auth/middleware';
 
 export const overviewRouter = Router();
 
@@ -37,7 +37,7 @@ function syncInfo(log: any) {
 
 // ── Legacy /overview-stats (kept for backward compat) ────────────────────────
 
-overviewRouter.get('/overview-stats', requireAdmin, async (_req, res) => {
+overviewRouter.get('/overview-stats', requireAdminOnly, async (_req, res) => {
   try {
     const now = new Date();
     const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
@@ -86,7 +86,7 @@ overviewRouter.get('/overview-stats', requireAdmin, async (_req, res) => {
 
 // ── Comprehensive overview ────────────────────────────────────────────────────
 
-overviewRouter.get('/overview', requireAdmin, async (_req, res) => {
+overviewRouter.get('/overview', requireAdminOnly, async (_req, res) => {
   try {
     const now = new Date();
     const { start: todayStart, end: todayEnd } = sydneyDayBounds(0);
