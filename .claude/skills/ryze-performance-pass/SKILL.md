@@ -1,6 +1,6 @@
 ---
 name: ryze-performance-pass
-description: Use for Ryze public website mobile performance work. Triggers on: PageSpeed, LCP, FCP, PSI score, mobile performance, hero image optimisation, Cloudinary optimisation, Google Fonts, GTM deferral, Meta Pixel deferral, landing page speed, page load time, Core Web Vitals, Vercel Preview speed test.
+description: Use automatically for any Ryze website task involving PageSpeed, PSI score, mobile performance, LCP, FCP, CLS, Core Web Vitals, Cloudinary images, Cloudinary optimisation, hero image, hero section, Google Fonts, GTM deferral, Meta Pixel deferral, analytics loading, third-party scripts, render-blocking resources, bundle size, page load time, mobile landing page speed, or /hsc-maths-tutoring performance optimisation.
 ---
 
 ## Purpose

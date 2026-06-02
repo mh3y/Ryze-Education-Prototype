@@ -1,6 +1,6 @@
 ---
 name: ryze-release-qa
-description: Use for Ryze release validation, pre-merge checks, pre-deploy verification, PR review, and production readiness. Triggers on: PR merge, deploy, release, QA check, push to main, Vercel Preview validation, production readiness, pre-commit review.
+description: Use automatically for Ryze PR review, merge safety check, pre-deploy verification, release validation, production readiness, regression check, QA check, branch review, safe to merge, build safety, typecheck before commit, pre-push check, post-fix validation, or any task that asks whether a change is safe to ship.
 ---
 
 ## Purpose

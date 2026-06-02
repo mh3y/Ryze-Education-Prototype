@@ -44,6 +44,17 @@ npm run db:push           # prisma db push to Supabase (safe, non-destructive)
 npm run db:studio         # Prisma Studio
 ```
 
+## Automatic skill routing
+
+Before starting any non-trivial task, classify the task and invoke the matching skill:
+
+1. **PR, merge, deploy, release, regression check, QA, build safety, safe to merge, production readiness** → use `ryze-release-qa`
+2. **PageSpeed, PSI, LCP, FCP, Cloudinary, hero image, Google Fonts, GTM/Meta deferral, mobile landing page speed, Core Web Vitals** → use `ryze-performance-pass`
+3. **New admin page, CRM feature, API endpoint, Prisma model, students/tutors/parents/classes/lessons/payments/homework/reports/leads/messages/alerts/resources/audit log, role-gated portal feature** → use `ryze-crm-feature-implementation`
+4. **Attendance missing, Discord voice, bot sync, VoiceAttendance, lesson matching, Calendar sync, attendanceEngine.ts, late/partial/left_early status, backfill** → use `ryze-attendance-pipeline-triage`
+
+Do **not** invoke a skill for: simple copy/text changes, single-file obvious fixes, CSS variable tweaks, or renaming a label. Use a normal prompt for those.
+
 ## Non-negotiable rules
 
 1. **Never use raw Tailwind colour utilities** (`text-slate-*`, `bg-gray-*`, `text-yellow-*`, etc.) where semantic CSS tokens exist. Run `npm run lint:colours` to verify.
