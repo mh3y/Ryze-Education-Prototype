@@ -20,6 +20,7 @@
 import { Router } from 'express';
 import { google } from 'googleapis';
 import { requireAdmin } from '../../auth/middleware';
+import { sydneyDayBounds } from '../../utils/timezone';
 
 export const calendarRouter = Router();
 
@@ -41,14 +42,16 @@ function getCalendarClient() {
 }
 
 // ---------------------------------------------------------------------------
-// Normalise a Google Calendar event time field → ISO string
-// For all-day events (date-only strings like "2026-05-28"), append explicit
-// Sydney midnight so Date parsing uses the correct local day instead of UTC
-// midnight (which can roll into the wrong calendar date for AEST/AEDT users).
+// Normalise a Google Calendar event time field → ISO string.
+// For all-day events (date-only strings like "2026-05-28"), resolve the
+// correct Sydney midnight UTC timestamp so the event lands on the right
+// calendar day for both AEST (+10:00) and AEDT (+11:00, Oct–Apr).
+// The former implementation hardcoded +10:00 and was 1h wrong during AEDT.
 // ---------------------------------------------------------------------------
 
 function toISO(s: string): string {
-  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? `${s}T00:00:00+10:00` : s;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  return sydneyDayBounds(0, s).start.toISOString();
 }
 
 // ---------------------------------------------------------------------------
