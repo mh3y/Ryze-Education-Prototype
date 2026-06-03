@@ -436,7 +436,7 @@ const AppContent: React.FC = () => {
             }
           >
             {/* Index: redirect to overview */}
-            <Route index element={<Navigate to="overview" replace />} />
+            <Route index element={<Navigate to="/dashboard/overview" replace />} />
 
             {/* ── LMS routes ── */}
             <Route path="overview" element={
@@ -520,7 +520,7 @@ const AppContent: React.FC = () => {
             </Route>
 
             {/* Catch-all — redirect unknown paths to overview */}
-            <Route path="*" element={<Navigate to="overview" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard/overview" replace />} />
           </Route>
           <Route path={ROUTES.TERMS} element={<PageWrapper><Terms /></PageWrapper>} />
           <Route path={ROUTES.PRIVACY} element={<PageWrapper><Privacy /></PageWrapper>} />
