@@ -268,8 +268,7 @@ const LeadsPage: React.FC = () => {
     <div className="flex flex-col gap-6 p-4 sm:p-6">
       <PageHeader
         title="Leads"
-        subtitle={`${total} enquir${total === 1 ? 'y' : 'ies'} captured from the website`}
-        icon={<Users size={22} />}
+        description={`${total} enquir${total === 1 ? 'y' : 'ies'} captured from the website`}
         actions={
           <button
             onClick={load}
@@ -309,9 +308,9 @@ const LeadsPage: React.FC = () => {
         <ErrorState message={error} onRetry={load} />
       ) : filteredLeads.length === 0 ? (
         <EmptyState
-          icon={<Users size={32} className="text-[var(--text-muted)]" />}
+          icon={Users}
           title="No leads yet"
-          message={search || statusFilter ? 'Try adjusting your filters.' : 'Enquiries submitted via the website will appear here.'}
+          description={search || statusFilter ? 'Try adjusting your filters.' : 'Enquiries submitted via the website will appear here.'}
         />
       ) : (
         <DataTable
