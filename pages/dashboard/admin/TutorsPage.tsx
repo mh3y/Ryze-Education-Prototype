@@ -10,6 +10,7 @@ import { adminApi, TutorListItem } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDeleteModal';
+import { LoadingState, EmptyState, ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -177,26 +178,26 @@ const TutorsPage: React.FC = () => {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={5} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
-                    Loading tutors…
+                  <td colSpan={5}>
+                    <LoadingState size="inline" message="Loading tutors…" />
                   </td>
                 </tr>
               )}
               {error && !loading && (
                 <tr>
-                  <td colSpan={5} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>
-                    {error}
+                  <td colSpan={5}>
+                    <ErrorState message={error} onRetry={load} />
                   </td>
                 </tr>
               )}
               {!loading && !error && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ padding: '48px 22px', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, color: 'var(--fg-muted)' }}>
-                      <GraduationCap size={32} style={{ color: 'var(--fg-faint)' }} />
-                      <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--fg-strong)' }}>No tutors found</div>
-                      <div style={{ fontSize: 13 }}>Add a tutor to get started.</div>
-                    </div>
+                  <td colSpan={5}>
+                    <EmptyState
+                      icon={GraduationCap}
+                      title={searchQuery ? 'No results' : 'No tutors yet'}
+                      description={searchQuery ? 'Try adjusting your search.' : 'Add a tutor to get started.'}
+                    />
                   </td>
                 </tr>
               )}

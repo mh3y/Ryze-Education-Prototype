@@ -13,6 +13,7 @@ import {
   AlertCircle, Clock, ChevronRight, Loader2, ArrowLeft,
 } from 'lucide-react';
 import { parentApi, type MessageThread, type ThreadMessage } from '../../../services/parentApi';
+import { ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -296,9 +297,7 @@ const ThreadDetail: React.FC<{
           </div>
         )}
         {error && !loading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--danger)', fontSize: 13, padding: '20px 0' }}>
-            <AlertCircle size={16} /> {error}
-          </div>
+          <ErrorState message={error} onRetry={load} />
         )}
         {!loading && messages.length === 0 && (
           <div style={{ textAlign: 'center', color: 'var(--fg-muted)', fontSize: 13, padding: '40px 0' }}>
@@ -472,9 +471,7 @@ const MessagesPage: React.FC = () => {
               </div>
             )}
             {error && !loading && (
-              <div style={{ padding: '24px 18px', color: 'var(--danger)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <AlertCircle size={15} /> {error}
-              </div>
+              <ErrorState message={error} onRetry={load} />
             )}
             {!loading && filtered.length === 0 && (
               <div style={{ padding: '48px 18px', textAlign: 'center' }}>
