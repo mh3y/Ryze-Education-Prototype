@@ -56,8 +56,14 @@ export function todaySydney(): string {
  * @param daysOffset  0 = today in Sydney, 1 = tomorrow, 7 = 7 days ahead, etc.
  * @param dateStr     Optional YYYY-MM-DD base date (Sydney). Defaults to today in Sydney.
  *
- * start  = 00:00:00.000 Sydney local time as UTC
- * end    = 23:59:59.999 Sydney local time as UTC (+24h - 1ms from start)
+ * start  = 00:00:00.000 Sydney local time as UTC  (= Sydney midnight)
+ * end    = next Sydney midnight - 1ms as UTC       (= 23:59:59.999 Sydney)
+ *
+ * Using next Sydney midnight (not start + 86400000) means the window is
+ * exactly one Sydney calendar day, even on DST transition days:
+ *   normal day         → 24h window
+ *   DST start (spring) → 23h window (clocks skip 1h forward at ~2am)
+ *   DST end   (fall)   → 25h window (clocks repeat 1h backward at ~3am)
  *
  * Day offset is applied via Date.UTC arithmetic so DST transitions during the
  * offset period never corrupt the result.
@@ -70,12 +76,19 @@ export function sydneyDayBounds(
 
   // Apply offset via UTC so DST drift cannot affect date arithmetic
   const [y, m, d] = base.split('-').map(Number);
-  const target    = new Date(Date.UTC(y, m - 1, d + daysOffset))
+  const target     = new Date(Date.UTC(y, m - 1, d + daysOffset))
     .toISOString()
     .slice(0, 10); // YYYY-MM-DD
+  const nextTarget = new Date(Date.UTC(y, m - 1, d + daysOffset + 1))
+    .toISOString()
+    .slice(0, 10); // YYYY-MM-DD (next calendar day)
 
   const start = sydneyMidnight(target);
-  const end   = new Date(start.getTime() + 86_400_000 - 1); // +24h - 1ms
+  // end = next Sydney midnight - 1ms, NOT start + 86400000 - 1.
+  // On DST transition days the Sydney calendar day is not 24h:
+  //   spring-forward (Oct): 23h day — start + 24h overshoots next midnight
+  //   fall-back (Apr):      25h day — start + 24h falls 1h short
+  const end   = new Date(sydneyMidnight(nextTarget).getTime() - 1);
 
   return { start, end };
 }
