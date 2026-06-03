@@ -5,12 +5,13 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Plus, ArrowUpRight, X, AlertCircle } from 'lucide-react';
+import { CalendarDays, Plus, ArrowUpRight, X, AlertCircle, BookOpen } from 'lucide-react';
 import { adminApi, ClassGroupListItem } from '../../../services/adminApi';
 import { auditLog } from '../../../services/auditLog';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
 import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
+import { EmptyState, ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -268,18 +269,18 @@ const ClassesPage: React.FC = () => {
       )}
 
       {error && !loading && (
-        <div style={{ color: 'var(--danger)', fontSize: 14, padding: 20 }}>{error}</div>
+        <ErrorState message={error} onRetry={load} />
       )}
 
       {/* Class grid */}
-      {!loading && displayClasses.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--fg-muted)' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📚</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No classes yet</div>
-          <div style={{ fontSize: 14 }}>Create your first class to get started.</div>
-        </div>
+      {!loading && !error && displayClasses.length === 0 && (
+        <EmptyState
+          icon={BookOpen}
+          title="No classes yet"
+          description="Create your first class to get started."
+        />
       )}
-      {!loading && (
+      {!loading && !error && (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
