@@ -16,6 +16,7 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdmin } from '../../auth/middleware';
+import { sydneyDayBounds, todaySydney } from '../../utils/timezone';
 import {
   generateUnmarkedAttendance,
   resolveNotificationsForEntity,
@@ -38,16 +39,9 @@ export const attendanceRouter = Router();
 attendanceRouter.use(requireAdmin);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function todayAEST(): string {
-  return new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
-}
-
-function aestDayBoundaries(dateStr: string): { dayStart: Date; dayEnd: Date } {
-  const dayStart = new Date(dateStr + 'T00:00:00+10:00');
-  const dayEnd   = new Date(dayStart.getTime() + 86_400_000);
-  return { dayStart, dayEnd };
-}
+// todaySydney() and sydneyDayBounds() are imported from utils/timezone.ts.
+// They replace the former todayAEST() / aestDayBoundaries() helpers which
+// hardcoded +10:00 and were wrong during AEDT (Sydney +11:00, Oct–Apr).
 
 function toFragment(v: any): RawVoiceFragment {
   return {
@@ -77,8 +71,8 @@ function serializeDate(d: Date | null | undefined): string | null {
 
 attendanceRouter.get('/health', async (req, res) => {
   try {
-    const dateStr = (req.query.date as string | undefined) ?? todayAEST();
-    const { dayStart, dayEnd } = aestDayBoundaries(dateStr);
+    const dateStr = (req.query.date as string | undefined) ?? todaySydney();
+    const { start: dayStart, end: dayEnd } = sydneyDayBounds(0, dateStr);
 
     const voiceWindowStart = new Date(dayStart.getTime() - THRESHOLDS.BUFFER_BEFORE_MS);
     const voiceWindowEnd   = new Date(dayEnd.getTime()   + THRESHOLDS.BUFFER_AFTER_MS);
@@ -228,8 +222,8 @@ attendanceRouter.get('/health', async (req, res) => {
 
 attendanceRouter.get('/lessons', async (req, res) => {
   try {
-    const dateStr = (req.query.date as string | undefined) ?? todayAEST();
-    const { dayStart, dayEnd } = aestDayBoundaries(dateStr);
+    const dateStr = (req.query.date as string | undefined) ?? todaySydney();
+    const { start: dayStart, end: dayEnd } = sydneyDayBounds(0, dateStr);
 
     // Extended window for voice sessions (add buffers to both sides of the day)
     const voiceWindowStart = new Date(dayStart.getTime() - THRESHOLDS.BUFFER_BEFORE_MS);
@@ -515,7 +509,7 @@ attendanceRouter.get('/voice-sessions', async (req, res) => {
 
     const where: any = {};
     if (date) {
-      const { dayStart, dayEnd } = aestDayBoundaries(date);
+      const { start: dayStart, end: dayEnd } = sydneyDayBounds(0, date);
       where.joined_at = { gte: dayStart, lt: dayEnd };
     }
     if (user_id) where.crm_user_id = Number(user_id);

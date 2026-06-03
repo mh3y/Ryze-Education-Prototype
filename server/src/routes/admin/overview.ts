@@ -1,28 +1,15 @@
 import { Router } from 'express';
 import { db } from '../../prisma';
 import { requireAdminOnly } from '../../auth/middleware';
+import { sydneyDayBounds } from '../../utils/timezone';
 
 export const overviewRouter = Router();
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Return start/end of a Sydney calendar day as UTC Date objects.
- *  daysOffset=0 → today, 1 → tomorrow, etc. */
-function sydneyDayBounds(daysOffset = 0): { start: Date; end: Date } {
-  // Use Intl to get the current Sydney date string
-  const now = new Date();
-  const sydneyDateStr = new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'Australia/Sydney',
-    year: 'numeric', month: '2-digit', day: '2-digit',
-  }).format(now);
-  // en-AU gives DD/MM/YYYY
-  const [day, month, year] = sydneyDateStr.split('/');
-  const base = new Date(`${year}-${month}-${day}T00:00:00+10:00`);
-  base.setDate(base.getDate() + daysOffset);
-  const start = new Date(base);
-  const end = new Date(base.getTime() + 86_400_000 - 1); // +24h - 1ms
-  return { start, end };
-}
+// sydneyDayBounds() is imported from utils/timezone.ts.
+// The former inline implementation hardcoded +10:00 (AEST only) when
+// constructing the midnight UTC timestamp; the import correctly handles
+// both AEST (+10:00) and AEDT (+11:00, Oct–Apr).
 
 function syncInfo(log: any) {
   if (!log) return null;
@@ -39,9 +26,10 @@ function syncInfo(log: any) {
 
 overviewRouter.get('/overview-stats', requireAdminOnly, async (_req, res) => {
   try {
-    const now = new Date();
-    const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
-    const todayEnd   = new Date(now); todayEnd.setHours(23, 59, 59, 999);
+    // sydneyDayBounds() gives correct UTC boundaries for the Sydney calendar day,
+    // handling both AEST (+10) and AEDT (+11). The former setHours(0,0,0,0) used
+    // server-local (UTC) midnight which was 10–11 hours wrong on Render (Oregon).
+    const { start: todayStart, end: todayEnd } = sydneyDayBounds();
 
     const [totalStudents, activeClasses, todayLessons, pendingPayments,
            missingReports, openAlerts, recentAlerts] = await Promise.all([
