@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import { db } from '../prisma';
-import { requireAuth } from '../auth/middleware';
+import { requireAuth, requireAdminOnly } from '../auth/middleware';
 
 export const portalRouter = Router();
 
 // ── GET /api/students — used by portalApi.getStudents() ──────────────────────
+// Admin-only: returns all users in the system.
+// Tutors, parents, and students are not permitted — they have role-scoped
+// equivalents under /api/tutor/*, /api/student/portal, /api/parent/portal.
 
-portalRouter.get('/students', requireAuth, async (req, res) => {
+portalRouter.get('/students', requireAdminOnly, async (req, res) => {
   try {
     const limit = Math.min(Number(req.query.limit ?? 100), 500);
     const skip  = Number(req.query.skip ?? 0);
@@ -36,8 +39,10 @@ portalRouter.get('/students', requireAuth, async (req, res) => {
 });
 
 // ── GET /api/classes — used by portalApi.getClasses() ────────────────────────
+// Admin-only: returns all class groups.
+// No active tutor-facing caller confirmed — tutors use /api/tutor/classes.
 
-portalRouter.get('/classes', requireAuth, async (req, res) => {
+portalRouter.get('/classes', requireAdminOnly, async (req, res) => {
   try {
     const where: any = {};
     if (req.query.active !== undefined) where.active = req.query.active === 'true';
@@ -72,9 +77,19 @@ portalRouter.get('/classes', requireAuth, async (req, res) => {
 });
 
 // ── GET /api/lessons — used by portalApi.getLessons() ────────────────────────
+// Shared across all roles (CalendarPage uses this endpoint for every role).
+// Role-based scoping is applied in-handler so each caller only sees lessons
+// relevant to their context.
+//
+//   admin  → all lessons
+//   tutor  → lessons for classes they teach (class.tutor_id = user_id)
+//   student → lessons for classes they are actively enrolled in
+//   parent  → lessons for classes any of their linked children are enrolled in
+//   other  → 403
 
 portalRouter.get('/lessons', requireAuth, async (req, res) => {
   try {
+    const p     = req.jwtPayload!;
     const limit = Math.min(Number(req.query.limit ?? 100), 500);
     const skip  = Number(req.query.skip ?? 0);
     const { status, class_group_id, upcoming_only } = req.query as {
@@ -85,6 +100,41 @@ portalRouter.get('/lessons', requireAuth, async (req, res) => {
     if (status) where.status = status;
     if (class_group_id) where.class_id = Number(class_group_id);
     if (upcoming_only === 'true') where.scheduled_at = { gte: new Date() };
+
+    // ── Role-based scoping ────────────────────────────────────────────────── //
+    if (p.role === 'admin') {
+      // admin: no additional filter — sees all lessons
+    } else if (p.role === 'tutor') {
+      // tutor: only lessons for classes they teach
+      where.class = { tutor_id: p.user_id };
+    } else if (p.role === 'student') {
+      // student: only lessons for classes they are actively enrolled in
+      where.class = {
+        enrollments: { some: { student_id: p.user_id, active: true } },
+      };
+    } else if (p.role === 'parent') {
+      // parent: only lessons for classes any linked child is enrolled in
+      const parentId = p.parent_profile_id;
+      if (!parentId) {
+        res.json({ total: 0, items: [] });
+        return;
+      }
+      const childLinks = await db.parentStudent.findMany({
+        where:  { parent_id: parentId },
+        select: { student_id: true },
+      });
+      if (childLinks.length === 0) {
+        res.json({ total: 0, items: [] });
+        return;
+      }
+      const childIds = childLinks.map((c: any) => c.student_id);
+      where.class = {
+        enrollments: { some: { student_id: { in: childIds }, active: true } },
+      };
+    } else {
+      res.status(403).json({ detail: 'Forbidden' });
+      return;
+    }
 
     const [total, items] = await Promise.all([
       db.lesson.count({ where }),
@@ -127,8 +177,10 @@ portalRouter.get('/lessons', requireAuth, async (req, res) => {
 });
 
 // ── GET /api/attendance — used by portalApi.getAttendance() ──────────────────
+// Admin-only: returns all attendance records across all students.
+// Tutors use /api/tutor/lessons/:id/attendance (scoped to their own classes).
 
-portalRouter.get('/attendance', requireAuth, async (req, res) => {
+portalRouter.get('/attendance', requireAdminOnly, async (req, res) => {
   try {
     const limit = Math.min(Number(req.query.limit ?? 100), 500);
     const skip  = Number(req.query.skip ?? 0);
