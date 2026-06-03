@@ -5,12 +5,13 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plus, ArrowRight } from 'lucide-react';
+import { Plus, ArrowRight, CalendarDays } from 'lucide-react';
 import { adminApi, LessonListItem } from '../../../services/adminApi';
 import ScheduleLessonModal from '../../../components/dashboard/modals/ScheduleLessonModal';
 import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
 import { StatCard } from '../../../components/dashboard/ui/StatCard';
 import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
+import { LoadingState, EmptyState, ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Types & helpers
@@ -86,15 +87,18 @@ const LessonsPage: React.FC = () => {
   const [view, setView] = useState('Day');
   const [lessons, setLessons]     = useState<LessonListItem[]>([]);
   const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminApi.getLessons({ limit: 100 });
       setLessons(data.items);
-    } catch {
-      // silently fall back to mock data
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to load lessons.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -174,7 +178,7 @@ const LessonsPage: React.FC = () => {
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))', gap: 'var(--gap-md)' }}>
-        <StatCard label="Lessons today" value={String(blocks.length).padStart(2, '0')} footRight={`${liveCount} live now`} />
+        <StatCard label="Lessons today" value={loading ? '…' : String(blocks.length).padStart(2, '0')} footRight={loading ? '' : `${liveCount} live now`} loading={loading} />
         <StatCard label="Attendance"    value={loading ? '…' : '—'} />
         <StatCard label="Make-ups owed" value="—" />
         <StatCard label="Empty seats"   value="—" />
@@ -214,14 +218,19 @@ const LessonsPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Empty state */}
-        {!loading && blocks.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--fg-muted)', fontSize: 14 }}>
-            No lessons found for the current filter.
-          </div>
+        {/* Loading / error / empty states */}
+        {loading && <LoadingState size="inline" message="Loading lessons…" />}
+        {error && !loading && <ErrorState message={error} onRetry={load} />}
+        {!loading && !error && blocks.length === 0 && (
+          <EmptyState
+            icon={CalendarDays}
+            title="No lessons today"
+            description="Schedule a lesson using the button above."
+          />
         )}
 
-        {/* Schedule grid */}
+        {/* Schedule grid — only rendered when there is data */}
+        {!loading && !error && blocks.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', overflow: 'hidden' }}>
           {/* Rooms column */}
           <div style={{ borderRight: '1px solid var(--border-faint)' }}>
@@ -322,6 +331,7 @@ const LessonsPage: React.FC = () => {
             </div>
           </div>
         </div>
+        )}
       </div>
       {/* Schedule Lesson modal */}
       {showSchedule && (
