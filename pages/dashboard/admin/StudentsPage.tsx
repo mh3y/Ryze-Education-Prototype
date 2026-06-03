@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail, Trash2,
+  Download, Plus, Search, Filter, ArrowUpDown, MoreHorizontal, Mail, Trash2, Users,
 } from 'lucide-react';
 import { portalApi, UserRecord } from '../../../services/portalApi';
 import { adminApi } from '../../../services/adminApi';
@@ -17,6 +17,7 @@ import ConfirmDeleteModal from '../../../components/dashboard/modals/ConfirmDele
 import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
 import { StatCard } from '../../../components/dashboard/ui/StatCard';
 import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
+import { LoadingState, EmptyState, ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Helpers & types
@@ -314,15 +315,28 @@ const StudentsPage: React.FC = () => {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={8} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)', fontSize: 14 }}>
-                    Loading students…
+                  <td colSpan={8}>
+                    <LoadingState size="inline" message="Loading students…" />
                   </td>
                 </tr>
               )}
               {error && !loading && (
                 <tr>
-                  <td colSpan={8} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)', fontSize: 14 }}>
-                    {error}
+                  <td colSpan={8}>
+                    <ErrorState message={error} onRetry={load} />
+                  </td>
+                </tr>
+              )}
+              {!loading && !error && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8}>
+                    <EmptyState
+                      icon={Users}
+                      title={searchQuery || activeFilter !== 'All' ? 'No results' : 'No students yet'}
+                      description={searchQuery || activeFilter !== 'All'
+                        ? 'Try adjusting your search or filters.'
+                        : 'Click "Add student" to enrol your first student.'}
+                    />
                   </td>
                 </tr>
               )}

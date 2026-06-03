@@ -11,6 +11,7 @@ import { adminApi, StudentPayment } from '../../../services/adminApi';
 import { PageHeader } from '../../../components/dashboard/ui/PageHeader';
 import { StatCard } from '../../../components/dashboard/ui/StatCard';
 import { StatusBadge } from '../../../components/dashboard/ui/StatusBadge';
+import { LoadingState, EmptyState, ErrorState } from '../../../components/dashboard/ui';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -555,6 +556,17 @@ const PaymentsPage: React.FC = () => {
   const totalOverdue = payments.filter(p => p.status === 'overdue').reduce((sum, p) => sum + (p.amount_remaining || 0), 0);
   const pendingCount = payments.filter(p => p.status === 'pending' || p.status === 'partial').length;
 
+  // Pre-compute filtered list so the table and empty-state can share one source of truth
+  const filteredPayments = payments.filter(p => {
+    const statusLower    = p.status.toLowerCase();
+    const matchesFilter  = filter === 'All'
+      || (filter === 'Due'     && (statusLower === 'pending' || statusLower === 'partial'))
+      || (filter === 'Overdue' && statusLower === 'overdue')
+      || (filter === 'Paid'    && statusLower === 'paid');
+    const matchesSearch  = !query || p.student_name.toLowerCase().includes(query.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
   const btnStyle: React.CSSProperties = {
     height: 38, padding: '0 14px', borderRadius: 9,
     fontSize: 13, fontWeight: 600,
@@ -667,22 +679,25 @@ const PaymentsPage: React.FC = () => {
               </thead>
               <tbody>
                 {loading && (
-                  <tr><td colSpan={6} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)' }}>Loading payments…</td></tr>
+                  <tr><td colSpan={7}><LoadingState size="inline" message="Loading payments…" /></td></tr>
                 )}
                 {error && !loading && (
-                  <tr><td colSpan={6} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--danger)' }}>{error}</td></tr>
+                  <tr><td colSpan={7}><ErrorState message={error} onRetry={load} /></td></tr>
                 )}
-                {!loading && payments.length === 0 && (
-                  <tr><td colSpan={6} style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--fg-muted)' }}>No payment records found.</td></tr>
+                {!loading && !error && filteredPayments.length === 0 && (
+                  <tr>
+                    <td colSpan={7}>
+                      <EmptyState
+                        icon={Search}
+                        title={query || filter !== 'All' ? 'No results' : 'No invoices yet'}
+                        description={query || filter !== 'All'
+                          ? 'Try adjusting your search or filters.'
+                          : 'Click "New invoice" to create the first payment record.'}
+                      />
+                    </td>
+                  </tr>
                 )}
-                {!loading && payments.map((p) => {
-                  const statusLower = p.status.toLowerCase();
-                  const matchesFilter = filter === 'All'
-                    || (filter === 'Due'     && (statusLower === 'pending' || statusLower === 'partial'))
-                    || (filter === 'Overdue' && statusLower === 'overdue')
-                    || (filter === 'Paid'    && statusLower === 'paid');
-                  const matchesSearch = !query || p.student_name.toLowerCase().includes(query.toLowerCase());
-                  if (!matchesFilter || !matchesSearch) return null;
+                {!loading && !error && filteredPayments.map((p) => {
 
                   const paidPct = p.amount_due > 0 ? Math.min(100, (p.amount_paid / p.amount_due) * 100) : 0;
                   const freqLabel: Record<string, string> = { termly: 'Termly', yearly: 'Yearly', weekly: 'Weekly', custom: 'Custom' };
