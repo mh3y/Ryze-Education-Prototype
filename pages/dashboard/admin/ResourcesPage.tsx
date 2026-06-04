@@ -92,7 +92,7 @@ const AddResourceModal: React.FC<AddResourceModalProps> = ({ classes, onClose, o
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -279,7 +279,8 @@ const ResourcesPage: React.FC = () => {
                       <ExternalLink size={12} /> Open
                     </a>
                     <button onClick={() => setDeleteTarget(r)}
-                      className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 bg-red-500/5 border border-red-500/10 px-2 py-1 rounded-lg transition-all">
+                      className="flex items-center gap-1 text-xs border px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                      style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 5%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 10%, transparent)' }}>
                       <Trash2 size={11} />
                     </button>
                   </div>
