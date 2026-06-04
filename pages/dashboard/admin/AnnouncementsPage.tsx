@@ -118,7 +118,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ classes, onClose, onCreated }
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -264,7 +264,7 @@ const PreviewDrawer: React.FC<PreviewDrawerProps> = ({
         {a.status !== 'archived' && (
           <div className="p-6 border-t border-white/5 space-y-3">
             {publishError && (
-              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-sm border rounded-xl p-3" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
                 <span className="shrink-0">⚠</span> {publishError}
               </div>
             )}
@@ -519,8 +519,8 @@ const AnnouncementsPage: React.FC = () => {
       )}
 
       {archiveError && !archiveTarget && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/20 backdrop-blur-sm"
-          style={{ maxWidth: 440 }}>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium border backdrop-blur-sm"
+          style={{ maxWidth: 440, color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
           <span className="shrink-0">⚠</span>
           {archiveError}
           <button onClick={() => setArchiveError(null)} className="ml-2 opacity-60 hover:opacity-100 transition-opacity">✕</button>

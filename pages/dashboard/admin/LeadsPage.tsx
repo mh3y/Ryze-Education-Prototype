@@ -146,7 +146,7 @@ const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({ lead, onClose, onUpda
           />
         </div>
 
-        {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="mb-3 text-sm" style={{ color: 'var(--danger)' }}>{error}</p>}
 
         <div className="flex gap-3">
           <button

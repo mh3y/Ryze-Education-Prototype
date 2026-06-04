@@ -79,7 +79,7 @@ export const RemindersView: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-300">{error}</div>
+        <div className="border rounded-xl p-4 text-sm" style={{ background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)', color: 'var(--danger)' }}>{error}</div>
       )}
 
       <div className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden">
@@ -118,11 +118,11 @@ export const RemindersView: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       {r.success ? (
-                        <span className="flex items-center gap-1.5 text-emerald-400 text-xs">
+                        <span className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--ok)' }}>
                           <CheckCircle2 size={13} /> Sent
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-red-400 text-xs" title={r.error_message ?? ''}>
+                        <span className="flex items-center gap-1.5 text-xs" title={r.error_message ?? ''} style={{ color: 'var(--danger)' }}>
                           <XCircle size={13} /> Failed
                         </span>
                       )}

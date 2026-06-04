@@ -143,7 +143,7 @@ class DashboardErrorBoundary extends Component<
             the overview.
           </p>
           {(import.meta as any).env?.DEV && this.state.error && (
-            <pre className="max-w-xl overflow-auto rounded bg-red-950/30 p-3 text-left text-xs text-red-400">
+            <pre className="max-w-xl overflow-auto rounded p-3 text-left text-xs" style={{ background: 'color-mix(in oklab, var(--danger) 8%, transparent)', color: 'var(--danger)' }}>
               {this.state.error.message}
             </pre>
           )}
@@ -216,7 +216,7 @@ const ScrollToTop = () => {
 
 const PageLoader = () => (
   <div className="flex min-h-[60vh] items-center justify-center bg-transparent">
-    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-[#b8841e]"></div>
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--border-strong)] border-t-[var(--accent)]"></div>
   </div>
 );
 

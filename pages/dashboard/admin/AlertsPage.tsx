@@ -183,7 +183,8 @@ const AlertsPage: React.FC = () => {
         <div className="flex items-center gap-2 justify-end">
           <button
             onClick={(e) => { e.stopPropagation(); setResolveTarget(r); }}
-            className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg hover:bg-emerald-500/20 transition-all"
+            className="flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1.5 rounded-lg transition-all hover:opacity-80"
+            style={{ color: 'var(--ok)', background: 'color-mix(in oklab, var(--ok) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--ok) 20%, transparent)' }}
           >
             <CheckCircle size={12} /> Resolve
           </button>
@@ -226,7 +227,7 @@ const AlertsPage: React.FC = () => {
 
       {/* Generate message */}
       {generateMsg && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-sm text-emerald-400 flex items-center gap-2">
+        <div className="border rounded-xl p-3 text-sm flex items-center gap-2" style={{ background: 'color-mix(in oklab, var(--ok) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--ok) 20%, transparent)', color: 'var(--ok)' }}>
           <Zap size={14} /> {generateMsg}
         </div>
       )}
@@ -236,13 +237,13 @@ const AlertsPage: React.FC = () => {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-4">
             <div className="text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1">Open Alerts</div>
-            <div className={`text-2xl font-bold ${openCount > 0 ? 'text-amber-400' : 'ryze-text-inverse'}`}>
+            <div className="text-2xl font-bold" style={openCount > 0 ? { color: 'var(--warn)' } : undefined}>
               {openCount}
             </div>
           </div>
           <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-4">
             <div className="text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1">Critical</div>
-            <div className={`text-2xl font-bold ${criticalCount > 0 ? 'text-red-400' : 'ryze-text-inverse'}`}>
+            <div className="text-2xl font-bold" style={criticalCount > 0 ? { color: 'var(--danger)' } : undefined}>
               {criticalCount}
             </div>
           </div>
@@ -309,8 +310,8 @@ const AlertsPage: React.FC = () => {
 
       {/* Action error toast */}
       {actionError && !resolveTarget && !dismissTarget && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/20 backdrop-blur-sm"
-          style={{ maxWidth: 440 }}>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium border backdrop-blur-sm"
+          style={{ maxWidth: 440, color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
           <span className="shrink-0">⚠</span>
           {actionError}
           <button onClick={() => setActionError(null)} className="ml-2 opacity-60 hover:opacity-100 transition-opacity">✕</button>

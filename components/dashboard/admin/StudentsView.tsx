@@ -73,7 +73,7 @@ export const StudentsView: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-300">{error}</div>
+        <div className="border rounded-xl p-4 text-sm" style={{ background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)', color: 'var(--danger)' }}>{error}</div>
       )}
 
       {/* Table */}
@@ -116,8 +116,8 @@ export const StudentsView: React.FC = () => {
                     <td className="px-6 py-4 ryze-text-muted font-mono text-xs hidden lg:table-cell">{u.discord_user_id}</td>
                     <td className="px-6 py-4">
                       {u.active
-                        ? <span className="flex items-center gap-1.5 text-emerald-400 text-xs font-medium"><UserCheck size={13} /> Active</span>
-                        : <span className="flex items-center gap-1.5 text-slate-500 text-xs font-medium"><UserX size={13} /> Inactive</span>}
+                        ? <span className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--ok)' }}><UserCheck size={13} /> Active</span>
+                        : <span className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--fg-faint)' }}><UserX size={13} /> Inactive</span>}
                     </td>
                   </tr>
                 ))}

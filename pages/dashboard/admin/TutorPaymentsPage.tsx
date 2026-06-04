@@ -66,7 +66,7 @@ const PayPeriodRow: React.FC<{
         <div className="text-right shrink-0">
           <div className="font-bold ryze-text-inverse">{formatCurrency(payment.amount_due)}</div>
           {Number(payment.amount_paid) > 0 && (
-            <div className="text-xs text-emerald-400">{formatCurrency(payment.amount_paid)} paid</div>
+            <div className="text-xs" style={{ color: 'var(--ok)' }}>{formatCurrency(payment.amount_paid)} paid</div>
           )}
         </div>
 
@@ -84,7 +84,7 @@ const PayPeriodRow: React.FC<{
         )}
 
         {/* Expand icon */}
-        <div className="text-slate-500 shrink-0">
+        <div className="shrink-0" style={{ color: 'var(--fg-faint)' }}>
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </div>
       </div>
@@ -187,7 +187,7 @@ const MarkPaidModal: React.FC<MarkPaidModalProps> = ({ payment, onClose, onSaved
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -280,7 +280,7 @@ const CreatePayPeriodModal: React.FC<{ onClose: () => void; onCreated: () => voi
           <button onClick={onClose} className="ryze-text-muted hover:ryze-text-inverse transition-colors"><X size={20} /></button>
         </div>
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -388,8 +388,8 @@ const TutorPaymentsPage: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: 'Total Due',     value: formatCurrency(totalDue),  color: 'ryze-text-inverse' },
-          { label: 'Total Paid',    value: formatCurrency(totalPaid), color: 'text-emerald-400' },
-          { label: 'Pending / Processing', value: String(pendingCount), color: pendingCount > 0 ? 'text-amber-400' : 'ryze-text-muted' },
+          { label: 'Total Paid',    value: formatCurrency(totalPaid), color: 'text-[var(--ok)]' },
+          { label: 'Pending / Processing', value: String(pendingCount), color: pendingCount > 0 ? 'text-[var(--warn)]' : 'ryze-text-muted' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-4">
             <div className="text-[10px] font-bold ryze-text-muted uppercase tracking-widest mb-1">{label}</div>
