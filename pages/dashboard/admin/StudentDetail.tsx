@@ -277,7 +277,7 @@ const StudentDetail: React.FC = () => {
               Save Profile
             </button>
             {saveMsg && (
-              <span className={`text-xs font-semibold ${saveMsg.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}`}>
+              <span className="text-xs font-semibold" style={{ color: saveMsg.startsWith('Error') ? 'var(--danger)' : 'var(--ok)' }}>
                 {saveMsg}
               </span>
             )}
@@ -310,7 +310,8 @@ const StudentDetail: React.FC = () => {
                       {cls.active && (
                         <button
                           onClick={() => setWithdrawTarget({ classGroupId: cls.class_id, className: cls.class_name })}
-                          className="flex items-center gap-1.5 text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg hover:bg-red-500/20 transition-all"
+                          className="flex items-center gap-1.5 text-xs font-semibold border px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
+                          style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}
                         >
                           <Trash2 size={12} /> Withdraw
                         </button>
@@ -328,7 +329,7 @@ const StudentDetail: React.FC = () => {
               <PlusCircle size={15} className="text-[#FFB000]" /> Enrol in Class
             </h3>
             {enrollError && (
-              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+              <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
                 <AlertCircle size={14} /> {enrollError}
               </div>
             )}
@@ -442,7 +443,7 @@ const StudentDetail: React.FC = () => {
 
       {/* Withdraw error banner */}
       {withdrawError && (
-        <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-sm border rounded-xl p-3" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
           <AlertCircle size={14} /> {withdrawError}
         </div>
       )}

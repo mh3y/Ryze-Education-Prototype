@@ -109,7 +109,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ classes, onClose, onCreated }
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -319,9 +319,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
   };
 
   return (
-    <div className={`bg-[#0a0f1e] border rounded-2xl overflow-hidden transition-colors ${
-      overdue && missing > 0 ? 'border-red-500/20' : 'border-white/10'
-    }`}>
+    <div className="bg-[#0a0f1e] border rounded-2xl overflow-hidden transition-colors"
+      style={{ borderColor: overdue && missing > 0 ? 'color-mix(in oklab, var(--danger) 20%, transparent)' : 'rgba(255,255,255,0.1)' }}
+    >
       {/* Card header */}
       <div className="p-5">
         <div className="flex items-start gap-4">
@@ -333,7 +333,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <h3 className="font-semibold ryze-text-inverse text-sm">{task.title}</h3>
               {overdue && missing > 0 && (
-                <span className="text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-1.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold border px-1.5 py-0.5 rounded-full" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
                   Overdue
                 </span>
               )}
@@ -344,7 +344,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
                   <BookOpen size={11} /> {task.class_group_name}
                 </span>
               )}
-              <span className={`flex items-center gap-1 ${overdue ? 'text-red-400' : ''}`}>
+              <span className="flex items-center gap-1" style={overdue ? { color: 'var(--danger)' } : undefined}>
                 <CalendarDays size={11} /> Due {formatDue(task.due_at)}
               </span>
             </div>
@@ -356,7 +356,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => onDelete(task)}
-              className="text-red-400 hover:text-red-300 bg-red-500/5 border border-red-500/10 p-1.5 rounded-lg transition-all"
+              className="border p-1.5 rounded-lg transition-all hover:opacity-80"
+              style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 5%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 10%, transparent)' }}
             >
               <Trash2 size={13} />
             </button>

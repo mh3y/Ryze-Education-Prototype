@@ -164,7 +164,7 @@ const ReportDrawer: React.FC<ReportDrawerProps> = ({ report, onClose, onUpdated 
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+            <div className="flex items-center gap-2 text-sm border rounded-xl p-3" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
               <AlertCircle size={14} className="shrink-0" /> {error}
             </div>
           )}
@@ -298,7 +298,7 @@ const ProgressReportsPage: React.FC = () => {
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Draft',     value: draftCount,     color: 'text-slate-400' },
+          { label: 'Draft',     value: draftCount,     color: 'text-[var(--fg-muted)]' },
           { label: 'Submitted', value: submittedCount, color: 'text-[#FFB000]' },
           { label: 'Total',     value: reports.length, color: 'ryze-text-inverse' },
         ].map(({ label, value, color }) => (

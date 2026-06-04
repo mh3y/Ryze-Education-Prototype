@@ -74,7 +74,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   };
 
   const btnClass = isDanger
-    ? 'bg-red-500 hover:bg-red-600 text-white'
+    ? 'bg-[var(--danger)] hover:opacity-90 text-white'
     : 'bg-[#FFB000] hover:bg-[#ffc133] text-[#050510]';
 
   return (
@@ -94,9 +94,11 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <div className="relative z-10 bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl max-w-md w-full p-6">
         <div className={`flex gap-4 mb-4 ${bodyText ? 'items-start' : 'items-center'}`}>
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-              isDanger ? 'bg-red-500/10 text-red-400' : 'bg-[#FFB000]/10 text-[#FFB000]'
-            }`}
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={isDanger
+              ? { background: 'color-mix(in oklab, var(--danger) 10%, transparent)', color: 'var(--danger)' }
+              : { background: 'color-mix(in oklab, var(--accent) 10%, transparent)', color: 'var(--accent)' }
+            }
           >
             {isDanger ? <AlertTriangle size={20} /> : <Info size={20} />}
           </div>
@@ -120,7 +122,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               type="text"
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
-              className="w-full px-4 py-2.5 bg-[#050510] border border-white/10 rounded-xl text-sm ryze-text-inverse focus:outline-none focus:border-red-500/50"
+              className="w-full px-4 py-2.5 bg-[#050510] border border-white/10 rounded-xl text-sm ryze-text-inverse focus:outline-none focus:border-[var(--danger)]"
               placeholder={confirmText}
               autoFocus
             />

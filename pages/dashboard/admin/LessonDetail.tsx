@@ -296,7 +296,8 @@ const LessonDetailPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setCancelConfirm(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all hover:opacity-80"
+                  style={{ background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)', color: 'var(--danger)' }}
                 >
                   <Trash2 size={11} /> Cancel
                 </button>
@@ -326,10 +327,10 @@ const LessonDetailPage: React.FC = () => {
 
       {/* Mismatch warning */}
       {mismatchedRecords.length > 0 && (
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-start gap-3">
-          <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+        <div className="border rounded-2xl p-4 flex items-start gap-3" style={{ background: 'color-mix(in oklab, var(--warn) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--warn) 20%, transparent)' }}>
+          <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--warn)' }} />
           <div>
-            <p className="text-sm font-semibold text-amber-400">Attendance Mismatches Detected</p>
+            <p className="text-sm font-semibold" style={{ color: 'var(--warn)' }}>Attendance Mismatches Detected</p>
             <p className="text-xs ryze-text-muted mt-0.5">
               {mismatchedRecords.length} student{mismatchedRecords.length !== 1 ? 's' : ''} have a
               discrepancy between tutor-marked and Discord-verified attendance.
@@ -367,9 +368,8 @@ const LessonDetailPage: React.FC = () => {
               return (
                 <div
                   key={ar.id}
-                  className={`flex items-center gap-4 bg-white/3 border rounded-xl p-4 ${
-                    ar.has_mismatch ? 'border-amber-500/20' : 'border-white/5'
-                  }`}
+                  className="flex items-center gap-4 bg-white/3 border rounded-xl p-4"
+                  style={{ borderColor: ar.has_mismatch ? 'color-mix(in oklab, var(--warn) 20%, transparent)' : 'rgba(255,255,255,0.05)' }}
                 >
                   <AttendanceIcon status={effectiveStatus} />
 
@@ -397,7 +397,7 @@ const LessonDetailPage: React.FC = () => {
                   <div className="flex items-center gap-2 shrink-0">
                     <StatusBadge value={effectiveStatus} />
                     {ar.has_mismatch && (
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold border px-1.5 py-0.5 rounded-full" style={{ color: 'var(--warn)', background: 'color-mix(in oklab, var(--warn) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--warn) 20%, transparent)' }}>
                         Mismatch
                       </span>
                     )}
@@ -477,7 +477,7 @@ const LessonDetailPage: React.FC = () => {
               </button>
             </div>
             {editError && (
-              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+              <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
                 <AlertTriangle size={14} className="shrink-0" /> {editError}
               </div>
             )}
@@ -531,8 +531,8 @@ const LessonDetailPage: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setCancelConfirm(false)} />
           <div className="relative z-10 bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={22} className="text-red-400" />
+            <div className="w-12 h-12 rounded-2xl border flex items-center justify-center mx-auto mb-4" style={{ background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)', color: 'var(--danger)' }}>
+              <Trash2 size={22} />
             </div>
             <h3 className="font-bold ryze-text-inverse text-base mb-2">Cancel this lesson?</h3>
             <p className="text-sm ryze-text-muted mb-6">
@@ -544,7 +544,8 @@ const LessonDetailPage: React.FC = () => {
                 Keep lesson
               </button>
               <button onClick={handleCancelLesson} disabled={cancelling}
-                className="flex-1 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60 text-sm flex items-center justify-center gap-2">
+                className="flex-1 py-2.5 text-white font-bold rounded-xl transition-all disabled:opacity-60 text-sm flex items-center justify-center gap-2 hover:opacity-90"
+                style={{ background: 'var(--danger)' }}>
                 {cancelling
                   ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   : 'Yes, cancel it'}

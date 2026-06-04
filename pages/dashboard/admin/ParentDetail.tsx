@@ -61,10 +61,10 @@ const InviteLinkBanner: React.FC<{ link: string; expiresAt: string; onClose: () 
   const expires = formatDate(expiresAt);
 
   return (
-    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 mb-6">
+    <div className="border rounded-2xl p-5 mb-6" style={{ background: 'color-mix(in oklab, var(--ok) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--ok) 20%, transparent)' }}>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <div className="font-bold text-emerald-400 flex items-center gap-2 mb-1">
+          <div className="font-bold flex items-center gap-2 mb-1" style={{ color: 'var(--ok)' }}>
             <Check size={16} /> New Invite Link Generated
           </div>
           <p className="text-sm ryze-text-muted">
@@ -77,16 +77,13 @@ const InviteLinkBanner: React.FC<{ link: string; expiresAt: string; onClose: () 
         </button>
       </div>
       <div className="flex gap-2">
-        <code className="flex-1 bg-black/30 text-emerald-300 text-xs px-4 py-2.5 rounded-xl font-mono truncate border border-emerald-500/10">
+        <code className="flex-1 bg-black/30 text-xs px-4 py-2.5 rounded-xl font-mono truncate border" style={{ color: 'var(--ok)', borderColor: 'color-mix(in oklab, var(--ok) 10%, transparent)' }}>
           {link}
         </code>
         <button
           onClick={copy}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all ${
-            copied
-              ? 'bg-emerald-500/20 text-emerald-400'
-              : 'bg-white/5 border border-white/10 ryze-text-inverse hover:bg-white/10'
-          }`}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all bg-white/5 border border-white/10 hover:bg-white/10"
+          style={copied ? { color: 'var(--ok)' } : undefined}
         >
           {copied ? <Check size={13} /> : <Copy size={13} />}
           {copied ? 'Copied!' : 'Copy'}
@@ -148,7 +145,7 @@ const LinkStudentModal: React.FC<LinkStudentModalProps> = ({ parentId, onClose, 
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
             <AlertCircle size={14} className="shrink-0" /> {error}
           </div>
         )}
@@ -486,7 +483,7 @@ const ParentDetail: React.FC = () => {
             </div>
 
             {saveError && (
-              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+              <div className="flex items-center gap-2 text-sm border rounded-xl p-3 mb-4" style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 10%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
                 <AlertCircle size={14} className="shrink-0" /> {saveError}
               </div>
             )}
@@ -557,7 +554,7 @@ const ParentDetail: React.FC = () => {
               {!parent.has_set_password && (
                 <div className="shrink-0">
                   {resendError && (
-                    <p className="text-xs text-red-400 mb-2">{resendError}</p>
+                    <p className="text-xs mb-2" style={{ color: 'var(--danger)' }}>{resendError}</p>
                   )}
                   <button
                     onClick={handleResendInvite}
@@ -644,7 +641,8 @@ const ParentDetail: React.FC = () => {
                         setUnlinkTarget({ linkId: s.link_id, name: s.student_name ?? `#${s.student_user_id}` });
                         setUnlinkConfirmOpen(true);
                       }}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 bg-red-500/5 border border-red-500/10 px-2.5 py-1.5 rounded-lg transition-all"
+                      className="flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1.5 rounded-lg transition-all hover:opacity-80"
+                      style={{ color: 'var(--danger)', background: 'color-mix(in oklab, var(--danger) 5%, transparent)', borderColor: 'color-mix(in oklab, var(--danger) 10%, transparent)' }}
                       title="Unlink student"
                     >
                       <Unlink size={12} /> Unlink

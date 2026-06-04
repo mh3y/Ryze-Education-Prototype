@@ -17,7 +17,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
 }) => (
   <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-400 mb-4 border border-red-500/20">
+    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 border" style={{ background: 'color-mix(in oklab, var(--danger) 10%, transparent)', color: 'var(--danger)', borderColor: 'color-mix(in oklab, var(--danger) 20%, transparent)' }}>
       <AlertTriangle size={32} />
     </div>
     <h3 className="font-bold ryze-text-inverse mb-1">{title}</h3>
