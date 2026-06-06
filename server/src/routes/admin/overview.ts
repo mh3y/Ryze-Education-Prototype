@@ -108,6 +108,7 @@ overviewRouter.get('/overview', requireAdminOnly, async (_req, res) => {
 
       recentActivityRaw,
       unreadMessages,
+      calendarHealthLogsRaw,
     ] = await Promise.all([
 
       // ── Summary counts ──────────────────────────────────────────────────────
@@ -237,6 +238,14 @@ overviewRouter.get('/overview', requireAdminOnly, async (_req, res) => {
 
       // ── Unread parent messages ──────────────────────────────────────────────
       db.message.count({ where: { sender_type: 'parent', read: false } }),
+
+      // ── Calendar health (last 5 lessons syncs) ──────────────────────────────
+      db.botSyncLog.findMany({
+        where:   { sync_type: 'lessons' },
+        orderBy: { created_at: 'desc' },
+        take:    5,
+        select:  { status: true, error_message: true, completed_at: true, started_at: true },
+      }),
     ]);
 
     // ── Process financials ────────────────────────────────────────────────────
@@ -371,6 +380,45 @@ overviewRouter.get('/overview', requireAdminOnly, async (_req, res) => {
       createdAt: a.created_at.toISOString(),
     }));
 
+    // ── Calendar health (lightweight version for overview) ───────────────────
+
+    const calLogs = calendarHealthLogsRaw as any[];
+    let calConsecFails = 0;
+    for (const l of calLogs) {
+      if (l.status === 'failed') calConsecFails++;
+      else break;
+    }
+    const calSuccessLog = calLogs.find((l: any) => l.status !== 'failed') ?? null;
+    const calFailLog    = calLogs.find((l: any) => l.status === 'failed') ?? null;
+    const calLastErr    = calFailLog?.error_message ?? null;
+    const calIsToken    = calLastErr
+      ? /invalid_grant|token.*(expired|revoked)|RefreshError|reauth/i.test(calLastErr)
+      : false;
+    const calSuccessAt  = calSuccessLog
+      ? ((calSuccessLog.completed_at ?? calSuccessLog.started_at) as Date).toISOString()
+      : null;
+    const calFailAt     = calFailLog
+      ? ((calFailLog.completed_at ?? calFailLog.started_at) as Date).toISOString()
+      : null;
+    const calStale = !calSuccessAt
+      || (Date.now() - new Date(calSuccessAt).getTime()) > 24 * 3_600_000;
+    const calStatus: 'ok' | 'warning' | 'error' =
+      calLogs.length === 0               ? 'warning' :
+      calIsToken                         ? 'error'   :
+      calConsecFails >= 3 && calStale    ? 'error'   :
+      calConsecFails > 0                 ? 'warning' :
+      'ok';
+
+    const calendarHealth = calLogs.length === 0 ? null : {
+      status:               calStatus,
+      consecutive_failures: calConsecFails,
+      last_success_at:      calSuccessAt,
+      last_failure_at:      calFailAt,
+      last_error:           calLastErr,
+      is_token_error:       calIsToken,
+      stale:                calStale,
+    };
+
     // ── Build response ────────────────────────────────────────────────────────
 
     res.json({
@@ -426,13 +474,14 @@ overviewRouter.get('/overview', requireAdminOnly, async (_req, res) => {
       },
 
       automation: {
-        lastMemberSync:    syncInfo(lastMemberSyncRaw),
-        lastCalendarSync:  syncInfo(lastCalendarSyncRaw),
-        lastLessonSync:    syncInfo(lastLessonSyncRaw),
-        lastAttendanceSync:syncInfo(lastAttendanceSyncRaw),
+        lastMemberSync:     syncInfo(lastMemberSyncRaw),
+        lastCalendarSync:   syncInfo(lastCalendarSyncRaw),
+        lastLessonSync:     syncInfo(lastLessonSyncRaw),
+        lastAttendanceSync: syncInfo(lastAttendanceSyncRaw),
         pendingBotJobs,
         failedBotJobs,
-        lastError: (lastFailedJob as any)?.error ?? null,
+        lastError:      (lastFailedJob as any)?.error ?? null,
+        calendarHealth,
       },
 
       recentActivity,

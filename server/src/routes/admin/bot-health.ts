@@ -82,6 +82,66 @@ botHealthRouter.get('/', async (_req, res) => {
       select:  { created_at: true },
     });
 
+    // ── Calendar (Google Lessons) health ──────────────────────────────────────
+    // Analyse the last 20 'lessons' sync runs to detect consecutive failures,
+    // expired/revoked OAuth tokens, and staleness.
+    const calendarLogs = await db.botSyncLog.findMany({
+      where:   { sync_type: 'lessons' },
+      orderBy: { created_at: 'desc' },
+      take:    20,
+      select:  {
+        id: true, status: true, error_message: true,
+        started_at: true, completed_at: true, created_at: true,
+      },
+    });
+
+    // Count consecutive failures from the front of the (desc-sorted) list
+    let consecutiveCalendarFailures = 0;
+    for (const log of calendarLogs) {
+      if (log.status === 'failed') consecutiveCalendarFailures++;
+      else break;
+    }
+
+    const calLastSuccess = calendarLogs.find(l => l.status !== 'failed') ?? null;
+    const calLastFailure = calendarLogs.find(l => l.status === 'failed') ?? null;
+    const calLastError   = calLastFailure?.error_message ?? null;
+
+    // Detect expired/revoked OAuth tokens (Google's invalid_grant, Python RefreshError, etc.)
+    const isCalTokenError = calLastError
+      ? /invalid_grant|token.*(expired|revoked)|RefreshError|reauth/i.test(calLastError)
+      : false;
+
+    const toIso = (log: typeof calLastSuccess | typeof calLastFailure): string | null => {
+      if (!log) return null;
+      const d = log.completed_at ?? log.started_at;
+      return d instanceof Date ? d.toISOString() : (d as any) ?? null;
+    };
+
+    const calLastSuccessAt = toIso(calLastSuccess);
+    const calLastFailureAt = toIso(calLastFailure);
+
+    const CALENDAR_STALE_HOURS = 24;
+    const calStale = calLastSuccessAt
+      ? (Date.now() - new Date(calLastSuccessAt).getTime()) > CALENDAR_STALE_HOURS * 3_600_000
+      : true;
+
+    const calendarHealthStatus: 'ok' | 'warning' | 'error' =
+      calendarLogs.length === 0                           ? 'warning' : // never synced
+      isCalTokenError                                     ? 'error'   :
+      consecutiveCalendarFailures >= 3 && calStale        ? 'error'   :
+      consecutiveCalendarFailures > 0                     ? 'warning' :
+      'ok';
+
+    const calendarHealth = {
+      status:               calendarHealthStatus,
+      consecutive_failures: consecutiveCalendarFailures,
+      last_success_at:      calLastSuccessAt,
+      last_failure_at:      calLastFailureAt,
+      last_error:           calLastError,
+      is_token_error:       isCalTokenError,
+      stale:                calStale,
+    };
+
     res.json({
       sync_summary:   syncSummary,
       recent_failures: recentFailures.map((f: any) => ({
@@ -96,10 +156,11 @@ botHealthRouter.get('/', async (_req, res) => {
           created_at: j.created_at instanceof Date ? j.created_at.toISOString() : j.created_at,
         })),
       },
-      portal_api_url: lastLogWithUrl?.portal_api_url ?? null,
-      last_any_sync:  lastAnySyncLog?.created_at instanceof Date
+      portal_api_url:  lastLogWithUrl?.portal_api_url ?? null,
+      last_any_sync:   lastAnySyncLog?.created_at instanceof Date
         ? lastAnySyncLog.created_at.toISOString()
         : (lastAnySyncLog?.created_at ?? null),
+      calendar_health: calendarHealth,
     });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });

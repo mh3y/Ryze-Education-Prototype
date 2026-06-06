@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import {
   Activity, Users, CalendarDays, BookOpen, RefreshCw,
   AlertTriangle, CheckCircle2, Clock, Play, Wifi, WifiOff,
-  ClipboardList, ChevronDown, ChevronUp,
+  ClipboardList, ChevronDown, ChevronUp, Key,
 } from 'lucide-react';
-import { adminApi, BotHealthResponse, BotSyncEntry } from '../../../services/adminApi';
+import { adminApi, BotHealthResponse, BotSyncEntry, CalendarHealth } from '../../../services/adminApi';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -52,6 +52,149 @@ const statusLabel: Record<string, string> = {
   partial: 'Partial',
   failed:  'Failed',
   running: 'Running…',
+};
+
+// ── CalendarHealthPanel ───────────────────────────────────────────────────────
+
+const CalendarHealthPanel: React.FC<{ health: CalendarHealth }> = ({ health }) => {
+  // OK state: compact green strip
+  if (health.status === 'ok') {
+    return (
+      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-3">
+        <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />
+        <div className="text-sm text-emerald-300 font-medium">
+          Google Calendar sync healthy
+          {health.last_success_at && (
+            <span className="text-emerald-400/70 font-normal ml-2">
+              · last synced {fmtRelative(health.last_success_at)}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const isError = health.status === 'error';
+
+  return (
+    <div className={`rounded-2xl p-5 border space-y-4 ${
+      isError
+        ? 'bg-red-500/10 border-red-500/25'
+        : 'bg-amber-500/10 border-amber-500/20'
+    }`}>
+
+      {/* Header row */}
+      <div className="flex items-start gap-3">
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+          isError ? 'bg-red-500/20' : 'bg-amber-500/15'
+        }`}>
+          {health.is_token_error
+            ? <Key size={16} className="text-red-400" />
+            : isError
+            ? <AlertTriangle size={16} className="text-red-400" />
+            : <AlertTriangle size={16} className="text-amber-400" />
+          }
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className={`font-bold text-sm ${isError ? 'text-red-300' : 'text-amber-300'}`}>
+            {health.is_token_error
+              ? 'Google Calendar Token Expired or Revoked'
+              : isError
+              ? 'Google Calendar Sync Failing'
+              : 'Google Calendar Sync Warnings'
+            }
+          </div>
+          <div className="text-xs text-slate-400 mt-0.5">
+            {health.is_token_error
+              ? 'No lessons have synced from Google Calendar. All voice attendance will remain unmatched until the token is renewed.'
+              : `Calendar sync has failed ${health.consecutive_failures} time${health.consecutive_failures !== 1 ? 's' : ''} in a row.`
+            }
+          </div>
+        </div>
+        {health.consecutive_failures > 0 && (
+          <div className={`text-xs px-2.5 py-1 rounded-full font-semibold flex-shrink-0 ${
+            isError
+              ? 'bg-red-500/20 text-red-300'
+              : 'bg-amber-500/20 text-amber-300'
+          }`}>
+            {health.consecutive_failures} failure{health.consecutive_failures !== 1 ? 's' : ''}
+          </div>
+        )}
+      </div>
+
+      {/* Last error message */}
+      {health.last_error && (
+        <div className="bg-black/20 rounded-xl px-3 py-2.5 font-mono text-xs text-red-300/90 break-all">
+          {health.last_error}
+        </div>
+      )}
+
+      {/* Last-success / last-failure timestamps */}
+      <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="bg-white/5 rounded-xl p-3 space-y-0.5">
+          <div className="text-slate-500">Last successful sync</div>
+          <div className="font-medium text-slate-300">
+            {health.last_success_at ? fmtAbsolute(health.last_success_at) : 'Never'}
+          </div>
+          {health.last_success_at && (
+            <div className="text-slate-500">{fmtRelative(health.last_success_at)}</div>
+          )}
+        </div>
+        <div className="bg-white/5 rounded-xl p-3 space-y-0.5">
+          <div className="text-slate-500">Last failed sync</div>
+          <div className="font-medium text-red-300/80">
+            {health.last_failure_at ? fmtAbsolute(health.last_failure_at) : '—'}
+          </div>
+          {health.last_failure_at && (
+            <div className="text-slate-500">{fmtRelative(health.last_failure_at)}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Remediation guide — shown only for token errors */}
+      {health.is_token_error && (
+        <div className="bg-black/20 rounded-xl p-4 text-xs space-y-2.5">
+          <div className="font-semibold text-slate-300">How to renew the token:</div>
+          <ol className="list-decimal list-inside space-y-1.5 text-slate-400">
+            <li>
+              SSH to the VPS:{' '}
+              <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">
+                ssh ubuntu@159.13.52.6
+              </code>
+            </li>
+            <li>
+              <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">
+                cd /opt/ryze/ryze-discord-bot
+              </code>{' '}
+              then run{' '}
+              <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">
+                python3 get_refresh_token.py
+              </code>
+            </li>
+            <li>Complete the OAuth browser flow and copy the new refresh token</li>
+            <li>
+              Update{' '}
+              <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">
+                GOOGLE_REFRESH_TOKEN
+              </code>{' '}
+              in{' '}
+              <code className="bg-white/10 px-1.5 py-0.5 rounded">.env</code>
+            </li>
+            <li>
+              Restart:{' '}
+              <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#FFB000]">
+                set -a &amp;&amp; source .env &amp;&amp; set +a &amp;&amp; docker compose up -d --no-deps --force-recreate bot api
+              </code>
+            </li>
+          </ol>
+          <div className="text-slate-500 pt-1">
+            After restart, click <strong className="text-slate-400">Sync Now</strong> on the Calendar Lessons card below
+            to trigger an immediate lesson sync.
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ── sub-components ────────────────────────────────────────────────────────────
@@ -305,6 +448,11 @@ export const BotHealth: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+
+      {/* Calendar health panel */}
+      {!loading && !error && health?.calendar_health && (
+        <CalendarHealthPanel health={health.calendar_health} />
       )}
 
       {/* 4 sync cards */}

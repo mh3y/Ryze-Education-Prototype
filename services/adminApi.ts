@@ -378,6 +378,26 @@ export interface BotSyncEntry {
   portal_api_url:  string | null;
 }
 
+/** Calendar-specific health derived from the last N `lessons` BotSyncLog entries. */
+export interface CalendarHealth {
+  /** 'error' = token invalid or no success in 24 h + ≥3 failures.
+   *  'warning' = some failures but a recent success exists.
+   *  'ok' = last run succeeded. */
+  status:               'ok' | 'warning' | 'error';
+  /** Number of consecutive failed runs counting from the most-recent entry. */
+  consecutive_failures: number;
+  /** ISO timestamp of the last run whose status was not 'failed'. */
+  last_success_at:      string | null;
+  /** ISO timestamp of the most-recent failed run. */
+  last_failure_at:      string | null;
+  /** error_message from the most-recent failed run. */
+  last_error:           string | null;
+  /** True when the error message indicates an expired / revoked OAuth token. */
+  is_token_error:       boolean;
+  /** True when the last successful sync was more than 24 h ago (or never). */
+  stale:                boolean;
+}
+
 export interface BotHealthResponse {
   sync_summary: {
     members:    BotSyncEntry | null;
@@ -397,8 +417,9 @@ export interface BotHealthResponse {
       attempts: number; error: string | null; created_at: string;
     }[];
   };
-  portal_api_url: string | null;
-  last_any_sync:  string | null;
+  portal_api_url:  string | null;
+  last_any_sync:   string | null;
+  calendar_health: CalendarHealth;
 }
 
 // Audit log
@@ -526,13 +547,15 @@ export interface AdminOverviewData {
     tutors: OverviewRiskItem[];
   };
   automation: {
-    lastMemberSync: OverviewSyncInfo | null;
-    lastCalendarSync: OverviewSyncInfo | null;
-    lastLessonSync: OverviewSyncInfo | null;
+    lastMemberSync:     OverviewSyncInfo | null;
+    lastCalendarSync:   OverviewSyncInfo | null;
+    lastLessonSync:     OverviewSyncInfo | null;
     lastAttendanceSync: OverviewSyncInfo | null;
-    pendingBotJobs: number;
-    failedBotJobs: number;
-    lastError: string | null;
+    pendingBotJobs:     number;
+    failedBotJobs:      number;
+    lastError:          string | null;
+    /** Calendar-specific health — null only when no lessons syncs exist at all. */
+    calendarHealth:     CalendarHealth | null;
   };
   recentActivity: OverviewActivityItem[];
 }
