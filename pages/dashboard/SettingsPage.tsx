@@ -3,8 +3,9 @@
  * Redesigned to match design handoff spec.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePortalSettings } from '../../contexts/PortalSettingsContext';
+import { adminApi, type TeamMember } from '../../services/adminApi';
 import {
   Star, Users, Bell, Shield, Activity, UserCheck, CreditCard,
   AlertTriangle, ChevronRight, Mail, Phone, Download, LogOut,
@@ -473,61 +474,147 @@ const IntegrationsSection: React.FC = () => (
 
 /* ── Team & roles ───────────────────────────────────────────── */
 
-const TEAM_MEMBERS = [
-  { name: 'Michael Hayes', email: 'michael@ryze.edu.au', role: 'Admin',  joined: 'Owner',    avatar: 'M' },
-  { name: 'Daniel Kwok',   email: 'daniel@ryze.edu.au',  role: 'Tutor',  joined: '3 mo ago', avatar: 'D' },
-  { name: 'Priya Aiyar',   email: 'priya@ryze.edu.au',   role: 'Tutor',  joined: '5 mo ago', avatar: 'P' },
-  { name: 'Sarah Tran',    email: 'sarah@ryze.edu.au',   role: 'Parent', joined: '2 mo ago', avatar: 'S' },
-];
-const AVATAR_COLOURS: Record<string, string> = { M: '#b8841e', D: '#4f9b6a', P: '#5e7fb3', S: '#c89e2b' };
+/**
+ * Deterministic avatar colour derived from the member's name.
+ * Uses a simple hash so the same name always maps to the same colour.
+ * Only hex values are used here — no raw Tailwind utilities.
+ */
+const AVATAR_PALETTE = ['#b8841e', '#4f9b6a', '#5e7fb3', '#c89e2b', '#8b5cf6', '#e07b4a'];
+function avatarColour(name: string): string {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h * 31) + name.charCodeAt(i)) >>> 0;
+  return AVATAR_PALETTE[h % AVATAR_PALETTE.length];
+}
 
-const TeamSection: React.FC = () => (
-  <SectionShell
-    title="Team & roles"
-    sub="Manage who has access to this workspace and what they can do."
-    action={<button style={btnPrimary}>Invite member</button>}
-  >
-    <div style={{ ...cardStyle, overflow: 'hidden' }}>
-      <div style={cardHeadStyle}>
-        <div>
-          <div style={cardTitleStyle}>Members</div>
-          <div style={cardSubStyle}>{TEAM_MEMBERS.length} people have access to this workspace.</div>
+/** Format an ISO date string as a human-friendly relative label, e.g. "3 mo ago". */
+function relativeDate(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const days   = Math.floor(diffMs / 86_400_000);
+  if (days <  1)  return 'Today';
+  if (days <  7)  return `${days}d ago`;
+  if (days < 30)  return `${Math.floor(days / 7)}w ago`;
+  if (days < 365) return `${Math.floor(days / 30)} mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+}
+
+const TeamSection: React.FC = () => {
+  const [members, setMembers]   = useState<TeamMember[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [error,   setError]     = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    adminApi.getTeamMembers()
+      .then(({ items }) => { if (!cancelled) { setMembers(items); setLoading(false); } })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load team members.');
+          setLoading(false);
+        }
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const roleOptions = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'tutor', label: 'Tutor' },
+  ];
+
+  return (
+    <SectionShell
+      title="Team & roles"
+      sub="Manage who has access to this workspace and what they can do."
+      action={<button style={btnPrimary}>Invite member</button>}
+    >
+      <div style={{ ...cardStyle, overflow: 'hidden' }}>
+        <div style={cardHeadStyle}>
+          <div>
+            <div style={cardTitleStyle}>Members</div>
+            <div style={cardSubStyle}>
+              {loading
+                ? 'Loading…'
+                : error
+                  ? 'Could not load members.'
+                  : `${members.length} ${members.length === 1 ? 'person has' : 'people have'} access to this workspace.`}
+            </div>
+          </div>
         </div>
-      </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
-            {['Member', 'Role', 'Joined', ''].map((h, i) => (
-              <th key={i} style={{ padding: '10px 20px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)', width: i === 3 ? 60 : undefined }}>{h}</th>
+
+        {/* Loading skeleton */}
+        {loading && (
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[1, 2, 3].map(n => (
+              <div key={n} style={{ height: 34, borderRadius: 8, background: 'var(--bg-surface-2)', opacity: 0.6 }} />
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {TEAM_MEMBERS.map((m, i) => (
-            <tr key={m.email} style={{ borderBottom: i < TEAM_MEMBERS.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
-              <td style={{ padding: '14px 20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: `${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}20`, border: `1px solid ${AVATAR_COLOURS[m.avatar] || '#8a8b8e'}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 16, fontWeight: 'var(--font-display-weight)' as any, color: AVATAR_COLOURS[m.avatar] || 'var(--fg-muted)' }}>{m.avatar}</div>
-                  <div>
-                    <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{m.name}</div>
-                    <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{m.email}</div>
-                  </div>
-                </div>
-              </td>
-              <td style={{ padding: '14px 20px' }}>
-                <SelectField value={m.role} onChange={() => {}} options={[{ value: 'Admin', label: 'Admin' }, { value: 'Tutor', label: 'Tutor' }, { value: 'Parent', label: 'Parent' }]} />
-              </td>
-              <td style={{ padding: '14px 20px', fontSize: 13, color: 'var(--fg-muted)' }}>{m.joined}</td>
-              <td style={{ padding: '14px 20px' }}>
-                {m.joined !== 'Owner' && <button style={{ ...btnQuiet, color: 'var(--danger)' }}><X size={13} /></button>}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </SectionShell>
-);
+          </div>
+        )}
+
+        {/* Error state */}
+        {!loading && error && (
+          <div style={{ padding: '20px 24px', fontSize: 13, color: 'var(--danger)' }}>
+            {error}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && members.length === 0 && (
+          <div style={{ padding: '32px 24px', textAlign: 'center', fontSize: 13, color: 'var(--fg-muted)' }}>
+            No team members found. Invite an admin or tutor to get started.
+          </div>
+        )}
+
+        {/* Member table */}
+        {!loading && !error && members.length > 0 && (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'var(--bg-surface-2)', borderBottom: '1px solid var(--border-soft)' }}>
+                {['Member', 'Role', 'Added', ''].map((h, i) => (
+                  <th key={i} style={{ padding: '10px 20px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-muted)', width: i === 3 ? 60 : undefined }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {members.map((m, i) => {
+                const initial = m.full_name.trim().charAt(0).toUpperCase();
+                const colour  = avatarColour(m.full_name);
+                return (
+                  <tr key={m.id} style={{ borderBottom: i < members.length - 1 ? '1px solid var(--border-faint)' : undefined }}>
+                    <td style={{ padding: '14px 20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: `${colour}20`, border: `1px solid ${colour}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontStyle: 'var(--font-display-style)', fontSize: 16, fontWeight: 'var(--font-display-weight)' as any, color: colour, flexShrink: 0 }}>{initial}</div>
+                        <div>
+                          <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--fg-strong)' }}>{m.full_name}</div>
+                          <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{m.email ?? m.display_id ?? '—'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      <SelectField
+                        value={m.role}
+                        onChange={() => {}}
+                        options={roleOptions}
+                      />
+                    </td>
+                    <td style={{ padding: '14px 20px', fontSize: 13, color: 'var(--fg-muted)' }}>
+                      {relativeDate(m.created_at)}
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      {m.role !== 'admin' && (
+                        <button style={{ ...btnQuiet, color: 'var(--danger)' }}><X size={13} /></button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </SectionShell>
+  );
+};
 
 /* ── Billing ────────────────────────────────────────────────── */
 
