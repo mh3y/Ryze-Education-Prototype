@@ -28,9 +28,9 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="stat" style={{ opacity: 0.5 }}>
-        <div className="stat__label" style={{ background: 'var(--bg-surface-2)', height: 12, width: 80, borderRadius: 4 }} />
-        <div className="stat__value" style={{ background: 'var(--bg-surface-2)', height: 44, width: 64, borderRadius: 6 }} />
+      <div className="stat ryze-stat" style={{ opacity: 0.5 }}>
+        <div className="stat__label ryze-stat__label" style={{ background: 'var(--bg-surface-2)', height: 12, width: 80, borderRadius: 4 }} />
+        <div className="stat__value ryze-stat__value" style={{ background: 'var(--bg-surface-2)', height: 44, width: 64, borderRadius: 6 }} />
       </div>
     );
   }
@@ -39,12 +39,12 @@ export const StatCard: React.FC<StatCardProps> = ({
   const resolvedDeltaText = deltaText ?? (trend !== undefined ? `${Math.abs(trend)}%` : undefined);
 
   return (
-    <div className="stat" onClick={onClick} style={onClick ? { cursor: 'pointer' } : undefined}>
-      <div className="stat__label">{label}</div>
-      <div className="stat__value tnum">{value}</div>
-      <div className="stat__foot">
+    <div className="stat ryze-stat" onClick={onClick} style={onClick ? { cursor: 'pointer' } : undefined}>
+      <div className="stat__label ryze-stat__label">{label}</div>
+      <div className="stat__value tnum ryze-stat__value ryze-tnum">{value}</div>
+      <div className="stat__foot ryze-stat__foot">
         {resolvedDeltaText ? (
-          <span className={`stat__delta stat__delta--${resolvedDeltaDir ?? 'up'}`}>
+          <span className={`stat__delta stat__delta--${resolvedDeltaDir ?? 'up'} ryze-stat__delta ryze-stat__delta--${resolvedDeltaDir ?? 'up'}`}>
             {resolvedDeltaDir === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
             {resolvedDeltaText}
           </span>

@@ -28,7 +28,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full pl-10 pr-9 py-2.5 bg-[#050510] border border-white/10 rounded-xl text-sm ryze-text-inverse placeholder-slate-600 focus:outline-none focus:border-[#FFB000]/40 focus:ring-1 focus:ring-[#FFB000]/20 transition-all"
+      className="w-full pl-10 pr-9 py-2.5 ryze-search__input"
     />
     {value && (
       <button

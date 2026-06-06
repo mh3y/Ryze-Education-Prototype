@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ryze · Progress Report — [Student Name]</title>
+<!-- ↑ REPLACE [Student Name] with the actual student name, e.g. "Jane Smith" -->
+<meta name="viewport" content="width=820">
+<meta name="ext-resource-dependency" content="../../engine/ryze-icon.png" data-resource-id="brandIcon" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../engine/ryze-report.css">
+<!--
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║   RYZE EDUCATION — STUDENT PROGRESS REPORT                       ║
+  ║   Canonical template — students/_template/                       ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║                                                                   ║
+  ║   HOW TO USE THIS FILE                                            ║
+  ║   ─────────────────────────────────────────────────────────────   ║
+  ║   1. Copy the ENTIRE _template/ folder (not just this file).      ║
+  ║   2. Rename the folder:  students/firstname-lastname/             ║
+  ║   3. Rename this file:   Student Name - Progress Report.html      ║
+  ║   4. Update the <title> tag above.                                ║
+  ║   5. Replace every field marked REPLACE in the REPORT object.     ║
+  ║   6. Open in Google Chrome to preview.                            ║
+  ║   7. Print to PDF: Ctrl+P → A4, margins None, background On.      ║
+  ║                                                                   ║
+  ║   ⚠  DO NOT copy a previous student's completed report file       ║
+  ║      as the basis for a new one. Always start from this           ║
+  ║      template. Completed reports contain another student's        ║
+  ║      ratings, lesson comments, parent comment, and tutor          ║
+  ║      details — all of which will be wrong for the new student.    ║
+  ║                                                                   ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║                                                                   ║
+  ║   ENGINE vs. STUDENT DATA                                         ║
+  ║   ─────────────────────────────────────────────────────────────   ║
+  ║   FIXED (never edit):                                             ║
+  ║     ../../engine/ryze-report.js   — all rendering logic           ║
+  ║     ../../engine/ryze-report.css  — all layout and styling        ║
+  ║     ../../engine/ryze-logo.png    — Ryze wordmark                 ║
+  ║     ../../engine/ryze-icon.png    — Ryze icon                     ║
+  ║                                                                   ║
+  ║   EDITABLE (replace for every student):                           ║
+  ║     The REPORT object below — everything you see marked REPLACE   ║
+  ║                                                                   ║
+  ║   The engine reads the REPORT object and builds every page,       ║
+  ║   chart, average, page number, and footer automatically.          ║
+  ║   You only ever supply the data.                                  ║
+  ║                                                                   ║
+  ╚═══════════════════════════════════════════════════════════════════╝
+-->
+</head>
+<body>
+<nav class="pager" id="pager"><b>Progress Report</b></nav>
+<div id="report-root"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   STUDENT REPORT DATA
+   ───────────────────────────────────────────────────────────────────
+   Replace every field marked REPLACE below.
+   Do not leave any REPLACE text or placeholder dates in the file
+   before exporting the PDF.
+
+   Field reference: ../../data/sample-report-data.js
+   Full guide:      ../../README.md (in ryze-report-engine root)
+                    ../../../README.md (in Reports root)
+   ═══════════════════════════════════════════════════════════════════ */
+
+const REPORT = {
+
+  /* ─────────────────────────────────────────────────────────────────
+     BRAND — do not change unless Ryze Education is rebranding.
+     These values and paths are shared across all reports.
+  ───────────────────────────────────────────────────────────────── */
+  brand: {
+    name: 'RYZE',
+    sub:  'EDUCATION',
+    site: 'ryzeeducation.com.au',
+    logo: '../../engine/ryze-logo.png',
+    icon: (window.__resources||{}).brandIcon||'../../engine/ryze-icon.png',
+  },
+
+  /* ─────────────────────────────────────────────────────────────────
+     REPORT METADATA — replace all three for every new report.
+     These values appear on the cover page and in the footer.
+  ───────────────────────────────────────────────────────────────── */
+
+  // REPLACE: 'Mid-Term Progress Report' or 'End of Term Report' etc.
+  reportType: 'REPLACE — e.g. Mid-Term Progress Report',
+
+  // REPLACE: the date this report was written, e.g. '2 June 2026'
+  prepared:   'REPLACE — DD Month YYYY',
+
+  // REPLACE: unique code — format: RPT.[YearGroup].[Term].[Year].[Initials]
+  // Example: RPT.Y11ADV.T2.2026.JS  for Jane Smith, Year 11 Advanced, T2 2026
+  id:         'RPT.XXXXX.TX.YYYY.XX',
+
+  /* ─────────────────────────────────────────────────────────────────
+     STUDENT — replace all four for every new student.
+  ───────────────────────────────────────────────────────────────── */
+
+  // REPLACE: student's full name — shown large on the cover
+  student:    'REPLACE — Student Full Name',
+
+  // REPLACE: short course name shown in the cover footer
+  course:     'REPLACE — e.g. Year 11 Advanced Maths',
+
+  // REPLACE: full course name shown in the cover kicker and cards
+  courseLine: 'REPLACE — e.g. Year 11 Advanced Mathematics',
+
+  // REPLACE: tutor's FULL name — engine auto-trims to first name + surname initial
+  // e.g. 'Conrad Liu' is displayed as 'Conrad L' to parents
+  tutor:      'REPLACE — Tutor Full Name',
+
+  /* ─────────────────────────────────────────────────────────────────
+     REPORT PERIOD — replace all four to match this term's schedule.
+  ───────────────────────────────────────────────────────────────── */
+  period: {
+    // REPLACE: e.g. 'T2 2026'
+    stamp:    'REPLACE — TX YYYY',
+
+    // REPLACE: e.g. 'Term 2 · Weeks 1–6'
+    label:    'REPLACE — Term X · Weeks 1–6',
+
+    // REPLACE: must match stamp above
+    metaTerm: 'REPLACE — TX YYYY',
+
+    // REPLACE: e.g. 'Wk 1–6'
+    metaWeeks:'REPLACE — Wk 1–6',
+  },
+
+  /* ─────────────────────────────────────────────────────────────────
+     METRICS — the four standard metrics.
+     Changing 'metrics' adds or removes columns from the ratings table.
+     'growthMetric' is the hero metric shown in the trend chart and
+     highlighted in the metric dials. It must match one entry in metrics.
+
+     REPLACE growthMetric: choose whichever metric is this student's
+     main focus area. Do not default to 'Confidence' for every student
+     — it should reflect the actual coaching priority for this student.
+  ───────────────────────────────────────────────────────────────── */
+  metrics:     ['Performance', 'Understanding', 'Confidence', 'Engagement'],
+
+  // REPLACE: set to the correct focus metric for THIS student
+  growthMetric:'REPLACE — e.g. Confidence',
+
+  /* ─────────────────────────────────────────────────────────────────
+     SNAPSHOT CONTENT — written fresh for every student.
+     All four fields below must be completely replaced.
+     Do not reuse content from another student's report.
+  ───────────────────────────────────────────────────────────────── */
+
+  // REPLACE: one-line summary of this student's progress.
+  // Wrap a metric name in {curly braces} to italicise and colour it.
+  // Example: 'Solid progress this term — with {Confidence} still building.'
+  headline:   'REPLACE — one-line progress summary. Wrap a metric in {curly braces}.',
+
+  // REPLACE: 3–5 sentences covering overall progress, key strength,
+  // growth area, and next step. Specific to this student.
+  summary:    'REPLACE — overall summary paragraph (3–5 sentences). Specific to this student.',
+
+  // REPLACE: explains what the growth metric means for this student
+  // and how it will be developed. Shown in the trend chart card.
+  growthNote: 'REPLACE — paragraph explaining the growth metric focus for this student.',
+
+  /* ─────────────────────────────────────────────────────────────────
+     STRENGTHS — three bullet points observed this term.
+     Must be replaced with this student's actual strengths.
+  ───────────────────────────────────────────────────────────────── */
+  strengths: [
+    'REPLACE — key strength one observed this term',
+    'REPLACE — key strength two observed this term',
+    'REPLACE — key strength three observed this term',
+  ],
+
+  /* ─────────────────────────────────────────────────────────────────
+     FOCUS AREAS — three next steps or areas to improve.
+     Must be replaced with this student's actual focus areas.
+  ───────────────────────────────────────────────────────────────── */
+  focus: [
+    'REPLACE — focus area / next step one for this student',
+    'REPLACE — focus area / next step two for this student',
+    'REPLACE — focus area / next step three for this student',
+  ],
+
+  /* ─────────────────────────────────────────────────────────────────
+     LESSONS — one entry per week in the report period.
+     ─────────────────────────────────────────────────────────────────
+     IMPORTANT:
+     • Delete these placeholder entries and rebuild from scratch.
+     • Use actual dates, topics, ratings, and tutor comments.
+     • Ratings must come from THIS student's lesson feedback forms.
+     • Do not copy ratings from a previous student or term.
+     • Cancelled and rescheduled lessons are automatically excluded
+       from all averages — use the correct flags.
+  ───────────────────────────────────────────────────────────────── */
+  lessons: [
+
+    /* ── Completed lesson — copy this block for each week ──────── */
+    {
+      week:       1,
+      date:       'REPLACE — DD Mon YYYY',   // e.g. '7 Apr 2026'
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',                         // optional, e.g. 'Cambridge 6F'
+      completion: 100,                        // REPLACE: actual % 0–100
+      ratings: {
+        Performance:  4,    // REPLACE: actual score 1–5 from lesson feedback
+        Understanding:4,    // REPLACE: actual score 1–5
+        Confidence:   3,    // REPLACE: actual score 1–5
+        Engagement:   4,    // REPLACE: actual score 1–5
+      },
+      summary: 'REPLACE — paste verbatim tutor comment from the lesson feedback form.',
+    },
+
+    {
+      week:       2,
+      date:       'REPLACE — DD Mon YYYY',
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',
+      completion: 100,
+      ratings: { Performance:4, Understanding:4, Confidence:4, Engagement:4 },
+      summary: 'REPLACE — paste verbatim tutor feedback.',
+    },
+
+    {
+      week:       3,
+      date:       'REPLACE — DD Mon YYYY',
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',
+      completion: 100,
+      ratings: { Performance:4, Understanding:4, Confidence:4, Engagement:4 },
+      summary: 'REPLACE — paste verbatim tutor feedback.',
+    },
+
+    {
+      week:       4,
+      date:       'REPLACE — DD Mon YYYY',
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',
+      completion: 100,
+      ratings: { Performance:4, Understanding:4, Confidence:4, Engagement:4 },
+      summary: 'REPLACE — paste verbatim tutor feedback.',
+    },
+
+    {
+      week:       5,
+      date:       'REPLACE — DD Mon YYYY',
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',
+      completion: 100,
+      ratings: { Performance:4, Understanding:4, Confidence:4, Engagement:4 },
+      summary: 'REPLACE — paste verbatim tutor feedback.',
+    },
+
+    {
+      week:       6,
+      date:       'REPLACE — DD Mon YYYY',
+      topic:      'REPLACE — Lesson Topic',
+      ref:        '',
+      completion: 100,
+      ratings: { Performance:4, Understanding:4, Confidence:4, Engagement:4 },
+      summary: 'REPLACE — paste verbatim tutor feedback.',
+    },
+
+    /* ── Cancelled week — uncomment and fill in if applicable ──────
+    {
+      week:      3,
+      date:      'REPLACE — DD Mon YYYY',
+      cancelled: true,
+      summary:   'REPLACE — brief reason, e.g. No lesson this week.',
+    },
+    ────────────────────────────────────────────────────────────── */
+
+    /* ── Rescheduled week — uncomment and fill in if applicable ────
+    {
+      week:          3,
+      date:          'REPLACE — DD Mon YYYY',
+      rescheduled:   true,
+      rescheduledTo: 'REPLACE — Day, DD Month YYYY',
+      summary:       'REPLACE — optional context note.',
+    },
+    ────────────────────────────────────────────────────────────── */
+
+  ],
+
+  /* ─────────────────────────────────────────────────────────────────
+     PARENT COMMENT — shown in the bordered box on the final page.
+     Written specifically for this student and this term.
+     Do not reuse or adapt from another student's report.
+  ───────────────────────────────────────────────────────────────── */
+  comment: {
+    // REPLACE: italic opening sentence about this student
+    lead: 'REPLACE — opening sentence about this student, shown in italic.',
+    paras: [
+      'REPLACE — first paragraph: key observations from this term\'s lessons.',
+      'REPLACE — second paragraph: next steps, practice plan, growth areas.',
+      'REPLACE — third paragraph: encouragement and forward look.',
+    ],
+  },
+
+  /* ─────────────────────────────────────────────────────────────────
+     NEXT REPORT — shown in the bottom band on the final page.
+  ───────────────────────────────────────────────────────────────── */
+  // REPLACE: e.g. 'End of Term 2'
+  nextReport: 'REPLACE — e.g. End of Term 2',
+
+};
+</script>
+
+<script src="../../engine/ryze-report.js"></script>
+</body>
+</html>

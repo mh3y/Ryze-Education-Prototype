@@ -1,0 +1,541 @@
+/* =============================================================
+   RYZE EDUCATION — LAYOUT SYSTEM
+   ryze-layout.css  v1.0
+
+   Import AFTER ryze-theme.css and ryze-components.css.
+   Covers: app shell, sidebar, topbar, page containers,
+   grid utilities, and mobile responsive behaviour.
+   ============================================================= */
+
+/* =============================================================
+   1. APP SHELL — CSS grid root
+   ============================================================= */
+
+.ryze-app {
+  display: grid;
+  grid-template-columns: var(--ryze-sidebar-w, 248px) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 200ms ease;
+}
+
+/* Rail (icon-only) sidebar */
+.ryze-app[data-sidebar="rail"],
+.ryze-app.sidebar--rail {
+  --ryze-sidebar-w: 68px;
+}
+
+/* =============================================================
+   2. SIDEBAR
+   ============================================================= */
+
+.ryze-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: var(--ryze-sidebar-w, 248px);
+  background: var(--ryze-side-bg);
+  color: var(--ryze-side-fg);
+  border-right: 1px solid var(--ryze-side-border);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--ryze-z-sidebar);
+  overflow: hidden;
+  transition: width 200ms ease;
+}
+
+/* Brand/logo area */
+.ryze-brand {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--ryze-side-border);
+  flex-shrink: 0;
+}
+.ryze-brand__mark {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--ryze-accent);
+  color: var(--ryze-accent-ink);
+  display: grid; place-items: center;
+  font-family: var(--ryze-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.ryze-brand__name {
+  font-family: var(--ryze-font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--ryze-side-fg);
+  line-height: 1.1;
+}
+.ryze-brand__sub {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ryze-side-fg-muted);
+  font-weight: 600;
+}
+
+/* Nav scroll region */
+.ryze-sidebar__scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+.ryze-sidebar__scroll::-webkit-scrollbar { width: 4px; }
+.ryze-sidebar__scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+
+/* Nav group */
+.ryze-nav-group { margin-top: 0; }
+.ryze-nav-group + .ryze-nav-group { margin-top: 16px; }
+.ryze-nav-group__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ryze-side-fg-muted);
+  padding: 0 10px 6px;
+}
+.ryze-nav-group__items { display: flex; flex-direction: column; gap: 1px; }
+
+/* Nav item */
+.ryze-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: var(--ryze-side-fg-muted);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.004em;
+  transition: background 120ms ease, color 120ms ease;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+}
+.ryze-nav-item:hover {
+  background: var(--ryze-side-hover);
+  color: var(--ryze-side-fg);
+}
+.ryze-nav-item.is-active,
+.ryze-nav-item[aria-current="page"] {
+  background: var(--ryze-side-active-bg);
+  color: var(--ryze-side-active-fg);
+  font-weight: 600;
+}
+
+/* Gold active rail indicator */
+.ryze-nav-item__rail {
+  position: absolute;
+  left: -10px; top: 6px; bottom: 6px;
+  width: 2.5px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 120ms ease;
+}
+.ryze-nav-item.is-active .ryze-nav-item__rail,
+.ryze-nav-item[aria-current="page"] .ryze-nav-item__rail {
+  background: var(--ryze-accent);
+}
+
+.ryze-nav-item__label { flex: 1; }
+
+/* Badge (unread count) */
+.ryze-nav-item__badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--ryze-danger);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 999px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Sidebar footer (user identity) */
+.ryze-sidebar__foot {
+  border-top: 1px solid var(--ryze-side-border);
+  padding: 12px;
+  flex-shrink: 0;
+}
+.ryze-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--ryze-side-border);
+}
+.ryze-sidebar__avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ryze-accent), color-mix(in oklab, var(--ryze-accent) 55%, #5b3d10));
+  color: var(--ryze-accent-ink);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 12px;
+  flex-shrink: 0;
+}
+.ryze-sidebar__user-name { font-size: 12.5px; font-weight: 600; color: var(--ryze-side-fg); }
+.ryze-sidebar__user-role { font-size: 10.5px; color: var(--ryze-side-fg-muted); }
+.ryze-sidebar__user-meta { flex: 1; min-width: 0; overflow: hidden; }
+
+/* =============================================================
+   3. TOPBAR
+   ============================================================= */
+
+.ryze-topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--ryze-z-topbar);
+  height: 60px;
+  background: color-mix(in oklab, var(--ryze-bg-app) 86%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--ryze-border-faint);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ryze-page-x);
+  gap: 18px;
+}
+
+/* Hamburger — hidden on desktop, visible on mobile */
+.ryze-topbar__hamburger {
+  display: none;
+  width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: var(--ryze-text-muted);
+  transition: background var(--ryze-transition), color var(--ryze-transition);
+  flex-shrink: 0;
+}
+.ryze-topbar__hamburger:hover { background: var(--ryze-bg-hover); color: var(--ryze-text-strong); }
+
+/* Breadcrumbs */
+.ryze-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ryze-text-muted);
+  flex-shrink: 0;
+  max-width: 36%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ryze-breadcrumbs__sep { color: var(--ryze-text-faint); opacity: 0.7; }
+.ryze-breadcrumbs__item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ryze-breadcrumbs__item--current { color: var(--ryze-text-strong); font-weight: 600; }
+
+/* Search */
+.ryze-topbar__search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  max-width: 440px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 7px 12px;
+  background: var(--ryze-bg-surface);
+  border: 1px solid var(--ryze-border-soft);
+  border-radius: 9px;
+  color: var(--ryze-text-muted);
+  font-size: 13px;
+  cursor: text;
+  transition: border-color var(--ryze-transition);
+}
+.ryze-topbar__search:hover { border-color: var(--ryze-border-strong); }
+.ryze-topbar__search-placeholder { flex: 1; }
+
+/* Right actions */
+.ryze-topbar__right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.ryze-topbar__icon {
+  position: relative;
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  color: var(--ryze-text-muted);
+  transition: background var(--ryze-transition), color var(--ryze-transition);
+}
+.ryze-topbar__icon:hover { background: var(--ryze-bg-hover); color: var(--ryze-text-strong); }
+.ryze-topbar__icon-dot {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ryze-accent);
+  box-shadow: 0 0 0 2px var(--ryze-bg-app);
+}
+.ryze-topbar__divider { width: 1px; height: 20px; background: var(--ryze-border-soft); }
+.ryze-topbar__me { display: flex; align-items: center; gap: 9px; }
+.ryze-topbar__me-name { font-size: 13px; font-weight: 600; color: var(--ryze-text-strong); }
+.ryze-topbar__me-role { font-size: 11px; color: var(--ryze-text-muted); }
+.ryze-topbar__avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ryze-accent), color-mix(in oklab, var(--ryze-accent) 55%, #5b3d10));
+  color: var(--ryze-accent-ink);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 12px;
+}
+
+/* =============================================================
+   4. MAIN CONTENT COLUMN
+   ============================================================= */
+
+.ryze-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page body wrapper — max-width + padding */
+.ryze-page {
+  flex: 1;
+  padding: var(--ryze-page-y) var(--ryze-page-x);
+  max-width: 1480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Section stack — vertical spacing between page sections */
+.ryze-section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ryze-gap-lg);
+}
+
+/* Subtle grid texture on app background */
+.ryze-bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(15,19,24,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15,19,24,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* =============================================================
+   5. GRID UTILITIES
+   ============================================================= */
+
+.ryze-grid { display: grid; gap: var(--ryze-gap-md); }
+
+/* Stat card grids */
+.ryze-grid--2  { grid-template-columns: repeat(2, 1fr); }
+.ryze-grid--3  { grid-template-columns: repeat(3, 1fr); }
+.ryze-grid--4  { grid-template-columns: repeat(4, 1fr); }
+
+/* Content grids */
+.ryze-grid--8-4  { grid-template-columns: 8fr 4fr; }  /* wide + narrow */
+.ryze-grid--7-5  { grid-template-columns: 7fr 5fr; }  /* payments layout */
+.ryze-grid--3-2  { grid-template-columns: 3fr 2fr; }  /* detail + sidebar */
+
+/* Auto-fill card grid */
+.ryze-grid--auto-280 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.ryze-grid--auto-240 { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+/* =============================================================
+   6. SETTINGS TWO-COLUMN LAYOUT
+   ============================================================= */
+
+.ryze-settings-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--ryze-gap-lg);
+  align-items: flex-start;
+}
+
+.ryze-settings-nav {
+  position: sticky;
+  top: calc(60px + 24px);  /* topbar height + offset */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--ryze-bg-surface);
+  border: 1px solid var(--ryze-border-faint);
+  border-radius: var(--ryze-radius-xl);
+  padding: 12px;
+  box-shadow: var(--ryze-shadow-card);
+}
+
+.ryze-settings-nav__item {
+  display: grid;
+  grid-template-columns: 18px 1fr 13px;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--ryze-text-default);
+  transition: background var(--ryze-transition), color var(--ryze-transition);
+  text-align: left;
+}
+.ryze-settings-nav__item:hover { background: var(--ryze-bg-hover); }
+.ryze-settings-nav__item.is-active { background: var(--ryze-accent-soft); color: var(--ryze-accent); }
+.ryze-settings-nav__item--danger { color: var(--ryze-danger); }
+.ryze-settings-nav__item--danger:hover { background: color-mix(in oklab, var(--ryze-danger) 8%, transparent); }
+.ryze-settings-nav__label { font-size: 13px; font-weight: 600; }
+.ryze-settings-nav__desc  { font-size: 11px; color: var(--ryze-text-muted); margin-top: 2px; }
+
+.ryze-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ryze-gap-lg);
+  min-width: 0;
+}
+
+/* Form row: label left, control right */
+.ryze-form-row {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 28px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ryze-border-faint);
+  align-items: flex-start;
+}
+.ryze-form-row:last-child { border-bottom: 0; }
+.ryze-form-row__label { font-size: 13.5px; font-weight: 600; color: var(--ryze-text-strong); }
+.ryze-form-row__hint  { font-size: 12.5px; color: var(--ryze-text-muted); margin-top: 5px; line-height: 1.5; max-width: 36ch; }
+.ryze-form-row__ctrl  { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+
+/* =============================================================
+   7. MOBILE RESPONSIVE
+   ============================================================= */
+
+@media (max-width: 768px) {
+
+  /* Override spacing for small screens */
+  :root {
+    --ryze-page-x:   16px;
+    --ryze-page-y:   20px;
+    --ryze-gap-md:   14px;
+    --ryze-gap-lg:   20px;
+  }
+
+  /* App becomes single-column */
+  .ryze-app {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar becomes a fixed overlay drawer */
+  .ryze-sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    z-index: var(--ryze-z-sidebar);
+  }
+
+  /* Open state — triggered by adding .mob-open to .ryze-app */
+  .ryze-app.mob-open .ryze-sidebar {
+    transform: translateX(0);
+    box-shadow: 0 0 0 100vw rgba(0,0,0,0.38);
+  }
+
+  /* Show hamburger, hide breadcrumbs on mobile */
+  .ryze-topbar__hamburger { display: flex; }
+  .ryze-breadcrumbs { display: none; }
+
+  /* Collapse search to icon-only */
+  .ryze-topbar__search-placeholder,
+  .ryze-topbar__search .kbd { display: none; }
+  .ryze-topbar__search {
+    flex: 0 0 36px;
+    width: 36px;
+    max-width: 36px;
+    padding: 0;
+    height: 36px;
+    justify-content: center;
+    margin: 0;
+  }
+
+  .ryze-topbar { padding: 0 16px; gap: 10px; }
+
+  /* Collapse all grids to single column */
+  .ryze-grid--2,
+  .ryze-grid--3,
+  .ryze-grid--4,
+  .ryze-grid--8-4,
+  .ryze-grid--7-5,
+  .ryze-grid--3-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Settings layout stacks */
+  .ryze-settings-shell { grid-template-columns: 1fr; }
+  .ryze-settings-nav { position: relative !important; top: 0 !important; }
+  .ryze-form-row { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Lesson rows get tighter */
+  .ryze-lesson-row { padding: 12px 14px; gap: 10px; grid-template-columns: 60px 1fr auto; }
+  .ryze-alert-row  { padding: 12px 14px; }
+  .ryze-toolbar    { padding: 10px 14px; }
+
+  /* Tables: cells get smaller padding */
+  .ryze-table thead th { padding: 9px 14px; }
+  .ryze-table tbody td { padding: 11px 14px; }
+
+  /* Page title scales down */
+  .ryze-page-header__title { font-size: clamp(22px, 6vw, 30px); }
+  .ryze-overview-header__greeting { font-size: clamp(18px, 5.5vw, 26px); }
+
+  /* Modals full-width */
+  .ryze-modal-overlay { padding: 0; align-items: flex-end; }
+  .ryze-modal {
+    max-width: 100%;
+    border-radius: var(--ryze-radius-2xl) var(--ryze-radius-2xl) 0 0;
+    max-height: 90vh;
+  }
+}
+
+/* Medium breakpoint — tablet landscape */
+@media (min-width: 769px) and (max-width: 1100px) {
+
+  .ryze-grid--4  { grid-template-columns: 1fr 1fr; }
+  .ryze-grid--3  { grid-template-columns: 1fr 1fr; }
+  .ryze-grid--8-4,
+  .ryze-grid--7-5,
+  .ryze-grid--3-2 { grid-template-columns: 1fr; }
+}
+
+/* Narrow desktop — sidebar gets tighter */
+@media (min-width: 769px) and (max-width: 960px) {
+  .ryze-grid--2 { grid-template-columns: 1fr; }
+  :root { --ryze-page-x: 28px; }
+}
+
+/* =============================================================
+   8. PRINT STYLES
+   ============================================================= */
+
+@media print {
+  .ryze-sidebar,
+  .ryze-topbar { display: none !important; }
+
+  .ryze-app { grid-template-columns: 1fr; }
+
+  .ryze-page {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .ryze-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .ryze-btn { display: none; }
+}

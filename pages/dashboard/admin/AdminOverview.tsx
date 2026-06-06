@@ -109,7 +109,7 @@ const SectionHeader: React.FC<{
       {sub && <div className="muted" style={{ fontSize: 13 }}>{sub}</div>}
     </div>
     {action && (
-      <button className="btn btn--quiet" style={{ fontSize: 12 }} onClick={() => onNav(action.path)}>
+      <button className="btn btn--quiet ryze-btn ryze-btn--quiet" style={{ fontSize: 12 }} onClick={() => onNav(action.path)}>
         {action.label} <ArrowRight size={12} />
       </button>
     )}
@@ -136,7 +136,7 @@ const Skeleton: React.FC<{ h?: number; w?: string; mb?: number }> = ({ h = 14, w
 );
 
 const SkeletonCard: React.FC = () => (
-  <div className="card" style={{ padding: 20 }}>
+  <div className="card ryze-card" style={{ padding: 20 }}>
     <Skeleton h={12} w="40%" mb={12} />
     <Skeleton h={32} w="60%" mb={8} />
     <Skeleton h={10} w="80%" />
@@ -144,16 +144,16 @@ const SkeletonCard: React.FC = () => (
 );
 
 function severityPip(sev: string): string {
-  if (sev === 'high' || sev === 'critical') return 'alert-row__pip alert-row__pip--high';
-  if (sev === 'medium' || sev === 'med')   return 'alert-row__pip alert-row__pip--med';
-  return 'alert-row__pip alert-row__pip--low';
+  if (sev === 'high' || sev === 'critical') return 'alert-row__pip alert-row__pip--high ryze-alert-row__pip ryze-alert-row__pip--high';
+  if (sev === 'medium' || sev === 'med')   return 'alert-row__pip alert-row__pip--med ryze-alert-row__pip ryze-alert-row__pip--med';
+  return 'alert-row__pip alert-row__pip--low ryze-alert-row__pip ryze-alert-row__pip--low';
 }
 
 function lessonStatusTag(status: string) {
-  if (status === 'live')      return <span className="tag tag--accent">Live</span>;
-  if (status === 'completed') return <span className="tag">Done</span>;
-  if (status === 'cancelled') return <span className="tag" style={{ color: 'var(--fg-muted)', background: 'var(--bg-surface-2)' }}>Cancelled</span>;
-  return <span className="tag tag--info">Upcoming</span>;
+  if (status === 'live')      return <span className="tag tag--accent ryze-badge ryze-badge--live">Live</span>;
+  if (status === 'completed') return <span className="tag ryze-badge ryze-badge--neutral">Done</span>;
+  if (status === 'cancelled') return <span className="tag ryze-badge ryze-badge--neutral" style={{ color: 'var(--fg-muted)', background: 'var(--bg-surface-2)' }}>Cancelled</span>;
+  return <span className="tag tag--info ryze-badge ryze-badge--upcoming">Upcoming</span>;
 }
 
 function activityIcon(entityType: string, action: string): React.ReactNode {
@@ -172,13 +172,13 @@ const OverduePaymentsCard: React.FC<{
   data: AdminOverviewData['financials'];
   onNav: (p: string) => void;
 }> = ({ data, onNav }) => (
-  <div className="card card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="card__head">
+  <div className="card card--flush ryze-card ryze-card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="card__head ryze-card__head">
       <div>
-        <div className="card__title">Overdue Payments</div>
-        <div className="card__sub">Parent / student balances outstanding</div>
+        <div className="card__title ryze-card__title">Overdue Payments</div>
+        <div className="card__sub ryze-card__sub">Parent / student balances outstanding</div>
       </div>
-      <button className="btn btn--quiet" onClick={() => onNav('/dashboard/admin/payments')}>
+      <button className="btn btn--quiet ryze-btn ryze-btn--quiet" onClick={() => onNav('/dashboard/admin/payments')}>
         View <ArrowRight size={12} />
       </button>
     </div>
@@ -208,11 +208,11 @@ const OverduePaymentsCard: React.FC<{
           )}
         </div>
         {data.topOverduePayments.map(p => (
-          <div key={p.id} className="alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/payments')}>
-            <div className="alert-row__pip alert-row__pip--high"><AlertTriangle size={13} /></div>
+          <div key={p.id} className="alert-row ryze-alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/payments')}>
+            <div className="alert-row__pip alert-row__pip--high ryze-alert-row__pip ryze-alert-row__pip--high"><AlertTriangle size={13} /></div>
             <div>
-              <div className="alert-row__title">{p.studentName}</div>
-              <div className="alert-row__sub">{p.description}{p.dueDate ? ` · Due ${fmtDate(p.dueDate)}` : ''}</div>
+              <div className="alert-row__title ryze-alert-row__title">{p.studentName}</div>
+              <div className="alert-row__sub ryze-alert-row__body">{p.description}{p.dueDate ? ` · Due ${fmtDate(p.dueDate)}` : ''}</div>
             </div>
             <div className="tnum" style={{ fontSize: 13, fontWeight: 700, color: 'var(--danger)', whiteSpace: 'nowrap' }}>
               {fmtCents(p.amountOwed)}
@@ -228,13 +228,13 @@ const TutorPayCard: React.FC<{
   data: AdminOverviewData['financials'];
   onNav: (p: string) => void;
 }> = ({ data, onNav }) => (
-  <div className="card card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="card__head">
+  <div className="card card--flush ryze-card ryze-card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="card__head ryze-card__head">
       <div>
-        <div className="card__title">Tutor Payments Owed</div>
-        <div className="card__sub">Unpaid tutor pay periods</div>
+        <div className="card__title ryze-card__title">Tutor Payments Owed</div>
+        <div className="card__sub ryze-card__sub">Unpaid tutor pay periods</div>
       </div>
-      <button className="btn btn--quiet" onClick={() => onNav('/dashboard/admin/tutor-payments')}>
+      <button className="btn btn--quiet ryze-btn ryze-btn--quiet" onClick={() => onNav('/dashboard/admin/tutor-payments')}>
         View <ArrowRight size={12} />
       </button>
     </div>
@@ -256,11 +256,11 @@ const TutorPayCard: React.FC<{
           </div>
         </div>
         {data.topTutorPayments.map(p => (
-          <div key={p.id} className="alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutor-payments')}>
-            <div className="alert-row__pip alert-row__pip--med"><DollarSign size={13} /></div>
+          <div key={p.id} className="alert-row ryze-alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutor-payments')}>
+            <div className="alert-row__pip alert-row__pip--med ryze-alert-row__pip ryze-alert-row__pip--med"><DollarSign size={13} /></div>
             <div>
-              <div className="alert-row__title">{p.tutorName}</div>
-              <div className="alert-row__sub">{p.period ?? p.description}</div>
+              <div className="alert-row__title ryze-alert-row__title">{p.tutorName}</div>
+              <div className="alert-row__sub ryze-alert-row__body">{p.period ?? p.description}</div>
             </div>
             <div className="tnum" style={{ fontSize: 13, fontWeight: 700, color: 'var(--warn)', whiteSpace: 'nowrap' }}>
               {fmtCents(p.amountOwed)}
@@ -276,13 +276,13 @@ const PriorityAlertsCard: React.FC<{
   alerts: OverviewAlertItem[];
   onNav: (p: string) => void;
 }> = ({ alerts, onNav }) => (
-  <div className="card card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="card__head">
+  <div className="card card--flush ryze-card ryze-card--flush" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="card__head ryze-card__head">
       <div>
-        <div className="card__title">Priority Alerts</div>
-        <div className="card__sub">{alerts.length} open alert{alerts.length !== 1 ? 's' : ''}</div>
+        <div className="card__title ryze-card__title">Priority Alerts</div>
+        <div className="card__sub ryze-card__sub">{alerts.length} open alert{alerts.length !== 1 ? 's' : ''}</div>
       </div>
-      <button className="btn btn--quiet" onClick={() => onNav('/dashboard/admin/alerts')}>
+      <button className="btn btn--quiet ryze-btn ryze-btn--quiet" onClick={() => onNav('/dashboard/admin/alerts')}>
         All <ArrowRight size={12} />
       </button>
     </div>
@@ -292,15 +292,15 @@ const PriorityAlertsCard: React.FC<{
     ) : (
       <div>
         {alerts.slice(0, 6).map(a => (
-          <div key={a.id} className="alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/alerts')}>
+          <div key={a.id} className="alert-row ryze-alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/alerts')}>
             <div className={severityPip(a.severity)}><AlertTriangle size={13} /></div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="alert-row__title">{a.title}</div>
-              <div className="alert-row__sub" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div className="alert-row__title ryze-alert-row__title">{a.title}</div>
+              <div className="alert-row__sub ryze-alert-row__body" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {a.message}
               </div>
             </div>
-            <div className="alert-row__when">{relTime(a.createdAt)}</div>
+            <div className="alert-row__when ryze-alert-row__when">{relTime(a.createdAt)}</div>
           </div>
         ))}
       </div>
@@ -316,17 +316,17 @@ const LessonRow: React.FC<{
   showDate?: boolean;
 }> = ({ lesson, onNav, showDate }) => (
   <div
-    className="lesson-row"
+    className="lesson-row ryze-lesson-row"
     style={{ cursor: 'pointer', opacity: lesson.status === 'cancelled' ? 0.55 : 1 }}
     onClick={() => onNav(`/dashboard/admin/lessons/${lesson.id}`)}
   >
     <div className="lesson-row__time">
-      <div className="lesson-row__start">{fmtTime(lesson.scheduledAt)}</div>
-      <div className="lesson-row__end">→ {fmtTime(lesson.endAt)}</div>
+      <div className="lesson-row__start ryze-lesson-row__start">{fmtTime(lesson.scheduledAt)}</div>
+      <div className="lesson-row__end ryze-lesson-row__end">→ {fmtTime(lesson.endAt)}</div>
     </div>
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div className="lesson-row__title">{lesson.title}</div>
-      <div className="lesson-row__meta">
+      <div className="lesson-row__title ryze-lesson-row__title">{lesson.title}</div>
+      <div className="lesson-row__meta ryze-lesson-row__meta">
         {[
           showDate ? fmtDayLabel(lesson.scheduledAt) : null,
           lesson.className,
@@ -349,55 +349,55 @@ const FinancialSection: React.FC<{
   const hasNetData   = data.revenueThisMonth > 0 || data.tutorPaymentsOwed > 0;
 
   return (
-    <div className="row row--4">
+    <div className="row row--4 ryze-grid ryze-grid--4">
       {/* Outstanding */}
-      <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/payments')}>
-        <div className="stat__label">Outstanding Payments</div>
-        <div className="stat__value tnum" style={{ color: data.parentOutstanding > 0 ? 'var(--warn)' : undefined }}>
+      <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/payments')}>
+        <div className="stat__label ryze-stat__label">Outstanding Payments</div>
+        <div className="stat__value tnum ryze-stat__value ryze-tnum" style={{ color: data.parentOutstanding > 0 ? 'var(--warn)' : undefined }}>
           {fmtCents(data.parentOutstanding)}
         </div>
-        <div className="stat__foot">
+        <div className="stat__foot ryze-stat__foot">
           {data.parentOverdue > 0
-            ? <span className="stat__delta stat__delta--down"><TrendingDown size={12} />{fmtCents(data.parentOverdue)} overdue</span>
-            : <span className="stat__delta stat__delta--up"><CheckCircle size={12} />No overdue</span>}
+            ? <span className="stat__delta stat__delta--down ryze-stat__delta ryze-stat__delta--down"><TrendingDown size={12} />{fmtCents(data.parentOverdue)} overdue</span>
+            : <span className="stat__delta stat__delta--up ryze-stat__delta ryze-stat__delta--up"><CheckCircle size={12} />No overdue</span>}
           <span className="muted">{data.countOverdue} invoice{data.countOverdue !== 1 ? 's' : ''}</span>
         </div>
       </div>
 
       {/* Revenue this month */}
-      <div className="stat">
-        <div className="stat__label">Revenue This Month</div>
-        <div className="stat__value tnum">
+      <div className="stat ryze-stat">
+        <div className="stat__label ryze-stat__label">Revenue This Month</div>
+        <div className="stat__value tnum ryze-stat__value ryze-tnum">
           {data.revenueThisMonth > 0 ? fmtCents(data.revenueThisMonth) : '—'}
         </div>
-        <div className="stat__foot">
+        <div className="stat__foot ryze-stat__foot">
           <span className="muted">All-time</span>
           <span className="tnum" style={{ fontSize: 12 }}>{fmtCents(data.revenueAllTime)}</span>
         </div>
       </div>
 
       {/* Tutor cost */}
-      <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutor-payments')}>
-        <div className="stat__label">Tutor Payments Owed</div>
-        <div className="stat__value tnum" style={{ color: data.tutorPaymentsOwed > 0 ? 'var(--warn)' : undefined }}>
+      <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutor-payments')}>
+        <div className="stat__label ryze-stat__label">Tutor Payments Owed</div>
+        <div className="stat__value tnum ryze-stat__value ryze-tnum" style={{ color: data.tutorPaymentsOwed > 0 ? 'var(--warn)' : undefined }}>
           {data.tutorPaymentsOwed > 0 ? fmtCents(data.tutorPaymentsOwed) : '—'}
         </div>
-        <div className="stat__foot">
+        <div className="stat__foot ryze-stat__foot">
           <span className="muted">{data.countTutorPaymentsPending} pay period{data.countTutorPaymentsPending !== 1 ? 's' : ''} pending</span>
         </div>
       </div>
 
       {/* Net position */}
-      <div className="stat">
-        <div className="stat__label">Net This Month</div>
-        <div className="stat__value tnum" style={{ color: !hasNetData ? 'var(--fg-muted)' : netPosition >= 0 ? 'var(--ok)' : 'var(--danger)' }}>
+      <div className="stat ryze-stat">
+        <div className="stat__label ryze-stat__label">Net This Month</div>
+        <div className="stat__value tnum ryze-stat__value ryze-tnum" style={{ color: !hasNetData ? 'var(--fg-muted)' : netPosition >= 0 ? 'var(--ok)' : 'var(--danger)' }}>
           {hasNetData ? fmtCents(Math.abs(netPosition)) : '—'}
         </div>
-        <div className="stat__foot">
+        <div className="stat__foot ryze-stat__foot">
           {hasNetData
             ? netPosition >= 0
-              ? <span className="stat__delta stat__delta--up"><TrendingUp size={12} />Positive</span>
-              : <span className="stat__delta stat__delta--down"><TrendingDown size={12} />Deficit</span>
+              ? <span className="stat__delta stat__delta--up ryze-stat__delta ryze-stat__delta--up"><TrendingUp size={12} />Positive</span>
+              : <span className="stat__delta stat__delta--down ryze-stat__delta ryze-stat__delta--down"><TrendingDown size={12} />Deficit</span>
             : <span className="muted">Insufficient data</span>}
         </div>
       </div>
@@ -415,49 +415,49 @@ const SnapshotSection: React.FC<{
 
   return (
     <>
-      <div className="row row--4">
-        <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/students')}>
-          <div className="stat__label">Active Students</div>
-          <div className="stat__value tnum">{summary.activeStudents}</div>
-          <div className="stat__foot">
+      <div className="row row--4 ryze-grid ryze-grid--4">
+        <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/students')}>
+          <div className="stat__label ryze-stat__label">Active Students</div>
+          <div className="stat__value tnum ryze-stat__value ryze-tnum">{summary.activeStudents}</div>
+          <div className="stat__foot ryze-stat__foot">
             {summary.newStudentsLast30Days > 0
-              ? <span className="stat__delta stat__delta--up"><TrendingUp size={12} />+{summary.newStudentsLast30Days} this month</span>
+              ? <span className="stat__delta stat__delta--up ryze-stat__delta ryze-stat__delta--up"><TrendingUp size={12} />+{summary.newStudentsLast30Days} this month</span>
               : <span className="muted">0 new this month</span>}
           </div>
         </div>
 
-        <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutors')}>
-          <div className="stat__label">Active Tutors</div>
-          <div className="stat__value tnum">{summary.activeTutors}</div>
-          <div className="stat__foot">
+        <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/tutors')}>
+          <div className="stat__label ryze-stat__label">Active Tutors</div>
+          <div className="stat__value tnum ryze-stat__value ryze-tnum">{summary.activeTutors}</div>
+          <div className="stat__foot ryze-stat__foot">
             <span className="muted">{summary.activeClasses} class{summary.activeClasses !== 1 ? 'es' : ''} running</span>
           </div>
         </div>
 
-        <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/classes')}>
-          <div className="stat__label">Active Classes</div>
-          <div className="stat__value tnum">{summary.activeClasses}</div>
-          <div className="stat__foot">
+        <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/classes')}>
+          <div className="stat__label ryze-stat__label">Active Classes</div>
+          <div className="stat__value tnum ryze-stat__value ryze-tnum">{summary.activeClasses}</div>
+          <div className="stat__foot ryze-stat__foot">
             <span className="muted">{summary.activeTutors} tutor{summary.activeTutors !== 1 ? 's' : ''} teaching</span>
           </div>
         </div>
 
-        <div className="stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/parents')}>
-          <div className="stat__label">Parent Accounts</div>
-          <div className="stat__value tnum">{summary.parentAccounts.total}</div>
-          <div className="stat__foot">
+        <div className="stat ryze-stat" style={{ cursor: 'pointer' }} onClick={() => onNav('/dashboard/admin/parents')}>
+          <div className="stat__label ryze-stat__label">Parent Accounts</div>
+          <div className="stat__value tnum ryze-stat__value ryze-tnum">{summary.parentAccounts.total}</div>
+          <div className="stat__foot ryze-stat__foot">
             {summary.parentAccounts.pendingInvite > 0
-              ? <span className="stat__delta stat__delta--down"><Clock size={12} />{summary.parentAccounts.pendingInvite} invite pending</span>
-              : <span className="stat__delta stat__delta--up"><CheckCircle size={12} />{summary.parentAccounts.active} active</span>}
+              ? <span className="stat__delta stat__delta--down ryze-stat__delta ryze-stat__delta--down"><Clock size={12} />{summary.parentAccounts.pendingInvite} invite pending</span>
+              : <span className="stat__delta stat__delta--up ryze-stat__delta ryze-stat__delta--up"><CheckCircle size={12} />{summary.parentAccounts.active} active</span>}
           </div>
         </div>
       </div>
 
       {/* Year Distribution */}
       {yearEntries.length > 0 ? (
-        <div className="card">
-          <div className="card__head">
-            <div className="card__title">Student Distribution by Year Level</div>
+        <div className="card ryze-card">
+          <div className="card__head ryze-card__head">
+            <div className="card__title ryze-card__title">Student Distribution by Year Level</div>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 24px', padding: '0 20px 16px' }}>
             {yearEntries.map(([year, count]) => (
@@ -475,7 +475,7 @@ const SnapshotSection: React.FC<{
           </div>
         </div>
       ) : (
-        <div className="card">
+        <div className="card ryze-card">
           <EmptyCard
             icon={<BarChart3 size={20} />}
             message="Year level data incomplete."
@@ -490,11 +490,11 @@ const SnapshotSection: React.FC<{
 // ── Section 5: Risk ────────────────────────────────────────────────────────
 
 const RiskRow: React.FC<{ item: OverviewRiskItem; onNav: (p: string) => void }> = ({ item, onNav }) => (
-  <div className="alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav(item.action)}>
+  <div className="alert-row ryze-alert-row" style={{ cursor: 'pointer' }} onClick={() => onNav(item.action)}>
     <div className={severityPip(item.severity)}><ShieldAlert size={13} /></div>
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div className="alert-row__title">{item.title}</div>
-      <div className="alert-row__sub">{item.type.replace(/_/g, ' ')}</div>
+      <div className="alert-row__title ryze-alert-row__title">{item.title}</div>
+      <div className="alert-row__sub ryze-alert-row__body">{item.type.replace(/_/g, ' ')}</div>
     </div>
     <ArrowRight size={13} style={{ color: 'var(--fg-faint)', flexShrink: 0 }} />
   </div>
@@ -511,11 +511,11 @@ const RiskSection: React.FC<{
   }).slice(0, 5);
 
   return (
-    <div className="card card--flush">
-      <div className="card__head">
+    <div className="card card--flush ryze-card ryze-card--flush">
+      <div className="card__head ryze-card__head">
         <div>
-          <div className="card__title">Academic & Operations Risk</div>
-          <div className="card__sub">Students and classes that need attention</div>
+          <div className="card__title ryze-card__title">Academic & Operations Risk</div>
+          <div className="card__sub ryze-card__sub">Students and classes that need attention</div>
         </div>
       </div>
       {sorted.length === 0 ? (
@@ -567,14 +567,14 @@ const AutomationSection: React.FC<{
   onTriggerSync: (type: 'sync_members' | 'sync_classes' | 'sync_lessons' | 'sync_attendance') => void;
   syncing: string | null;
 }> = ({ auto, onNav, onTriggerSync, syncing }) => (
-  <div className="row row--2">
-    <div className="card card--flush">
-      <div className="card__head">
+  <div className="row row--2 ryze-grid ryze-grid--2">
+    <div className="card card--flush ryze-card ryze-card--flush">
+      <div className="card__head ryze-card__head">
         <div>
-          <div className="card__title">Sync Status</div>
-          <div className="card__sub">Discord bot ↔ Supabase data pipeline</div>
+          <div className="card__title ryze-card__title">Sync Status</div>
+          <div className="card__sub ryze-card__sub">Discord bot ↔ Supabase data pipeline</div>
         </div>
-        <button className="btn btn--quiet" onClick={() => onNav('/dashboard/admin/bot-health')}>
+        <button className="btn btn--quiet ryze-btn ryze-btn--quiet" onClick={() => onNav('/dashboard/admin/bot-health')}>
           Bot Health <ArrowRight size={12} />
         </button>
       </div>
@@ -587,7 +587,7 @@ const AutomationSection: React.FC<{
       {/* Manual trigger buttons */}
       <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border-soft)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button
-          className="btn btn--ghost"
+          className="btn btn--ghost ryze-btn ryze-btn--ghost"
           style={{ fontSize: 12 }}
           disabled={!!syncing}
           onClick={() => onTriggerSync('sync_members')}
@@ -596,7 +596,7 @@ const AutomationSection: React.FC<{
           Sync Members
         </button>
         <button
-          className="btn btn--ghost"
+          className="btn btn--ghost ryze-btn ryze-btn--ghost"
           style={{ fontSize: 12 }}
           disabled={!!syncing}
           onClick={() => onTriggerSync('sync_lessons')}
@@ -605,7 +605,7 @@ const AutomationSection: React.FC<{
           Sync Calendar
         </button>
         <button
-          className="btn btn--ghost"
+          className="btn btn--ghost ryze-btn ryze-btn--ghost"
           style={{ fontSize: 12 }}
           disabled={!!syncing}
           onClick={() => onTriggerSync('sync_attendance')}
@@ -616,9 +616,9 @@ const AutomationSection: React.FC<{
       </div>
     </div>
 
-    <div className="card card--flush">
-      <div className="card__head">
-        <div className="card__title">Bot Job Queue</div>
+    <div className="card card--flush ryze-card ryze-card--flush">
+      <div className="card__head ryze-card__head">
+        <div className="card__title ryze-card__title">Bot Job Queue</div>
       </div>
       <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -655,7 +655,7 @@ const AutomationSection: React.FC<{
             Queuing {syncing.replace('_', ' ')} job…
           </div>
         )}
-        <button className="btn btn--ghost" style={{ marginTop: 4 }} onClick={() => onNav('/dashboard/admin/bot-health')}>
+        <button className="btn btn--ghost ryze-btn ryze-btn--ghost" style={{ marginTop: 4 }} onClick={() => onNav('/dashboard/admin/bot-health')}>
           <Wifi size={13} /> View Bot Health
         </button>
       </div>
@@ -666,14 +666,14 @@ const AutomationSection: React.FC<{
 // ── Section 7: Activity Feed ───────────────────────────────────────────────
 
 const ActivityFeed: React.FC<{ activity: AdminOverviewData['recentActivity']; onNav?: (p: string) => void }> = ({ activity, onNav }) => (
-  <div className="card card--flush">
-    <div className="card__head">
+  <div className="card card--flush ryze-card ryze-card--flush">
+    <div className="card__head ryze-card__head">
       <div>
-        <div className="card__title">Recent Activity</div>
-        <div className="card__sub">Last {activity.length} events recorded server-side</div>
+        <div className="card__title ryze-card__title">Recent Activity</div>
+        <div className="card__sub ryze-card__sub">Last {activity.length} events recorded server-side</div>
       </div>
       {onNav && (
-        <button className="btn btn--quiet" style={{ fontSize: 12 }} onClick={() => onNav('/dashboard/admin/audit-log')}>
+        <button className="btn btn--quiet ryze-btn ryze-btn--quiet" style={{ fontSize: 12 }} onClick={() => onNav('/dashboard/admin/audit-log')}>
           Audit Log <ArrowRight size={12} />
         </button>
       )}
@@ -722,14 +722,14 @@ const ActivityFeed: React.FC<{ activity: AdminOverviewData['recentActivity']; on
 // ── Loading skeleton page ──────────────────────────────────────────────────
 
 const LoadingSkeleton: React.FC = () => (
-  <div className="section-stack">
-    <div className="row row--3">
+  <div className="section-stack ryze-section-stack">
+    <div className="row row--3 ryze-grid ryze-grid--3">
       <SkeletonCard /><SkeletonCard /><SkeletonCard />
     </div>
-    <div className="row row--2">
+    <div className="row row--2 ryze-grid ryze-grid--2">
       <SkeletonCard /><SkeletonCard />
     </div>
-    <div className="row row--4">
+    <div className="row row--4 ryze-grid ryze-grid--4">
       <SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard />
     </div>
   </div>
@@ -779,16 +779,16 @@ const AdminOverview: React.FC = () => {
   const firstName = getFirstName(user?.name ?? 'there');
 
   return (
-    <div className="section-stack">
+    <div className="section-stack ryze-section-stack">
 
       {/* ── Page head ────────────────────────────────────────────────── */}
-      <div className="page-head">
+      <div className="page-head ryze-overview-header">
         <div>
-          <div className="page-head__eyebrow">{getTodayLabel()}</div>
-          <h1 className="page-head__title">
-            Good {getGreeting()}, <span className="accent-text">{firstName}</span>.
+          <div className="page-head__eyebrow ryze-overview-header__date">{getTodayLabel()}</div>
+          <h1 className="page-head__title ryze-overview-header__greeting">
+            Good {getGreeting()}, <span className="accent-text ryze-accent-text">{firstName}</span>.
           </h1>
-          <p className="page-head__sub">
+          <p className="page-head__sub ryze-overview-header__context">
             {loading
               ? 'Loading overview…'
               : data
@@ -807,8 +807,8 @@ const AdminOverview: React.FC = () => {
                 : 'Could not load data.'}
           </p>
         </div>
-        <div className="page-head__actions">
-          <button className="btn btn--ghost" onClick={load} disabled={loading}>
+        <div className="page-head__actions ryze-page-header__actions">
+          <button className="btn btn--ghost ryze-btn ryze-btn--ghost" onClick={load} disabled={loading}>
             <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
             {loading ? 'Loading…' : lastRefreshed ? `Refreshed ${relTime(lastRefreshed.toISOString())}` : 'Refresh'}
           </button>
@@ -825,7 +825,7 @@ const AdminOverview: React.FC = () => {
         }}>
           <WifiOff size={16} />
           <span style={{ flex: 1 }}>{error}</span>
-          <button className="btn btn--ghost" style={{ fontSize: 12 }} onClick={load}>Retry</button>
+          <button className="btn btn--ghost ryze-btn ryze-btn--ghost" style={{ fontSize: 12 }} onClick={load}>Retry</button>
         </div>
       )}
 
@@ -836,7 +836,7 @@ const AdminOverview: React.FC = () => {
       {data && !loading && (
         <>
           {/* ── Quick Actions ─────────────────────────────────────── */}
-          <div className="card" style={{ padding: '18px 20px' }}>
+          <div className="card ryze-card" style={{ padding: '18px 20px' }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 14 }}>
               Quick Actions
             </div>
@@ -879,7 +879,7 @@ const AdminOverview: React.FC = () => {
           </div>
 
           {/* ── S1: Action Centre ─────────────────────────────────── */}
-          <div className="row row--3">
+          <div className="row row--3 ryze-grid ryze-grid--3">
             <OverduePaymentsCard data={data.financials} onNav={nav} />
             <TutorPayCard        data={data.financials} onNav={nav} />
             <PriorityAlertsCard  alerts={data.actions.priorityAlerts} onNav={nav} />
@@ -887,19 +887,19 @@ const AdminOverview: React.FC = () => {
 
           {/* ── S2: Schedule ──────────────────────────────────────── */}
           <div>
-            <div className="row row--2">
+            <div className="row row--2 ryze-grid ryze-grid--2">
               {/* Today */}
-              <div className="card card--flush">
-                <div className="card__head">
+              <div className="card card--flush ryze-card ryze-card--flush">
+                <div className="card__head ryze-card__head">
                   <div>
-                    <div className="card__title">Today</div>
-                    <div className="card__sub">
+                    <div className="card__title ryze-card__title">Today</div>
+                    <div className="card__sub ryze-card__sub">
                       {data.schedule.today.length} lesson{data.schedule.today.length !== 1 ? 's' : ''} scheduled
                       {data.schedule.today.filter(l => l.status === 'live').length > 0
                         ? ` · ${data.schedule.today.filter(l => l.status === 'live').length} live now` : ''}
                     </div>
                   </div>
-                  <button className="btn btn--quiet" onClick={() => nav('/dashboard/admin/lessons')}>
+                  <button className="btn btn--quiet ryze-btn ryze-btn--quiet" onClick={() => nav('/dashboard/admin/lessons')}>
                     Lessons <ArrowRight size={12} />
                   </button>
                 </div>
@@ -909,11 +909,11 @@ const AdminOverview: React.FC = () => {
               </div>
 
               {/* Next 7 days */}
-              <div className="card card--flush">
-                <div className="card__head">
+              <div className="card card--flush ryze-card ryze-card--flush">
+                <div className="card__head ryze-card__head">
                   <div>
-                    <div className="card__title">Next 7 Days</div>
-                    <div className="card__sub">{data.schedule.upcoming.length} upcoming lesson{data.schedule.upcoming.length !== 1 ? 's' : ''}</div>
+                    <div className="card__title ryze-card__title">Next 7 Days</div>
+                    <div className="card__sub ryze-card__sub">{data.schedule.upcoming.length} upcoming lesson{data.schedule.upcoming.length !== 1 ? 's' : ''}</div>
                   </div>
                 </div>
                 {data.schedule.upcoming.length === 0

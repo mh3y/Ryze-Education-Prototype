@@ -95,7 +95,7 @@ export function DataTable<T>({
   return (
     <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ overflowX: 'auto' }}>
-        <table className="table">
+        <table className="table ryze-table">
           <thead>
             <tr>
               {columns.map((col) => (
@@ -128,9 +128,9 @@ export function DataTable<T>({
               <tr>
                 <td colSpan={columns.length}>
                   {emptyState ?? (
-                    <div className="empty">
-                      <div className="empty__title">No results</div>
-                      <p className="empty__body">Try adjusting your search or filters.</p>
+                    <div className="empty ryze-empty">
+                      <div className="empty__title ryze-empty__title">No results</div>
+                      <p className="empty__body ryze-empty__body">Try adjusting your search or filters.</p>
                     </div>
                   )}
                 </td>
@@ -155,13 +155,13 @@ export function DataTable<T>({
       </div>
 
       {!loading && pageCount > 1 && (
-        <div className="table-foot">
+        <div className="table-foot ryze-table-foot">
           <span className="muted" style={{ fontSize: 13 }}>
             Showing {currentPage * pageSize + 1}–{Math.min((currentPage + 1) * pageSize, sorted.length)} of {sorted.length}
           </span>
           <div className="pager">
             <button
-              className="btn btn--ghost"
+              className="btn btn--ghost ryze-btn ryze-btn--ghost"
               style={{ height: 32, padding: '0 12px', fontSize: 12 }}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={currentPage === 0}
@@ -172,7 +172,7 @@ export function DataTable<T>({
               {currentPage + 1} / {pageCount}
             </span>
             <button
-              className="btn btn--ghost"
+              className="btn btn--ghost ryze-btn ryze-btn--ghost"
               style={{ height: 32, padding: '0 12px', fontSize: 12 }}
               onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
               disabled={currentPage >= pageCount - 1}

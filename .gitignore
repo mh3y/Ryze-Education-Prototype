@@ -23,3 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Report engine — never commit private student data or generated PDFs
+tools/report-engine/generated-reports/*
+!tools/report-engine/generated-reports/.gitkeep
+tools/report-engine/students/*/
+!tools/report-engine/students/_template/
+tools/report-engine/reports/*.html
+!tools/report-engine/reports/template.html
+tools/report-engine/reports/*.pdf
