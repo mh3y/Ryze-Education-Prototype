@@ -18,10 +18,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   actions,
   compact,
 }) => (
-  <div className={compact ? 'page-head page-head--compact' : 'page-head'}>
+  <div className={compact ? 'page-head page-head--compact ryze-page-header' : 'page-head ryze-page-header'}>
     <div>
       {(eyebrow || breadcrumb) && (
-        <div className="page-head__eyebrow">
+        <div className="page-head__eyebrow ryze-page-header__eyebrow">
           {breadcrumb ? (
             <>
               {breadcrumb.href
@@ -33,9 +33,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           ) : eyebrow}
         </div>
       )}
-      <h1 className="page-head__title">{title}</h1>
-      {description && <p className="page-head__sub">{description}</p>}
+      <h1 className="page-head__title ryze-page-header__title">{title}</h1>
+      {description && <p className="page-head__sub ryze-page-header__sub">{description}</p>}
     </div>
-    {actions && <div className="page-head__actions">{actions}</div>}
+    {actions && <div className="page-head__actions ryze-page-header__actions">{actions}</div>}
   </div>
 );

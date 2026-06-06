@@ -21,90 +21,84 @@
   --gap-lg: 28px;
 
   /* ── Accent (default: Ryze Gold) ──────────────────────────── */
-  --accent: #b8841e;
-  --accent-soft: rgba(184, 132, 30, 0.14);
-  --accent-soft-2: rgba(184, 132, 30, 0.08);
-  --accent-fg: #ffffff;
-  --accent-ink: #1a1305;
+  --accent:       var(--ryze-accent);
+  --accent-soft:  var(--ryze-accent-soft);
+  --accent-soft-2:var(--ryze-accent-soft-2);
+  --accent-fg:    var(--ryze-accent-fg);
+  --accent-ink:   var(--ryze-accent-ink);
 
   /* ── Semantic ─────────────────────────────────────────────── */
-  --ok: #4f9b6a;
-  --warn: #c89e2b;
-  --danger: #c25450;
-  --info: #5e7fb3;
+  --ok:     var(--ryze-ok);
+  --warn:   var(--ryze-warn);
+  --danger: var(--ryze-danger);
+  --info:   var(--ryze-info);
 }
 
 /* ─── Theme: DARK (default) ──────────────────────────────────── */
+/* Token bridge → ryze-theme.css defines the actual values.        */
 [data-theme="dark"] {
-  --bg-app: #0a0e16;
-  --bg-sidebar: #0d1119;
-  --bg-surface: #11151e;
-  --bg-surface-2: #161b26;
-  --bg-elevated: #1b2230;
-  --bg-hover: rgba(255, 255, 255, 0.04);
-  --bg-active: rgba(255, 255, 255, 0.06);
+  --bg-app:       var(--ryze-bg-app);
+  --bg-sidebar:   var(--ryze-bg-sidebar);
+  --bg-surface:   var(--ryze-bg-surface);
+  --bg-surface-2: var(--ryze-bg-surface-2);
+  --bg-elevated:  var(--ryze-bg-elevated);
+  --bg-hover:     var(--ryze-bg-hover);
+  --bg-active:    var(--ryze-bg-active);
 
-  --fg-strong: #f6f4ef;
-  --fg-default: #d8d4cb;
-  --fg-muted: #8a8b8e;
-  --fg-faint: #7c7f88; /* was #5a5c61 (~2.5:1) → now ~3.8:1 on #0a0e16 */
+  --fg-strong:    var(--ryze-text-strong);
+  --fg-default:   var(--ryze-text-default);
+  --fg-muted:     var(--ryze-text-muted);
+  --fg-faint:     var(--ryze-text-faint);
 
-  --border-faint: rgba(255, 255, 255, 0.06);
-  --border-soft: rgba(255, 255, 255, 0.09);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-faint:  var(--ryze-border-faint);
+  --border-soft:   var(--ryze-border-soft);
+  --border-strong: var(--ryze-border-strong);
 
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.02) inset, 0 12px 32px -18px rgba(0, 0, 0, 0.6);
+  --shadow-card: var(--ryze-shadow-card);
 
-  --grid-line: rgba(255, 255, 255, 0.025);
+  --grid-line: var(--ryze-border-faint);
 
   color-scheme: dark;
 }
 
 /* ─── Theme: LIGHT (matches marketing site) ──────────────────── */
+/* Token bridge → ryze-theme.css defines the actual values.        */
 [data-theme="light"] {
-  --bg-app: #f6f1e8;
-  --bg-sidebar: #11151d;
-  --bg-surface: #ffffff;
-  --bg-surface-2: #fbf7ef;
-  --bg-elevated: #ffffff;
-  --bg-hover: rgba(17, 21, 29, 0.04);
-  --bg-active: rgba(17, 21, 29, 0.06);
+  --bg-app:       var(--ryze-bg-app);
+  --bg-sidebar:   var(--ryze-bg-sidebar);
+  --bg-surface:   var(--ryze-bg-surface);
+  --bg-surface-2: var(--ryze-bg-surface-2);
+  --bg-elevated:  var(--ryze-bg-elevated);
+  --bg-hover:     var(--ryze-bg-hover);
+  --bg-active:    var(--ryze-bg-active);
 
-  --fg-strong: #11151d;
-  --fg-default: #2a2f3a;
-  --fg-muted: #6b7280;
-  --fg-faint: #757c85; /* was #9aa0a8 (~2.1:1 on white) → now ~4.5:1 */
+  --fg-strong:    var(--ryze-text-strong);
+  --fg-default:   var(--ryze-text-default);
+  --fg-muted:     var(--ryze-text-muted);
+  --fg-faint:     var(--ryze-text-faint);
 
-  --border-faint: rgba(17, 21, 29, 0.06);
-  --border-soft: rgba(17, 21, 29, 0.1);
-  --border-strong: rgba(17, 21, 29, 0.16);
+  --border-faint:  var(--ryze-border-faint);
+  --border-soft:   var(--ryze-border-soft);
+  --border-strong: var(--ryze-border-strong);
 
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 18px 40px -28px rgba(17, 21, 29, 0.18), 0 4px 12px -8px rgba(17, 21, 29, 0.08);
+  --shadow-card: var(--ryze-shadow-card);
 
-  --grid-line: rgba(17, 21, 29, 0.04);
+  --grid-line: var(--ryze-border-faint);
 
   color-scheme: light;
 }
 
-/* The sidebar in LIGHT mode uses warm-cream tokens to match the light theme. */
-[data-theme="light"] {
-  --side-bg: #f5f0e6;
-  --side-fg: #11151d;
-  --side-fg-muted: rgba(17, 21, 29, 0.52);
-  --side-hover: rgba(17, 21, 29, 0.05);
-  --side-active-bg: var(--accent-soft);
-  --side-active-fg: var(--accent);
-  --side-border: rgba(17, 21, 29, 0.09);
-}
+/* Sidebar tokens — both themes use ryze-side-* which are always dark
+   (ryze-theme.css keeps the sidebar dark even in light mode).        */
+[data-theme="light"],
 [data-theme="dark"] {
-  --side-bg: #07090e;
-  --side-fg: #f6f4ef;
-  --side-fg-muted: rgba(246, 244, 239, 0.5);
-  --side-hover: rgba(255, 255, 255, 0.04);
-  --side-active-bg: var(--accent-soft);
-  --side-active-fg: var(--accent);
-  --side-border: rgba(255, 255, 255, 0.07);
+  --side-bg:        var(--ryze-side-bg);
+  --side-fg:        var(--ryze-side-fg);
+  --side-fg-muted:  var(--ryze-side-fg-muted);
+  --side-hover:     var(--ryze-side-hover);
+  --side-active-bg: var(--ryze-side-active-bg);
+  --side-active-fg: var(--ryze-side-active-fg);
+  --side-border:    var(--ryze-side-border);
 }
 
 /* ─── Density variants ──────────────────────────────────────── */

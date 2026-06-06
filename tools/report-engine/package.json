@@ -1,0 +1,7 @@
+{
+  "name": "ryze-report-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ryze Education report engine CLI scripts (create-new-report, validate-report, export-report-pdf).",
+  "_notice": "Do NOT run npm install in this folder. Dependencies (puppeteer-core) are installed to %USERPROFILE%\\.ryze-engine\\ to avoid Google Drive file corruption. Run setup-report-engine.bat instead."
+}

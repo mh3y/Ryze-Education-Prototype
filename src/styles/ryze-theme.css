@@ -1,0 +1,390 @@
+/* =============================================================
+   RYZE EDUCATION — DESIGN TOKENS
+   ryze-theme.css  v1.0
+
+   Drop this file into the project and import it first.
+   All tokens are CSS custom properties on :root (light default).
+   Apply data-theme="dark" to <html> or <body> to switch themes.
+   Apply data-density="airy|balanced|dense" for spacing variants.
+
+   Note: Google Fonts are already loaded via <head> preload in
+   index.html — no @import needed here.
+   ============================================================= */
+
+/* =============================================================
+   SECTION 1 — TYPOGRAPHY TOKENS
+   ============================================================= */
+:root {
+  /* Font families */
+  --ryze-font-sans:    "Manrope", system-ui, -apple-system, sans-serif;
+  --ryze-font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --ryze-font-mono:    "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Display font modifiers */
+  --ryze-font-display-style:  italic;
+  --ryze-font-display-weight: 500;
+
+  /* Type scale — use these consistently, avoid one-off sizes */
+  --ryze-text-xs:   11px;   /* eyebrows, timestamps, labels */
+  --ryze-text-sm:   12.5px; /* table sub-cells, captions */
+  --ryze-text-base: 14px;   /* body, table cells */
+  --ryze-text-md:   15px;   /* slightly prominent body */
+  --ryze-text-lg:   18px;   /* card intros, summaries */
+  --ryze-text-xl:   24px;   /* small section headings */
+  --ryze-text-2xl:  32px;   /* page titles (admin) */
+  --ryze-text-3xl:  42px;   /* stat values */
+  --ryze-text-hero: clamp(24px, 2.2vw, 36px); /* responsive page title */
+
+  /* Font weights */
+  --ryze-weight-regular:  400;
+  --ryze-weight-medium:   500;
+  --ryze-weight-semibold: 600;
+  --ryze-weight-bold:     700;
+  --ryze-weight-heavy:    800;
+
+  /* Line heights */
+  --ryze-leading-tight:  1.1;
+  --ryze-leading-snug:   1.25;
+  --ryze-leading-normal: 1.5;
+  --ryze-leading-loose:  1.65;
+
+  /* Letter spacing */
+  --ryze-tracking-tight:  -0.015em;
+  --ryze-tracking-normal:  0;
+  --ryze-tracking-wide:    0.04em;
+  --ryze-tracking-wider:   0.10em;
+  --ryze-tracking-widest:  0.16em; /* eyebrows */
+}
+
+/* =============================================================
+   SECTION 2 — SPACING SCALE
+   ============================================================= */
+:root {
+  /* Base 4px grid */
+  --ryze-space-1:  4px;
+  --ryze-space-2:  8px;
+  --ryze-space-3:  12px;
+  --ryze-space-4:  16px;
+  --ryze-space-5:  20px;
+  --ryze-space-6:  24px;
+  --ryze-space-7:  28px;
+  --ryze-space-8:  32px;
+  --ryze-space-10: 40px;
+  --ryze-space-12: 48px;
+  --ryze-space-14: 56px;
+  --ryze-space-16: 64px;
+
+  /* Semantic spacing aliases */
+  --ryze-gap-xs:   var(--ryze-space-2);   /* 8px  — tight inline gaps */
+  --ryze-gap-sm:   var(--ryze-space-3);   /* 12px — card internals */
+  --ryze-gap-md:   var(--ryze-space-5);   /* 20px — card grid gaps */
+  --ryze-gap-lg:   var(--ryze-space-7);   /* 28px — section gaps */
+  --ryze-gap-xl:   var(--ryze-space-10);  /* 40px — major section gaps */
+
+  --ryze-page-x:   var(--ryze-space-10);  /* 40px — horizontal page padding */
+  --ryze-page-y:   var(--ryze-space-8);   /* 32px — vertical page padding */
+
+  --ryze-card-pad: var(--ryze-space-6);   /* 24px — standard card padding */
+  --ryze-row-h:    52px;                  /* standard table row height */
+}
+
+/* Density overrides */
+[data-density="airy"] {
+  --ryze-page-x:   56px;
+  --ryze-page-y:   44px;
+  --ryze-card-pad: 28px;
+  --ryze-gap-md:   24px;
+  --ryze-gap-lg:   36px;
+  --ryze-row-h:    60px;
+}
+[data-density="dense"] {
+  --ryze-page-x:   24px;
+  --ryze-page-y:   20px;
+  --ryze-card-pad: 14px;
+  --ryze-gap-md:   12px;
+  --ryze-gap-lg:   18px;
+  --ryze-row-h:    42px;
+}
+
+/* =============================================================
+   SECTION 3 — BORDER RADIUS
+   ============================================================= */
+:root {
+  --ryze-radius-xs: 4px;   /* tags, small chips */
+  --ryze-radius-sm: 6px;   /* pills, badges */
+  --ryze-radius-md: 8px;   /* inputs, buttons */
+  --ryze-radius-lg: 10px;  /* cards, dropdowns */
+  --ryze-radius-xl: 14px;  /* large cards, panels */
+  --ryze-radius-2xl:18px;  /* hero cards */
+  --ryze-radius-full: 9999px; /* pills, avatars */
+}
+
+/* =============================================================
+   SECTION 4 — SHADOW SCALE
+   ============================================================= */
+:root {
+  /* Light mode shadows — warm and subtle */
+  --ryze-shadow-xs: 0 1px 2px rgba(15,19,24,0.04);
+  --ryze-shadow-sm: 0 0 0 1px rgba(15,19,24,0.05),
+                    0 1px 3px rgba(15,19,24,0.05),
+                    0 4px 12px rgba(15,19,24,0.04);
+  --ryze-shadow-md: 0 0 0 1px rgba(15,19,24,0.06),
+                    0 2px 8px rgba(15,19,24,0.07),
+                    0 8px 24px rgba(15,19,24,0.05);
+  --ryze-shadow-lg: 0 0 0 1px rgba(15,19,24,0.06),
+                    0 4px 16px rgba(15,19,24,0.09),
+                    0 20px 40px rgba(15,19,24,0.08);
+
+  /* Alias for components */
+  --ryze-shadow-card:     var(--ryze-shadow-sm);
+  --ryze-shadow-elevated: var(--ryze-shadow-md);
+  --ryze-shadow-modal:    var(--ryze-shadow-lg);
+}
+
+/* =============================================================
+   SECTION 5 — TRANSITIONS
+   ============================================================= */
+:root {
+  --ryze-ease:         cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ryze-ease-spring:  cubic-bezier(0.3, 0.7, 0.4, 1);
+  --ryze-duration-fast:   100ms;
+  --ryze-duration-base:   140ms;
+  --ryze-duration-slow:   220ms;
+  --ryze-transition:  var(--ryze-duration-base) var(--ryze-ease);
+}
+
+/* =============================================================
+   SECTION 6 — LIGHT THEME (DEFAULT)
+   Premium warm-neutral for admin, parent + student portals.
+   ============================================================= */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds */
+  --ryze-bg-app:      #ece8dc;  /* warm parchment — page background */
+  --ryze-bg-sidebar:  #0f1318;  /* dark sidebar — brand/contrast */
+  --ryze-bg-surface:  #ffffff;  /* cards, modals, dropdowns */
+  --ryze-bg-surface-2:#f7f4ec;  /* table headers, inset panels */
+  --ryze-bg-elevated: #ffffff;  /* floating elements */
+  --ryze-bg-hover:    rgba(15,19,24,0.038);
+  --ryze-bg-active:   rgba(15,19,24,0.056);
+  --ryze-bg-overlay:  rgba(15,19,24,0.35);  /* modal backdrop */
+
+  /* ── Text hierarchy */
+  --ryze-text-strong:  #0f1318;  /* headings, primary labels */
+  --ryze-text-default: #252d38;  /* body, table cells */
+  --ryze-text-muted:   #6b7585;  /* secondary labels, placeholders */
+  --ryze-text-faint:   #9ba3af;  /* timestamps, dividers */
+
+  /* ── Borders */
+  --ryze-border-faint:  rgba(15,19,24,0.07);  /* table rows, card edges */
+  --ryze-border-soft:   rgba(15,19,24,0.11);  /* inputs, chips */
+  --ryze-border-strong: rgba(15,19,24,0.19);  /* hover states, focus */
+
+  /* ── Brand accent — Ryze yellow/gold */
+  --ryze-accent:       #b8841e;
+  --ryze-accent-hover: #a5751a;
+  --ryze-accent-soft:  rgba(184,132,30,0.13);  /* active nav bg */
+  --ryze-accent-soft-2:rgba(184,132,30,0.07);  /* accent card tint */
+  --ryze-accent-fg:    #ffffff;  /* text on accent bg */
+  --ryze-accent-ink:   #1a1305;  /* dark text on light-accent bg */
+
+  /* ── Semantic: Success */
+  --ryze-ok:      #3e8e5e;
+  --ryze-ok-soft: rgba(62,142,94,0.11);
+  --ryze-ok-border:rgba(62,142,94,0.25);
+
+  /* ── Semantic: Warning */
+  --ryze-warn:      #b8920a;
+  --ryze-warn-soft: rgba(184,146,10,0.11);
+  --ryze-warn-border:rgba(184,146,10,0.25);
+
+  /* ── Semantic: Danger */
+  --ryze-danger:      #b84040;
+  --ryze-danger-soft: rgba(184,64,64,0.09);
+  --ryze-danger-border:rgba(184,64,64,0.26);
+
+  /* ── Semantic: Info */
+  --ryze-info:      #3f6fa8;
+  --ryze-info-soft: rgba(63,111,168,0.11);
+  --ryze-info-border:rgba(63,111,168,0.25);
+
+  /* ── Semantic: Neutral */
+  --ryze-neutral:      #6b7585;
+  --ryze-neutral-soft: rgba(107,117,133,0.10);
+  --ryze-neutral-border:rgba(107,117,133,0.22);
+
+  /* ── Focus ring */
+  --ryze-focus-ring: 0 0 0 2px var(--ryze-bg-surface), 0 0 0 4px var(--ryze-accent);
+
+  /* ── Sidebar tokens (always dark, even in light mode) */
+  --ryze-side-bg:         #0f1318;
+  --ryze-side-fg:         #f5f2ec;
+  --ryze-side-fg-muted:   rgba(245,242,236,0.50);
+  --ryze-side-hover:      rgba(255,255,255,0.045);
+  --ryze-side-active-bg:  rgba(184,132,30,0.15);
+  --ryze-side-active-fg:  #b8841e;
+  --ryze-side-border:     rgba(255,255,255,0.075);
+}
+
+/* =============================================================
+   SECTION 7 — DARK THEME
+   ============================================================= */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ryze-bg-app:       #0a0e16;
+  --ryze-bg-sidebar:   #07090e;
+  --ryze-bg-surface:   #11151e;
+  --ryze-bg-surface-2: #161b26;
+  --ryze-bg-elevated:  #1b2230;
+  --ryze-bg-hover:     rgba(255,255,255,0.04);
+  --ryze-bg-active:    rgba(255,255,255,0.06);
+  --ryze-bg-overlay:   rgba(0,0,0,0.55);
+
+  --ryze-text-strong:  #f6f4ef;
+  --ryze-text-default: #d8d4cb;
+  --ryze-text-muted:   #8a8b8e;
+  --ryze-text-faint:   #5a5c61;
+
+  --ryze-border-faint:  rgba(255,255,255,0.06);
+  --ryze-border-soft:   rgba(255,255,255,0.09);
+  --ryze-border-strong: rgba(255,255,255,0.15);
+
+  --ryze-accent:        #b8841e;
+  --ryze-accent-hover:  #cc9628;
+  --ryze-accent-soft:   rgba(184,132,30,0.15);
+  --ryze-accent-soft-2: rgba(184,132,30,0.08);
+
+  --ryze-ok:       #4f9b6a;
+  --ryze-ok-soft:  rgba(79,155,106,0.14);
+  --ryze-ok-border:rgba(79,155,106,0.28);
+
+  --ryze-warn:       #c89e2b;
+  --ryze-warn-soft:  rgba(200,158,43,0.14);
+  --ryze-warn-border:rgba(200,158,43,0.28);
+
+  --ryze-danger:       #c25450;
+  --ryze-danger-soft:  rgba(194,84,80,0.14);
+  --ryze-danger-border:rgba(194,84,80,0.28);
+
+  --ryze-info:       #5e7fb3;
+  --ryze-info-soft:  rgba(94,127,179,0.14);
+  --ryze-info-border:rgba(94,127,179,0.28);
+
+  --ryze-neutral:       #8a8b8e;
+  --ryze-neutral-soft:  rgba(138,139,142,0.12);
+  --ryze-neutral-border:rgba(138,139,142,0.24);
+
+  /* Dark mode shadow — deeper and cooler */
+  --ryze-shadow-xs:   0 1px 2px rgba(0,0,0,0.20);
+  --ryze-shadow-sm:   0 1px 0 rgba(255,255,255,0.02) inset,
+                      0 8px 24px rgba(0,0,0,0.28);
+  --ryze-shadow-md:   0 1px 0 rgba(255,255,255,0.02) inset,
+                      0 16px 40px rgba(0,0,0,0.36);
+  --ryze-shadow-lg:   0 1px 0 rgba(255,255,255,0.02) inset,
+                      0 24px 56px rgba(0,0,0,0.48);
+
+  --ryze-side-bg:         #07090e;
+  --ryze-side-fg:         #f5f2ec;
+  --ryze-side-fg-muted:   rgba(245,242,236,0.48);
+  --ryze-side-hover:      rgba(255,255,255,0.04);
+  --ryze-side-active-bg:  rgba(184,132,30,0.15);
+  --ryze-side-active-fg:  #b8841e;
+  --ryze-side-border:     rgba(255,255,255,0.07);
+}
+
+/* =============================================================
+   SECTION 8 — Z-INDEX SCALE
+   ============================================================= */
+:root {
+  --ryze-z-base:     0;
+  --ryze-z-above:    10;
+  --ryze-z-sticky:   20;   /* sticky table headers */
+  --ryze-z-topbar:   30;   /* topbar */
+  --ryze-z-sidebar:  40;   /* mobile sidebar overlay */
+  --ryze-z-dropdown: 50;   /* dropdowns, tooltips */
+  --ryze-z-modal:    60;   /* modals */
+  --ryze-z-toast:    70;   /* toast notifications */
+  --ryze-z-tweaks:   2147483646; /* tweaks panel */
+}
+
+/* =============================================================
+   SECTION 9 — GLOBAL BASE RESETS
+   NOTE: body background is intentionally NOT set here — the
+   project manages it via index.html inline styles (--ryze-shell-bg).
+   ============================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+input, select, textarea { font-family: inherit; color: inherit; }
+a { color: inherit; }
+
+/* Focus ring — applied to all interactive elements */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ryze-focus-ring);
+  border-radius: var(--ryze-radius-md);
+}
+
+/* =============================================================
+   SECTION 10 — UTILITY CLASSES
+   ============================================================= */
+
+/* Text utilities */
+.ryze-eyebrow {
+  font-family: var(--ryze-font-sans);
+  font-size: var(--ryze-text-xs);
+  font-weight: var(--ryze-weight-bold);
+  letter-spacing: var(--ryze-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ryze-text-muted);
+}
+.ryze-display {
+  font-family: var(--ryze-font-display);
+  font-style: var(--ryze-font-display-style);
+  font-weight: var(--ryze-font-display-weight);
+  letter-spacing: var(--ryze-tracking-tight);
+  line-height: var(--ryze-leading-tight);
+}
+.ryze-mono { font-family: var(--ryze-font-mono); }
+.ryze-tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* Colour utilities */
+.ryze-accent-text { color: var(--ryze-accent); }
+.ryze-muted { color: var(--ryze-text-muted); }
+.ryze-strong { color: var(--ryze-text-strong); }
+.ryze-ok-text     { color: var(--ryze-ok); }
+.ryze-warn-text   { color: var(--ryze-warn); }
+.ryze-danger-text { color: var(--ryze-danger); }
+.ryze-info-text   { color: var(--ryze-info); }
+
+/* Divider */
+.ryze-divider {
+  height: 1px;
+  background: var(--ryze-border-faint);
+  border: 0;
+  margin: 0;
+}
+
+/* Status dot */
+.ryze-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: var(--ryze-radius-full);
+  background: var(--ryze-ok);
+  flex-shrink: 0;
+}
+.ryze-dot--warn   { background: var(--ryze-warn); }
+.ryze-dot--danger { background: var(--ryze-danger); }
+.ryze-dot--info   { background: var(--ryze-info); }
+.ryze-dot--neutral{ background: var(--ryze-neutral); }
+
+/* Scrollbar */
+.ryze-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ryze-border-strong) transparent;
+}
+.ryze-scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.ryze-scroll-thin::-webkit-scrollbar-track { background: transparent; }
+.ryze-scroll-thin::-webkit-scrollbar-thumb { background: var(--ryze-border-strong); border-radius: var(--ryze-radius-full); }

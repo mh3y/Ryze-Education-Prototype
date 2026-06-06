@@ -1,0 +1,25 @@
+# ── Node dependencies ─────────────────────────────────────────────────────────
+# Do NOT install node_modules here — deps live in %USERPROFILE%\.ryze-engine\
+# Run setup-report-engine.bat instead of npm install.
+node_modules/
+
+# ── Generated PDF output ──────────────────────────────────────────────────────
+# PDFs are private output — never commit them.
+generated-reports/*
+!generated-reports/.gitkeep
+
+# ── Real student report HTML files ───────────────────────────────────────────
+# Each completed student report contains lesson comments, ratings, and parent
+# notes — private data that must not be committed to a public or shared repo.
+#
+# Rule: every real student folder under students/ is excluded.
+# Exception: students/_template/ is safe to commit (it's the blank template).
+students/*/
+!students/_template/
+
+# ── Real student report HTML files in reports/ ────────────────────────────────
+# Any completed report HTML placed here contains private student data.
+# Only the blank template (template.html) is safe to commit.
+reports/*.html
+!reports/template.html
+reports/*.pdf
