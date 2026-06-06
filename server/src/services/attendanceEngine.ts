@@ -18,8 +18,12 @@ export const THRESHOLDS = {
   BUFFER_BEFORE_MS:  15 * 60 * 1000,
   /** Voice sessions ending this many ms after lesson end are in-scope */
   BUFFER_AFTER_MS:   15 * 60 * 1000,
-  /** Two consecutive sessions < this gap are merged into one block */
-  MERGE_GAP_MS:       5 * 60 * 1000,
+  /** Two consecutive sessions < this gap are merged into one block.
+   *  10 min covers Discord reconnect delays and brief WiFi drops without
+   *  incorrectly merging genuinely separate sessions (class channels are
+   *  unique per class group, so two separate classes on the same day
+   *  would be in different channels and would not be merged). */
+  MERGE_GAP_MS:      10 * 60 * 1000,
   /** First join this many ms after scheduled start → "late" */
   LATE_THRESHOLD_MS: 10 * 60 * 1000,
   /** Last leave this many ms before scheduled end → "left_early" */
