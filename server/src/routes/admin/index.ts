@@ -16,6 +16,7 @@ import { alertsRouter } from './alerts';
 import { botJobsRouter } from './bot-jobs';
 import { botHealthRouter } from './bot-health';
 import { calendarRouter } from './calendar';
+import { teamRouter } from './team';
 
 export const adminRouter = Router();
 
@@ -37,3 +38,4 @@ adminRouter.use('/', alertsRouter);
 adminRouter.use('/bot-jobs', botJobsRouter);
 adminRouter.use('/bot-health', botHealthRouter);
 adminRouter.use('/calendar', calendarRouter);
+adminRouter.use('/team', teamRouter);

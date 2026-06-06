@@ -10,7 +10,8 @@
     "images:upload": "node scripts/upload-to-cloudinary.mjs",
     "images:replace": "node scripts/replace-image-refs.mjs --write",
     "images:replace:dry": "node scripts/replace-image-refs.mjs",
-    "lint:colours": "node scripts/lint-colours.mjs"
+    "lint:colours": "node scripts/lint-colours.mjs",
+    "lint:fixtures": "node scripts/lint-no-hardcoded-people.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",

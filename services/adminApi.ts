@@ -90,6 +90,16 @@ export interface TutorDetail extends TutorListItem {
   }[];
 }
 
+// Team members (Settings > Team & Roles)
+export interface TeamMember {
+  id: number;
+  display_id: string | null;
+  full_name: string;
+  email: string | null;
+  role: 'admin' | 'tutor';
+  created_at: string;
+}
+
 // Students
 export interface StudentListItem {
   id: number;
@@ -605,6 +615,12 @@ export const adminApi = {
 
   deleteTutor(id: number): Promise<void> {
     return del(`/tutors/${id}`);
+  },
+
+  // ── Team members (Settings > Team & Roles) ──────────────────────────── //
+
+  getTeamMembers(): Promise<{ total: number; items: TeamMember[] }> {
+    return get('/team');
   },
 
   // ── Audit log ───────────────────────────────────────────────────────── //
