@@ -222,12 +222,32 @@ export interface SystemAlert {
 export interface ClassGroupListItem {
   id: number;
   name: string;
+  class_type: string;
   year_level: string | null;
   subject: string | null;
+  timezone: string;
+  schedule: string | null;
+  schedule_day: number | null;
+  schedule_hour: number | null;
+  schedule_minute: number | null;
+  duration_min: number;
+  max_students: number | null;
+  discord_channel_id: string | null;
+  discord_role_id: string | null;
+  google_calendar_id: string | null;
   active: boolean;
+  archived_at: string | null;
   created_at: string;
-  tutor: { id: number; full_name: string; discord_user_id: number } | null;
+  tutor: { id: number; full_name: string; discord_user_id: string | null } | null;
   member_count: number;
+}
+
+export interface ClassHealthWarnings {
+  id: number;
+  name: string;
+  warnings: string[];
+  warning_count: number;
+  healthy: boolean;
 }
 
 export interface ClassGroupDetail extends ClassGroupListItem {
@@ -235,9 +255,12 @@ export interface ClassGroupDetail extends ClassGroupListItem {
     membership_id: number;
     user_id: number;
     student_name: string;
+    discord_user_id: string | null;
     enrollment_status: string;
     start_date: string | null;
     end_date: string | null;
+    is_trial: boolean;
+    notes: string | null;
   }[];
 }
 
@@ -599,6 +622,14 @@ export const adminApi = {
     return patch(`/tutors/${id}/profile`, body);
   },
 
+  linkTutorDiscord(id: number, discord_user_id: string | null): Promise<{ updated: boolean }> {
+    return patch(`/tutors/${id}/discord-link`, { discord_user_id });
+  },
+
+  assignTutorToClass(tutorId: number, classId: number): Promise<{ updated: boolean }> {
+    return patch(`/tutors/${tutorId}/assign-class`, { class_id: classId });
+  },
+
   deactivateTutor(id: number): Promise<{ updated: boolean }> {
     return patch(`/tutors/${id}/deactivate`, {});
   },
@@ -703,6 +734,10 @@ export const adminApi = {
     return patch(`/students/${userId}/profile`, body);
   },
 
+  linkStudentDiscord(userId: number, discord_user_id: string | null): Promise<{ updated: boolean }> {
+    return patch(`/students/${userId}/discord-link`, { discord_user_id });
+  },
+
   deactivateStudent(id: number): Promise<{ updated: boolean }> {
     return patch(`/students/${id}/deactivate`, { active: false });
   },
@@ -736,13 +771,93 @@ export const adminApi = {
 
   createClass(body: {
     name: string;
+    class_type?: string;
     subject?: string;
     year_level?: string;
     tutor_user_id?: number;
     max_capacity?: number;
     active?: boolean;
+    discord_channel_id?: string;
+    discord_role_id?: string;
+    google_calendar_id?: string;
+    schedule_day?: number;
+    schedule_hour?: number;
+    schedule_minute?: number;
+    duration_min?: number;
+    schedule?: string;
+    timezone?: string;
+    description?: string;
   }): Promise<{ id: number; name: string }> {
     return post('/classes', body);
+  },
+
+  updateClass(id: number, body: Partial<{
+    name: string;
+    class_type: string;
+    subject: string;
+    year_level: string;
+    tutor_user_id: number;
+    max_students: number;
+    active: boolean;
+    discord_channel_id: string;
+    discord_role_id: string;
+    google_calendar_id: string;
+    schedule_day: number;
+    schedule_hour: number;
+    schedule_minute: number;
+    duration_min: number;
+    schedule: string;
+    timezone: string;
+    description: string;
+  }>): Promise<{ updated: boolean }> {
+    return patch(`/classes/${id}`, body);
+  },
+
+  archiveClass(id: number): Promise<{ archived: boolean }> {
+    return del(`/classes/${id}`);
+  },
+
+  getClassHealth(): Promise<{
+    total_classes: number;
+    healthy_count: number;
+    warning_count: number;
+    classes: ClassHealthWarnings[];
+  }> {
+    return get('/classes/health');
+  },
+
+  getClassHealthById(id: number): Promise<ClassHealthWarnings & {
+    details: {
+      has_tutor: boolean;
+      tutor_has_discord: boolean;
+      active_students: number;
+      students_missing_discord: number;
+      has_discord_channel: boolean;
+      has_google_calendar: boolean;
+      has_schedule: boolean;
+      upcoming_lessons: number;
+    };
+  }> {
+    return get(`/classes/${id}/health`);
+  },
+
+  syncClassDiscord(id: number): Promise<{ job_id: number; status: string }> {
+    return post(`/classes/${id}/sync-discord`, {});
+  },
+
+  enrollStudentInClass(classId: number, body: {
+    student_id: number;
+    is_trial?: boolean;
+    notes?: string;
+  }): Promise<{ enrollment_id: number; reactivated: boolean }> {
+    return post(`/classes/${classId}/enroll`, body);
+  },
+
+  updateClassEnrollment(classId: number, studentId: number, body: {
+    active?: boolean;
+    notes?: string;
+  }): Promise<{ updated: boolean }> {
+    return patch(`/classes/${classId}/enrollment/${studentId}`, body);
   },
 
   // ── Lessons ─────────────────────────────────────────────────────────── //
@@ -768,6 +883,10 @@ export const adminApi = {
     description?: string;
   }): Promise<{ id: number; title: string; google_event_id?: string }> {
     return post('/lessons', body);
+  },
+
+  setLessonSubstitute(id: number, substitute_tutor_id: number | null): Promise<{ updated: boolean }> {
+    return patch(`/lessons/${id}/substitute`, { substitute_tutor_id });
   },
 
   updateLesson(id: number, body: Partial<{
