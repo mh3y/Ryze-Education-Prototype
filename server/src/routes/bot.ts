@@ -481,8 +481,16 @@ botRouter.post('/sync-voice-sessions', async (req, res) => {
           },
         });
         updated++;
-      } else if (!existing) {
-        // Create new session record
+      } else if (existing && !leftDate) {
+        // Duplicate JOIN for a user already active in this channel — no-op, but log for visibility.
+        console.log(
+          `[bot] sync-voice-sessions: duplicate JOIN ignored — user=${s.discord_user_id} channel=${s.discord_channel_id} existing_session_id=${existing.id}`,
+        );
+      } else {
+        // No existing active session — create new record.
+        // Note: this branch is also reached by LEAVE events that arrive without a prior JOIN
+        // (e.g. bot restart lost the in-memory session). The bot sends joined_at=left_at in
+        // that case, producing a 0-second stub so the LEAVE event is still captured.
         await db.voiceAttendance.create({
           data: {
             discord_user_id:    s.discord_user_id,
