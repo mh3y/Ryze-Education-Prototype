@@ -73,9 +73,10 @@ tutorsRouter.get('/', async (req, res) => {
 
 tutorsRouter.post('/', async (req, res) => {
   try {
-    const { full_name, email, bio, subjects, hourly_rate } = req.body as {
+    const { full_name, email, discord_user_id, bio, subjects, hourly_rate } = req.body as {
       full_name?: string;
       email?: string;
+      discord_user_id?: string;
       bio?: string;
       subjects?: string;
       hourly_rate?: number;
@@ -92,6 +93,7 @@ tutorsRouter.post('/', async (req, res) => {
       data: {
         full_name: full_name.trim(),
         email: email?.toLowerCase().trim() ?? null,
+        discord_user_id: discord_user_id?.trim() ?? null,
         role: 'tutor',
         ...(hasProfile ? { tutor_profile: { create: profileData } } : {}),
       },
@@ -167,6 +169,58 @@ tutorsRouter.patch('/:id/profile', async (req, res) => {
         update: { ...profileData },
       });
     }
+
+    res.json({ updated: true });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// PATCH /tutors/:id/discord-link — set or clear discord_user_id
+// ---------------------------------------------------------------------------
+
+tutorsRouter.patch('/:id/discord-link', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { discord_user_id } = req.body as { discord_user_id?: string | null };
+    await db.user.update({
+      where: { id },
+      data: { discord_user_id: discord_user_id?.trim() ?? null },
+    });
+    res.json({ updated: true });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// PATCH /tutors/:id/assign-class — assign tutor to a class (sets ClassGroup.tutor_id)
+// ---------------------------------------------------------------------------
+
+tutorsRouter.patch('/:id/assign-class', async (req, res) => {
+  try {
+    const tutor_id = Number(req.params.id);
+    const { class_id } = req.body as { class_id?: number };
+    if (!class_id) { res.status(400).json({ detail: 'class_id is required' }); return; }
+
+    const cls = await db.classGroup.findUnique({ where: { id: class_id } });
+    if (!cls) { res.status(404).json({ detail: 'Class not found' }); return; }
+
+    await db.classGroup.update({ where: { id: class_id }, data: { tutor_id } });
+
+    await db.auditLog.create({
+      data: {
+        actor_id: (req as any).jwtPayload?.id ?? null,
+        actor_type: 'user',
+        action: 'update',
+        entity_type: 'class',
+        entity_id: String(class_id),
+        entity_name: cls.name,
+        old_data: { tutor_id: cls.tutor_id },
+        new_data: { tutor_id },
+      },
+    }).catch(() => {});
 
     res.json({ updated: true });
   } catch (e: any) {
