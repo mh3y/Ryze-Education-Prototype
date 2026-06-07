@@ -99,7 +99,8 @@ model User {
   discord_link    DiscordLink?
 
   // Teaching
-  taught_classes ClassGroup[] @relation("ClassTutor")
+  taught_classes      ClassGroup[] @relation("ClassTutor")
+  substitute_lessons  Lesson[]     @relation("SubstituteTutor")
 
   // Student activity
   enrollments      ClassEnrollment[]
@@ -212,9 +213,11 @@ model ParentStudent {
 model ClassGroup {
   id                 Int       @id @default(autoincrement())
   name               String
+  class_type         String    @default("group") // private | group
   subject            String
   description        String?
   year_level         String?
+  timezone           String    @default("Australia/Sydney")
   schedule           String? // human-readable, e.g. "Tuesdays 5pm"
   schedule_day       Int? // 0=Sun … 6=Sat
   schedule_hour      Int?
@@ -252,6 +255,7 @@ model ClassEnrollment {
   student_id  Int
   class_id    Int
   enrolled_at DateTime   @default(now())
+  end_date    DateTime? // set when student is unenrolled (historical preservation)
   active      Boolean    @default(true)
   is_trial    Boolean    @default(false) // trial lesson before full enrolment
   trial_at    DateTime?
@@ -268,25 +272,30 @@ model ClassEnrollment {
 // ============================================================================
 
 model Lesson {
-  id               Int          @id @default(autoincrement())
-  class_id         Int
-  title            String
-  description      String?
-  scheduled_at     DateTime
-  duration_min     Int          @default(60)
-  meet_link        String?
-  recording_url    String?
-  discord_event_id String?
-  google_event_id  String?      @unique // Google Calendar event ID (set by bot)
-  status           LessonStatus @default(scheduled)
-  notes            String? // tutor notes post-lesson
-  created_at       DateTime     @default(now())
-  updated_at       DateTime     @updatedAt
+  id                  Int          @id @default(autoincrement())
+  class_id            Int
+  substitute_tutor_id Int?         // per-lesson substitute when primary tutor is unavailable
+  title               String
+  description         String?
+  scheduled_at        DateTime
+  duration_min        Int          @default(60)
+  meet_link           String?
+  recording_url       String?
+  discord_event_id    String?
+  google_event_id     String?      @unique // Google Calendar event ID (set by bot)
+  recurrence_key      String?      @unique // deterministic key for CRM-generated recurring lessons
+  status              LessonStatus @default(scheduled)
+  notes               String? // tutor notes post-lesson
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
 
-  class            ClassGroup        @relation(fields: [class_id], references: [id], onDelete: Cascade)
-  attendance       Attendance[]
-  voice_attendance VoiceAttendance[]
-  resources        LessonResource[]
+  class             ClassGroup        @relation(fields: [class_id], references: [id], onDelete: Cascade)
+  substitute_tutor  User?             @relation("SubstituteTutor", fields: [substitute_tutor_id], references: [id])
+  attendance        Attendance[]
+  voice_attendance  VoiceAttendance[]
+  resources         LessonResource[]
+
+  @@index([substitute_tutor_id])
 
   @@index([class_id])
   @@index([scheduled_at])

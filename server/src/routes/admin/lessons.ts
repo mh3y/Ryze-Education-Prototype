@@ -211,6 +211,50 @@ lessonsRouter.patch('/:id', async (req, res) => {
   }
 });
 
+// PATCH /api/admin/lessons/:id/substitute — set or clear substitute tutor for one lesson
+lessonsRouter.patch('/:id/substitute', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { substitute_tutor_id } = req.body as { substitute_tutor_id?: number | null };
+
+    const lesson = await db.lesson.findUnique({
+      where: { id },
+      include: { class: { select: { name: true } } },
+    });
+    if (!lesson) { res.status(404).json({ detail: 'Lesson not found' }); return; }
+
+    if (substitute_tutor_id != null) {
+      const tutor = await db.user.findUnique({ where: { id: substitute_tutor_id } });
+      if (!tutor || tutor.role !== 'tutor') {
+        res.status(400).json({ detail: 'substitute_tutor_id must reference an active tutor' });
+        return;
+      }
+    }
+
+    await db.lesson.update({
+      where: { id },
+      data: { substitute_tutor_id: substitute_tutor_id ?? null },
+    });
+
+    await db.auditLog.create({
+      data: {
+        actor_id: (req as any).jwtPayload?.id ?? null,
+        actor_type: 'user',
+        action: 'update',
+        entity_type: 'lesson',
+        entity_id: String(id),
+        entity_name: lesson.title,
+        old_data: { substitute_tutor_id: (lesson as any).substitute_tutor_id ?? null },
+        new_data: { substitute_tutor_id: substitute_tutor_id ?? null },
+      },
+    }).catch(() => {});
+
+    res.json({ updated: true });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // DELETE /api/admin/lessons/:id — cancel
 lessonsRouter.delete('/:id', async (req, res) => {
   try {
@@ -292,13 +336,16 @@ lessonsRouter.post('/generate', async (req, res) => {
           cursor.getFullYear(), cursor.getMonth(), cursor.getDate(),
           utcHour, mins, 0, 0,
         ));
+        // Deterministic key: class_id + date + hour + minute — prevents duplicates on re-run
+        const recurrenceKey = `cls${class_group_id}-${dateStr}-${String(hour).padStart(2, '0')}${String(mins).padStart(2, '0')}`;
         lessonData.push({
-          class_id:     class_group_id,
-          title:        `${title_prefix} — Lesson ${lessonNum}`,
-          scheduled_at: scheduled,
-          duration_min: dur,
-          meet_link:    meet_link ?? null,
-          status:       'scheduled',
+          class_id:       class_group_id,
+          title:          `${title_prefix} — Lesson ${lessonNum}`,
+          scheduled_at:   scheduled,
+          duration_min:   dur,
+          meet_link:      meet_link ?? null,
+          status:         'scheduled',
+          recurrence_key: recurrenceKey,
         });
         lessonNum++;
       }
@@ -310,8 +357,23 @@ lessonsRouter.post('/generate', async (req, res) => {
       return;
     }
 
-    const result = await db.lesson.createMany({ data: lessonData });
-    res.status(201).json({ created: result.count, lesson_count: lessonNum - 1 });
+    // Idempotent: skip any lesson whose recurrence_key already exists
+    let created = 0;
+    let skipped = 0;
+    for (const ld of lessonData) {
+      try {
+        await db.lesson.create({ data: ld });
+        created++;
+      } catch (err: any) {
+        // Unique constraint violation on recurrence_key → already exists
+        if (err?.code === 'P2002') {
+          skipped++;
+        } else {
+          throw err;
+        }
+      }
+    }
+    res.status(201).json({ created, skipped, lesson_count: lessonNum - 1 });
   } catch (e: any) {
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }

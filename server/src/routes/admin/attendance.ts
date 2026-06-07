@@ -94,6 +94,7 @@ attendanceRouter.get('/health', async (req, res) => {
               },
             },
           },
+          substitute_tutor: { select: { id: true, full_name: true } },
         },
         orderBy: { scheduled_at: 'asc' },
       }),
@@ -121,6 +122,7 @@ attendanceRouter.get('/health', async (req, res) => {
 
       const participantIds = new Set<number>();
       if (lesson.class?.tutor?.id) participantIds.add(lesson.class.tutor.id);
+      if ((lesson as any).substitute_tutor?.id) participantIds.add((lesson as any).substitute_tutor.id);
       for (const e of (lesson.class?.enrollments ?? [])) {
         participantIds.add(e.student.id);
       }
@@ -247,6 +249,7 @@ attendanceRouter.get('/lessons', async (req, res) => {
             },
           },
         },
+        substitute_tutor: { select: { id: true, full_name: true, discord_user_id: true } },
         attendance: {
           include: { student: { select: { full_name: true } } },
         },
@@ -349,10 +352,16 @@ attendanceRouter.get('/lessons', async (req, res) => {
         };
       }
 
-      // ── Tutor ─────────────────────────────────────────────────────────
+      // ── Primary tutor ─────────────────────────────────────────────────
       const tutorUser  = lesson.class?.tutor ?? null;
       const tutorReport = tutorUser
         ? buildParticipant({ ...tutorUser, role: 'tutor' }, true)
+        : null;
+
+      // ── Substitute tutor (if set for this lesson) ─────────────────────
+      const subTutorUser = (lesson as any).substitute_tutor ?? null;
+      const subTutorReport = subTutorUser
+        ? buildParticipant({ ...subTutorUser, role: 'tutor' }, true)
         : null;
 
       // ── Students ──────────────────────────────────────────────────────
@@ -360,10 +369,11 @@ attendanceRouter.get('/lessons', async (req, res) => {
         buildParticipant(e.student, true),
       );
 
-      // ── Issues ────────────────────────────────────────────────────────
+      // ── Issues — use substitute tutor if present, else primary tutor ──
+      const effectiveTutor = subTutorReport ?? tutorReport;
       const issues = detectIssues({
-        tutor:    tutorReport
-          ? { user_id: tutorReport.user_id, full_name: tutorReport.full_name, final_status: tutorReport.final_status, is_late: tutorReport.is_late, left_early: tutorReport.left_early }
+        tutor: effectiveTutor
+          ? { user_id: effectiveTutor.user_id, full_name: effectiveTutor.full_name, final_status: effectiveTutor.final_status, is_late: effectiveTutor.is_late, left_early: effectiveTutor.left_early }
           : null,
         students: studentReports.map((s: any) => ({
           user_id: s.user_id, full_name: s.full_name, final_status: s.final_status, is_late: s.is_late, left_early: s.left_early,
@@ -392,8 +402,9 @@ attendanceRouter.get('/lessons', async (req, res) => {
         lesson_status: lesson.status,
         meet_link:     lesson.meet_link ?? null,
 
-        tutor:    tutorReport,
-        students: studentReports,
+        tutor:            tutorReport,
+        substitute_tutor: subTutorReport,
+        students:         studentReports,
 
         issues,
         has_issues: issues.length > 0,

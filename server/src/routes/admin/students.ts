@@ -46,8 +46,9 @@ studentsRouter.get('/', async (req, res) => {
 // POST /api/admin/students — admin only
 studentsRouter.post('/', requireAdminOnly, async (req, res) => {
   try {
-    const { full_name, email, year_level, school, notes } = req.body as {
-      full_name?: string; email?: string; year_level?: string; school?: string; notes?: string;
+    const { full_name, email, discord_user_id, year_level, school, notes } = req.body as {
+      full_name?: string; email?: string; discord_user_id?: string;
+      year_level?: string; school?: string; notes?: string;
     };
     if (!full_name) { res.status(400).json({ detail: 'full_name is required' }); return; }
 
@@ -61,6 +62,7 @@ studentsRouter.post('/', requireAdminOnly, async (req, res) => {
       data: {
         full_name: full_name.trim(),
         email: email?.toLowerCase().trim() ?? null,
+        discord_user_id: discord_user_id?.trim() ?? null,
         role: 'student',
         ...(hasProfile ? { student_profile: { create: profileData } } : {}),
       },
@@ -144,6 +146,21 @@ studentsRouter.patch('/:id/profile', async (req, res) => {
   }
 });
 
+// PATCH /api/admin/students/:id/discord-link — set discord_user_id for an existing student
+studentsRouter.patch('/:id/discord-link', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { discord_user_id } = req.body as { discord_user_id?: string | null };
+    await db.user.update({
+      where: { id },
+      data: { discord_user_id: discord_user_id?.trim() ?? null },
+    });
+    res.json({ updated: true });
+  } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
 // PATCH /api/admin/students/:id/deactivate
 studentsRouter.patch('/:id/deactivate', async (req, res) => {
   try {
@@ -187,9 +204,13 @@ studentsRouter.patch('/:id/enrollment/:classId', async (req, res) => {
     const class_id = Number(req.params.classId);
     const { enrollment_status } = req.body as { enrollment_status?: string };
 
+    const isActive = enrollment_status !== 'inactive';
     await db.classEnrollment.update({
       where: { student_id_class_id: { student_id, class_id } },
-      data: { active: enrollment_status !== 'inactive' },
+      data: {
+        active: isActive,
+        end_date: isActive ? null : new Date(), // record unenrollment timestamp
+      },
     });
     res.json({ updated: true });
   } catch (e: any) {
