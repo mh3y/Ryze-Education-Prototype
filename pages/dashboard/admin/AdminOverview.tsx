@@ -28,6 +28,8 @@ import {
   type OverviewLessonItem,
   type OverviewRiskItem,
   type OverviewAlertItem,
+  type OverviewSyncInfo,
+  type CalendarHealth,
 } from '../../../services/adminApi';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -529,8 +531,57 @@ const RiskSection: React.FC<{
 
 // ── Section 6: Automation Health ───────────────────────────────────────────
 
-const SyncBadge: React.FC<{ info: AdminOverviewData['automation'][keyof AdminOverviewData['automation']]; label: string }> = ({ info, label }) => {
-  if (!info || typeof info !== 'object') {
+/**
+ * Compact banner shown at the top of the overview whenever the Google Calendar
+ * token is expired/revoked or the lessons sync has been failing for 24 h+.
+ * Uses only CSS custom properties — no raw Tailwind colour utilities.
+ */
+const CalendarSyncAlert: React.FC<{
+  health: CalendarHealth;
+  onNav: (p: string) => void;
+}> = ({ health, onNav }) => {
+  if (health.status === 'ok') return null;
+
+  const isTokenError = health.is_token_error;
+  const bgColor      = isTokenError ? 'var(--danger)' : 'var(--warn)';
+
+  return (
+    <div
+      role="alert"
+      onClick={() => onNav('/dashboard/admin/bot-health')}
+      style={{
+        display: 'flex', alignItems: 'flex-start', gap: 12,
+        padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
+        background: `color-mix(in oklab, ${bgColor} 10%, transparent)`,
+        border:     `1px solid color-mix(in oklab, ${bgColor} 24%, transparent)`,
+      }}
+    >
+      <AlertTriangle size={16} style={{ color: bgColor, flexShrink: 0, marginTop: 1 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: bgColor }}>
+          {isTokenError
+            ? 'Google Calendar token expired — lesson sync stopped'
+            : 'Google Calendar sync failing'}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
+          {isTokenError
+            ? 'No lessons have synced from Google Calendar. Voice attendance cannot be matched until the GOOGLE_REFRESH_TOKEN is renewed.'
+            : `${health.consecutive_failures} consecutive failure${health.consecutive_failures !== 1 ? 's' : ''}.${health.last_error ? ` Last error: ${health.last_error}` : ''}`
+          }
+          {health.last_success_at && (
+            <> · Last success: {new Date(health.last_success_at).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short' })}</>
+          )}
+        </div>
+      </div>
+      <span style={{ fontSize: 12, color: bgColor, flexShrink: 0, fontWeight: 600 }}>
+        View Bot Health →
+      </span>
+    </div>
+  );
+};
+
+const SyncBadge: React.FC<{ info: OverviewSyncInfo | null; label: string }> = ({ info, label }) => {
+  if (!info) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid var(--border-soft)' }}>
         <span className="dot dot--warn" />
@@ -541,9 +592,8 @@ const SyncBadge: React.FC<{ info: AdminOverviewData['automation'][keyof AdminOve
       </div>
     );
   }
-  const s = info as { status: string; at: string; error: string | null; created: number; updated: number };
-  const { label: ageLabel, stale } = syncAge(s.at);
-  const ok = s.status === 'success' && !stale;
+  const { label: ageLabel, stale } = syncAge(info.at);
+  const ok = info.status === 'success' && !stale;
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid var(--border-soft)' }}>
@@ -551,10 +601,10 @@ const SyncBadge: React.FC<{ info: AdminOverviewData['automation'][keyof AdminOve
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 600 }}>{label}</div>
         <div className="muted" style={{ fontSize: 12 }}>
-          {s.status} · {ageLabel}
-          {(s.created > 0 || s.updated > 0) && ` · +${s.created} created, ${s.updated} updated`}
+          {info.status} · {ageLabel}
+          {(info.created > 0 || info.updated > 0) && ` · +${info.created} created, ${info.updated} updated`}
         </div>
-        {s.error && <div style={{ fontSize: 11.5, color: 'var(--danger)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.error}</div>}
+        {info.error && <div style={{ fontSize: 11.5, color: 'var(--danger)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{info.error}</div>}
       </div>
       <span className="tnum" style={{ fontSize: 11.5, color: stale ? 'var(--warn)' : 'var(--fg-faint)', flexShrink: 0 }}>{ageLabel}</span>
     </div>
@@ -578,6 +628,12 @@ const AutomationSection: React.FC<{
           Bot Health <ArrowRight size={12} />
         </button>
       </div>
+      {/* Calendar token / sync failure alert — only shown when health is degraded */}
+      {auto.calendarHealth && auto.calendarHealth.status !== 'ok' && (
+        <div style={{ padding: '12px 20px 0' }}>
+          <CalendarSyncAlert health={auto.calendarHealth} onNav={onNav} />
+        </div>
+      )}
       <div style={{ padding: '0 20px' }}>
         <SyncBadge info={auto.lastLessonSync}     label="Lesson Sync (Google Calendar)" />
         <SyncBadge info={auto.lastMemberSync}     label="Member Sync (Discord → Portal)" />
@@ -835,6 +891,11 @@ const AdminOverview: React.FC = () => {
       {/* ── Content ─────────────────────────────────────────────────── */}
       {data && !loading && (
         <>
+          {/* ── Calendar Sync Alert (top-level, only when degraded) ── */}
+          {data.automation.calendarHealth && data.automation.calendarHealth.status !== 'ok' && (
+            <CalendarSyncAlert health={data.automation.calendarHealth} onNav={nav} />
+          )}
+
           {/* ── Quick Actions ─────────────────────────────────────── */}
           <div className="card ryze-card" style={{ padding: '18px 20px' }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--fg-muted)', marginBottom: 14 }}>
