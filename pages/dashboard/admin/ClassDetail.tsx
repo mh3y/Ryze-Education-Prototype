@@ -153,7 +153,7 @@ const EnrollModal: React.FC<EnrollModalProps> = ({ classId, onClose, onEnrolled 
       await adminApi.enrollStudentInClass(classId, { student_id: id, is_trial: isTrial });
       onEnrolled();
     } catch (err: any) {
-      setError(err?.message ?? 'Failed to enroll student.');
+      setError(err?.message ?? 'Failed to enrol student.');
       setSaving(false);
     }
   };
@@ -616,7 +616,7 @@ const ClassDetail: React.FC = () => {
             {classGroup.active ? (
               <button
                 onClick={async () => {
-                  if (!confirm('Archive this class? Enrollments and lessons will be preserved.')) return;
+                  if (!confirm('Archive this class? Enrolments and lessons will be preserved.')) return;
                   await adminApi.archiveClass(Number(id));
                   navigate('/dashboard/admin/classes');
                 }}
@@ -676,7 +676,7 @@ const ClassDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Enroll modal */}
+      {/* Enrol modal */}
       {showEnrollModal && (
         <EnrollModal
           classId={Number(id)}

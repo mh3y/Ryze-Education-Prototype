@@ -139,7 +139,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'summary',       label: 'Summary' },
   { key: 'users',         label: 'Users' },
   { key: 'classes',       label: 'Classes' },
-  { key: 'enrollments',   label: 'Enrollments' },
+  { key: 'enrollments',   label: 'Enrolments' },
   { key: 'lessons',       label: 'Lessons' },
   { key: 'voice',         label: 'Voice Log' },
   { key: 'reconciliation',label: 'Reconciliation' },
@@ -298,7 +298,7 @@ export default function DatabaseHealthPage() {
           <StatCard label="Users" value={summary.data.users.total} sub={`${summary.data.users.student}s · ${summary.data.users.tutor}t · ${summary.data.users.admin}a`} />
           <StatCard label="No Discord" value={summary.data.users.no_discord_students + summary.data.users.no_discord_tutors} warn={summary.data.users.no_discord_students + summary.data.users.no_discord_tutors > 0} />
           <StatCard label="Classes" value={summary.data.classes.total} sub={`${summary.data.classes.active} active`} />
-          <StatCard label="Enrollments" value={summary.data.enrollments.active} sub="active" />
+          <StatCard label="Enrolments" value={summary.data.enrollments.active} sub="active" />
           <StatCard label="Lessons" value={summary.data.lessons.total} sub={`${summary.data.lessons.scheduled} scheduled`} />
           <StatCard label="Voice Records" value={summary.data.voice_attendance.total} sub={`${summary.data.voice_attendance.unmatched} unmatched`} warn={summary.data.voice_attendance.unmatched > 0} />
           <StatCard label="Issues" value={issueCount} warn={criticalCount > 0} sub={criticalCount > 0 ? `${criticalCount} critical/high` : undefined} />
@@ -354,7 +354,7 @@ export default function DatabaseHealthPage() {
                     ['Active', summary.data.classes.active],
                     ['Inactive/archived', summary.data.classes.inactive],
                 ]},
-                { label: 'Enrollments', items: [
+                { label: 'Enrolments', items: [
                     ['Total', summary.data.enrollments.total],
                     ['Active', summary.data.enrollments.active],
                     ['Inactive', summary.data.enrollments.inactive],
@@ -403,7 +403,7 @@ export default function DatabaseHealthPage() {
                   {users.data.total} users · {users.data.items.filter(u => u.warning_count > 0).length} with warnings
                 </div>
                 <Tbl
-                  headers={['ID', 'Display ID', 'Name', 'Role', 'Discord Linked', 'Active', 'Enrollments', 'Warnings']}
+                  headers={['ID', 'Display ID', 'Name', 'Role', 'Discord Linked', 'Active', 'Enrolments', 'Warnings']}
                   rows={users.data.items.map((u) => [
                     <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{u.id}</span>,
                     <span style={{ fontFamily: 'monospace', fontSize: 11 }}>{u.display_id ?? '—'}</span>,
@@ -463,7 +463,7 @@ export default function DatabaseHealthPage() {
             {enrollments.data && enrollments.data.items.length > 0 && (
               <>
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)', fontSize: 12, color: 'var(--text-muted)' }}>
-                  {enrollments.data.total} enrollments · {enrollments.data.items.filter(e => e.warning_count > 0).length} with warnings
+                  {enrollments.data.total} enrolments · {enrollments.data.items.filter(e => e.warning_count > 0).length} with warnings
                 </div>
                 <Tbl
                   headers={['#', 'Student', 'Role', 'Class', 'Active', 'Trial', 'Enrolled', 'Warnings']}
