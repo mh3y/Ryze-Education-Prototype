@@ -28,7 +28,9 @@ import {
   detectIssues,
   lessonWindow,
   sessionOverlapsWindow,
+  detectUnexpectedParticipants,
   type RawVoiceFragment,
+  type UnexpectedParticipant,
 } from '../../services/attendanceEngine';
 
 function notifyAsync(fn: () => Promise<unknown>): void {
@@ -605,6 +607,565 @@ attendanceRouter.get('/', async (req, res) => {
     });
     res.json({ total: items.length, items: items.map(attendanceToRecord) });
   } catch (e: any) {
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── Shared reconciliation helper ──────────────────────────────────────────────
+//
+// Builds a full lesson report (same shape as /lessons) for a single lesson,
+// given the lesson row and a pre-loaded slice of voice sessions. Used by
+// /overview and /classes/:classId to avoid repeating the reconciliation logic.
+
+function reconcileLesson(params: {
+  lesson:              any;
+  voiceSessionsByUser: Map<number, any[]>;
+  channelSessions:     any[]; // all sessions in this lesson's channel+window
+}): any {
+  const { lesson, voiceSessionsByUser, channelSessions } = params;
+  const { windowStart, windowEnd, lessonEnd } = lessonWindow({
+    scheduled_at: lesson.scheduled_at instanceof Date ? lesson.scheduled_at : new Date(lesson.scheduled_at),
+    duration_min: lesson.duration_min,
+  });
+
+  // Index manual overrides by student_id
+  const overrideMap = new Map<number, any>();
+  for (const att of (lesson.attendance ?? [])) {
+    overrideMap.set(att.student_id, att);
+  }
+
+  // Build participant report for a single user
+  function buildParticipant(
+    user: { id: number; full_name: string; discord_user_id?: string | null; role?: string },
+    enrolled: boolean,
+  ) {
+    const userSessions = (voiceSessionsByUser.get(user.id) ?? []).filter((s: any) =>
+      sessionOverlapsWindow(
+        { joined_at: new Date(s.joined_at), left_at: s.left_at ? new Date(s.left_at) : null },
+        windowStart,
+        windowEnd,
+      ),
+    );
+
+    const fragments = userSessions.map(toFragment);
+    const merged    = mergeVoiceFragments(fragments);
+    const computed  = computeStatus(
+      { scheduled_at: lesson.scheduled_at instanceof Date ? lesson.scheduled_at : new Date(lesson.scheduled_at), duration_min: lesson.duration_min },
+      merged,
+    );
+
+    const override       = overrideMap.get(user.id) ?? null;
+    const isOverride     = !!override && override.marked_by != null;
+    const overrideStatus = isOverride ? override.status : null;
+    const finalStatus    = overrideStatus ?? computed.status;
+
+    return {
+      user_id:         user.id,
+      full_name:       user.full_name,
+      role:            (user as any).role ?? 'student',
+      discord_user_id: user.discord_user_id ?? null,
+      enrolled,
+      first_join:      serializeDate(merged?.first_join),
+      last_leave:      serializeDate(merged?.last_leave),
+      total_minutes:   merged?.total_minutes ?? 0,
+      computed_status: computed.status,
+      is_late:         computed.is_late,
+      left_early:      computed.left_early,
+      is_override:     isOverride,
+      override_status: overrideStatus,
+      override_notes:  override?.notes ?? null,
+      override_by:     override?.marked_by ?? null,
+      override_at:     serializeDate(override?.marked_at),
+      final_status:    finalStatus,
+      fragments:       fragments.map(f => ({
+        id:               f.id,
+        joined_at:        serializeDate(f.joined_at),
+        left_at:          serializeDate(f.left_at),
+        duration_minutes: f.duration_seconds != null ? Math.round(f.duration_seconds / 60) : null,
+        discord_channel:  f.discord_channel,
+        status:           f.status,
+      })),
+    };
+  }
+
+  const tutorUser      = lesson.class?.tutor ?? null;
+  const tutorReport    = tutorUser ? buildParticipant({ ...tutorUser, role: 'tutor' }, true) : null;
+  const subTutorUser   = lesson.substitute_tutor ?? null;
+  const subTutorReport = subTutorUser ? buildParticipant({ ...subTutorUser, role: 'tutor' }, true) : null;
+
+  const studentReports = (lesson.class?.enrollments ?? []).map((e: any) =>
+    buildParticipant(e.student, true),
+  );
+
+  const effectiveTutor = subTutorReport ?? tutorReport;
+  const issues = detectIssues({
+    tutor: effectiveTutor
+      ? { user_id: effectiveTutor.user_id, full_name: effectiveTutor.full_name, final_status: effectiveTutor.final_status, is_late: effectiveTutor.is_late, left_early: effectiveTutor.left_early }
+      : null,
+    students: studentReports.map((s: any) => ({
+      user_id: s.user_id, full_name: s.full_name, final_status: s.final_status, is_late: s.is_late, left_early: s.left_early,
+    })),
+  });
+
+  // Expected user IDs for unexpected participant detection
+  const expectedIds = new Set<number>();
+  if (tutorUser)    expectedIds.add(tutorUser.id);
+  if (subTutorUser) expectedIds.add(subTutorUser.id);
+  for (const e of (lesson.class?.enrollments ?? [])) expectedIds.add(e.student.id);
+
+  const unexpectedParticipants: UnexpectedParticipant[] = lesson.class?.discord_channel_id
+    ? detectUnexpectedParticipants({
+        expectedUserIds:  expectedIds,
+        channelSessions:  channelSessions.filter((s: any) =>
+          sessionOverlapsWindow(
+            { joined_at: new Date(s.joined_at), left_at: s.left_at ? new Date(s.left_at) : null },
+            windowStart,
+            windowEnd,
+          ),
+        ),
+      })
+    : [];
+
+  const enrolledCount  = studentReports.length;
+  const presentCount   = studentReports.filter((s: any) =>
+    ['present', 'late', 'left_early'].includes(s.final_status),
+  ).length;
+  const attendanceRate = enrolledCount > 0 ? Math.round((presentCount / enrolledCount) * 100) : 0;
+
+  return {
+    id:                     lesson.id,
+    class_id:               lesson.class_id,
+    class_name:             lesson.class?.name ?? 'Unknown Class',
+    subject:                lesson.class?.subject ?? null,
+    year_level:             lesson.class?.year_level ?? null,
+    title:                  lesson.title,
+    scheduled_at:           serializeDate(lesson.scheduled_at instanceof Date ? lesson.scheduled_at : new Date(lesson.scheduled_at)),
+    scheduled_end:          serializeDate(lessonEnd),
+    duration_min:           lesson.duration_min,
+    lesson_status:          lesson.status,
+    meet_link:              lesson.meet_link ?? null,
+    tutor:                  tutorReport,
+    substitute_tutor:       subTutorReport,
+    students:               studentReports,
+    issues,
+    has_issues:             issues.length > 0 || unexpectedParticipants.length > 0,
+    unexpected_participants: unexpectedParticipants,
+    enrolled_count:         enrolledCount,
+    present_count:          presentCount,
+    attendance_rate:        attendanceRate,
+  };
+}
+
+// ── GET /api/admin/attendance/overview ────────────────────────────────────────
+//
+// Class-centric overview: all active classes with their health status, most-recent
+// lesson attendance, and week-level metrics. The primary entry point for the
+// redesigned Attendance page.
+
+attendanceRouter.get('/overview', async (req, res) => {
+  try {
+    const now    = new Date();
+    const past60 = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+    const next30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    // Week window (last 7 days) for metrics
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // 1. Load all active classes with tutor + enrolled students
+    const classes = await db.classGroup.findMany({
+      where: { active: true },
+      include: {
+        tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+        enrollments: {
+          where:   { active: true },
+          include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    if (classes.length === 0) {
+      return res.json({ metrics: { active_classes: 0, lessons_this_week: 0, lessons_completed: 0, healthy_lessons: 0, lessons_with_issues: 0, missing_tutor: 0, missing_student: 0, unmatched_voice: 0, possible_substitute: 0 }, classes: [] });
+    }
+
+    const classIds = classes.map((c: any) => c.id);
+
+    // 2. Load lessons for active classes in last 60 days + next scheduled
+    const [recentLessons, upcomingLessons] = await Promise.all([
+      db.lesson.findMany({
+        where: { class_id: { in: classIds }, scheduled_at: { gte: past60, lte: now }, status: { not: 'cancelled' } },
+        include: {
+          class: {
+            include: {
+              tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+              enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+            },
+          },
+          substitute_tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+          attendance:       { include: { student: { select: { full_name: true } } } },
+        },
+        orderBy: { scheduled_at: 'desc' },
+      }),
+      db.lesson.findMany({
+        where: { class_id: { in: classIds }, scheduled_at: { gt: now, lte: next30 }, status: { not: 'cancelled' } },
+        select: { id: true, class_id: true, title: true, scheduled_at: true, duration_min: true },
+        orderBy: { scheduled_at: 'asc' },
+      }),
+    ]);
+
+    // 3. Load voice sessions for the relevant time range and class channels
+    const channelIds = classes.map((c: any) => c.discord_channel_id).filter(Boolean) as string[];
+    const voiceWindowStart = new Date(past60.getTime() - THRESHOLDS.BUFFER_BEFORE_MS);
+    const voiceWindowEnd   = new Date(now.getTime()    + THRESHOLDS.BUFFER_AFTER_MS);
+
+    const allVoiceSessions = channelIds.length > 0
+      ? await db.voiceAttendance.findMany({
+          where: {
+            joined_at:          { gte: voiceWindowStart, lte: voiceWindowEnd },
+            discord_channel_id: { in: channelIds },
+          },
+          include: { user: { select: { id: true, full_name: true, role: true } } },
+          orderBy: { joined_at: 'asc' },
+        })
+      : [];
+
+    // Index voice sessions by crm_user_id and by channel
+    const sessionsByUser    = new Map<number, any[]>();
+    const sessionsByChannel = new Map<string, any[]>();
+    for (const s of allVoiceSessions) {
+      if (s.crm_user_id) {
+        if (!sessionsByUser.has(s.crm_user_id)) sessionsByUser.set(s.crm_user_id, []);
+        sessionsByUser.get(s.crm_user_id)!.push(s);
+      }
+      const ch = s.discord_channel_id ?? '';
+      if (ch) {
+        if (!sessionsByChannel.has(ch)) sessionsByChannel.set(ch, []);
+        sessionsByChannel.get(ch)!.push(s);
+      }
+    }
+
+    // Index lessons by class_id
+    const lessonsByClass = new Map<number, any[]>();
+    for (const l of recentLessons) {
+      if (!lessonsByClass.has(l.class_id)) lessonsByClass.set(l.class_id, []);
+      lessonsByClass.get(l.class_id)!.push(l);
+    }
+
+    // Index next lesson by class_id
+    const nextByClass = new Map<number, any>();
+    for (const l of upcomingLessons) {
+      if (!nextByClass.has(l.class_id)) nextByClass.set(l.class_id, l);
+    }
+
+    // 4. Compute per-class overview
+    const classOverviews = classes.map((cls: any) => {
+      const classLessons  = lessonsByClass.get(cls.id) ?? [];
+      const recent3       = classLessons.slice(0, 3); // already ordered desc
+      const channelSessions = cls.discord_channel_id ? (sessionsByChannel.get(cls.discord_channel_id) ?? []) : [];
+
+      const reconciledLessons = recent3.map((l: any) =>
+        reconcileLesson({ lesson: l, voiceSessionsByUser: sessionsByUser, channelSessions }),
+      );
+
+      // Derive class health from most recent reconciled lesson
+      let health_status: string;
+      let health_message: string;
+      let issue_count = 0;
+
+      const configWarnings: string[] = [];
+      if (!cls.tutor)                          configWarnings.push('No tutor assigned');
+      if ((cls.enrollments ?? []).length === 0) configWarnings.push('No enrolled students');
+      if (!cls.discord_channel_id)             configWarnings.push('No Discord channel');
+
+      if (configWarnings.length > 0) {
+        health_status  = 'misconfigured';
+        health_message = configWarnings.join(', ');
+      } else if (reconciledLessons.length === 0) {
+        health_status  = 'no_recent_lessons';
+        health_message = 'No lessons in last 60 days';
+      } else {
+        const mostRecent = reconciledLessons[0];
+        const allIssues  = [...mostRecent.issues, ...mostRecent.unexpected_participants];
+        issue_count      = allIssues.length;
+
+        const hasTutorAbsent = mostRecent.issues.some((i: any) => i.type === 'tutor_absent');
+        if (hasTutorAbsent) {
+          health_status  = 'critical';
+          health_message = `Tutor absent ${new Date(mostRecent.scheduled_at).toLocaleDateString('en-AU', { timeZone: 'Australia/Sydney', day: 'numeric', month: 'short' })}`;
+        } else if (issue_count > 0) {
+          health_status  = 'issue';
+          health_message = `${issue_count} issue${issue_count !== 1 ? 's' : ''} in last lesson`;
+        } else {
+          health_status  = 'healthy';
+          health_message = 'All good';
+        }
+      }
+
+      return {
+        id:                cls.id,
+        name:              cls.name,
+        class_type:        cls.class_type,
+        schedule_day:      cls.schedule_day,
+        schedule_hour:     cls.schedule_hour,
+        schedule_minute:   cls.schedule_minute,
+        duration_min:      cls.duration_min,
+        timezone:          cls.timezone,
+        subject:           cls.subject,
+        year_level:        cls.year_level ?? null,
+        tutor:             cls.tutor ? { id: cls.tutor.id, full_name: cls.tutor.full_name } : null,
+        enrolled_students: (cls.enrollments ?? []).map((e: any) => ({ id: e.student.id, full_name: e.student.full_name })),
+        discord_channel_id: cls.discord_channel_id ?? null,
+        next_lesson:       nextByClass.has(cls.id)
+          ? { id: nextByClass.get(cls.id).id, scheduled_at: serializeDate(nextByClass.get(cls.id).scheduled_at) }
+          : null,
+        recent_lessons:    reconciledLessons,
+        health_status,
+        health_message,
+        issue_count,
+        config_warnings:   configWarnings,
+      };
+    });
+
+    // 5. Week-level metrics
+    const weekLessons = recentLessons.filter((l: any) => new Date(l.scheduled_at) >= weekStart);
+    let weekMissingTutor = 0, weekMissingStudent = 0, weekUnmatched = 0, weekPossibleSub = 0;
+    let weekHealthy = 0, weekWithIssues = 0;
+
+    for (const l of weekLessons) {
+      const channelSessions = l.class?.discord_channel_id ? (sessionsByChannel.get(l.class.discord_channel_id) ?? []) : [];
+      const report = reconcileLesson({ lesson: l, voiceSessionsByUser: sessionsByUser, channelSessions });
+      if (report.issues.some((i: any) => i.type === 'tutor_absent')) weekMissingTutor++;
+      if (report.issues.some((i: any) => i.type === 'student_absent')) weekMissingStudent++;
+      if (report.unexpected_participants.some((p: any) => p.type === 'unknown_user')) weekUnmatched++;
+      if (report.unexpected_participants.some((p: any) => p.type === 'possible_substitute')) weekPossibleSub++;
+      if (report.has_issues) weekWithIssues++; else weekHealthy++;
+    }
+
+    res.json({
+      metrics: {
+        active_classes:      classes.length,
+        lessons_this_week:   weekLessons.length,
+        lessons_completed:   weekLessons.filter((l: any) => l.status === 'completed').length,
+        healthy_lessons:     weekHealthy,
+        lessons_with_issues: weekWithIssues,
+        missing_tutor:       weekMissingTutor,
+        missing_student:     weekMissingStudent,
+        unmatched_voice:     weekUnmatched,
+        possible_substitute: weekPossibleSub,
+      },
+      classes: classOverviews,
+    });
+  } catch (e: any) {
+    console.error('[attendance] overview error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── GET /api/admin/attendance/classes/:classId ────────────────────────────────
+//
+// Per-class lesson history: last 8 lessons with full attendance reconciliation.
+// Returns same lesson shape as /lessons so the existing LessonCard can render them.
+
+attendanceRouter.get('/classes/:classId', async (req, res) => {
+  try {
+    const classId = Number(req.params.classId);
+    if (isNaN(classId)) { res.status(400).json({ detail: 'Invalid classId' }); return; }
+
+    const cls = await db.classGroup.findUnique({
+      where:   { id: classId },
+      include: {
+        tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+        enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+      },
+    });
+    if (!cls) { res.status(404).json({ detail: 'Class not found' }); return; }
+
+    const now    = new Date();
+    const past90 = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+    const lessons = await db.lesson.findMany({
+      where: { class_id: classId, scheduled_at: { gte: past90, lte: now }, status: { not: 'cancelled' } },
+      include: {
+        class: {
+          include: {
+            tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+            enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+          },
+        },
+        substitute_tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+        attendance:       { include: { student: { select: { full_name: true } } } },
+      },
+      orderBy: { scheduled_at: 'desc' },
+      take: 8,
+    });
+
+    // Voice sessions for this class's channel in the relevant window
+    const voiceWindowStart = new Date(past90.getTime() - THRESHOLDS.BUFFER_BEFORE_MS);
+    const voiceWindowEnd   = new Date(now.getTime() + THRESHOLDS.BUFFER_AFTER_MS);
+
+    const allVoiceSessions = cls.discord_channel_id
+      ? await db.voiceAttendance.findMany({
+          where: { joined_at: { gte: voiceWindowStart, lte: voiceWindowEnd }, discord_channel_id: cls.discord_channel_id },
+          include: { user: { select: { id: true, full_name: true, role: true } } },
+          orderBy: { joined_at: 'asc' },
+        })
+      : [];
+
+    const sessionsByUser = new Map<number, any[]>();
+    for (const s of allVoiceSessions) {
+      if (s.crm_user_id) {
+        if (!sessionsByUser.has(s.crm_user_id)) sessionsByUser.set(s.crm_user_id, []);
+        sessionsByUser.get(s.crm_user_id)!.push(s);
+      }
+    }
+
+    const lessonReports = lessons.map((l: any) =>
+      reconcileLesson({ lesson: l, voiceSessionsByUser: sessionsByUser, channelSessions: allVoiceSessions }),
+    );
+
+    res.json({
+      class: {
+        id:                cls.id,
+        name:              (cls as any).name,
+        class_type:        (cls as any).class_type,
+        subject:           (cls as any).subject,
+        year_level:        (cls as any).year_level ?? null,
+        schedule_day:      (cls as any).schedule_day,
+        schedule_hour:     (cls as any).schedule_hour,
+        schedule_minute:   (cls as any).schedule_minute,
+        duration_min:      (cls as any).duration_min,
+        timezone:          (cls as any).timezone,
+        discord_channel_id: (cls as any).discord_channel_id ?? null,
+        tutor:             cls.tutor ? { id: cls.tutor.id, full_name: cls.tutor.full_name } : null,
+        enrolled_students: (cls.enrollments ?? []).map((e: any) => ({ id: e.student.id, full_name: e.student.full_name })),
+      },
+      lessons: lessonReports,
+    });
+  } catch (e: any) {
+    console.error('[attendance] class detail error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── GET /api/admin/attendance/issues ──────────────────────────────────────────
+//
+// Aggregated issues across all active classes for the last 14 days.
+// Includes lesson-level issues and unexpected participant alerts.
+
+attendanceRouter.get('/issues', async (req, res) => {
+  try {
+    const now    = new Date();
+    const past14 = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const classes = await db.classGroup.findMany({
+      where: { active: true },
+      include: {
+        tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+        enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+      },
+    });
+
+    if (classes.length === 0) {
+      return res.json({ total: 0, items: [] });
+    }
+
+    const classIds = classes.map((c: any) => c.id);
+    const channelIds = classes.map((c: any) => c.discord_channel_id).filter(Boolean) as string[];
+
+    const [lessons, voiceSessions] = await Promise.all([
+      db.lesson.findMany({
+        where: { class_id: { in: classIds }, scheduled_at: { gte: past14, lte: now }, status: { not: 'cancelled' } },
+        include: {
+          class: {
+            include: {
+              tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+              enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+            },
+          },
+          substitute_tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+          attendance: { include: { student: { select: { full_name: true } } } },
+        },
+        orderBy: { scheduled_at: 'desc' },
+      }),
+      channelIds.length > 0
+        ? db.voiceAttendance.findMany({
+            where: {
+              joined_at: { gte: new Date(past14.getTime() - THRESHOLDS.BUFFER_BEFORE_MS), lte: new Date(now.getTime() + THRESHOLDS.BUFFER_AFTER_MS) },
+              discord_channel_id: { in: channelIds },
+            },
+            include: { user: { select: { id: true, full_name: true, role: true } } },
+            orderBy: { joined_at: 'asc' },
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const sessionsByUser    = new Map<number, any[]>();
+    const sessionsByChannel = new Map<string, any[]>();
+    for (const s of voiceSessions) {
+      if (s.crm_user_id) {
+        if (!sessionsByUser.has(s.crm_user_id)) sessionsByUser.set(s.crm_user_id, []);
+        sessionsByUser.get(s.crm_user_id)!.push(s);
+      }
+      const ch = s.discord_channel_id ?? '';
+      if (ch) {
+        if (!sessionsByChannel.has(ch)) sessionsByChannel.set(ch, []);
+        sessionsByChannel.get(ch)!.push(s);
+      }
+    }
+
+    const aggregatedIssues: any[] = [];
+
+    for (const lesson of lessons) {
+      const channelSessions = lesson.class?.discord_channel_id
+        ? (sessionsByChannel.get(lesson.class.discord_channel_id) ?? [])
+        : [];
+
+      const report = reconcileLesson({ lesson, voiceSessionsByUser: sessionsByUser, channelSessions });
+
+      for (const issue of report.issues) {
+        aggregatedIssues.push({
+          type:       issue.type,
+          severity:   issue.severity,
+          message:    issue.message,
+          class_id:   lesson.class_id,
+          class_name: lesson.class?.name ?? 'Unknown',
+          lesson_id:  lesson.id,
+          lesson_date: serializeDate(lesson.scheduled_at instanceof Date ? lesson.scheduled_at : new Date(lesson.scheduled_at)),
+          user_id:    issue.user_id   ?? null,
+          user_name:  issue.user_name ?? null,
+        });
+      }
+
+      for (const p of report.unexpected_participants) {
+        aggregatedIssues.push({
+          type:       p.type,
+          severity:   'warning',
+          message:    p.type === 'possible_substitute'
+            ? `Possible substitute: ${p.full_name ?? p.discord_username ?? 'unknown'} in ${lesson.class?.name ?? 'class'}`
+            : p.type === 'unexpected_student'
+            ? `Unexpected student: ${p.full_name ?? p.discord_username ?? 'unknown'}`
+            : `Unknown voice user in ${lesson.class?.name ?? 'class'} (${p.discord_username ?? p.discord_user_id})`,
+          class_id:   lesson.class_id,
+          class_name: lesson.class?.name ?? 'Unknown',
+          lesson_id:  lesson.id,
+          lesson_date: serializeDate(lesson.scheduled_at instanceof Date ? lesson.scheduled_at : new Date(lesson.scheduled_at)),
+          user_id:    p.crm_user_id,
+          user_name:  p.full_name,
+        });
+      }
+    }
+
+    // Sort: errors first, then by lesson date desc
+    const SEVERITY_ORDER: Record<string, number> = { error: 0, warning: 1 };
+    aggregatedIssues.sort((a, b) => {
+      const sv = (SEVERITY_ORDER[a.severity] ?? 2) - (SEVERITY_ORDER[b.severity] ?? 2);
+      if (sv !== 0) return sv;
+      return (b.lesson_date ?? '').localeCompare(a.lesson_date ?? '');
+    });
+
+    res.json({ total: aggregatedIssues.length, items: aggregatedIssues });
+  } catch (e: any) {
+    console.error('[attendance] issues error:', e?.message);
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }
 });

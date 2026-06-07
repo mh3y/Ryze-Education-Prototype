@@ -15,7 +15,7 @@ import {
   BookOpen, CalendarRange, ClipboardCheck, PenLine,
   ClipboardList, FolderOpen,
   CreditCard, DollarSign,
-  Megaphone, Activity, Settings,
+  Megaphone, Activity, Settings, Database,
   LogOut, FileText, MessageSquare,
 } from 'lucide-react';
 
@@ -86,8 +86,9 @@ const NAV: Record<UserRole, NavGroup[]> = {
         { label: 'Messages',          path: '/dashboard/admin/messages',     icon: MessageSquare },
         { label: 'Announcements',     path: '/dashboard/admin/announcements', icon: Megaphone },
         { label: 'Audit log',         path: '/dashboard/admin/audit-log',    icon: FileText },
-        { label: 'Bot health',        path: '/dashboard/admin/bot-health',   icon: Activity },
-        { label: 'Settings',          path: '/dashboard/settings',           icon: Settings },
+        { label: 'Bot health',        path: '/dashboard/admin/bot-health',      icon: Activity },
+        { label: 'DB Health',         path: '/dashboard/admin/database-health', icon: Database },
+        { label: 'Settings',          path: '/dashboard/settings',              icon: Settings },
       ],
     },
   ],
