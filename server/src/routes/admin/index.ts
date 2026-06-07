@@ -15,6 +15,7 @@ import { auditRouter } from './audit';
 import { alertsRouter } from './alerts';
 import { botJobsRouter } from './bot-jobs';
 import { botHealthRouter } from './bot-health';
+import { dbHealthRouter } from './database-health';
 import { calendarRouter } from './calendar';
 import { teamRouter } from './team';
 
@@ -37,5 +38,6 @@ adminRouter.use('/', auditRouter);
 adminRouter.use('/', alertsRouter);
 adminRouter.use('/bot-jobs', botJobsRouter);
 adminRouter.use('/bot-health', botHealthRouter);
+adminRouter.use('/database-health', dbHealthRouter);
 adminRouter.use('/calendar', calendarRouter);
 adminRouter.use('/team', teamRouter);

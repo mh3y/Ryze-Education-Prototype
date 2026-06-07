@@ -3,6 +3,7 @@ import {
   mergeVoiceFragments,
   computeStatus,
   detectIssues,
+  detectUnexpectedParticipants,
   lessonWindow,
   sessionOverlapsWindow,
   THRESHOLDS,
@@ -215,6 +216,159 @@ describe('sessionOverlapsWindow', () => {
   it('still-active session (left_at=null) overlaps when started before window end', () => {
     const s = { joined_at: new Date('2025-06-05T10:00:00Z'), left_at: null };
     expect(sessionOverlapsWindow(s, wStart, wEnd)).toBe(true);
+  });
+});
+
+// ── detectUnexpectedParticipants ──────────────────────────────────────────────
+
+describe('detectUnexpectedParticipants', () => {
+  const session = (
+    id: number,
+    crm_user_id: number | null,
+    role: string | null,
+    durationSec = 3600,
+  ) => ({
+    crm_user_id,
+    discord_user_id: `duid_${id}`,
+    discord_username: crm_user_id == null ? `UnknownUser${id}` : null,
+    duration_seconds: durationSec,
+    joined_at: new Date('2025-06-05T09:00:00Z'),
+    user: crm_user_id != null && role != null
+      ? { id: crm_user_id, full_name: `User ${crm_user_id}`, role }
+      : null,
+  });
+
+  it('returns empty array when all sessions are expected participants', () => {
+    const expected = new Set([1, 2]);
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: expected,
+      channelSessions: [session(1, 1, 'tutor'), session(2, 2, 'student')],
+    });
+    expect(result).toHaveLength(0);
+  });
+
+  it('classifies tutor-role non-expected user as possible_substitute', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1]),          // user 2 is NOT expected
+      channelSessions: [session(2, 2, 'tutor')],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].type).toBe('possible_substitute');
+    expect(result[0].crm_user_id).toBe(2);
+  });
+
+  it('classifies admin-role non-expected user as possible_substitute', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([10]),
+      channelSessions: [session(5, 5, 'admin')],
+    });
+    expect(result[0].type).toBe('possible_substitute');
+  });
+
+  it('classifies student-role non-expected user as unexpected_student', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1]),
+      channelSessions: [session(3, 3, 'student')],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].type).toBe('unexpected_student');
+    expect(result[0].crm_user_id).toBe(3);
+  });
+
+  it('classifies session with no crm_user_id as unknown_user', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1]),
+      channelSessions: [session(99, null, null)],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].type).toBe('unknown_user');
+    expect(result[0].crm_user_id).toBeNull();
+    expect(result[0].discord_username).toBe('UnknownUser99');
+  });
+
+  it('aggregates multiple fragments from the same user into a single entry', () => {
+    const s1 = { ...session(1, 5, 'student'), duration_seconds: 1800, joined_at: new Date('2025-06-05T09:00:00Z') };
+    const s2 = { ...session(1, 5, 'student'), duration_seconds: 1800, joined_at: new Date('2025-06-05T10:00:00Z') };
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set<number>(),
+      channelSessions: [s1, s2],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].total_minutes).toBe(60); // 1800 + 1800 = 3600 s = 60 min
+  });
+
+  it('takes the earliest first_join across aggregated fragments', () => {
+    const early = new Date('2025-06-05T08:55:00Z');
+    const late  = new Date('2025-06-05T09:30:00Z');
+    const s1 = { ...session(1, 7, 'student'), joined_at: late,  duration_seconds: 600 };
+    const s2 = { ...session(2, 7, 'student'), joined_at: early, duration_seconds: 600 };
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set<number>(),
+      channelSessions: [s1, s2],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].first_join).toBe(early.toISOString());
+  });
+
+  it('handles mixed expected and unexpected in the same channel', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1, 2]),
+      channelSessions: [
+        session(1, 1, 'tutor'),    // expected → skip
+        session(2, 2, 'student'),  // expected → skip
+        session(3, 3, 'tutor'),    // unexpected tutor → possible_substitute
+        session(4, null, null),    // no CRM link → unknown_user
+      ],
+    });
+    expect(result).toHaveLength(2);
+    const types = result.map(r => r.type).sort();
+    expect(types).toEqual(['possible_substitute', 'unknown_user']);
+  });
+
+  it('all results have severity warning', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set<number>(),
+      channelSessions: [session(1, 5, 'student'), session(2, null, null)],
+    });
+    expect(result.every(r => r.severity === 'warning')).toBe(true);
+  });
+});
+
+// ── detectIssues: additional edge cases ───────────────────────────────────────
+
+describe('detectIssues — additional scenarios', () => {
+  const mkUser = (status: string, is_late = false, left_early = false, id = 1, name = 'User') => ({
+    user_id: id, full_name: name, final_status: status, is_late, left_early,
+  });
+
+  it('returns tutor_left_early warning', () => {
+    const issues = detectIssues({ tutor: mkUser('left_early', false, true), students: [] });
+    expect(issues.some(i => i.type === 'tutor_left_early' && i.severity === 'warning')).toBe(true);
+  });
+
+  it('returns student_late warning', () => {
+    const issues = detectIssues({
+      tutor: mkUser('present'),
+      students: [mkUser('late', true, false, 2, 'Late Student')],
+    });
+    expect(issues.some(i => i.type === 'student_late')).toBe(true);
+  });
+
+  it('handles multiple absent students independently', () => {
+    const issues = detectIssues({
+      tutor: mkUser('present'),
+      students: [mkUser('absent', false, false, 2, 'A'), mkUser('absent', false, false, 3, 'B')],
+    });
+    const absentIssues = issues.filter(i => i.type === 'student_absent');
+    expect(absentIssues).toHaveLength(2);
+  });
+
+  it('includes user_id and user_name in tutor_absent issues', () => {
+    const tutor = mkUser('absent', false, false, 19, 'Conrad');
+    const issues = detectIssues({ tutor, students: [] });
+    const issue  = issues.find(i => i.type === 'tutor_absent');
+    expect(issue?.user_id).toBe(19);
+    expect(issue?.user_name).toBe('Conrad');
   });
 });
 

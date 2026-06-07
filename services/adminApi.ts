@@ -586,6 +586,91 @@ export interface AdminOverviewStats {
   }[];
 }
 
+// Database Health Dashboard
+export interface DbHealthSummary {
+  users:            { total: number; admin: number; tutor: number; student: number; no_discord_students: number; no_discord_tutors: number; inactive: number };
+  classes:          { total: number; active: number; inactive: number };
+  enrollments:      { total: number; active: number; inactive: number };
+  lessons:          { total: number; scheduled: number; completed: number; cancelled: number };
+  voice_attendance: { total: number; unmatched: number };
+  attendance:       { total: number; unknown: number };
+}
+
+export interface DbHealthUser {
+  id: number; display_id: string | null; discord_user_id: string | null;
+  full_name: string; role: string; active: boolean; created_at: string;
+  active_enrollment_count: number; warnings: string[]; warning_count: number;
+}
+
+export interface DbHealthClass {
+  id: number; name: string; class_type: string; subject: string | null;
+  year_level: string | null; timezone: string;
+  schedule_day: number | null; schedule_hour: number | null; schedule_minute: number | null;
+  duration_min: number; discord_channel_id: string | null; discord_role_id: string | null;
+  google_calendar_id: string | null; tutor_id: number | null; tutor_name: string | null;
+  tutor_has_discord: boolean; active: boolean; archived_at: string | null; created_at: string;
+  active_student_count: number; upcoming_lesson_count: number; warnings: string[]; warning_count: number;
+}
+
+export interface DbHealthEnrollment {
+  id: number; student_id: number; student_name: string; student_role: string; student_active: boolean;
+  class_id: number; class_name: string; class_active: boolean;
+  active: boolean; is_trial: boolean; enrolled_at: string; end_date: string | null; notes: string | null;
+  warnings: string[]; warning_count: number;
+}
+
+export interface DbHealthLesson {
+  id: number; class_id: number; class_name: string; class_active: boolean;
+  title: string; scheduled_at: string; duration_min: number; status: string;
+  recurrence_key: string | null; google_event_id: string | null;
+  substitute_tutor_id: number | null; substitute_tutor_name: string | null;
+  attendance_count: number; attendance_unknown: number; created_at: string;
+  warnings: string[]; warning_count: number;
+}
+
+export interface DbHealthVoiceRecord {
+  id: number; lesson_id: number | null; lesson_title: string | null;
+  lesson_scheduled_at: string | null; lesson_class_id: number | null;
+  discord_user_id: string; discord_username: string | null;
+  discord_channel_id: string | null; discord_channel: string | null;
+  joined_at: string; left_at: string | null;
+  duration_seconds: number | null; duration_min: number | null;
+  status: string; crm_user_id: number | null; crm_user_name: string | null; crm_user_role: string | null;
+  unmatched: boolean; created_at: string;
+}
+
+export interface DbHealthReconciliation {
+  class_id: number | null; class_name: string; date: string | null;
+  discord_channel_id: string | null;
+  lesson: { id: number; title: string; scheduled_at: string; duration_min: number; status: string; lesson_end: string | null } | null;
+  window: { start: string; end: string } | null;
+  roster: Array<{
+    student_id: number; student_name: string; discord_user_id: string | null;
+    has_voice_data: boolean; voice_joined_at: string | null; voice_left_at: string | null; voice_total_min: number | null;
+    is_late: boolean; left_early: boolean;
+    computed_from_voice: string;  // present | absent | late | left_early | partial
+    recorded_attendance: string;  // crm override status or 'not_recorded'
+    is_override: boolean;
+    final_status: string;
+    mismatch: boolean;            // override disagrees with voice evidence
+  }>;
+  unmatched_voice: Array<{
+    id: number; discord_user_id: string; discord_username: string | null;
+    crm_user_id: number | null; in_expected_roster: boolean;
+    joined_at: string; left_at: string | null; duration_seconds: number | null;
+  }>;
+  summary: {
+    enrolled: number; present: number; absent: number; late: number; left_early: number; partial: number;
+    no_voice_data: number; overrides: number; mismatches: number; unmatched_discord: number;
+  } | null;
+}
+
+export interface DbHealthIssue {
+  id: string; severity: 'critical' | 'high' | 'medium' | 'low';
+  category: string; entity_type: string; entity_id: number; entity_name: string;
+  description: string; edit_path: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // API surface
 // ---------------------------------------------------------------------------
@@ -1177,6 +1262,40 @@ export const adminApi = {
 
   cancelBotJob(id: number): Promise<void> {
     return del(`/bot-jobs/${id}`);
+  },
+
+  // ── Database Health ──────────────────────────────────────────────────────── //
+
+  getDatabaseHealthSummary(): Promise<DbHealthSummary> {
+    return get('/database-health/summary');
+  },
+
+  getDatabaseHealthUsers(): Promise<{ total: number; items: DbHealthUser[] }> {
+    return get('/database-health/users');
+  },
+
+  getDatabaseHealthClasses(): Promise<{ total: number; items: DbHealthClass[] }> {
+    return get('/database-health/classes');
+  },
+
+  getDatabaseHealthEnrollments(): Promise<{ total: number; items: DbHealthEnrollment[] }> {
+    return get('/database-health/enrollments');
+  },
+
+  getDatabaseHealthLessons(params?: { class_id?: number; status?: string; skip?: number; limit?: number }): Promise<Paginated<DbHealthLesson>> {
+    return get('/database-health/lessons', params);
+  },
+
+  getDatabaseHealthVoice(params?: { class_id?: number; date?: string; skip?: number; limit?: number }): Promise<Paginated<DbHealthVoiceRecord>> {
+    return get('/database-health/voice-attendance', params);
+  },
+
+  getDatabaseHealthReconciliation(classId: number, date: string): Promise<DbHealthReconciliation> {
+    return get('/database-health/reconciliation', { class_id: classId, date });
+  },
+
+  getDatabaseHealthIssues(): Promise<{ total: number; items: DbHealthIssue[] }> {
+    return get('/database-health/issues');
   },
 };
 

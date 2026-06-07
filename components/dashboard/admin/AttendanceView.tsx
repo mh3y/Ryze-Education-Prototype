@@ -26,6 +26,14 @@ import {
   XCircle,
   Pencil,
   X,
+  LayoutDashboard,
+  BookOpen,
+  Wifi,
+  WifiOff,
+  UserX,
+  UserPlus,
+  Shield,
+  TrendingUp,
 } from 'lucide-react';
 import { portalApi, AttendanceRecord } from '../../../services/portalApi';
 
@@ -959,18 +967,587 @@ const CrmTab: React.FC = () => {
   );
 };
 
+// ── Overview API types ────────────────────────────────────────────────────────
+
+interface OverviewLesson {
+  id:             number;
+  scheduled_at:   string;
+  scheduled_end:  string;
+  duration_min:   number;
+  lesson_status:  string;
+  tutor:          { user_id: number; full_name: string; final_status: string; is_late: boolean; left_early: boolean } | null;
+  students:       { user_id: number; full_name: string; final_status: string }[];
+  issues:         IssueReport[];
+  unexpected_participants: { type: string; severity: string; full_name: string | null; discord_username: string | null; total_minutes: number }[];
+  has_issues:     boolean;
+  present_count:  number;
+  enrolled_count: number;
+}
+
+interface ClassOverview {
+  id:                 number;
+  name:               string;
+  class_type:         string;
+  schedule_day:       number | null;
+  schedule_hour:      number | null;
+  schedule_minute:    number | null;
+  duration_min:       number;
+  timezone:           string;
+  subject:            string;
+  year_level:         string | null;
+  tutor:              { id: number; full_name: string } | null;
+  enrolled_students:  { id: number; full_name: string }[];
+  discord_channel_id: string | null;
+  next_lesson:        { id: number; scheduled_at: string } | null;
+  recent_lessons:     OverviewLesson[];
+  health_status:      'healthy' | 'critical' | 'issue' | 'no_recent_lessons' | 'misconfigured';
+  health_message:     string;
+  issue_count:        number;
+  config_warnings:    string[];
+}
+
+interface OverviewMetrics {
+  active_classes:      number;
+  lessons_this_week:   number;
+  lessons_completed:   number;
+  healthy_lessons:     number;
+  lessons_with_issues: number;
+  missing_tutor:       number;
+  missing_student:     number;
+  unmatched_voice:     number;
+  possible_substitute: number;
+}
+
+interface OverviewResponse {
+  metrics: OverviewMetrics;
+  classes: ClassOverview[];
+}
+
+interface AggregatedIssue {
+  type:        string;
+  severity:    'error' | 'warning';
+  message:     string;
+  class_id:    number;
+  class_name:  string;
+  lesson_id:   number;
+  lesson_date: string;
+  user_id:     number | null;
+  user_name:   string | null;
+}
+
+// ── Overview helpers ──────────────────────────────────────────────────────────
+
+function scheduleLabel(cls: ClassOverview): string {
+  if (cls.schedule_day == null || cls.schedule_hour == null) return 'No schedule set';
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const h    = cls.schedule_hour;
+  const m    = cls.schedule_minute ?? 0;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12  = h % 12 || 12;
+  const mStr = m > 0 ? `:${String(m).padStart(2, '0')}` : '';
+  return `${days[cls.schedule_day]}s ${h12}${mStr} ${ampm}`;
+}
+
+function fmtShortDate(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-AU', {
+    timeZone: AEST_ZONE, day: 'numeric', month: 'short', year: 'numeric',
+  });
+}
+
+function healthBadge(status: ClassOverview['health_status']) {
+  switch (status) {
+    case 'healthy':           return { label: 'Healthy',        color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+    case 'critical':          return { label: 'Critical',       color: 'bg-red-500/20 text-red-300 border-red-500/30' };
+    case 'issue':             return { label: 'Issues',         color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+    case 'no_recent_lessons': return { label: 'No recent data', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
+    case 'misconfigured':     return { label: 'Misconfigured',  color: 'bg-orange-500/20 text-orange-300 border-orange-500/30' };
+    default:                  return { label: status,           color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
+  }
+}
+
+// ── Class card (used in OverviewTab) ─────────────────────────────────────────
+
+interface ClassCardProps {
+  cls:           ClassOverview;
+  onViewHistory: (classId: number) => void;
+}
+
+const ClassCard: React.FC<ClassCardProps> = ({ cls, onViewHistory }) => {
+  const [expanded, setExpanded] = useState(cls.health_status === 'critical' || cls.health_status === 'issue');
+  const badge = healthBadge(cls.health_status);
+
+  return (
+    <div className={`bg-white/[0.03] border rounded-2xl overflow-hidden transition-colors ${
+      cls.health_status === 'critical' ? 'border-red-500/30' :
+      cls.health_status === 'issue'    ? 'border-amber-500/25' :
+      'border-white/10'
+    }`}>
+      {/* Card header */}
+      <div
+        className="px-5 py-4 flex items-start gap-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
+        onClick={() => setExpanded(v => !v)}
+      >
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <span className="text-sm font-bold ryze-text-inverse">{cls.name}</span>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/5 ryze-text-muted capitalize">{cls.class_type}</span>
+            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${badge.color}`}>{badge.label}</span>
+          </div>
+          <div className="flex items-center gap-3 text-xs ryze-text-muted flex-wrap">
+            <span>{scheduleLabel(cls)} · {cls.duration_min} min</span>
+            {cls.tutor && <span>· {cls.tutor.full_name}</span>}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          {cls.issue_count > 0 && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/20">
+              <AlertTriangle size={10} />
+              {cls.issue_count}
+            </span>
+          )}
+          <span className="ryze-text-muted">{expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}</span>
+        </div>
+      </div>
+
+      {/* Expanded detail */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            key="detail"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-white/10 px-5 py-4 space-y-4">
+              {/* Config info row */}
+              <div className="flex items-center gap-4 flex-wrap text-xs ryze-text-muted">
+                <span>
+                  <span className="font-medium ryze-text-inverse">Students:</span>{' '}
+                  {cls.enrolled_students.length > 0
+                    ? cls.enrolled_students.map(s => s.full_name).join(', ')
+                    : <span className="text-orange-400">None enrolled</span>}
+                </span>
+                <span>
+                  {cls.discord_channel_id
+                    ? <span className="flex items-center gap-1"><Wifi size={11} className="text-emerald-400" /> Discord set</span>
+                    : <span className="flex items-center gap-1 text-orange-400"><WifiOff size={11} /> No channel</span>}
+                </span>
+                {cls.next_lesson && (
+                  <span>
+                    <span className="font-medium ryze-text-inverse">Next:</span>{' '}
+                    {fmtShortDate(cls.next_lesson.scheduled_at)}
+                  </span>
+                )}
+              </div>
+
+              {/* Config warnings */}
+              {cls.config_warnings.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {cls.config_warnings.map((w, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-medium bg-orange-500/10 border border-orange-500/20 text-orange-300">
+                      <AlertTriangle size={10} />
+                      {w}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Recent lessons mini-table */}
+              {cls.recent_lessons.length > 0 ? (
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Recent lessons</p>
+                  <div className="space-y-2">
+                    {cls.recent_lessons.map(l => {
+                      const tutorStatus = l.tutor?.final_status ?? 'absent';
+                      const tutorOk     = ['present', 'late', 'left_early'].includes(tutorStatus);
+                      const hasTutorAbsent = l.issues.some((i: IssueReport) => i.type === 'tutor_absent');
+                      return (
+                        <div key={l.id} className={`rounded-xl px-3 py-2.5 border text-xs ${
+                          hasTutorAbsent                                     ? 'bg-red-500/5 border-red-500/20' :
+                          l.has_issues                                       ? 'bg-amber-500/5 border-amber-500/20' :
+                          'bg-white/[0.02] border-white/5'
+                        }`}>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className="font-medium ryze-text-inverse">{fmtShortDate(l.scheduled_at)}</span>
+                            <span className="ryze-text-muted">{fmtTime(l.scheduled_at)}</span>
+                            {/* Tutor indicator */}
+                            <span className={`flex items-center gap-1 ${tutorOk ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {tutorOk ? <UserCheck size={11} /> : <UserX size={11} />}
+                              {l.tutor ? l.tutor.full_name : 'No tutor'}
+                            </span>
+                            {/* Student count */}
+                            <span className="ryze-text-muted">{l.present_count}/{l.enrolled_count} students</span>
+                            {/* Unexpected participants */}
+                            {l.unexpected_participants.length > 0 && (
+                              <span className="flex items-center gap-1 text-purple-400">
+                                <UserPlus size={11} />
+                                {l.unexpected_participants.length} unexpected
+                              </span>
+                            )}
+                            {/* Issue pills */}
+                            {l.issues.map((issue: IssueReport, i: number) => {
+                              const meta = ISSUE_META[issue.type] ?? { label: issue.message, icon: <AlertTriangle size={10} />, color: 'text-amber-400' };
+                              return (
+                                <span key={i} className={`flex items-center gap-1 ${meta.color}`}>
+                                  {React.cloneElement(meta.icon as React.ReactElement, { size: 10 })}
+                                  {meta.label}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs ryze-text-muted italic">No recent lessons found (last 60 days).</p>
+              )}
+
+              {/* Action */}
+              <button
+                onClick={(e) => { e.stopPropagation(); onViewHistory(cls.id); }}
+                className="text-xs font-medium text-[#FFB000]/80 hover:text-[#FFB000] transition flex items-center gap-1.5"
+              >
+                <BookOpen size={12} />
+                View full class history →
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// ── Overview tab ──────────────────────────────────────────────────────────────
+
+interface OverviewTabProps {
+  onViewClassHistory: (classId: number) => void;
+}
+
+const OverviewTab: React.FC<OverviewTabProps> = ({ onViewClassHistory }) => {
+  const [data,    setData]    = useState<OverviewResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    fetch('/api/admin/attendance/overview', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : r.json().then((e: any) => Promise.reject(e.detail ?? 'Error')))
+      .then(setData)
+      .catch(e => setError(String(e)))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-5 space-y-2 animate-pulse">
+            <div className="h-4 bg-white/5 rounded w-1/3" />
+            <div className="h-3 bg-white/5 rounded w-1/2" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-300 flex items-center justify-between">
+        <span>{error}</span>
+        <button onClick={load} className="ml-4 px-3 py-1 rounded-lg bg-red-500/20 text-red-300 text-xs hover:bg-red-500/30 transition">Retry</button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const { metrics, classes } = data;
+
+  const metricCards = [
+    { label: 'Active classes',   value: metrics.active_classes,      icon: <LayoutDashboard size={16} />, color: 'text-blue-300' },
+    { label: 'Lessons this wk',  value: metrics.lessons_this_week,   icon: <ClipboardList   size={16} />, color: 'text-purple-300' },
+    { label: 'Completed',        value: metrics.lessons_completed,    icon: <CheckCircle2    size={16} />, color: 'text-emerald-300' },
+    { label: 'With issues',      value: metrics.lessons_with_issues,  icon: <AlertTriangle   size={16} />, color: metrics.lessons_with_issues > 0 ? 'text-amber-300' : 'text-slate-500' },
+    { label: 'Missing tutor',    value: metrics.missing_tutor,        icon: <UserX           size={16} />, color: metrics.missing_tutor > 0 ? 'text-red-300' : 'text-slate-500' },
+    { label: 'Missing student',  value: metrics.missing_student,      icon: <Users           size={16} />, color: metrics.missing_student > 0 ? 'text-amber-300' : 'text-slate-500' },
+    { label: 'Possible sub',     value: metrics.possible_substitute,  icon: <Shield          size={16} />, color: metrics.possible_substitute > 0 ? 'text-purple-300' : 'text-slate-500' },
+    { label: 'Unknown voice',    value: metrics.unmatched_voice,      icon: <TrendingUp      size={16} />, color: metrics.unmatched_voice > 0 ? 'text-orange-300' : 'text-slate-500' },
+  ];
+
+  return (
+    <div className="space-y-5">
+      {/* Refresh */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs ryze-text-muted">{classes.length} active class{classes.length !== 1 ? 'es' : ''} · metrics cover last 7 days</p>
+        <button onClick={load} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition ryze-text-muted">
+          <RefreshCw size={14} />
+        </button>
+      </div>
+
+      {/* Metrics grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {metricCards.map(m => (
+          <div key={m.label} className="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
+            <span className={m.color}>{m.icon}</span>
+            <div>
+              <p className="text-lg font-bold ryze-text-inverse">{m.value}</p>
+              <p className="text-[10px] ryze-text-muted">{m.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Class cards */}
+      {classes.length === 0 ? (
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-16 text-center">
+          <LayoutDashboard size={36} className="mx-auto mb-4 opacity-20" />
+          <p className="ryze-text-muted text-sm">No active classes found.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {classes.map(cls => (
+            <ClassCard key={cls.id} cls={cls} onViewHistory={onViewClassHistory} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Class history tab ─────────────────────────────────────────────────────────
+
+interface ClassHistoryTabProps {
+  classId:  number;
+  onBack:   () => void;
+}
+
+const ClassHistoryTab: React.FC<ClassHistoryTabProps> = ({ classId, onBack }) => {
+  const [data,    setData]    = useState<{ class: ClassOverview; lessons: LessonReport[] } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
+  const [tick,    setTick]    = useState(0);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    fetch(`/api/admin/attendance/classes/${classId}`, { credentials: 'include' })
+      .then(r => r.ok ? r.json() : r.json().then((e: any) => Promise.reject(e.detail ?? 'Error')))
+      .then(setData)
+      .catch(e => setError(String(e)))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, [classId, tick]);
+
+  const refresh = () => setTick(t => t + 1);
+
+  return (
+    <div className="space-y-5">
+      {/* Back button + header */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 text-xs ryze-text-muted hover:ryze-text-inverse transition"
+        >
+          <ChevronLeft size={14} />
+          Back to overview
+        </button>
+        {data?.class && (
+          <>
+            <span className="text-slate-700">·</span>
+            <span className="text-sm font-bold ryze-text-inverse">{data.class.name}</span>
+            <span className="text-xs ryze-text-muted">{scheduleLabel(data.class as any)}</span>
+          </>
+        )}
+        <button onClick={refresh} className="ml-auto p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition ryze-text-muted">
+          <RefreshCw size={14} />
+        </button>
+      </div>
+
+      {loading && (
+        <div className="space-y-3">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 animate-pulse">
+              <div className="h-4 bg-white/5 rounded w-1/3 mb-2" />
+              <div className="h-3 bg-white/5 rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-300">{error}</div>
+      )}
+
+      {!loading && data && (
+        <>
+          {data.lessons.length === 0 ? (
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-16 text-center">
+              <ClipboardList size={36} className="mx-auto mb-4 opacity-20" />
+              <p className="ryze-text-muted text-sm">No lessons in the last 90 days for this class.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs ryze-text-muted">Showing last {data.lessons.length} lesson{data.lessons.length !== 1 ? 's' : ''} (up to 8)</p>
+              {data.lessons.map(lesson => (
+                <LessonCard key={lesson.id} lesson={lesson} onRefresh={refresh} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// ── Issues tab ────────────────────────────────────────────────────────────────
+
+const AGGR_ISSUE_META: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+  ...ISSUE_META,
+  possible_substitute: { label: 'Possible substitute', icon: <Shield     size={13} />, color: 'text-purple-400' },
+  unexpected_student:  { label: 'Unexpected student',  icon: <UserPlus   size={13} />, color: 'text-orange-400' },
+  unknown_user:        { label: 'Unknown voice user',  icon: <UserX      size={13} />, color: 'text-amber-400' },
+};
+
+const IssuesTab: React.FC = () => {
+  const [data,    setData]    = useState<{ total: number; items: AggregatedIssue[] } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    fetch('/api/admin/attendance/issues', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : r.json().then((e: any) => Promise.reject(e.detail ?? 'Error')))
+      .then(setData)
+      .catch(e => setError(String(e)))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        {[0, 1, 2, 3].map(i => (
+          <div key={i} className="bg-white/[0.03] border border-white/10 rounded-xl p-4 animate-pulse">
+            <div className="h-4 bg-white/5 rounded w-2/3" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-300 flex items-center justify-between">
+        <span>{error}</span>
+        <button onClick={load} className="ml-4 px-3 py-1 rounded-lg bg-red-500/20 text-red-300 text-xs hover:bg-red-500/30 transition">Retry</button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-xs ryze-text-muted">
+          {data.total} issue{data.total !== 1 ? 's' : ''} across all classes · last 14 days
+        </p>
+        <button onClick={load} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition ryze-text-muted">
+          <RefreshCw size={14} />
+        </button>
+      </div>
+
+      {data.items.length === 0 ? (
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-16 text-center">
+          <CheckCircle2 size={36} className="mx-auto mb-4 text-emerald-400 opacity-60" />
+          <p className="ryze-text-muted text-sm">No issues in the last 14 days.</p>
+        </div>
+      ) : (
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left px-5 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Issue</th>
+                <th className="text-left px-5 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Class</th>
+                <th className="text-left px-5 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.items.map((issue, i) => {
+                const meta = AGGR_ISSUE_META[issue.type] ?? { label: issue.type, icon: <AlertTriangle size={13} />, color: 'text-amber-400' };
+                return (
+                  <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3">
+                      <div className={`flex items-center gap-2 ${meta.color}`}>
+                        {meta.icon}
+                        <span className="font-medium text-xs">{issue.message}</span>
+                      </div>
+                      {issue.severity === 'error' && (
+                        <span className="mt-1 inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-500/20 text-red-300 border border-red-500/20">Critical</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3 ryze-text-muted text-xs hidden sm:table-cell">
+                      <a href={`/dashboard/admin/classes/${issue.class_id}`} className="hover:text-[#FFB000] transition">
+                        {issue.class_name}
+                      </a>
+                    </td>
+                    <td className="px-5 py-3 ryze-text-muted text-xs hidden md:table-cell">
+                      {fmtShortDate(issue.lesson_date)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ── Main component ────────────────────────────────────────────────────────────
 
-type TabId = 'lessons' | 'voice' | 'crm';
+type TabId = 'overview' | 'lessons' | 'voice' | 'crm' | 'issues';
 
 export const AttendanceView: React.FC = () => {
-  const [tab, setTab] = useState<TabId>('lessons');
+  const [tab,             setTab]            = useState<TabId>('overview');
+  const [focusedClassId,  setFocusedClassId] = useState<number | null>(null);
+
+  // When a class card fires "View full history", switch to class-history sub-view
+  const handleViewClassHistory = (classId: number) => {
+    setFocusedClassId(classId);
+    setTab('overview'); // stays in overview tree; ClassHistoryTab replaces OverviewTab
+  };
+
+  const handleBackToOverview = () => {
+    setFocusedClassId(null);
+  };
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-    { id: 'lessons', label: 'Scheduled Lessons', icon: <ClipboardList size={15} /> },
-    { id: 'voice',   label: 'Discord Voice Log', icon: <Mic           size={15} /> },
-    { id: 'crm',     label: 'CRM Records',       icon: <Users         size={15} /> },
+    { id: 'overview', label: 'Overview',          icon: <LayoutDashboard size={15} /> },
+    { id: 'lessons',  label: 'By Date',           icon: <ClipboardList   size={15} /> },
+    { id: 'voice',    label: 'Discord Voice Log', icon: <Mic             size={15} /> },
+    { id: 'crm',      label: 'CRM Records',       icon: <Users           size={15} /> },
+    { id: 'issues',   label: 'Issues',            icon: <AlertTriangle   size={15} /> },
   ];
+
+  // Reset class focus when switching tabs
+  const handleTabChange = (id: TabId) => {
+    setTab(id);
+    if (id !== 'overview') setFocusedClassId(null);
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
@@ -978,7 +1555,7 @@ export const AttendanceView: React.FC = () => {
       <div>
         <h2 className="text-3xl font-bold ryze-text-inverse">Attendance</h2>
         <p className="ryze-text-muted mt-1 text-sm">
-          Scheduled lessons are the source of truth. Discord voice activity is evidence used to verify attendance.
+          Class-centric attendance control centre. Discord voice evidence reconciled against scheduled lessons.
         </p>
       </div>
 
@@ -987,7 +1564,7 @@ export const AttendanceView: React.FC = () => {
         {tabs.map(t => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => handleTabChange(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
               tab === t.id
                 ? 'bg-[#FFB000]/20 text-[#FFB000] border border-[#FFB000]/30'
@@ -1001,9 +1578,16 @@ export const AttendanceView: React.FC = () => {
       </div>
 
       {/* Tab content */}
-      {tab === 'lessons' && <LessonsTab />}
-      {tab === 'voice'   && <DiscordVoiceTab />}
-      {tab === 'crm'     && <CrmTab />}
+      {tab === 'overview' && focusedClassId != null && (
+        <ClassHistoryTab classId={focusedClassId} onBack={handleBackToOverview} />
+      )}
+      {tab === 'overview' && focusedClassId == null && (
+        <OverviewTab onViewClassHistory={handleViewClassHistory} />
+      )}
+      {tab === 'lessons'  && <LessonsTab />}
+      {tab === 'voice'    && <DiscordVoiceTab />}
+      {tab === 'crm'      && <CrmTab />}
+      {tab === 'issues'   && <IssuesTab />}
     </motion.div>
   );
 };

@@ -228,6 +228,119 @@ export function detectIssues(params: {
   return issues;
 }
 
+// ── Unexpected participant detector ───────────────────────────────────────────
+
+export type UnexpectedParticipantType = 'possible_substitute' | 'unexpected_student' | 'unknown_user';
+
+export interface UnexpectedParticipant {
+  type:             UnexpectedParticipantType;
+  severity:         'warning';
+  crm_user_id:      number | null;
+  full_name:        string | null;
+  role:             string | null;
+  discord_user_id:  string;
+  discord_username: string | null;
+  total_minutes:    number;
+  first_join:       string; // ISO
+}
+
+/**
+ * Given voice sessions in a class channel during a lesson window,
+ * returns participants who are NOT in the expected set (tutor + enrolled students).
+ *
+ * Groups multiple fragments from the same user and classifies them:
+ *   possible_substitute — tutor/admin role user, not the assigned tutor
+ *   unexpected_student  — student-role user, not enrolled in this class
+ *   unknown_user        — no crm_user_id (unmatched Discord account)
+ */
+export function detectUnexpectedParticipants(params: {
+  expectedUserIds: Set<number>;
+  channelSessions: Array<{
+    crm_user_id:      number | null;
+    discord_user_id:  string;
+    discord_username: string | null;
+    duration_seconds: number | null;
+    joined_at:        Date;
+    user: { id: number; full_name: string; role: string } | null;
+  }>;
+}): UnexpectedParticipant[] {
+  // Aggregate sessions by crm_user_id (or discord_user_id for unmatched)
+  const byKey = new Map<string, {
+    crm_user_id:      number | null;
+    discord_user_id:  string;
+    discord_username: string | null;
+    total_seconds:    number;
+    first_join:       Date;
+    user: { id: number; full_name: string; role: string } | null;
+  }>();
+
+  for (const s of params.channelSessions) {
+    // Skip expected participants
+    if (s.crm_user_id != null && params.expectedUserIds.has(s.crm_user_id)) continue;
+
+    const key = s.crm_user_id != null ? `crm:${s.crm_user_id}` : `discord:${s.discord_user_id}`;
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, {
+        crm_user_id:      s.crm_user_id,
+        discord_user_id:  s.discord_user_id,
+        discord_username: s.discord_username,
+        total_seconds:    s.duration_seconds ?? 0,
+        first_join:       s.joined_at,
+        user:             s.user,
+      });
+    } else {
+      existing.total_seconds += s.duration_seconds ?? 0;
+      if (s.joined_at < existing.first_join) existing.first_join = s.joined_at;
+    }
+  }
+
+  const result: UnexpectedParticipant[] = [];
+  for (const entry of byKey.values()) {
+    const total_minutes = Math.round(entry.total_seconds / 60);
+
+    if (entry.crm_user_id == null) {
+      result.push({
+        type: 'unknown_user',
+        severity: 'warning',
+        crm_user_id: null,
+        full_name: entry.discord_username,
+        role: null,
+        discord_user_id: entry.discord_user_id,
+        discord_username: entry.discord_username,
+        total_minutes,
+        first_join: entry.first_join.toISOString(),
+      });
+    } else if (entry.user?.role === 'tutor' || entry.user?.role === 'admin') {
+      result.push({
+        type: 'possible_substitute',
+        severity: 'warning',
+        crm_user_id: entry.crm_user_id,
+        full_name: entry.user?.full_name ?? null,
+        role: entry.user?.role ?? null,
+        discord_user_id: entry.discord_user_id,
+        discord_username: entry.discord_username,
+        total_minutes,
+        first_join: entry.first_join.toISOString(),
+      });
+    } else {
+      result.push({
+        type: 'unexpected_student',
+        severity: 'warning',
+        crm_user_id: entry.crm_user_id,
+        full_name: entry.user?.full_name ?? null,
+        role: entry.user?.role ?? null,
+        discord_user_id: entry.discord_user_id,
+        discord_username: entry.discord_username,
+        total_minutes,
+        first_join: entry.first_join.toISOString(),
+      });
+    }
+  }
+
+  return result;
+}
+
 // ── Window helpers ────────────────────────────────────────────────────────────
 
 /** Returns the start and end of the matching window for a lesson (includes buffers) */
