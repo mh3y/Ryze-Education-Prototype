@@ -230,7 +230,11 @@ export function detectIssues(params: {
 
 // ── Unexpected participant detector ───────────────────────────────────────────
 
-export type UnexpectedParticipantType = 'possible_substitute' | 'unexpected_student' | 'unknown_user';
+export type UnexpectedParticipantType =
+  | 'possible_substitute'    // tutor-role user not assigned to this class
+  | 'unexpected_student'     // student-role user not enrolled in this class
+  | 'unknown_user'           // no CRM account linked to this Discord user
+  | 'admin_test_activity';   // admin-role user (not a substitute — likely testing/monitoring)
 
 export interface UnexpectedParticipant {
   type:             UnexpectedParticipantType;
@@ -311,9 +315,23 @@ export function detectUnexpectedParticipants(params: {
         total_minutes,
         first_join: entry.first_join.toISOString(),
       });
-    } else if (entry.user?.role === 'tutor' || entry.user?.role === 'admin') {
+    } else if (entry.user?.role === 'tutor') {
+      // Tutor-role user not assigned to this class → possible substitute
       result.push({
         type: 'possible_substitute',
+        severity: 'warning',
+        crm_user_id: entry.crm_user_id,
+        full_name: entry.user?.full_name ?? null,
+        role: entry.user?.role ?? null,
+        discord_user_id: entry.discord_user_id,
+        discord_username: entry.discord_username,
+        total_minutes,
+        first_join: entry.first_join.toISOString(),
+      });
+    } else if (entry.user?.role === 'admin') {
+      // Admin-role user → not a substitute; likely monitoring/testing the channel
+      result.push({
+        type: 'admin_test_activity',
         severity: 'warning',
         crm_user_id: entry.crm_user_id,
         full_name: entry.user?.full_name ?? null,

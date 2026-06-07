@@ -1413,15 +1413,20 @@ const ClassHistoryTab: React.FC<ClassHistoryTabProps> = ({ classId, onBack }) =>
 
 const AGGR_ISSUE_META: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   ...ISSUE_META,
-  possible_substitute: { label: 'Possible substitute', icon: <Shield     size={13} />, color: 'text-purple-400' },
-  unexpected_student:  { label: 'Unexpected student',  icon: <UserPlus   size={13} />, color: 'text-orange-400' },
-  unknown_user:        { label: 'Unknown voice user',  icon: <UserX      size={13} />, color: 'text-amber-400' },
+  possible_substitute:  { label: 'Possible substitute', icon: <Shield     size={13} />, color: 'text-purple-400' },
+  unexpected_student:   { label: 'Unexpected student',  icon: <UserPlus   size={13} />, color: 'text-orange-400' },
+  unknown_user:         { label: 'Unknown voice user',  icon: <UserX      size={13} />, color: 'text-amber-400' },
+  // admin_test_activity is filtered server-side and will not appear in the Issues tab,
+  // but the entry is here so ClassCard mini-rows can render it if shown in overview context
+  admin_test_activity:  { label: 'Admin/test activity', icon: <Shield     size={13} />, color: 'text-slate-400' },
 };
 
 const IssuesTab: React.FC = () => {
-  const [data,    setData]    = useState<{ total: number; items: AggregatedIssue[] } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState<string | null>(null);
+  const [data,       setData]       = useState<{ total: number; items: AggregatedIssue[] } | null>(null);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [genResult,  setGenResult]  = useState<{ created: number } | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -1431,6 +1436,24 @@ const IssuesTab: React.FC = () => {
       .then(setData)
       .catch(e => setError(String(e)))
       .finally(() => setLoading(false));
+  };
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setGenResult(null);
+    try {
+      const r = await fetch('/api/admin/attendance/generate-alerts', {
+        method: 'POST', credentials: 'include',
+      });
+      if (r.ok) {
+        const d = await r.json();
+        setGenResult({ created: d.created });
+      }
+    } catch {
+      // best-effort — failure is non-critical
+    } finally {
+      setGenerating(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -1462,10 +1485,35 @@ const IssuesTab: React.FC = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-xs ryze-text-muted">
-          {data.total} issue{data.total !== 1 ? 's' : ''} across all classes · last 14 days
+          {data.total} computed issue{data.total !== 1 ? 's' : ''} · last 14 days
         </p>
         <button onClick={load} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition ryze-text-muted">
           <RefreshCw size={14} />
+        </button>
+      </div>
+
+      {/* Computed-only notice — clearly distinguish from persisted Alerts */}
+      <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl px-4 py-3 flex items-start gap-3">
+        <AlertTriangle size={14} className="text-blue-400 mt-0.5 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-blue-300 font-semibold">Computed issues — not persisted</p>
+          <p className="text-xs ryze-text-muted mt-0.5">
+            These are calculated live from attendance data on each page load.
+            They are <em>not</em> saved as alerts. To create persistent, trackable records in the Alerts system, run the generator below.
+          </p>
+          {genResult != null && (
+            <p className="text-xs text-emerald-400 mt-1 font-medium">
+              ✓ {genResult.created} new alert{genResult.created !== 1 ? 's' : ''} created (duplicates skipped).
+            </p>
+          )}
+        </div>
+        <button
+          onClick={handleGenerate}
+          disabled={generating}
+          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 text-xs font-semibold hover:bg-blue-500/30 disabled:opacity-50 transition whitespace-nowrap"
+        >
+          <Shield size={12} />
+          {generating ? 'Generating…' : 'Generate Alerts'}
         </button>
       </div>
 

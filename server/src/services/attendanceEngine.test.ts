@@ -257,12 +257,28 @@ describe('detectUnexpectedParticipants', () => {
     expect(result[0].crm_user_id).toBe(2);
   });
 
-  it('classifies admin-role non-expected user as possible_substitute', () => {
+  it('classifies admin-role non-expected user as admin_test_activity (not possible_substitute)', () => {
     const result = detectUnexpectedParticipants({
       expectedUserIds: new Set([10]),
       channelSessions: [session(5, 5, 'admin')],
     });
-    expect(result[0].type).toBe('possible_substitute');
+    expect(result).toHaveLength(1);
+    expect(result[0].type).toBe('admin_test_activity');
+    expect(result[0].type).not.toBe('possible_substitute');
+  });
+
+  it('keeps tutor-role as possible_substitute and admin-role as admin_test_activity in same channel', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1]),
+      channelSessions: [
+        session(2, 2, 'tutor'),  // unexpected tutor
+        session(3, 3, 'admin'),  // admin monitoring
+      ],
+    });
+    expect(result).toHaveLength(2);
+    const byType = Object.fromEntries(result.map(r => [r.type, r]));
+    expect(byType['possible_substitute'].crm_user_id).toBe(2);
+    expect(byType['admin_test_activity'].crm_user_id).toBe(3);
   });
 
   it('classifies student-role non-expected user as unexpected_student', () => {
@@ -323,6 +339,22 @@ describe('detectUnexpectedParticipants', () => {
     expect(result).toHaveLength(2);
     const types = result.map(r => r.type).sort();
     expect(types).toEqual(['possible_substitute', 'unknown_user']);
+  });
+
+  it('handles all four unexpected types in the same channel', () => {
+    const result = detectUnexpectedParticipants({
+      expectedUserIds: new Set([1]),
+      channelSessions: [
+        session(1, 1, 'tutor'),    // expected → skip
+        session(2, 2, 'tutor'),    // unexpected tutor → possible_substitute
+        session(3, 3, 'admin'),    // admin monitoring → admin_test_activity
+        session(4, 4, 'student'),  // unexpected student → unexpected_student
+        session(5, null, null),    // no CRM → unknown_user
+      ],
+    });
+    expect(result).toHaveLength(4);
+    const types = result.map(r => r.type).sort();
+    expect(types).toEqual(['admin_test_activity', 'possible_substitute', 'unexpected_student', 'unknown_user']);
   });
 
   it('all results have severity warning', () => {
