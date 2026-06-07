@@ -691,8 +691,12 @@ model Alert {
   severity            String    @default("medium") // low | medium | high | critical
   title               String
   message             String
-  related_entity_type String? // student | payment | lesson | class
-  related_entity_id   Int?
+  related_entity_type   String? // student | payment | lesson | class
+  related_entity_id     Int?
+  // Secondary dedup key — used when alerts need both a primary entity (e.g. lesson) and
+  // a secondary entity (e.g. the specific student who was absent). Allows per-student-per-
+  // lesson dedup without collapsing multiple students' alerts for the same lesson.
+  secondary_entity_id   Int?
   status              String    @default("open") // open | resolved | dismissed
   assigned_to         Int?
   resolved_at         DateTime?
