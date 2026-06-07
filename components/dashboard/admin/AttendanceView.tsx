@@ -1501,9 +1501,14 @@ const IssuesTab: React.FC = () => {
             These are calculated live from attendance data on each page load.
             They are <em>not</em> saved as alerts. To create persistent, trackable records in the Alerts system, run the generator below.
           </p>
-          {genResult != null && (
+          {genResult != null && genResult.created > 0 && (
             <p className="text-xs text-emerald-400 mt-1 font-medium">
-              ✓ {genResult.created} new alert{genResult.created !== 1 ? 's' : ''} created (duplicates skipped).
+              ✓ {genResult.created} new alert{genResult.created !== 1 ? 's' : ''} created in the Alerts system.
+            </p>
+          )}
+          {genResult != null && genResult.created === 0 && (
+            <p className="text-xs text-slate-400 mt-1">
+              No new alerts — no unresolved attendance issues found in the last 14 days, or all open alerts already exist. Check back after the next lesson runs.
             </p>
           )}
         </div>

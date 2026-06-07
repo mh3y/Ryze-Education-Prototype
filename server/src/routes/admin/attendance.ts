@@ -1279,13 +1279,21 @@ attendanceRouter.post('/generate-alerts', async (req, res) => {
       }
     }
 
-    // Dedup helper: create alert only if no open alert exists for this type+entity pair
+    // Dedup helper: create alert only if no open alert exists for this type+entity pair.
+    // secondary_entity_id enables per-student-per-lesson dedup: related_entity_id = lesson_id,
+    // secondary_entity_id = user_id. Without it, only the primary entity is checked.
     async function maybeCreateAttendanceAlert(data: {
       alert_type: string; severity: string; title: string; message: string;
       related_entity_type: string; related_entity_id: number;
+      secondary_entity_id?: number;
     }): Promise<boolean> {
       const existing = await db.alert.findFirst({
-        where: { alert_type: data.alert_type, related_entity_id: data.related_entity_id, status: 'open' },
+        where: {
+          alert_type:           data.alert_type,
+          related_entity_id:    data.related_entity_id,
+          secondary_entity_id:  data.secondary_entity_id ?? null,
+          status:               'open',
+        },
       });
       if (existing) return false;
       await db.alert.create({ data: { ...data, status: 'open' } });
@@ -1316,16 +1324,20 @@ attendanceRouter.post('/generate-alerts', async (req, res) => {
         if (ok) createdKeys.push(`tutor_absent:lesson_${lesson.id}`);
       }
 
-      // ── Student absent (one open alert per student — deduped by student_id) ─
+      // ── Student absent (deduped per lesson + student — no two alerts for same lesson+student) ─
+      // related_entity_id = lesson.id (primary), secondary_entity_id = user.id (student).
+      // This allows: two students absent from the same lesson → two distinct alerts,
+      // while preventing duplicates if generate-alerts is run multiple times.
       for (const issue of report.issues.filter((i: any) => i.type === 'student_absent')) {
         if (!issue.user_id) continue;
         const ok = await maybeCreateAttendanceAlert({
           alert_type: 'attendance_student_absent', severity: 'medium',
           title:   `Student absent — ${issue.user_name ?? 'Unknown'}`,
           message: `${issue.user_name ?? 'Student'} was absent for ${cls} on ${dateStr}.`,
-          related_entity_type: 'student', related_entity_id: issue.user_id,
+          related_entity_type: 'lesson', related_entity_id: lesson.id,
+          secondary_entity_id: issue.user_id,
         });
-        if (ok) createdKeys.push(`student_absent:user_${issue.user_id}_lesson_${lesson.id}`);
+        if (ok) createdKeys.push(`student_absent:lesson_${lesson.id}_user_${issue.user_id}`);
       }
 
       // ── Possible substitute ───────────────────────────────────────────────
