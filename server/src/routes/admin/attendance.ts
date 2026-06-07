@@ -732,6 +732,9 @@ function reconcileLesson(params: {
   ).length;
   const attendanceRate = enrolledCount > 0 ? Math.round((presentCount / enrolledCount) * 100) : 0;
 
+  // admin_test_activity is informational only — exclude from issue counts / health flags
+  const actionableUnexpected = unexpectedParticipants.filter(p => p.type !== 'admin_test_activity');
+
   return {
     id:                     lesson.id,
     class_id:               lesson.class_id,
@@ -748,7 +751,8 @@ function reconcileLesson(params: {
     substitute_tutor:       subTutorReport,
     students:               studentReports,
     issues,
-    has_issues:             issues.length > 0 || unexpectedParticipants.length > 0,
+    // has_issues excludes admin_test_activity so admin monitoring doesn't pollute health status
+    has_issues:             issues.length > 0 || actionableUnexpected.length > 0,
     unexpected_participants: unexpectedParticipants,
     enrolled_count:         enrolledCount,
     present_count:          presentCount,
@@ -764,6 +768,11 @@ function reconcileLesson(params: {
 
 attendanceRouter.get('/overview', async (req, res) => {
   try {
+    const currentUser = (req as any).user as { id: number; role: string } | undefined;
+    // Tutors see only their own classes; admins see all
+    const classWhere: any = { active: true };
+    if (currentUser?.role === 'tutor') classWhere.tutor_id = currentUser.id;
+
     const now    = new Date();
     const past60 = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
     const next30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -771,9 +780,9 @@ attendanceRouter.get('/overview', async (req, res) => {
     // Week window (last 7 days) for metrics
     const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    // 1. Load all active classes with tutor + enrolled students
+    // 1. Load active classes (scoped to tutor if applicable)
     const classes = await db.classGroup.findMany({
-      where: { active: true },
+      where: classWhere,
       include: {
         tutor: { select: { id: true, full_name: true, discord_user_id: true } },
         enrollments: {
@@ -785,7 +794,10 @@ attendanceRouter.get('/overview', async (req, res) => {
     });
 
     if (classes.length === 0) {
-      return res.json({ metrics: { active_classes: 0, lessons_this_week: 0, lessons_completed: 0, healthy_lessons: 0, lessons_with_issues: 0, missing_tutor: 0, missing_student: 0, unmatched_voice: 0, possible_substitute: 0 }, classes: [] });
+      return res.json({
+        metrics: { active_classes: 0, lessons_this_week: 0, lessons_completed: 0, healthy_lessons: 0, lessons_with_issues: 0, missing_tutor: 0, missing_student: 0, unmatched_voice: 0, possible_substitute: 0 },
+        classes: [],
+      });
     }
 
     const classIds = classes.map((c: any) => c.id);
@@ -885,7 +897,11 @@ attendanceRouter.get('/overview', async (req, res) => {
         health_message = 'No lessons in last 60 days';
       } else {
         const mostRecent = reconciledLessons[0];
-        const allIssues  = [...mostRecent.issues, ...mostRecent.unexpected_participants];
+        // Exclude admin_test_activity from issue counts — admin monitoring is not a health issue
+        const allIssues  = [
+          ...mostRecent.issues,
+          ...mostRecent.unexpected_participants.filter((p: any) => p.type !== 'admin_test_activity'),
+        ];
         issue_count      = allIssues.length;
 
         const hasTutorAbsent = mostRecent.issues.some((i: any) => i.type === 'tutor_absent');
@@ -980,6 +996,13 @@ attendanceRouter.get('/classes/:classId', async (req, res) => {
     });
     if (!cls) { res.status(404).json({ detail: 'Class not found' }); return; }
 
+    // Tutors may only view classes they are assigned to as primary tutor
+    const currentUser = (req as any).user as { id: number; role: string } | undefined;
+    if (currentUser?.role === 'tutor' && cls.tutor?.id !== currentUser.id) {
+      res.status(403).json({ detail: 'Access denied: not your class' });
+      return;
+    }
+
     const now    = new Date();
     const past90 = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
@@ -1054,11 +1077,15 @@ attendanceRouter.get('/classes/:classId', async (req, res) => {
 
 attendanceRouter.get('/issues', async (req, res) => {
   try {
+    const currentUser = (req as any).user as { id: number; role: string } | undefined;
+    const classWhere: any = { active: true };
+    if (currentUser?.role === 'tutor') classWhere.tutor_id = currentUser.id;
+
     const now    = new Date();
     const past14 = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
     const classes = await db.classGroup.findMany({
-      where: { active: true },
+      where: classWhere,
       include: {
         tutor: { select: { id: true, full_name: true, discord_user_id: true } },
         enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
@@ -1136,15 +1163,19 @@ attendanceRouter.get('/issues', async (req, res) => {
         });
       }
 
-      for (const p of report.unexpected_participants) {
+      // admin_test_activity is informational only — excluded from the Issues list
+      for (const p of report.unexpected_participants.filter((p: any) => p.type !== 'admin_test_activity')) {
+        const userName = p.full_name ?? p.discord_username ?? 'unknown';
+        const message =
+          p.type === 'possible_substitute'
+            ? `Possible substitute: ${userName} in ${lesson.class?.name ?? 'class'}`
+            : p.type === 'unexpected_student'
+            ? `Unexpected student: ${userName}`
+            : `Unknown voice user in ${lesson.class?.name ?? 'class'} (${p.discord_username ?? p.discord_user_id})`;
         aggregatedIssues.push({
           type:       p.type,
           severity:   'warning',
-          message:    p.type === 'possible_substitute'
-            ? `Possible substitute: ${p.full_name ?? p.discord_username ?? 'unknown'} in ${lesson.class?.name ?? 'class'}`
-            : p.type === 'unexpected_student'
-            ? `Unexpected student: ${p.full_name ?? p.discord_username ?? 'unknown'}`
-            : `Unknown voice user in ${lesson.class?.name ?? 'class'} (${p.discord_username ?? p.discord_user_id})`,
+          message,
           class_id:   lesson.class_id,
           class_name: lesson.class?.name ?? 'Unknown',
           lesson_id:  lesson.id,
@@ -1166,6 +1197,166 @@ attendanceRouter.get('/issues', async (req, res) => {
     res.json({ total: aggregatedIssues.length, items: aggregatedIssues });
   } catch (e: any) {
     console.error('[attendance] issues error:', e?.message);
+    res.status(500).json({ detail: e?.message ?? 'Internal server error' });
+  }
+});
+
+// ── POST /api/admin/attendance/generate-alerts ───────────────────────────────
+//
+// Scans the last 14 days of completed lessons and creates persistent Alert records
+// for each attendance issue found. Uses stable dedup keys so re-running never
+// creates duplicate open alerts.
+//
+// Alert types created:
+//   attendance_tutor_absent      — dedup: lesson_id
+//   attendance_student_absent    — dedup: student_user_id (one open alert per absent student)
+//   attendance_possible_substitute — dedup: lesson_id
+//   attendance_unmatched_voice   — dedup: lesson_id
+//
+// Admin-only (write operation). Tutors receive 403.
+
+attendanceRouter.post('/generate-alerts', async (req, res) => {
+  try {
+    const currentUser = (req as any).user as { id: number; role: string } | undefined;
+    if (currentUser?.role !== 'admin') {
+      res.status(403).json({ detail: 'Admin-only action' }); return;
+    }
+
+    const now    = new Date();
+    const past14 = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const classes = await db.classGroup.findMany({
+      where: { active: true },
+      include: {
+        tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+        enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+      },
+    });
+
+    if (classes.length === 0) { res.json({ created: 0, keys: [] }); return; }
+
+    const classIds   = classes.map((c: any) => c.id);
+    const channelIds = classes.map((c: any) => c.discord_channel_id).filter(Boolean) as string[];
+
+    const [lessons, voiceSessions] = await Promise.all([
+      db.lesson.findMany({
+        where: { class_id: { in: classIds }, scheduled_at: { gte: past14, lte: now }, status: { not: 'cancelled' } },
+        include: {
+          class: {
+            include: {
+              tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+              enrollments: { where: { active: true }, include: { student: { select: { id: true, full_name: true, discord_user_id: true, role: true } } } },
+            },
+          },
+          substitute_tutor: { select: { id: true, full_name: true, discord_user_id: true } },
+          attendance:        { include: { student: { select: { full_name: true } } } },
+        },
+        orderBy: { scheduled_at: 'desc' },
+      }),
+      channelIds.length > 0
+        ? db.voiceAttendance.findMany({
+            where: {
+              joined_at: { gte: new Date(past14.getTime() - THRESHOLDS.BUFFER_BEFORE_MS), lte: new Date(now.getTime() + THRESHOLDS.BUFFER_AFTER_MS) },
+              discord_channel_id: { in: channelIds },
+            },
+            include: { user: { select: { id: true, full_name: true, role: true } } },
+            orderBy: { joined_at: 'asc' },
+          })
+        : Promise.resolve([]) as any,
+    ]);
+
+    const sessionsByUser    = new Map<number, any[]>();
+    const sessionsByChannel = new Map<string, any[]>();
+    for (const s of voiceSessions) {
+      if (s.crm_user_id) {
+        if (!sessionsByUser.has(s.crm_user_id)) sessionsByUser.set(s.crm_user_id, []);
+        sessionsByUser.get(s.crm_user_id)!.push(s);
+      }
+      const ch = s.discord_channel_id ?? '';
+      if (ch) {
+        if (!sessionsByChannel.has(ch)) sessionsByChannel.set(ch, []);
+        sessionsByChannel.get(ch)!.push(s);
+      }
+    }
+
+    // Dedup helper: create alert only if no open alert exists for this type+entity pair
+    async function maybeCreateAttendanceAlert(data: {
+      alert_type: string; severity: string; title: string; message: string;
+      related_entity_type: string; related_entity_id: number;
+    }): Promise<boolean> {
+      const existing = await db.alert.findFirst({
+        where: { alert_type: data.alert_type, related_entity_id: data.related_entity_id, status: 'open' },
+      });
+      if (existing) return false;
+      await db.alert.create({ data: { ...data, status: 'open' } });
+      return true;
+    }
+
+    const createdKeys: string[] = [];
+
+    for (const lesson of lessons) {
+      const channelSessions = lesson.class?.discord_channel_id
+        ? (sessionsByChannel.get(lesson.class.discord_channel_id) ?? [])
+        : [];
+
+      const report     = reconcileLesson({ lesson, voiceSessionsByUser: sessionsByUser, channelSessions });
+      const cls        = lesson.class?.name ?? 'Unknown';
+      const dateStr    = new Date(lesson.scheduled_at).toLocaleDateString('en-AU', {
+        timeZone: 'Australia/Sydney', day: 'numeric', month: 'short', year: 'numeric',
+      });
+
+      // ── Tutor absent ─────────────────────────────────────────────────────
+      if (report.issues.some((i: any) => i.type === 'tutor_absent')) {
+        const ok = await maybeCreateAttendanceAlert({
+          alert_type: 'attendance_tutor_absent', severity: 'high',
+          title:   `Tutor absent — ${cls}`,
+          message: `Tutor was absent for ${cls} on ${dateStr}. Verify whether a substitute was arranged.`,
+          related_entity_type: 'lesson', related_entity_id: lesson.id,
+        });
+        if (ok) createdKeys.push(`tutor_absent:lesson_${lesson.id}`);
+      }
+
+      // ── Student absent (one open alert per student — deduped by student_id) ─
+      for (const issue of report.issues.filter((i: any) => i.type === 'student_absent')) {
+        if (!issue.user_id) continue;
+        const ok = await maybeCreateAttendanceAlert({
+          alert_type: 'attendance_student_absent', severity: 'medium',
+          title:   `Student absent — ${issue.user_name ?? 'Unknown'}`,
+          message: `${issue.user_name ?? 'Student'} was absent for ${cls} on ${dateStr}.`,
+          related_entity_type: 'student', related_entity_id: issue.user_id,
+        });
+        if (ok) createdKeys.push(`student_absent:user_${issue.user_id}_lesson_${lesson.id}`);
+      }
+
+      // ── Possible substitute ───────────────────────────────────────────────
+      const subs = report.unexpected_participants.filter((p: any) => p.type === 'possible_substitute');
+      if (subs.length > 0) {
+        const subNames = subs.map((p: any) => p.full_name ?? p.discord_username ?? 'unknown').join(', ');
+        const ok = await maybeCreateAttendanceAlert({
+          alert_type: 'attendance_possible_substitute', severity: 'medium',
+          title:   `Possible substitute — ${cls}`,
+          message: `Unassigned tutor(s) detected in ${cls} on ${dateStr}: ${subNames}. Confirm whether an authorised substitute covered this lesson.`,
+          related_entity_type: 'lesson', related_entity_id: lesson.id,
+        });
+        if (ok) createdKeys.push(`possible_substitute:lesson_${lesson.id}`);
+      }
+
+      // ── Unmatched voice (unknown_user) ────────────────────────────────────
+      const unmatched = report.unexpected_participants.filter((p: any) => p.type === 'unknown_user');
+      if (unmatched.length > 0) {
+        const ok = await maybeCreateAttendanceAlert({
+          alert_type: 'attendance_unmatched_voice', severity: 'low',
+          title:   `Unmatched voice activity — ${cls}`,
+          message: `Unrecognised Discord user(s) were present in the ${cls} channel on ${dateStr}. Check if their account needs to be linked in the CRM.`,
+          related_entity_type: 'lesson', related_entity_id: lesson.id,
+        });
+        if (ok) createdKeys.push(`unmatched_voice:lesson_${lesson.id}`);
+      }
+    }
+
+    res.json({ created: createdKeys.length, keys: createdKeys });
+  } catch (e: any) {
+    console.error('[attendance] generate-alerts error:', e?.message);
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
   }
 });
