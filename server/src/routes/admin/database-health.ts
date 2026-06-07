@@ -520,7 +520,7 @@ dbHealthRouter.get('/issues', async (_req: Request, res: Response) => {
       if (!u.discord_user_id && (u.role === 'student' || u.role === 'tutor'))
         add('high', 'Discord', 'user', u.id, u.full_name, 'No Discord account linked', `/dashboard/admin/${u.role}s/${u.id}`);
       if (!u.active && u.enrollments.length > 0)
-        add('high', 'Enrollment', 'user', u.id, u.full_name, `Inactive user has ${u.enrollments.length} active enrollment(s)`, `/dashboard/admin/students/${u.id}`);
+        add('high', 'Enrolment', 'user', u.id, u.full_name, `Inactive user has ${u.enrollments.length} active enrolment(s)`, `/dashboard/admin/students/${u.id}`);
       if (isEmailLike(u.full_name))
         add('medium', 'Data Quality', 'user', u.id, u.full_name, 'Name looks like an email address — may be a placeholder', `/dashboard/admin/students/${u.id}`);
     }
@@ -531,7 +531,7 @@ dbHealthRouter.get('/issues', async (_req: Request, res: Response) => {
     for (const c of classes) {
       if (!c.tutor_id && c.active)             add('high',     'Roster',      'class', c.id, c.name, 'Active class has no tutor assigned', `/dashboard/admin/classes/${c.id}`);
       if (!c.discord_channel_id && c.active)   add('medium',   'Discord',     'class', c.id, c.name, 'No Discord channel ID configured', `/dashboard/admin/classes/${c.id}`);
-      if (c.enrollments.length === 0 && c.active) add('medium','Enrollment',  'class', c.id, c.name, 'Active class has no enrolled students', `/dashboard/admin/classes/${c.id}`);
+      if (c.enrollments.length === 0 && c.active) add('medium','Enrolment',   'class', c.id, c.name, 'Active class has no enrolled students', `/dashboard/admin/classes/${c.id}`);
       if (c.discord_channel_id && (chanCounts[c.discord_channel_id] ?? 0) > 1)
         add('critical', 'Discord', 'class', c.id, c.name, `Discord channel shared with ${chanCounts[c.discord_channel_id] - 1} other class(es) — permission conflicts likely`, `/dashboard/admin/classes/${c.id}`);
       if (isEmailLike(c.name))                 add('medium',   'Data Quality','class', c.id, c.name, 'Class name looks like an email address', `/dashboard/admin/classes/${c.id}`);
@@ -540,9 +540,9 @@ dbHealthRouter.get('/issues', async (_req: Request, res: Response) => {
 
     for (const e of enrollments) {
       if ((e.student.role === 'tutor' || e.student.role === 'admin') && e.active)
-        add('high', 'Enrollment', 'enrollment', e.id, `${e.student.full_name} → ${e.class.name}`, `${e.student.role} role enrolled as student`, `/dashboard/admin/classes/${e.class.id}`);
+        add('high', 'Enrolment', 'enrollment', e.id, `${e.student.full_name} → ${e.class.name}`, `${e.student.role} role enrolled as student`, `/dashboard/admin/classes/${e.class.id}`);
       if (!e.student.active && e.active)
-        add('medium', 'Enrollment', 'enrollment', e.id, `${e.student.full_name} → ${e.class.name}`, 'Active enrollment for inactive student', `/dashboard/admin/students/${e.student.id}`);
+        add('medium', 'Enrolment', 'enrollment', e.id, `${e.student.full_name} → ${e.class.name}`, 'Active enrolment for inactive student', `/dashboard/admin/students/${e.student.id}`);
     }
 
     if (unmatchedVoice > 0)
