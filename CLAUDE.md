@@ -44,16 +44,73 @@ npm run db:push           # prisma db push to Supabase (safe, non-destructive)
 npm run db:studio         # Prisma Studio
 ```
 
-## Automatic skill routing
+## Skills & Subagent Usage Protocol
 
-Before starting any non-trivial task, classify the task and invoke the matching skill:
+### Mandatory preflight (every non-trivial task)
 
-1. **PR, merge, deploy, release, regression check, QA, build safety, safe to merge, production readiness** → use `ryze-release-qa`
-2. **PageSpeed, PSI, LCP, FCP, Cloudinary, hero image, Google Fonts, GTM/Meta deferral, mobile landing page speed, Core Web Vitals** → use `ryze-performance-pass`
-3. **New admin page, CRM feature, API endpoint, Prisma model, students/tutors/parents/classes/lessons/payments/homework/reports/leads/messages/alerts/resources/audit log, role-gated portal feature** → use `ryze-crm-feature-implementation`
-4. **Attendance missing, Discord voice, bot sync, VoiceAttendance, lesson matching, Calendar sync, attendanceEngine.ts, late/partial/left_early status, backfill** → use `ryze-attendance-pipeline-triage`
+Before starting any non-trivial task, output a preflight block:
 
-Do **not** invoke a skill for: simple copy/text changes, single-file obvious fixes, CSS variable tweaks, or renaming a label. Use a normal prompt for those.
+```
+PREFLIGHT
+skill:      <skill name or "none">
+subagents:  <agent names or "none">
+safe-reads: <files you will read>
+mutations:  <files / DB records you will write — "none" if read-only>
+dry-run:    <yes / no / n/a>
+```
+
+Then invoke the matching skill or agent before doing any work.
+
+### Skill routing
+
+| Trigger keywords | Skill |
+|-----------------|-------|
+| PR, merge, deploy, release, regression check, QA, build safety, safe to merge, production readiness | `ryze-release-qa` |
+| PageSpeed, PSI, LCP, FCP, Cloudinary, hero image, Google Fonts, GTM/Meta deferral, mobile landing page speed, Core Web Vitals | `ryze-performance-pass` |
+| New admin page, CRM feature, API endpoint, Prisma model, students/tutors/parents/classes/lessons/payments/homework/reports/leads/messages/alerts/resources/audit log, role-gated portal feature | `ryze-crm-feature-implementation` |
+| Attendance missing, Discord voice, bot sync, VoiceAttendance, lesson matching, Calendar sync, attendanceEngine.ts, late/partial/left_early status, backfill | `ryze-attendance-pipeline-triage` |
+
+Do **not** invoke a skill for: simple copy/text changes, single-file obvious fixes, CSS variable tweaks, or renaming a label.
+
+### Subagent routing
+
+Subagents live in `.claude/agents/`. Use them for:
+
+- `ryze-attendance-debugger` — multi-layer pipeline trace (Discord → VPS → Render → Supabase) for a single missing attendance
+- `ryze-performance-auditor` — PSI + Lighthouse pass + bundle analysis on public pages
+
+### Ryze high-risk operation checklist
+
+Before **any** production data mutation:
+- [ ] Read the current state first (dry-run or inspect script)
+- [ ] Document before/after values in the session
+- [ ] Prefer Prisma ORM over raw SQL
+- [ ] Never delete records — archive/deactivate only
+- [ ] Never mutate `VoiceAttendance` rows
+- [ ] Never auto-enrol from Discord voice activity
+- [ ] Never enrol a substitute tutor as a student
+
+### Final report format (multi-part tasks)
+
+End every multi-part task with a report block:
+
+```
+FINAL REPORT
+Parts completed:   <list with ✅/⚠️/❌>
+Mutations applied: <table: what, before, after>
+PRs opened/merged: <list>
+Owner decisions pending: <list or "none">
+Known remaining risks: <list or "none">
+```
+
+### PR checklist (before merge)
+
+- [ ] `npx tsc` passes (frontend) or `npm run build` passes (backend)
+- [ ] `npm run lint:colours` passes (if UI changed)
+- [ ] No raw `.env` values or secrets in diff
+- [ ] Audit log entries added for any new CRM mutations
+- [ ] No `prisma migrate reset` or destructive DB changes
+- [ ] Vercel Preview validated before merging to `main`
 
 ## Non-negotiable rules
 

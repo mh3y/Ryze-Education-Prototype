@@ -305,6 +305,13 @@ botRouter.post('/sync-lessons', async (req, res) => {
 
     let created = 0;
     let updated = 0;
+    let skipped = 0;
+
+    // Cache active class IDs for this request to avoid N+1 on class lookups.
+    const activeClassIds = new Set(
+      (await db.classGroup.findMany({ where: { active: true }, select: { id: true } }))
+        .map((c) => c.id)
+    );
 
     for (const l of lessons) {
       if (!l.google_event_id || !l.class_id || !l.scheduled_at) continue;
@@ -317,6 +324,8 @@ botRouter.post('/sync-lessons', async (req, res) => {
       });
 
       if (existing) {
+        // Update time/title/meta but never overwrite class_id on an existing lesson.
+        // This prevents calendar re-sync from silently moving a lesson to a different class.
         await db.lesson.update({
           where: { google_event_id: l.google_event_id },
           data: {
@@ -331,15 +340,25 @@ botRouter.post('/sync-lessons', async (req, res) => {
         });
         updated++;
       } else {
+        // Guard: only create a lesson for an active class.
+        // If the class_id is inactive or non-existent (e.g. a ghost class from a
+        // mis-configured calendar sync), skip rather than creating an orphaned lesson.
+        if (!activeClassIds.has(l.class_id)) {
+          console.warn(
+            `[bot] sync-lessons: skipping lesson "${l.google_event_id}" — class_id=${l.class_id} is not active or does not exist.`
+          );
+          skipped++;
+          continue;
+        }
         await db.lesson.create({
           data: {
-            class_id:       l.class_id,
+            class_id:        l.class_id,
             google_event_id: l.google_event_id,
-            title:          l.title,
-            description:    l.description ?? null,
-            scheduled_at:   scheduledAt,
-            duration_min:   l.duration_min,
-            meet_link:      l.meet_link ?? null,
+            title:           l.title,
+            description:     l.description ?? null,
+            scheduled_at:    scheduledAt,
+            duration_min:    l.duration_min,
+            meet_link:       l.meet_link ?? null,
             status,
           },
         });
@@ -347,7 +366,7 @@ botRouter.post('/sync-lessons', async (req, res) => {
       }
     }
 
-    res.json({ synced: lessons.length, created, updated });
+    res.json({ synced: lessons.length, created, updated, skipped });
   } catch (e: any) {
     console.error('[bot] sync-lessons error:', e?.message);
     res.status(500).json({ detail: e?.message ?? 'Internal server error' });
