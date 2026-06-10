@@ -294,7 +294,7 @@ const Home: React.FC = () => {
                   variant="link"
                   href={ROUTES.CONTACT}
                   size="lg"
-                  label="Book a Consultation"
+                  label="Book a Free Consultation"
                   page="home"
                   placement="home_hero"
                   className="w-full sm:min-w-[244px] sm:w-auto"

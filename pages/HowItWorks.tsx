@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import PrimaryCTA from '../components/PrimaryCTA';
 import {
   ArrowRight,
   BarChart3,
@@ -14,10 +14,9 @@ import {
   X,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { FadeInSection, InteractiveLift, StaggerGroup } from '../src/components/animation';
+import { FadeInSection, StaggerGroup } from '../src/components/animation';
 
 const HowItWorks: React.FC = () => {
-  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const principles = [
@@ -314,14 +313,11 @@ const HowItWorks: React.FC = () => {
               <p className="mx-auto mb-8 max-w-2xl text-lg ryze-text-secondary">
                 {t("Every student begins with a consultation and assessment. We'll discuss whether private tutoring or a small-group class is the better fit for the situation.")}
               </p>
-              <InteractiveLift as="div" className="inline-block">
-                <button
-                  onClick={() => navigate('/contact')}
-                  className="rounded-full bg-[var(--color-ryze)] px-10 py-4 font-bold text-[var(--accent-foreground)] shadow-lg transition-all hover:bg-[var(--color-ryze-400)]"
-                >
-                  {t('Book a Consultation')}
-                </button>
-              </InteractiveLift>
+              <PrimaryCTA
+                page="how-it-works"
+                placement="bottom_cta"
+                size="lg"
+              />
             </div>
           </div>
         </div>

@@ -196,6 +196,9 @@ const TheRyzeTruth: React.FC = () => {
             <p className="text-lg font-medium ryze-text-primary">
               {t('That experience left me with a question: Why does so much tutoring fail to actually help?')}
             </p>
+            <p className="mt-8 text-sm font-semibold tracking-[0.04em] ryze-text-muted text-right">
+              — {t('Michael Yang, Founder of Ryze Education')}
+            </p>
           </div>
         </div>
       </section>

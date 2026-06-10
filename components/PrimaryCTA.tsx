@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Phone } from 'lucide-react';
 import { trackPrimaryCtaClick } from '../src/analytics';
 
-export const PRIMARY_CTA_LABEL = 'Book a Consultation';
+export const PRIMARY_CTA_LABEL = 'Book a Free Consultation';
 
 type PrimaryCtaSize = 'sm' | 'md' | 'lg';
 type PrimaryCtaVariant = 'button' | 'link';

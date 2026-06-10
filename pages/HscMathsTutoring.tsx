@@ -259,7 +259,7 @@ const HscMathsTutoring: React.FC = () => {
       phone: submission.phone || undefined,
       message: `Student level: ${submission.studentLevel}`,
       source: 'website',
-      page: '/hsc-maths-tutoring',
+      page: '/hsc-maths-program',
       ...readUtmParams(location.search),
     });
 

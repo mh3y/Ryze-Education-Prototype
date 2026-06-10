@@ -437,7 +437,7 @@ const RyzeAI: React.FC = () => {
                      <div className="w-20 h-1.5 bg-[#FFB000] rounded-full mb-6"></div>
                   </div>
                   <div className="lg:col-span-8 space-y-8 text-lg ryze-text-inverse-muted font-light leading-relaxed">
-                     <p className="text-xl" dangerouslySetInnerHTML={{ __html: t("Most students don't fail because they're not smart enough.</strong> They fail because they don't know what they don't know.") }}></p>
+                     <p className="text-xl">{t("Most students don't fail because they're not smart enough. They fail because they don't know what they don't know.")}</p>
                      <p>{t("Students spend hours reviewing material they've already mastered while their actual weak spots go unaddressed. They cram facts without understanding concepts. They walk into exams anxious and underprepared—not because they didn't study, but because they studied the wrong things in the wrong ways.")}</p>
                      <div className="pl-6 border-l-2 border-[#FFB000]/30">
                        <p className="ryze-text-muted italic">{t("Traditional study tools give everyone the same content. Teachers can't track each student's specific confusion points. And students are left guessing about what to study next.")}</p>
@@ -664,7 +664,7 @@ const RyzeAI: React.FC = () => {
                        </div>
                        <div className="relative z-10 flex flex-col items-center w-64 opacity-50">
                            <div className="w-3 h-3 bg-slate-700 rounded-full mb-6 border border-slate-500"></div>
-                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.02em] ryze-text-inverse">June 2026</div>
+                           <div className="mb-2 text-2xl font-display font-bold tracking-[0.02em] ryze-text-inverse">{t("Launching soon")}</div>
                            <div className="ryze-text-muted font-medium">{t("Public Launch")}</div>
                        </div>
                    </div>
@@ -688,7 +688,7 @@ const RyzeAI: React.FC = () => {
                       {t("If you'd like to discuss Ryze AI, explore partnership opportunities, or express interest in beta access, we'd love to hear from you.")}
                    </p>
                    <a
-                      href="mailto:ryzeeducation@outlook.com"
+                      href="mailto:ryzeeducationgroup@gmail.com"
                       className="relative z-10 inline-flex items-center gap-4 px-12 py-6 bg-[#FFB000] text-[#050510] font-bold text-xl rounded-full hover:bg-[#ffc133] transition-all duration-300 transform hover:-translate-y-1 shadow-[0_10px_40px_-10px_rgba(255,176,0,0.5)]"
                    >
                       {t("Request Access")} <ArrowRight className="w-6 h-6" />
