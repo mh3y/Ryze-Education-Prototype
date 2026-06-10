@@ -43,8 +43,8 @@ const Navbar: React.FC = () => {
   const menuPanelId = 'ryze-mobile-nav-panel';
   const brandLogoUrl =
     'https://res.cloudinary.com/dsvjhemjd/image/upload/f_auto,q_auto:good,c_limit,w_320/v1764105292/yellow_logo_png_bvs11z.png';
-  const bookConsultationLabel = 'Enrol Now';
-  const mobileEnrolLabel = 'Enrol Now';
+  const bookConsultationLabel = 'Free Consultation';
+  const mobileEnrolLabel = 'Free Consultation';
   const aboutSubLinks = [
     { name: 'The Ryze Truth', path: '/the-ryze-truth', desc: 'Our philosophy and story.' },
     { name: 'How Ryze Works', path: ROUTES.HOW_IT_WORKS, desc: 'Our process explained.' },
@@ -55,6 +55,7 @@ const Navbar: React.FC = () => {
     { name: 'Junior Foundations | Year 7 -10', path: ROUTES.JUNIOR_FOUNDATIONS_PROGRAM, desc: 'Year 7-10 support aligned with the NSW curriculum.' },
     { name: 'OC & Selective Exam Preparation', path: ROUTES.SELECTIVE_OC_PROGRAM, desc: 'OC and selective preparation with stronger reasoning.' },
     { name: 'Primary | Year 3 - 6', path: ROUTES.PRIMARY_MATHS_PROGRAM, desc: 'Years 3-6 building confidence and fluency early.' },
+    { name: 'Maths Tutoring Overview', path: ROUTES.MATHS_TUTORING, desc: 'Overview of all Ryze programs, approach, and results.' },
   ];
 
   useEffect(() => {
@@ -371,9 +372,6 @@ const Navbar: React.FC = () => {
                   </span>
                 </span>
               </NavLink>
-              <NavLink to="/learning-style" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
-                {t('Learning Style')}
-              </NavLink>
               <NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsOpen(false)}>
                 {t('Contact')}
               </NavLink>
@@ -539,9 +537,6 @@ const Navbar: React.FC = () => {
                       <Zap size={10} fill="currentColor" />
                     </span>
                   </span>
-                </NavLink>
-                <NavLink to="/learning-style" className={({ isActive }) => linkClass(isActive)}>
-                  {t('Learning Style')}
                 </NavLink>
                 <div className={navDividerClass} aria-hidden="true" />
                 {/* Portal Sign In */}

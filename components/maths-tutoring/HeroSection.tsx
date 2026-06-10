@@ -137,7 +137,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToCta, isMobileViewpo
           onClick={onScrollToCta}
           className="ryze-cta-primary w-full sm:w-auto"
         >
-          Start your journey now
+          Book a Free Consultation
         </button>
         <p className="ryze-text-muted mt-3 sm:mt-5 text-sm sm:text-base">Join 500+ other satisfied students</p>
       </div>

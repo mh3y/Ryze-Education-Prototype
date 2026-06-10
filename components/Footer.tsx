@@ -124,6 +124,7 @@ const Footer: React.FC = () => {
                 <li><Link to={ROUTES.JUNIOR_FOUNDATIONS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Junior Foundations')}</Link></li>
                 <li><Link to={ROUTES.SELECTIVE_OC_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('OC & Selective Exam Preparation')}</Link></li>
                 <li><Link to={ROUTES.PRIMARY_MATHS_PROGRAM} className={`transition-colors flex ${linkHoverClass}`}>{t('Primary')}</Link></li>
+                <li><Link to={ROUTES.MATHS_TUTORING} className={`transition-colors flex ${linkHoverClass}`}>{t('Maths Tutoring Overview')}</Link></li>
               </ul>
             </div>
             
@@ -131,6 +132,8 @@ const Footer: React.FC = () => {
             <div className="lg:col-span-2">
               <h4 className={`mb-3 text-[1.08rem] font-extrabold uppercase tracking-[0.1em] ${headingClass}`}>{t('Company')}</h4>
               <ul className="space-y-2.5 text-sm leading-6">
+                <li><Link to="/meet-the-team" className={`transition-colors flex ${linkHoverClass}`}>{t('Meet Our Team')}</Link></li>
+                <li><Link to="/the-ryze-truth" className={`transition-colors flex ${linkHoverClass}`}>{t('The Ryze Truth')}</Link></li>
                 <li><Link to={ROUTES.HOW_IT_WORKS} className={`transition-colors flex ${linkHoverClass}`}>{t('How It Works')}</Link></li>
                 <li>
                   <Link to={ROUTES.RYZE_AI} className={`flex items-center gap-2 transition-colors ${linkHoverClass}`}>
