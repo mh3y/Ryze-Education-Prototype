@@ -1,12 +1,12 @@
 ---
 name: ryze-performance-pass
-description: Use automatically for any Ryze website task involving PageSpeed, PSI score, mobile performance, LCP, FCP, CLS, Core Web Vitals, Cloudinary images, Cloudinary optimisation, hero image, hero section, Google Fonts, GTM deferral, Meta Pixel deferral, analytics loading, third-party scripts, render-blocking resources, bundle size, page load time, mobile landing page speed, or /hsc-maths-tutoring performance optimisation.
+description: Use automatically for any Ryze website task involving PageSpeed, PSI score, mobile performance, LCP, FCP, CLS, Core Web Vitals, Cloudinary images, Cloudinary optimisation, hero image, hero section, Google Fonts, GTM deferral, Meta Pixel deferral, analytics loading, third-party scripts, render-blocking resources, bundle size, page load time, mobile landing page speed, or /hsc-maths-program performance optimisation.
 ---
 
 ## Purpose
 Improve mobile PageSpeed / Core Web Vitals on Ryze public pages without damaging conversion tracking, lead capture, routing, or visual trust.
 
-**Primary target:** `/hsc-maths-tutoring` — the Google Ads landing page. Any regression here has direct revenue impact.
+**Primary target:** `/hsc-maths-program` — the Google Ads landing page. Any regression here has direct revenue impact.
 
 **This skill's description is deliberately scoped to technical metrics.** For copy, CTA, or offer structure changes on landing pages, use a normal prompt — that's a separate concern.
 

@@ -2,17 +2,17 @@
   "redirects": [
     {
       "source": "/landing",
-      "destination": "/hsc-maths-tutoring",
+      "destination": "/hsc-maths-program",
       "permanent": true
     },
     {
       "source": "/landing/",
-      "destination": "/hsc-maths-tutoring",
+      "destination": "/hsc-maths-program",
       "permanent": true
     },
     {
       "source": "/Landing",
-      "destination": "/hsc-maths-tutoring",
+      "destination": "/hsc-maths-program",
       "permanent": true
     },
     {

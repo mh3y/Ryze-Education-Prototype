@@ -43,7 +43,7 @@ process.stdin.on('end', () => {
         'cloudinary', 'hero image', 'hero section', 'google fonts',
         'gtm', 'meta pixel', 'analytics deferral', 'third-party script',
         'render-blocking', 'mobile performance', 'mobile speed',
-        'page load', 'bundle size', 'hsc-maths-tutoring',
+        'page load', 'bundle size', 'hsc-maths-program',
       ],
     },
     {
